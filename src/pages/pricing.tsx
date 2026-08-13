@@ -14,7 +14,7 @@ import type { NextPageWithLayout } from '../types/next';
 const PricingPage: NextPageWithLayout = () => (
   <>
     <Meta
-      title="Pricing — Zylen E-Invoice Integration"
+      title="Pricing — Recycling Hub E-Invoice Integration"
       description="Simple, transparent pricing for Malaysian e-invoice compliance. No hidden fees, no long-term contracts."
     />
     <ReusableHero

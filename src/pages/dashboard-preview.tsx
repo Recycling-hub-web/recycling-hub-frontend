@@ -259,7 +259,7 @@ const fmt = (n: number) =>
 const DashboardPreview: NextPage = () => (
   <>
     <Head>
-      <title>Dashboard — Zylen</title>
+      <title>Dashboard — Recycling Hub</title>
       <meta name="robots" content="noindex, nofollow" />
     </Head>
 
@@ -272,7 +272,7 @@ const DashboardPreview: NextPage = () => (
             <Zap className="size-4 text-white" strokeWidth={2.5} />
           </div>
           <span className="text-sm font-semibold tracking-tight text-white">
-            Zylen
+            Recycling Hub
           </span>
           <span className="ml-auto rounded-full bg-brand-600/20 px-2 py-0.5 text-[10px] font-semibold text-brand-400">
             BETA

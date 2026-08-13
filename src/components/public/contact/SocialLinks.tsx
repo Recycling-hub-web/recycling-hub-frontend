@@ -13,10 +13,10 @@ const InstagramIcon = () => (
 const SOCIALS = [
   {
     label: 'Instagram',
-    handle: '@zylen.tech',
+    handle: '@recyclinghub.eco',
     href: BRAND.social.instagram,
     icon: <InstagramIcon />,
-    description: 'E-invoice tips & compliance guides',
+    description: 'E-waste tips & recycling updates',
   },
 ];
 

@@ -10,8 +10,8 @@ import {
 } from 'react-icons/lu';
 
 import { Meta } from '../../components/layout/Meta';
+import { ServiceProcess } from '../../components/public/services/ServiceProcess';
 import { BookDemo } from '../../components/public/shared/BookDemo';
-import { HowItWorks } from '../../components/public/shared/HowItWorks';
 import { BeforeAfterComparison } from '../../components/solutions/BeforeAfterComparison';
 import { NgoComplianceChecker } from '../../components/solutions/NgoComplianceChecker';
 import { RelatedSolutions } from '../../components/solutions/RelatedSolutions';
@@ -27,107 +27,67 @@ import type { NextPageWithLayout } from '../../types/next';
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 const STATS = [
+  { value: 'DOE', label: 'Licensed collection and disposal' },
+  { value: '0', label: 'Devices resold without your knowledge' },
   {
-    value: 'RM 1M+',
-    label: 'Annual revenue threshold for mandatory e-invoice compliance',
-  },
-  { value: '55', label: 'Mandatory fields required per MyInvois submission' },
-  {
-    value: '1 Jan 2027',
-    label: 'LHDN enforcement deadline — applies to all entities',
+    value: '100%',
+    label: 'Certified data destruction on donated devices',
   },
 ];
 
 const BENEFITS = [
   {
     Icon: LuReceipt,
-    title: 'Donation Receipt Automation',
+    title: 'ESG & Donor-Ready Reporting',
     description:
-      'Auto-submit donation receipts to LHDN MyInvois the moment they are issued. No manual re-entry, no compliance gaps.',
+      'A diversion report you can fold directly into your own impact reporting or donor updates.',
   },
   {
     Icon: LuLayers,
-    title: 'Consolidated B2C Submission',
+    title: 'Scheduled Collection Drives',
     description:
-      'Hundreds of small cash donors? MyInvois allows a single consolidated daily e-invoice for B2C transactions — saving your team enormous effort.',
+      'Coordinate one-off collection days or ongoing pickups as donated devices come in — no minimum required.',
   },
   {
     Icon: LuFileText,
-    title: 'Grant & Sponsorship Invoicing',
+    title: 'Certified Data Destruction',
     description:
-      'Issue compliant e-invoices for government grants, corporate sponsors, and programme funding across multiple projects.',
+      'Every data-bearing device is wiped or destroyed to a certified standard, protecting donors and beneficiaries alike.',
   },
   {
     Icon: LuPlugZap,
-    title: 'Works With However You Keep Records',
+    title: 'Works With However You Track Donations',
     description:
-      'Spreadsheets, Wave, manual bookkeeping, or no system at all — we build the missing piece so you keep working exactly as you do today.',
-  },
-];
-
-const PRICING_TIERS = [
-  {
-    name: 'Guided Setup',
-    price: 'From RM 4,000',
-    note: 'one-time · source code yours',
-    description:
-      'For NGOs on spreadsheets, Wave, manual bookkeeping, or no system at all.',
-    features: [
-      '7–10 day delivery',
-      'LHDN sandbox testing included',
-      'Source code & documentation',
-      '30-day post-launch support',
-    ],
-    highlight: false,
-  },
-  {
-    name: 'Custom Connect',
-    price: 'From RM 6,000',
-    note: 'one-time · source code yours',
-    description:
-      'For NGOs on custom donor portals, legacy databases, or in-house systems.',
-    features: [
-      '10–14 day delivery',
-      'Full field mapping to MyInvois spec',
-      'Source code & documentation',
-      '30-day post-launch support',
-    ],
-    highlight: true,
+      'Spreadsheet, donation log, or no formal system at all — we build collection around what you already do.',
   },
 ];
 
 const FAQ_ITEMS = [
   {
-    question: 'Does the LHDN e-invoice mandate apply to NGOs?',
+    question: 'Does this apply to NGOs and charities of any size?',
     answer:
-      'Yes. The mandate applies to all entities with annual revenue above RM 1M — including registered societies, foundations, charitable bodies, and religious organisations. Being a non-profit does not exempt you from the requirement.',
+      "Yes — whether you're a small volunteer-run group or a large registered charity, the same licensed process applies. Volume determines whether you use free individual pickup or a bulk quote.",
   },
   {
-    question: 'What types of transactions require e-invoices for NGOs?',
+    question: 'We only have a handful of donated devices. Is that too small?',
     answer:
-      'Donation receipts, grant income, event registration fees, membership fees, merchandise sales, and any sale of goods or services must be submitted through MyInvois. Pure gifts with no consideration may be exempt — we can help you determine which of your transactions apply.',
+      "Not at all — small volumes can go through our free individual pickup with instant DuitNow payment where applicable, or bulk collection if a device is unlikely to have resale value. Get in touch and we'll point you to the right path.",
+  },
+  {
+    question: 'What happens to data on donated devices?',
+    answer:
+      'Any data-bearing device — phones, laptops, drives — goes through certified destruction before recycling, whether it came from a donor or your own operations.',
+  },
+  {
+    question: 'Can we get documentation for our own donor or impact reporting?',
+    answer:
+      'Yes — bulk collections include an ESG-ready diversion report you can use in donor updates, annual reports, or impact statements.',
   },
   {
     question:
-      'Will switching to e-invoice affect our Section 44(6) tax exemption receipts?',
+      'Can you collect on a recurring basis, like after each donation drive?',
     answer:
-      'This is one of the most common concerns we hear. MyInvois e-invoices and Section 44(6) tax exemption receipts serve different purposes — one is an LHDN submission requirement, the other is a donor tax deduction document. You can continue issuing your existing Section 44(6) receipts to donors alongside the MyInvois e-invoice. We advise all NGO clients to confirm the specific treatment with their tax adviser, and we ensure our integration does not interfere with your existing receipt workflow.',
-  },
-  {
-    question:
-      "We're already using AutoCount or SQL Accounting — is this still for us?",
-    answer:
-      "Possibly not, and we'll tell you honestly. If your platform already has certified MyInvois support, you may already be covered — worth checking with your provider first. Zylen is built specifically for NGOs on spreadsheets, Wave, or manual bookkeeping, where that built-in support doesn't exist.",
-  },
-  {
-    question: 'How long does setup take for an NGO?',
-    answer:
-      'Most NGO integrations go live within 7–14 days. Day 1 is a free discovery call, you receive a fixed-price proposal within 24 hours, and our engineers start the build immediately after approval.',
-  },
-  {
-    question: 'We have a custom donor portal. Is that a different package?',
-    answer:
-      'Yes. If your donations come through a custom-built platform, website, or in-house system, that falls under our Custom Connect package (from RM 6,000 one-time). We analyse your data model, map your fields to the 55 MyInvois requirements, and build a tailored bridge. Contact us for a scoping call.',
+      'Yes — we can schedule recurring pickups timed to your donation drives or set up an on-request collection whenever volume builds up.',
   },
 ];
 
@@ -149,20 +109,6 @@ const ChevronIcon = ({ open }: { open: boolean }) => (
   </motion.svg>
 );
 
-const CheckIcon = () => (
-  <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-neutral-100">
-    <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-      <path
-        d="M1.5 5l2.5 2.5 4.5-4.5"
-        stroke="#0f0f0f"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  </span>
-);
-
 const NgoPage: NextPageWithLayout = () => {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const toggleFaq = (i: number) => setOpenFaq(openFaq === i ? null : i);
@@ -170,16 +116,16 @@ const NgoPage: NextPageWithLayout = () => {
   return (
     <>
       <Meta
-        title="E-Invoice for NGOs & Charities — Zylen"
-        description="Automate monthly MyInvois donation submissions for your NGO or charity. LHDN-compliant e-invoice integration in 7–14 days."
+        title="E-Waste Disposal for NGOs & Charities — Recycling Hub"
+        description="Certified disposal and ESG reporting for donated electronics that no longer work. DOE/SW110-compliant collection for NGOs and charities across Malaysia."
       />
 
       {/* ── Hero ─────────────────────────────────────────────────────────────── */}
       <ReusableHero
         eyebrow="Solutions · NGOs & Charities"
-        headline="E-Invoice Compliance for NGOs"
-        headlineAccent="& Charities."
-        description="LHDN's e-invoice mandate applies to all organisations above RM 1M — including NGOs, charitable bodies, and religious organisations. Zylen automates your donation receipts, grant invoices, and event billing through MyInvois."
+        headline="Certified E-Waste Disposal for"
+        headlineAccent="NGOs & Charities."
+        description="Donated electronics that no longer work still need to go somewhere responsible. Recycling Hub collects, certifies destruction on any data, and gives you an ESG-ready report for your own donor transparency."
       />
 
       {/* ── Mandate stats ────────────────────────────────────────────────────── */}
@@ -187,7 +133,7 @@ const NgoPage: NextPageWithLayout = () => {
         <div className="mx-auto max-w-7xl px-5 md:px-8">
           <FadeIn>
             <p className="mb-10 text-center text-xs font-semibold uppercase tracking-[0.15em] text-slate-400">
-              The LHDN mandate applies to your organisation
+              Why NGOs and charities choose licensed disposal
             </p>
           </FadeIn>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -207,7 +153,7 @@ const NgoPage: NextPageWithLayout = () => {
         </div>
       </section>
 
-      {/* ── Section 44(6) compliance checker (NGO-only) ──────────────────────── */}
+      {/* ── Bulk collection eligibility checker (NGO-only) ───────────────────── */}
       <NgoComplianceChecker />
 
       {/* ── Trust badges ─────────────────────────────────────────────────────── */}
@@ -217,25 +163,25 @@ const NgoPage: NextPageWithLayout = () => {
       <BeforeAfterComparison
         eyebrow="The Reality"
         left={{
-          label: 'Without Zylen',
-          headline: 'Manual. Risky. Non-compliant.',
+          label: 'Without Recycling Hub',
+          headline: 'Stored. Unaccounted For. Unreported.',
           bullets: [
-            'Log into MyInvois portal every month manually',
-            'Track every donation in a spreadsheet',
-            'Miss the 7-day consolidated submission deadline',
-            'No individual e-invoice system for donors',
-            'Finance team overwhelmed during Ramadan campaigns',
+            'Unusable donated devices stored indefinitely in a back office',
+            'No idea whether donor or beneficiary data was ever wiped',
+            'No documentation to show donors where their contribution ended up',
+            'No numbers to include in your own impact or ESG reporting',
+            'Handled ad hoc, whenever someone has time',
           ],
         }}
         right={{
-          label: 'With Zylen',
-          headline: 'Automated. Compliant. Effortless.',
+          label: 'With Recycling Hub',
+          headline: 'Collected. Documented. Reportable.',
           bullets: [
-            'Donations auto-submitted to MyInvois from whatever you use',
-            'Individual donor e-invoices generated automatically',
-            'Consolidated monthly submission before the 7-day deadline',
-            'Full audit trail for LHDN compliance',
-            'Finance team focuses on mission — not paperwork',
+            'Scheduled collection for unusable donated electronics',
+            'Certified data destruction on every data-bearing device',
+            'A licensed, SW110-compliant disposal record for your files',
+            'ESG diversion report you can cite in donor or impact reporting',
+            'One point of contact, not an ad hoc scramble',
           ],
         }}
       />
@@ -243,8 +189,8 @@ const NgoPage: NextPageWithLayout = () => {
       {/* ── Urgency callout ──────────────────────────────────────────────────── */}
       <UrgencyCallout
         Icon={LuTriangleAlert}
-        headline="Section 44(6) approved organisations must issue e-invoices for every donation."
-        body="Under LHDN guidelines updated July 2025, all organisations approved under Section 44(6), 44(6B), 44(11B), 44(11C) and 44(11D) must issue e-invoices for all monetary donations — regardless of amount or payment method. A consolidated e-invoice must be submitted to MyInvois within 7 days of each month-end."
+        headline="Donated devices can carry someone else's data long after they've been dropped off."
+        body="A donated laptop or phone often still holds the previous owner's files, accounts, or personal data. Passing it along — even to a good cause — without wiping it first is a data exposure risk for everyone involved. Recycling Hub destroys that data before the device is recycled."
       />
 
       {/* ── Benefits ─────────────────────────────────────────────────────────── */}
@@ -252,9 +198,9 @@ const NgoPage: NextPageWithLayout = () => {
         <div className="mx-auto max-w-7xl px-5 md:px-8">
           <div className="mb-14 text-center">
             <SectionHeading
-              eyebrow="Built for NGOs"
-              headline="Everything Your Organisation Needs"
-              subtext="Zylen handles the technical complexity of LHDN compliance so your team can focus on your mission — not paperwork."
+              eyebrow="Built for NGOs & Charities"
+              headline="Bulk Collection, Fully Documented"
+              subtext="From a single donation drive to ongoing device turnover — Recycling Hub handles every collection so your team doesn't have to."
               light
             />
           </div>
@@ -285,99 +231,26 @@ const NgoPage: NextPageWithLayout = () => {
       </section>
 
       {/* ── How it works ─────────────────────────────────────────────────────── */}
-      <HowItWorks />
+      <ServiceProcess />
 
       {/* ── Pricing ──────────────────────────────────────────────────────────── */}
       <section className="bg-white py-20 md:py-28">
         <div className="mx-auto max-w-7xl px-5 md:px-8">
-          <div className="mb-12 text-center">
+          <div className="text-center">
             <SectionHeading
-              eyebrow="Transparent Pricing"
-              headline="Fixed Price. No Surprises."
-              subtext="Choose the package that fits your system. Both include full source code and 30-day post-launch support. Prices shown are starting estimates, confirmed on a free call."
+              eyebrow="Pricing"
+              headline="Free for Individual Drop-Offs, Quoted for Bulk"
+              subtext="A handful of devices from a small drive may qualify for free individual pickup — larger volumes are quoted based on device types and count."
             />
           </div>
 
-          <div className="mx-auto grid max-w-2xl grid-cols-1 gap-4 sm:grid-cols-2">
-            {PRICING_TIERS.map((tier, i) => (
-              <FadeIn key={tier.name} delay={i * 0.1}>
-                <div
-                  className={`flex h-full flex-col rounded-3xl border p-8 ${
-                    tier.highlight
-                      ? 'border-neutral-950 bg-white shadow-md'
-                      : 'border-slate-200 bg-white shadow-sm'
-                  }`}
-                >
-                  {tier.highlight && (
-                    <span className="mb-3 inline-block w-fit rounded-full bg-neutral-950 px-3 py-1 text-xs font-semibold text-white">
-                      Custom System
-                    </span>
-                  )}
-                  <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-slate-400">
-                    {tier.name}
-                  </p>
-                  <p className="font-montserrat text-3xl font-extrabold tracking-tight text-neutral-950">
-                    {tier.price}
-                  </p>
-                  <p className="mt-1 text-sm text-slate-500">{tier.note}</p>
-                  <p className="mt-4 text-sm leading-relaxed text-slate-500">
-                    {tier.description}
-                  </p>
-
-                  <ul className="mt-6 flex flex-col gap-3">
-                    {tier.features.map((f) => (
-                      <li
-                        key={f}
-                        className="flex items-center gap-3 text-sm text-slate-700"
-                      >
-                        <CheckIcon />
-                        {f}
-                      </li>
-                    ))}
-                  </ul>
-
-                  <div className="mt-auto pt-8">
-                    <Button
-                      href="/contact"
-                      variant={tier.highlight ? 'primary' : 'secondary'}
-                      className="w-full justify-center"
-                    >
-                      Get a Free Estimate
-                    </Button>
-                  </div>
-                </div>
-              </FadeIn>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Who we build for ─────────────────────────────────────────────────── */}
-      <section className="border-y border-slate-100 bg-neutral-50 py-14 md:py-16">
-        <div className="mx-auto max-w-3xl px-5 text-center md:px-8">
-          <FadeIn>
-            <p className="mb-4 text-xs font-semibold uppercase tracking-[0.15em] text-slate-400">
-              Built for the charitable sector
-            </p>
-            <p className="text-base leading-relaxed text-slate-600 md:text-lg">
-              We build for{' '}
-              <span className="font-semibold text-neutral-950">
-                registered societies
-              </span>
-              ,{' '}
-              <span className="font-semibold text-neutral-950">
-                charitable foundations
-              </span>
-              ,{' '}
-              <span className="font-semibold text-neutral-950">
-                zakat bodies
-              </span>
-              , and{' '}
-              <span className="font-semibold text-neutral-950">
-                Islamic relief organisations
-              </span>{' '}
-              across Malaysia — helping them meet LHDN requirements without
-              disrupting the donor experience.
+          <FadeIn
+            delay={0.15}
+            className="mt-10 flex flex-col items-center gap-3"
+          >
+            <Button href="/contact">Request a Bulk Quote</Button>
+            <p className="text-sm text-slate-500">
+              No obligation · Response within 24 hours
             </p>
           </FadeIn>
         </div>
@@ -387,7 +260,7 @@ const NgoPage: NextPageWithLayout = () => {
       <section className="bg-white py-20 md:py-28">
         <div className="mx-auto max-w-3xl px-5 md:px-8">
           <h2 className="mb-12 text-center font-montserrat text-3xl font-bold leading-tight tracking-[-0.02em] text-neutral-950 md:text-4xl">
-            Questions from NGOs
+            Questions from NGOs & Charities
           </h2>
 
           <div className="flex flex-col gap-3">

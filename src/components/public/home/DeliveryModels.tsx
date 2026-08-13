@@ -17,7 +17,7 @@ const listContainer = {
 };
 
 const DeliveryModels = () => (
-  <section className="bg-white py-16 md:py-20">
+  <section id="pricing" className="bg-white py-16 md:py-20">
     <div className="mx-auto max-w-7xl px-5 md:px-8">
       <div className="mb-12 text-center">
         <SectionHeading
@@ -108,8 +108,8 @@ const DeliveryModels = () => (
       </div>
 
       <p className="mt-8 text-center text-sm text-slate-500">
-        Prices shown are starting estimates — your exact quote is confirmed on a
-        free discovery call.
+        Individual pickup is always free — bulk and enterprise pricing is
+        confirmed after a quick assessment of your volume.
       </p>
     </div>
   </section>

@@ -17,12 +17,12 @@ const ITEMS = [
   {
     question: 'Do I need to prepare anything before the call?',
     answer:
-      "No preparation needed. It helps if you know how you currently keep your books (spreadsheet, Wave, manual, or an accounting system) and roughly how many invoices you issue per month — but even if you don't, we can work through it together.",
+      "No preparation needed. It helps if you know roughly how many devices you're looking to clear out and whether it's for personal use or a business — but even if you don't, we can work through it together.",
   },
   {
     question: 'Is the consultation really free?',
     answer:
-      'Yes, completely. There is no obligation to proceed after the call. We review your setup, answer your questions, and give you a clear picture of what integration would look like for your business.',
+      'Yes, completely. There is no obligation to proceed after the call. We review your situation, answer your questions, and give you a clear picture of whether individual pickup or bulk collection fits — plus a quote if bulk collection applies.',
   },
 ];
 

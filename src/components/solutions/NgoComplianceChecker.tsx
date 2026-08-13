@@ -1,16 +1,16 @@
 import Link from 'next/link';
 
-const MUST_COMPLY = [
-  'Registered society with s.44(6) approval',
-  'Charitable foundation with donation tax exemption',
-  'Islamic relief or zakat body',
-  'Any NGO with annual revenue above RM 1M',
+const GOOD_FIT = [
+  'Clearing out donated electronics that no longer work',
+  'Decommissioning an old computer lab or office setup',
+  'Need certificates for your own donor or ESG reporting',
+  'Handling more devices than a single pickup covers',
 ];
 
-const CHECK_WITH_LHDN = [
-  'Purely religious institution (no s.44 approval)',
-  'Grassroots community group below RM 1M',
-  'Volunteer-run society with no paid staff',
+const TALK_TO_US_FIRST = [
+  'Just one or two personal devices (individual pickup covers this)',
+  'Not sure whether it counts as "bulk"',
+  'Need collection timed around an event or move-out date',
 ];
 
 const NgoComplianceChecker = () => (
@@ -18,17 +18,17 @@ const NgoComplianceChecker = () => (
     <div className="mx-auto max-w-7xl px-5 md:px-8">
       <div className="rounded-2xl border border-slate-200 bg-white p-8">
         <h3 className="mb-6 font-montserrat text-lg font-bold text-neutral-950 md:text-xl">
-          Is your organisation required to comply?
+          Does bulk collection make sense for your organisation?
         </h3>
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          {/* Must comply */}
+          {/* Good fit */}
           <div>
             <p className="mb-3 text-sm font-semibold text-green-700">
-              Must comply ✓
+              Likely a good fit ✓
             </p>
             <ul className="flex flex-col gap-2.5">
-              {MUST_COMPLY.map((item) => (
+              {GOOD_FIT.map((item) => (
                 <li
                   key={item}
                   className="flex items-start gap-2 text-sm text-slate-600"
@@ -40,13 +40,13 @@ const NgoComplianceChecker = () => (
             </ul>
           </div>
 
-          {/* Check with LHDN */}
+          {/* Talk to us first */}
           <div>
             <p className="mb-3 text-sm font-semibold text-yellow-600">
-              Check with LHDN ◦
+              Talk to us first ◦
             </p>
             <ul className="flex flex-col gap-2.5">
-              {CHECK_WITH_LHDN.map((item) => (
+              {TALK_TO_US_FIRST.map((item) => (
                 <li
                   key={item}
                   className="flex items-start gap-2 text-sm text-slate-600"
@@ -67,7 +67,7 @@ const NgoComplianceChecker = () => (
           >
             Book a free 15-minute call
           </Link>{' '}
-          — we&apos;ll confirm your compliance obligation at no cost.
+          — we&apos;ll help you figure out the right path, individual or bulk.
         </p>
       </div>
     </div>

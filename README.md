@@ -1,6 +1,6 @@
-# Zylen — E-Invoice Integration Service
+# Recycling Hub — E-Invoice Integration Service
 
-Multi-page marketing website for **Zylen**, a Malaysian e-invoicing middleware that connects businesses to LHDN's MyInvois API. Built front-end first — full-stack (auth, client portal, admin panel) is the next phase.
+Multi-page marketing website for **Recycling Hub**, a Malaysian e-invoicing middleware that connects businesses to LHDN's MyInvois API. Built front-end first — full-stack (auth, client portal, admin panel) is the next phase.
 
 ---
 
@@ -22,7 +22,7 @@ Multi-page marketing website for **Zylen**, a Malaysian e-invoicing middleware t
 
 | Route | File | Sections |
 |---|---|---|
-| `/` | `pages/index.tsx` | Hero, Trust stats, Connectors, Comparison (sticky scroll), Why Zylen, How It Works, Delivery Models, FAQ, CTA |
+| `/` | `pages/index.tsx` | Hero, Trust stats, Connectors, Comparison (sticky scroll), Why Recycling Hub, How It Works, Delivery Models, FAQ, CTA |
 | `/services` | `pages/services.tsx` | Hero, Service Overview (flow), Product Features, Supported Systems, Process, Packages, Compliance & Security, FAQ, Book Demo |
 | `/pricing` | `pages/pricing.tsx` | Hero, Trust bar, Tiers (monthly/annual toggle), Comparison table, Add-ons, FAQ, CTA |
 | `/about` | `pages/about.tsx` | Hero, Mission Statement, Our Values, Meet the Team, Who We Work With, Book Demo |
@@ -58,7 +58,7 @@ src/
 │   ├── public/
 │   │   ├── home/                 # HeroSection, ComparisonSection (sticky scroll),
 │   │   │                         # TrustStrip, ConnectorsStrip, ProblemStrip,
-│   │   │                         # WhyZylen, DeliveryModels, FinalCTA
+│   │   │                         # WhyRecyclingHub, DeliveryModels, FinalCTA
 │   │   ├── about/                # MissionStatement, OurValues, TeamSection,
 │   │   │                         # WhoWeWorkWith
 │   │   ├── services/             # ServiceOverview, ProductFeatures, SupportedSystems,
@@ -182,8 +182,8 @@ Copy `.env.example` to `.env.local` and fill in values. Never commit `.env.local
 
 ```bash
 # Current (front-end only)
-NEXT_PUBLIC_SITE_URL=https://www.zylen.com.my
-NEXT_PUBLIC_CALENDLY_URL=https://calendly.com/zylen
+NEXT_PUBLIC_SITE_URL=https://www.recyclinghub.eco
+NEXT_PUBLIC_CALENDLY_URL=https://calendly.com/recyclinghub
 NEXT_PUBLIC_WHATSAPP_URL=https://wa.me/601112345678
 
 # Phase 1 — Lead capture
@@ -246,4 +246,4 @@ invoices       id, integrationId, lhdnRef, status, submittedAt, errorLog
 
 ## License
 
-ISC © 2026 Zylen Sdn Bhd
+ISC © 2026 Recycling Hub Sdn Bhd

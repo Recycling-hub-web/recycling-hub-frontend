@@ -23,14 +23,14 @@ const Section = ({
 const TermsPage: NextPageWithLayout = () => (
   <>
     <Meta
-      title="Terms of Service — Zylen"
-      description="The terms and conditions governing your use of Zylen's e-invoice integration services."
+      title="Terms of Service — Recycling Hub"
+      description="The terms and conditions governing your use of Recycling Hub's e-invoice integration services."
     />
 
     <ReusableHero
       eyebrow="Legal"
       headline="Terms of Service"
-      description="The terms that govern your use of Zylen's services."
+      description="The terms that govern your use of Recycling Hub's services."
     />
 
     <section className="bg-white py-16 md:py-20">
@@ -41,10 +41,10 @@ const TermsPage: NextPageWithLayout = () => (
 
         <Section title="1. Acceptance of Terms">
           <p>
-            By accessing our website (zylen.tech) or engaging Zylen
-            (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;) for any services,
-            you agree to be bound by these Terms of Service. If you do not
-            agree, please do not use our website or services.
+            By accessing our website (recyclinghub.eco) or engaging Recycling
+            Hub (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;) for any
+            services, you agree to be bound by these Terms of Service. If you do
+            not agree, please do not use our website or services.
           </p>
           <p>
             These terms apply to all visitors, clients, and others who access or
@@ -56,16 +56,16 @@ const TermsPage: NextPageWithLayout = () => (
 
         <Section title="2. Description of Services">
           <p>
-            Zylen provides e-invoice integration services that connect your
-            existing accounting software or ERP system to Malaysia&apos;s LHDN
-            MyInvois portal. Our services include:
+            Recycling Hub provides e-invoice integration services that connect
+            your existing accounting software or ERP system to Malaysia&apos;s
+            LHDN MyInvois portal. Our services include:
           </p>
           <ul className="flex list-inside list-disc flex-col gap-2 pl-1">
             <li>Integration project delivery (fixed-price, one-time builds)</li>
             <li>Monthly maintenance and LHDN API update management</li>
             <li>
-              Zylen Connect SaaS — a self-serve middleware platform for standard
-              accounting software
+              Recycling Hub Connect SaaS — a self-serve middleware platform for
+              standard accounting software
             </li>
             <li>
               Consulting and discovery calls related to MyInvois compliance
@@ -136,8 +136,8 @@ const TermsPage: NextPageWithLayout = () => (
           <p>
             Estimated delivery timelines (7–14 days for standard integrations)
             are provided in good faith and are contingent on timely client
-            cooperation, system access, and data availability. Zylen is not
-            liable for delays caused by incomplete information, restricted
+            cooperation, system access, and data availability. Recycling Hub is
+            not liable for delays caused by incomplete information, restricted
             access, or changes to LHDN MyInvois requirements outside our
             control.
           </p>
@@ -153,18 +153,19 @@ const TermsPage: NextPageWithLayout = () => (
             For fixed-price integration projects, upon receipt of full payment,
             you own the source code of the integration built specifically for
             your system. General frameworks, utilities, and proprietary
-            middleware components developed by Zylen remain our intellectual
-            property.
+            middleware components developed by Recycling Hub remain our
+            intellectual property.
           </p>
           <p>
-            All website content, branding, and materials on zylen.tech are owned
-            by Zylen and may not be reproduced without written permission.
+            All website content, branding, and materials on recyclinghub.eco are
+            owned by Recycling Hub and may not be reproduced without written
+            permission.
           </p>
         </Section>
 
         <Section title="7. LHDN Compliance Disclaimer">
           <p>
-            Zylen builds integrations to the official LHDN MyInvois API
+            Recycling Hub builds integrations to the official LHDN MyInvois API
             specification and runs full sandbox validation prior to go-live.
             However, final approval and acceptance of e-invoices by LHDN is
             subject to the accuracy of your business data, your LHDN
@@ -175,21 +176,22 @@ const TermsPage: NextPageWithLayout = () => (
             and cannot guarantee LHDN&apos;s decisions regarding your
             submissions. Any fines, penalties, or enforcement actions by LHDN
             arising from your business operations or non-compliance prior to
-            engaging Zylen are solely your responsibility.
+            engaging Recycling Hub are solely your responsibility.
           </p>
         </Section>
 
         <Section title="8. Limitation of Liability">
           <p>
-            To the maximum extent permitted by Malaysian law, Zylen shall not be
-            liable for any indirect, incidental, consequential, or punitive
-            damages arising from your use of our services, including but not
-            limited to loss of business, revenue, data, or LHDN penalties.
+            To the maximum extent permitted by Malaysian law, Recycling Hub
+            shall not be liable for any indirect, incidental, consequential, or
+            punitive damages arising from your use of our services, including
+            but not limited to loss of business, revenue, data, or LHDN
+            penalties.
           </p>
           <p>
             Our total liability for any claim arising from our services shall
-            not exceed the total fees paid by you to Zylen in the 3 months
-            preceding the event giving rise to the claim.
+            not exceed the total fees paid by you to Recycling Hub in the 3
+            months preceding the event giving rise to the claim.
           </p>
         </Section>
 
@@ -234,15 +236,15 @@ const TermsPage: NextPageWithLayout = () => (
           <p>
             Email:{' '}
             <a
-              href="mailto:contact@zylen.tech"
+              href="mailto:contact@recyclinghub.eco"
               className="font-medium text-neutral-950 underline underline-offset-2"
             >
-              contact@zylen.tech
+              contact@recyclinghub.eco
             </a>
             <br />
             WhatsApp: +60 11-6080 3604
             <br />
-            Website: zylen.tech
+            Website: recyclinghub.eco
           </p>
         </Section>
       </div>

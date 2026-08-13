@@ -20,7 +20,10 @@ const CompanyTimeline = () => {
     <section className="bg-white py-20 md:py-28">
       <div className="mx-auto max-w-7xl px-5 md:px-8">
         <div className="mb-16 text-center">
-          <SectionHeading eyebrow="Our Story" headline="How Zylen Came to Be" />
+          <SectionHeading
+            eyebrow="Our Story"
+            headline="How Recycling Hub Came to Be"
+          />
         </div>
 
         <div ref={timelineRef} className="relative mx-auto max-w-2xl">

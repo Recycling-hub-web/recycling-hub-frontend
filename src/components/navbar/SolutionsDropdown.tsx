@@ -15,25 +15,25 @@ const SOLUTIONS = [
     href: '/solutions/ngo',
     icon: LuHeart,
     title: 'For NGOs & Charities',
-    description: 'Automate monthly MyInvois donation submissions',
+    description: 'Certified disposal and ESG reporting for donated electronics',
   },
   {
     href: '/solutions/education',
     icon: LuGraduationCap,
     title: 'For Education & Colleges',
-    description: 'E-invoice compliance for tuition fees and student billing',
+    description: 'Decommission computer labs and campus IT, fully documented',
   },
   {
     href: '/solutions/professional-services',
     icon: LuBriefcase,
     title: 'For Professional Services',
-    description: 'Streamline invoicing for consultancies and firms',
+    description: 'Certified data destruction for client-facing firms',
   },
   {
     href: '/solutions/retail',
     icon: LuShoppingBag,
     title: 'For Retail & Trading',
-    description: 'High-volume invoice automation for traders',
+    description: 'Bulk collection for returned and end-of-life inventory',
   },
 ] as const;
 

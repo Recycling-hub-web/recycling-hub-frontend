@@ -24,7 +24,7 @@ const Footer = () => (
           <Link href="/" className="mb-5 inline-flex no-underline">
             <Image
               src={ASSETS.logo.whiteLogo}
-              alt="Zylen"
+              alt="Recycling Hub"
               width={110}
               height={34}
               className="h-8 w-auto object-contain"
@@ -134,7 +134,7 @@ const Footer = () => (
       </div>
 
       <div className="mt-12 border-t border-white/[0.10] pt-6 text-center text-xs text-white/35">
-        © {new Date().getFullYear()} Zylen. All rights reserved. ·{' '}
+        © {new Date().getFullYear()} Recycling Hub. All rights reserved. ·{' '}
         {BRAND.website}
       </div>
     </div>

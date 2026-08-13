@@ -18,17 +18,17 @@ const CR = 82;
 type Pill = { name: string; x: number; y: number; w: number; color: string };
 
 const PILLS: Pill[] = [
-  // Row 1 — how organizations keep records today
-  { name: 'Spreadsheets', x: 119, y: 54, w: 138, color: '#3b82f6' },
-  { name: 'Wave', x: 307, y: 54, w: 138, color: '#8b5cf6' },
-  { name: 'Manual Bookkeeping', x: 495, y: 54, w: 138, color: '#06b6d4' },
-  { name: 'Custom ERP', x: 683, y: 54, w: 138, color: '#10b981' },
-  // Row 2 — LHDN / integration features
-  { name: 'MyInvois', x: 77, y: 148, w: 110, color: '#f59e0b' },
-  { name: 'LHDN API', x: 210, y: 148, w: 110, color: '#ef4444' },
-  { name: 'Real-time Sync', x: 360, y: 148, w: 148, color: '#6366f1' },
-  { name: 'Auto-Validation', x: 531, y: 148, w: 150, color: '#14b8a6' },
-  { name: 'Error Detection', x: 703, y: 148, w: 150, color: '#f97316' },
+  // Row 1 — who hands devices over
+  { name: 'Households', x: 119, y: 54, w: 138, color: '#3b82f6' },
+  { name: 'Offices', x: 307, y: 54, w: 138, color: '#8b5cf6' },
+  { name: 'Factories', x: 495, y: 54, w: 138, color: '#06b6d4' },
+  { name: 'Retailers', x: 683, y: 54, w: 138, color: '#10b981' },
+  // Row 2 — what the hub delivers
+  { name: 'Certified Destruction', x: 88, y: 148, w: 168, color: '#f59e0b' },
+  { name: 'DOE Compliance', x: 255, y: 148, w: 138, color: '#ef4444' },
+  { name: 'ESG Reporting', x: 400, y: 148, w: 128, color: '#6366f1' },
+  { name: 'Instant Payment', x: 545, y: 148, w: 140, color: '#14b8a6' },
+  { name: 'Chain of Custody', x: 700, y: 148, w: 150, color: '#f97316' },
 ];
 
 const iconTop = CY - CR;
@@ -52,8 +52,8 @@ const HubDiagram = () => {
       <defs>
         {/* Gradient for center circle */}
         <linearGradient id="hub-grad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#31a6ff" />
-          <stop offset="100%" stopColor="#1370e2" />
+          <stop offset="0%" stopColor="#008a3e" />
+          <stop offset="100%" stopColor="#0a3d2e" />
         </linearGradient>
 
         {/* Drop shadow for center icon */}
@@ -62,7 +62,7 @@ const HubDiagram = () => {
             dx="0"
             dy="12"
             stdDeviation="16"
-            floodColor="#1370e2"
+            floodColor="#0a3d2e"
             floodOpacity="0.2"
           />
         </filter>
@@ -130,7 +130,7 @@ const HubDiagram = () => {
       })}
 
       {/* Outer glow ring */}
-      <circle cx={CX} cy={CY} r={CR + 14} fill="#31a6ff" fillOpacity="0.08" />
+      <circle cx={CX} cy={CY} r={CR + 14} fill="#008a3e" fillOpacity="0.08" />
 
       {/* Center circle — gradient */}
       <circle
@@ -158,9 +158,9 @@ const SupportedSystems = () => (
     <div className="mx-auto max-w-7xl px-5 md:px-8">
       <div className="mb-14 text-center">
         <SectionHeading
-          eyebrow="Compatibility"
-          headline="Works With However You Keep Records"
-          subtext="Spreadsheets, Wave, manual bookkeeping, or a custom system — we build the missing piece around what you already use, including major Malaysian accounting platforms."
+          eyebrow="Who We Collect From"
+          headline="Works Whether It's One Phone or a Whole Warehouse"
+          subtext="Households, offices, factories, and retailers — we run the same licensed, documented process around whoever's handing over the devices."
         />
       </div>
 
@@ -183,14 +183,14 @@ const SupportedSystems = () => (
         transition={{ duration: 0.5, delay: 0.4, ease }}
         className="mt-2 text-center text-sm text-slate-400"
       >
-        Already on AutoCount, Xero, or QuickBooks?{' '}
+        Not sure if your volume counts as &ldquo;bulk&rdquo;?{' '}
         <Link
           href="/contact"
           className="font-semibold text-neutral-950 hover:underline"
         >
           Talk to us
         </Link>{' '}
-        — those usually cover this already, but we&apos;ll confirm.
+        — we&apos;ll tell you honestly.
       </motion.p>
     </div>
   </section>

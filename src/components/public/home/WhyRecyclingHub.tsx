@@ -69,29 +69,29 @@ const LockIcon = () => (
 const FEATURES = [
   {
     Icon: ShieldIcon,
-    title: 'Built to LHDN Specification — All 55 Fields',
-    body: "Zylen maps your invoice data to all 55 mandatory MyInvois fields before submission. Every integration is validated against LHDN's sandbox environment before a single live invoice is sent.",
+    title: 'Licensed Under DOE & SW110 — Every Collection Documented',
+    body: 'Recycling Hub collects and processes e-waste under a registered DOE license and SW110 scheduled-waste compliance. Every pickup is logged, tracked, and backed by paperwork you can hand to an auditor.',
   },
   {
     Icon: PlugIcon,
-    title: 'Keep Using Whatever You Use Today',
-    body: "Spreadsheets, Wave, manual bookkeeping, or no system at all — Zylen builds the missing piece so you don't have to switch tools or retrain your team. We handle MyInvois in the background.",
+    title: 'One Partner, Whether It’s One Phone or a Whole Office',
+    body: "A single old laptop or a full office decommission — Recycling Hub runs the same licensed, documented process either way. You don't need a separate vendor for personal and enterprise volumes.",
   },
   {
     Icon: LockIcon,
-    title: 'Encrypted Submission. Zero Data Retention.',
-    body: 'Every invoice travels through an encrypted API bridge. Zylen does not store your financial data — the code lives in your infrastructure, not ours. You own it entirely on go-live.',
+    title: 'Certified Destruction. Zero Data Recovery.',
+    body: 'Every device carrying data goes through certified destruction with a serialized certificate. Recycling Hub does not resell or retain your data-bearing devices — destruction is verified, not assumed.',
   },
 ];
 
-const WhyZylen = () => (
+const WhyRecyclingHub = () => (
   <section className="bg-neutral-50 py-16 md:py-20">
     <div className="mx-auto max-w-7xl px-5 md:px-8">
       <div className="mb-14 text-center">
         <SectionHeading
-          eyebrow="Why Zylen"
-          headline="Built for Teams Whose Tools Don't Do This Yet"
-          subtext="If you're on Wave, spreadsheets, or manual bookkeeping, MyInvois compliance isn't something your setup handles for you. Zylen builds and manages that missing piece — fully set up, fully guided, at a fixed price. No new software. No vendor lock-in."
+          eyebrow="Why Recycling Hub"
+          headline="The Compliant Way to Get Rid of Old Electronics"
+          subtext="A scrap dealer or a storage room won't wipe your data, document the collection, or keep it out of a landfill. Recycling Hub handles the entire process — licensed, certified, and documented — for individuals and businesses alike."
         />
       </div>
 
@@ -122,4 +122,4 @@ const WhyZylen = () => (
   </section>
 );
 
-export { WhyZylen };
+export { WhyRecyclingHub };

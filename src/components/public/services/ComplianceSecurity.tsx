@@ -6,9 +6,9 @@ const ease = [0.22, 1, 0.36, 1] as const;
 
 const PILLARS = [
   {
-    title: 'LHDN MyInvois Compliant',
+    title: 'DOE & SW110 Licensed',
     description:
-      'Every integration is built against the official LHDN MyInvois API specification and validated in the LHDN sandbox before go-live. We track API version changes and push updates proactively.',
+      'Every collection and disposal is carried out under our registered DOE license and SW110 scheduled-waste compliance, kept current and audit-ready.',
     icon: (
       <svg
         width="24"
@@ -26,9 +26,9 @@ const PILLARS = [
     ),
   },
   {
-    title: 'Encrypted & Secure',
+    title: 'Certified Data Destruction',
     description:
-      'All data is transmitted over TLS 1.3. Your invoice data is never stored beyond what is required for submission logging. We do not sell or share client data.',
+      'Data-bearing devices are wiped or physically destroyed to a certified standard before recycling. We do not resell devices still holding your data.',
     icon: (
       <svg
         width="24"
@@ -48,7 +48,7 @@ const PILLARS = [
   {
     title: 'PDPA Aligned',
     description:
-      "Our data handling practices align with Malaysia's Personal Data Protection Act (PDPA). Client and customer data is processed only for the purpose of e-invoice submission.",
+      "Our data handling practices align with Malaysia's Personal Data Protection Act (PDPA). Any data encountered during collection or destruction is handled only for that purpose.",
     icon: (
       <svg
         width="24"

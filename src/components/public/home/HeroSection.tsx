@@ -1,9 +1,9 @@
 import { motion, useScroll, useTransform } from 'framer-motion';
-import Image from 'next/image';
 import { useRef } from 'react';
 
 import { HERO } from '../../../constants/content';
 import { ArrowButton } from '../../ui/buttons/ArrowButton';
+import { Button } from '../../ui/buttons/Button';
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -23,8 +23,6 @@ const HeroSection = () => {
 
   const contentY = useTransform(scrollYProgress, [0, 1], [0, -80]);
   const contentOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-  const dashboardY = useTransform(scrollYProgress, [0, 1], [0, -40]);
-  const dashboardScale = useTransform(scrollYProgress, [0, 0.6], [1, 0.96]);
 
   return (
     <section
@@ -35,7 +33,7 @@ const HeroSection = () => {
       <div
         className="pointer-events-none absolute left-1/2 top-0 h-[300px] w-[500px] -translate-x-1/2 -translate-y-1/4 animate-glow-pulse rounded-full blur-[120px] md:h-[600px] md:w-[900px]"
         style={{
-          background: 'radial-gradient(ellipse, #1370e2 0%, transparent 70%)',
+          background: 'radial-gradient(ellipse, #008a3e 0%, transparent 70%)',
         }}
       />
 
@@ -52,14 +50,21 @@ const HeroSection = () => {
       {/* ── Content — parallax up + fade on scroll ──────────────────────── */}
       <motion.div
         style={{ y: contentY, opacity: contentOpacity }}
-        className="relative mx-auto max-w-7xl px-5 text-center md:px-8"
+        className="relative mx-auto max-w-7xl px-5 pb-24 text-center md:px-8 md:pb-32"
       >
+        <motion.span
+          {...fadeUp(0)}
+          className="inline-block rounded-full bg-white/10 px-4 py-1.5 text-xs font-semibold text-white/80 ring-1 ring-white/20"
+        >
+          {HERO.badge}
+        </motion.span>
+
         <motion.h1
           {...fadeUp(0.1)}
-          className="mx-auto max-w-4xl font-montserrat text-3xl font-extrabold leading-[1.08] tracking-[-0.03em] text-white sm:text-4xl md:text-6xl lg:text-[4.25rem]"
+          className="mx-auto mt-5 max-w-4xl font-montserrat text-3xl font-extrabold leading-[1.08] tracking-[-0.03em] text-white sm:text-4xl md:text-6xl lg:text-[4.25rem]"
         >
-          Keep Using What You Already Know. <br className="hidden sm:block" />
-          <span className="text-white/70">{"We'll Handle the Rest."}</span>
+          {HERO.headline} <br className="hidden sm:block" />
+          <span className="text-white/70">{HERO.headlineAccent}</span>
         </motion.h1>
 
         {/* Subtitle */}
@@ -76,52 +81,34 @@ const HeroSection = () => {
           className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row"
         >
           <ArrowButton href="/contact">{HERO.ctaPrimary}</ArrowButton>
+          <Button href="/contact" variant="outline-white">
+            {HERO.ctaSecondary}
+          </Button>
         </motion.div>
-      </motion.div>
 
-      {/* ── Dashboard — slower parallax ─────────────────────────────────── */}
-      <motion.div
-        initial={{ opacity: 0, y: 56 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.5, ease }}
-        style={{ y: dashboardY, scale: dashboardScale }}
-        className="relative mx-auto mt-16 max-w-6xl px-5 md:px-8"
-      >
-        {/* Glow behind dashboard */}
-        <div
-          className="pointer-events-none absolute inset-x-0 top-1/2 -z-10 h-64 -translate-y-1/2 animate-glow-pulse blur-[80px]"
-          style={{
-            background: 'radial-gradient(ellipse, #1370e2 0%, transparent 70%)',
-          }}
-        />
-
-        {/* Browser chrome */}
-
-        <div className="rounded-2xl border border-white/20 bg-white/10 p-2 backdrop-blur-xl">
-          <div className="overflow-hidden rounded-2xl shadow-[0_-12px_80px_rgba(5,57,89,0.6)]">
-            <div className="flex items-center gap-3 bg-slate-900 px-4 py-3">
-              <div className="flex items-center gap-1.5">
-                <span className="size-3 rounded-full bg-red-400/50" />
-                <span className="size-3 rounded-full bg-yellow-400/50" />
-                <span className="size-3 rounded-full bg-green-400/50" />
-              </div>
-              <div className="flex flex-1 items-center justify-center">
-                <span className="rounded-md bg-white/[0.07] px-6 py-1 text-xs text-white/30">
-                  app.zylen.tech/dashboard
-                </span>
-              </div>
-            </div>
-
-            <Image
-              src="/assets/img/brand/dashnoard.jpg"
-              alt="Zylen e-invoice dashboard"
-              width={1280}
-              height={720}
-              className="w-full object-cover object-top"
-              priority
-            />
-          </div>
-        </div>
+        {/* Trust checklist */}
+        <motion.ul
+          {...fadeUp(0.4)}
+          className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2"
+        >
+          {HERO.trustItems.map((item) => (
+            <li
+              key={item}
+              className="flex items-center gap-2 text-sm text-white/60"
+            >
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <path
+                  d="M2 7l3.5 3.5L12 3.5"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              {item}
+            </li>
+          ))}
+        </motion.ul>
       </motion.div>
     </section>
   );

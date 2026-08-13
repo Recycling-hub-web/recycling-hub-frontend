@@ -10,8 +10,8 @@ import {
 } from 'react-icons/lu';
 
 import { Meta } from '../../components/layout/Meta';
+import { ServiceProcess } from '../../components/public/services/ServiceProcess';
 import { BookDemo } from '../../components/public/shared/BookDemo';
-import { HowItWorks } from '../../components/public/shared/HowItWorks';
 import { BeforeAfterComparison } from '../../components/solutions/BeforeAfterComparison';
 import { RelatedSolutions } from '../../components/solutions/RelatedSolutions';
 import { TrustBadges } from '../../components/solutions/TrustBadges';
@@ -26,77 +26,68 @@ import type { NextPageWithLayout } from '../../types/next';
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 const STATS = [
+  { value: 'DOE', label: 'Licensed collection and disposal' },
   {
-    value: 'RM 1M+',
-    label: 'Annual revenue threshold for mandatory e-invoice compliance',
+    value: '0',
+    label: 'Devices resold or landfilled without your consent',
   },
-  { value: '55', label: 'Mandatory fields required per MyInvois submission' },
-  {
-    value: '1 Jan 2027',
-    label: 'LHDN enforcement deadline — retail & trading included',
-  },
+  { value: '100%', label: 'Certified data destruction on returned devices' },
 ];
 
 const BENEFITS = [
   {
     Icon: LuZap,
-    title: 'High-Volume Automation',
+    title: 'High-Volume Bulk Pickup',
     description:
-      'Submit thousands of invoices daily without manual effort. Our integration handles queue management, retries, and error resolution automatically.',
+      'Scheduled collection for hundreds of returned or end-of-life units at a time — not a one-device-at-a-time process.',
   },
   {
     Icon: LuPackage,
-    title: 'POS & Inventory Integration',
+    title: 'Inventory Write-Off Documentation',
     description:
-      'Connect your point-of-sale or inventory management system directly to MyInvois. Every sale generates a compliant e-invoice instantly.',
+      'Every collected batch comes with paperwork you can hand to finance for write-offs, insurance, or audit purposes.',
   },
   {
     Icon: LuChartBar,
-    title: 'B2B & B2C Invoice Support',
+    title: 'Certified Destruction on Returns',
     description:
-      'Handle business customer invoices and consolidated B2C daily submissions — both submission types fully supported per LHDN specification.',
+      'Devices returned under warranty or trade-in are data-wiped and destroyed to a certified standard before recycling.',
   },
   {
     Icon: LuPlugZap,
-    title: 'Works With Whatever You Use Today',
+    title: 'Works With However You Track Stock',
     description:
-      "Spreadsheets, a custom POS, or no formal system at all — we build the missing piece so your sales operations don't change.",
+      'Spreadsheet, POS system, or no formal tracking at all — we build the collection process around what you already do.',
   },
-];
-
-const PRICING_FEATURES = [
-  '7–14 day delivery',
-  'LHDN sandbox testing included',
-  'Source code & documentation',
-  '30-day post-launch support',
 ];
 
 const FAQ_ITEMS = [
   {
-    question: 'Does the LHDN mandate apply to retail and trading businesses?',
+    question: 'Does this apply to retail and trading businesses of any size?',
     answer:
-      'Yes. All retailers, wholesalers, distributors, and trading companies with annual revenue above RM 1M must issue e-invoices through LHDN MyInvois by 1 January 2027.',
-  },
-  {
-    question: 'We issue hundreds of invoices a day. Can Zylen handle this?',
-    answer:
-      'Yes. Our integration is built for high-volume environments. We implement queue management, batch submission, and automatic retry logic so every invoice reaches LHDN — even at thousands of transactions per day.',
+      "Yes — whether you're a single outlet or a multi-branch distributor, our licensed collection process is the same. Volume is what determines timeline and quote, not business size.",
   },
   {
     question:
-      'What is the difference between B2B and B2C invoicing for retail?',
+      'We have hundreds of returned or damaged units. Can Recycling Hub handle this?',
     answer:
-      "B2B invoices (to registered businesses) must be submitted individually in real time. B2C invoices (to consumers) can be consolidated into a single daily e-invoice. Our integration handles both submission modes per LHDN's specification.",
+      'Yes. Bulk collection is built for exactly this — hundreds of units collected, documented, and processed in scheduled runs rather than one at a time.',
   },
   {
-    question: 'Can you connect to our POS or inventory system?',
+    question:
+      "What's the difference between returned devices and end-of-life stock?",
     answer:
-      'Yes. If your system has an API, database access, or export capability, we can build the integration. Our Custom Connect package covers POS systems, warehouse management systems, and proprietary trading platforms.',
+      'Returned devices (warranty returns, trade-ins) often still carry customer data and get certified destruction as standard. End-of-life stock (damaged, obsolete, or unsellable inventory) goes straight to licensed recycling. Both are documented the same way.',
   },
   {
-    question: 'How long does setup take?',
+    question: 'Can you collect from our warehouse or multiple outlets?',
     answer:
-      'Standard accounting software integrations go live in 7–10 days. Custom POS or inventory systems typically take 10–14 days. Enterprise multi-branch setups are scoped individually but rarely exceed 4 weeks.',
+      'Yes — bulk collection can be scheduled at a single warehouse or coordinated across multiple outlet locations, depending on your setup.',
+  },
+  {
+    question: 'How long does collection take to arrange?',
+    answer:
+      "Request a quote and we'll confirm pricing and a collection window within 24 hours. Actual scheduling depends on your volume and preferred timeline.",
   },
 ];
 
@@ -118,20 +109,6 @@ const ChevronIcon = ({ open }: { open: boolean }) => (
   </motion.svg>
 );
 
-const CheckIcon = () => (
-  <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-neutral-100">
-    <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-      <path
-        d="M1.5 5l2.5 2.5 4.5-4.5"
-        stroke="#0f0f0f"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  </span>
-);
-
 const RetailPage: NextPageWithLayout = () => {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const toggleFaq = (i: number) => setOpenFaq(openFaq === i ? null : i);
@@ -139,16 +116,16 @@ const RetailPage: NextPageWithLayout = () => {
   return (
     <>
       <Meta
-        title="E-Invoice for Retail & Trading — Zylen"
-        description="High-volume MyInvois invoice automation for retailers, wholesalers, and traders. LHDN-compliant integration in 7–14 days."
+        title="E-Waste Collection for Retail & Trading — Recycling Hub"
+        description="Bulk collection and certified disposal for returned, damaged, and end-of-life electronics inventory. DOE/SW110-compliant, ESG-ready reporting."
       />
 
       {/* ── Hero ─────────────────────────────────────────────────────────────── */}
       <ReusableHero
         eyebrow="Solutions · Retail & Trading"
-        headline="E-Invoice Compliance for"
+        headline="Certified E-Waste Disposal for"
         headlineAccent="Retail & Trading."
-        description="Retailers, wholesalers, and trading companies above RM 1M must submit every invoice through LHDN MyInvois. Zylen automates high-volume invoice submissions — from POS transactions to B2B trade invoices."
+        description="Returned electronics, damaged stock, and end-of-life displays pile up fast. Recycling Hub collects in bulk, destroys data on any returned devices, and gives you documentation for write-offs and ESG reporting."
       />
 
       {/* ── Trust badges ─────────────────────────────────────────────────────── */}
@@ -159,7 +136,7 @@ const RetailPage: NextPageWithLayout = () => {
         <div className="mx-auto max-w-7xl px-5 md:px-8">
           <FadeIn>
             <p className="mb-10 text-center text-xs font-semibold uppercase tracking-[0.15em] text-slate-400">
-              The LHDN mandate applies to all retail and trading businesses
+              Why retailers and traders choose licensed bulk collection
             </p>
           </FadeIn>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -183,25 +160,25 @@ const RetailPage: NextPageWithLayout = () => {
       <BeforeAfterComparison
         eyebrow="The Reality"
         left={{
-          label: 'Without Zylen',
-          headline: 'Manual. High-risk. Unscalable.',
+          label: 'Without Recycling Hub',
+          headline: 'Piling Up. Untracked. Risky.',
           bullets: [
-            'Manually upload hundreds of invoices to MyInvois daily',
-            'B2C consolidated daily invoice done by hand',
-            'POS system has no native MyInvois connection',
-            'One formatting error rejects the entire batch',
-            'Operations team drowning in compliance work',
+            'Returned electronics pile up in a back room indefinitely',
+            'No idea whether devices still hold customer data',
+            'Damaged stock scrapped through unlicensed dealers',
+            'No documentation for write-offs or insurance claims',
+            'No ESG numbers to report on electronics waste',
           ],
         }}
         right={{
-          label: 'With Zylen',
-          headline: 'Automated. Real-time. Scalable.',
+          label: 'With Recycling Hub',
+          headline: 'Collected. Documented. Compliant.',
           bullets: [
-            'Every POS transaction auto-submitted to MyInvois instantly',
-            'Consolidated B2C daily invoice generated and submitted automatically',
-            'High-volume batches handled without manual intervention',
-            'Errors caught and retried automatically',
-            'Operations team focuses on sales — not submissions',
+            'Scheduled bulk pickup for returns and end-of-life stock',
+            'Certified data wipe on every returned device',
+            'Licensed, SW110-compliant disposal — not a scrap dealer',
+            'Write-off documentation issued per collection',
+            'ESG diversion report ready for your sustainability reporting',
           ],
         }}
       />
@@ -209,8 +186,8 @@ const RetailPage: NextPageWithLayout = () => {
       {/* ── Urgency callout ──────────────────────────────────────────────────── */}
       <UrgencyCallout
         Icon={LuTriangleAlert}
-        headline="B2C retailers can consolidate daily transactions — but only if done correctly."
-        body="LHDN allows retailers to issue a single consolidated e-invoice for all B2C transactions each day — instead of one per customer. However, this consolidated invoice must be correctly formatted, submitted by end of day, and include all required fields. Zylen handles this automatically from your POS system."
+        headline="Returned devices can still hold customer data — until they're properly wiped."
+        body="A phone or laptop returned under warranty or a trade-in program often still has the previous owner's data on it. Reselling or scrapping it through an unlicensed channel is a data exposure risk, not just a compliance one. Recycling Hub wipes or destroys data on every device before it leaves our custody."
       />
 
       {/* ── Benefits ─────────────────────────────────────────────────────────── */}
@@ -219,8 +196,8 @@ const RetailPage: NextPageWithLayout = () => {
           <div className="mb-14 text-center">
             <SectionHeading
               eyebrow="Built for Retail & Trading"
-              headline="High-Volume Invoicing, Fully Automated"
-              subtext="From single-outlet retailers to multi-branch distributors — Zylen handles every invoice submission so your team doesn't have to."
+              headline="Bulk Collection, Fully Documented"
+              subtext="From single-outlet retailers to multi-branch distributors — Recycling Hub handles every collection so your team doesn't have to."
               light
             />
           </div>
@@ -251,49 +228,27 @@ const RetailPage: NextPageWithLayout = () => {
       </section>
 
       {/* ── How it works ─────────────────────────────────────────────────────── */}
-      <HowItWorks />
+      <ServiceProcess />
 
       {/* ── Pricing ──────────────────────────────────────────────────────────── */}
       <section className="bg-white py-20 md:py-28">
         <div className="mx-auto max-w-7xl px-5 md:px-8">
-          <div className="mb-12 text-center">
+          <div className="text-center">
             <SectionHeading
-              eyebrow="Transparent Pricing"
-              headline="One Fixed Price. No Surprises."
-              subtext="Guided setup starts from RM 4,000, confirmed on a free call. High-volume POS and custom systems are scoped individually."
+              eyebrow="Pricing"
+              headline="Quoted to Your Volume — No Guesswork"
+              subtext="Bulk collection pricing depends on device types and volume. Tell us what you're clearing out and we'll confirm a quote before anything is scheduled."
             />
           </div>
 
-          <FadeIn delay={0.15}>
-            <div className="mx-auto max-w-sm rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-              <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-slate-400">
-                Basic Connect
-              </p>
-              <p className="font-montserrat text-4xl font-extrabold tracking-tight text-neutral-950">
-                From RM 4,000
-              </p>
-              <p className="mt-1 text-sm text-slate-500">
-                one-time · source code yours
-              </p>
-
-              <ul className="mt-8 flex flex-col gap-3">
-                {PRICING_FEATURES.map((f) => (
-                  <li
-                    key={f}
-                    className="flex items-center gap-3 text-sm text-slate-700"
-                  >
-                    <CheckIcon />
-                    {f}
-                  </li>
-                ))}
-              </ul>
-
-              <div className="mt-8">
-                <Button href="/contact" className="w-full justify-center">
-                  Get a Free Estimate
-                </Button>
-              </div>
-            </div>
+          <FadeIn
+            delay={0.15}
+            className="mt-10 flex flex-col items-center gap-3"
+          >
+            <Button href="/contact">Request a Bulk Quote</Button>
+            <p className="text-sm text-slate-500">
+              No obligation · Response within 24 hours
+            </p>
           </FadeIn>
         </div>
       </section>

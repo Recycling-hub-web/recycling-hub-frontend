@@ -14,130 +14,130 @@ interface TabData {
 
 const TABS: TabData[] = [
   {
-    label: 'Auto-Format',
-    headline: "Every invoice formatted to LHDN's exact specification.",
+    label: 'Book & Schedule',
+    headline: 'Book a pickup in under a minute — for one device or a hundred.',
     checklist: [
-      '55 mandatory fields mapped automatically',
-      'Supplier, buyer, and tax codes validated',
-      'Date, currency, and amount fields standardised',
-      'Credit notes and debit notes handled',
-      'Zero manual data entry required',
+      'Online form or WhatsApp booking',
+      'Flexible slots for households and offices',
+      'Bulk collection scheduled around your operations',
+      'No account or contract required for individuals',
+      'Confirmation sent immediately after booking',
     ],
     // TODO: replace with real client quote
     quote:
-      'We used to spend hours reformatting invoices before uploading. Zylen eliminated that entirely.',
+      'We had forty old laptops sitting in a storeroom for two years. Recycling Hub had them collected within a week of booking.',
+    authorInitials: 'OM',
+    authorLabel: 'Office Manager',
+    authorRole: 'KL trading company',
+    mockupLabel: 'Pickup Booking Confirmation',
+  },
+  {
+    label: 'Collect',
+    headline: 'Licensed collection, tracked from the moment we arrive.',
+    checklist: [
+      'DOE-registered, SW110-compliant collection team',
+      'Doorstep pickup for individuals, on-site for businesses',
+      'Every collected item logged at pickup',
+      'Secure transport to our processing facility',
+      'No device left unaccounted for',
+    ],
+    // TODO: replace with real client quote
+    quote:
+      'The team logged every single unit before it left our building. We had a full manifest the same day.',
     authorInitials: 'FM',
-    authorLabel: 'Finance Manager',
-    authorRole: 'KL SME',
-    mockupLabel: 'Invoice Formatting Status',
+    authorLabel: 'Facilities Manager',
+    authorRole: 'Selangor manufacturer',
+    mockupLabel: 'Live Collection Log',
   },
   {
-    label: 'Validate',
-    headline: 'Errors caught before they reach LHDN.',
+    label: 'Sort & Process',
+    headline: 'Every device sorted, assessed, and routed correctly.',
     checklist: [
-      'TIN validation against LHDN database',
-      'Tax code and SST classification check',
-      'Grand total vs line items reconciliation',
-      'Mandatory field completeness check',
-      'Pre-submission sandbox test on every batch',
+      'Devices assessed for reuse, refurbishment, or recycling',
+      'Components separated by material type',
+      'Hazardous components handled to DOE standard',
+      'Nothing sent to landfill',
+      'Processing facility open to compliance audits',
     ],
     // TODO: replace with real client quote
     quote:
-      'Our rejection rate dropped to zero after switching to Zylen. The pre-submission validation catches everything.',
-    authorInitials: 'AD',
-    authorLabel: 'Accounts Director',
-    authorRole: 'Selangor firm',
-    mockupLabel: 'Pre-Submission Validation Results',
+      'We asked what actually happens after pickup, and Recycling Hub walked us through the whole process — nothing was vague.',
+    authorInitials: 'PL',
+    authorLabel: 'Procurement Lead',
+    authorRole: 'KL professional services firm',
+    mockupLabel: 'Processing Status Board',
   },
   {
-    label: 'Submit',
-    headline: 'Real-time submission directly to MyInvois API.',
+    label: 'Data Destruction',
+    headline: 'Every data-bearing device destroyed, not just deleted.',
     checklist: [
-      'Direct API connection to LHDN MyInvois',
-      'Batch and individual submission supported',
-      'B2B and B2C invoice types handled',
-      'Consolidated daily B2C submission for retailers',
-      'Submission confirmation stored automatically',
+      'On-site or facility-based certified shredding',
+      'Serialized certificate of destruction per asset',
+      'PDPA-compliant handling throughout',
+      'No resale of data-bearing devices',
+      'Certificates available for audit within days',
     ],
     // TODO: replace with real client quote
     quote:
-      'Our team no longer logs into the MyInvois portal at all. Zylen handles every submission automatically.',
-    authorInitials: 'OL',
-    authorLabel: 'Operations Lead',
-    authorRole: 'Trading company',
-    mockupLabel: 'Live Submission Feed',
+      'We needed proof our old servers were destroyed, not resold. The certificate covered every serial number.',
+    authorInitials: 'ITM',
+    authorLabel: 'IT Manager',
+    authorRole: 'Financial services firm',
+    mockupLabel: 'Certificate of Destruction',
   },
   {
-    label: 'Monitor',
-    headline: 'Full visibility on every invoice status.',
+    label: 'Get Paid',
+    headline: 'Individuals get paid the moment their devices are collected.',
     checklist: [
-      'Live submission status dashboard',
-      'Valid, queue, pending, error breakdown',
-      'Per-invoice drill-down view',
-      'Email and WhatsApp alerts on errors',
-      'Filter by date, system, or status',
+      'Instant DuitNow payment on collection',
+      'No waiting period or manual payout request',
+      'Payment confirmed before our team leaves',
+      'No hidden deductions',
+      'Works for one device or a full clear-out',
     ],
     // TODO: replace with real client quote
     quote:
-      'For the first time, our finance team can see exactly which invoices are compliant and which need attention.',
-    authorInitials: 'CF',
-    authorLabel: 'CFO',
+      'I had a drawer full of old phones. Payment landed in DuitNow before the pickup team even left.',
+    authorInitials: 'HS',
+    authorLabel: 'Household Seller',
+    authorRole: 'Petaling Jaya',
+    mockupLabel: 'DuitNow Payment Confirmation',
+  },
+  {
+    label: 'Compliance Docs',
+    headline: 'Every collection backed by paperwork your auditor will accept.',
+    checklist: [
+      'DOE and SW110 documentation per collection',
+      'Full chain-of-custody records',
+      'Certificates stored and retrievable on request',
+      'Ready for internal or third-party audit',
+      'No manual record-keeping needed on your end',
+    ],
+    // TODO: replace with real client quote
+    quote:
+      'When our auditors asked for e-waste disposal records, we had the full documentation within the hour.',
+    authorInitials: 'CO',
+    authorLabel: 'Compliance Officer',
+    authorRole: 'Klang Valley manufacturer',
+    mockupLabel: 'Compliance Documentation Pack',
+  },
+  {
+    label: 'ESG Reporting',
+    headline: 'Diversion reports your sustainability team can actually use.',
+    checklist: [
+      'Tonnage recycled per collection',
+      'Landfill diversion summary',
+      'Estimated carbon impact',
+      'Delivered in a format ready for ESG disclosures',
+      'Available on a per-collection or annual basis',
+    ],
+    // TODO: replace with real client quote
+    quote:
+      'The diversion report dropped straight into our sustainability disclosure with no extra formatting needed.',
+    authorInitials: 'SM',
+    authorLabel: 'Sustainability Manager',
     authorRole: 'Malaysian NGO',
-    mockupLabel: 'Status Overview Dashboard',
-  },
-  {
-    label: 'Error Handling',
-    headline: 'Every LHDN error decoded and resolved automatically.',
-    checklist: [
-      'INV-403, INV-405, INV-400 and all LHDN error codes handled',
-      'Root cause identified per rejected invoice',
-      'Auto-retry on transient submission failures',
-      'Error summary report per batch',
-      'WhatsApp alert when manual fix is needed',
-    ],
-    // TODO: replace with real client quote
-    quote:
-      'We never have to Google LHDN error codes anymore. Zylen tells us exactly what went wrong and fixes it.',
-    authorInitials: 'FE',
-    authorLabel: 'Finance Executive',
-    authorRole: 'Private college',
-    mockupLabel: 'Error Log with Resolution Status',
-  },
-  {
-    label: 'Audit Trail',
-    headline: 'Complete compliance records for every submission.',
-    checklist: [
-      'Full submission history with timestamps',
-      'LHDN acknowledgement receipts stored',
-      'Credit note and cancellation history',
-      '7-year data retention for audit purposes',
-      'Exportable reports for finance team',
-    ],
-    // TODO: replace with real client quote
-    quote:
-      'When our auditors asked for e-invoice records, we exported everything from Zylen in 2 minutes.',
-    authorInitials: 'FD',
-    authorLabel: 'Finance Director',
-    authorRole: 'Accounting firm',
-    mockupLabel: 'Audit Log Table',
-  },
-  {
-    label: 'Setup',
-    headline: "Works with whatever you're using today — even a spreadsheet.",
-    checklist: [
-      'Spreadsheets, CSV exports, or manual entry — all supported',
-      'Wave and other tools without built-in MyInvois support',
-      'No new software to learn or migrate to',
-      'Guided TIN registration and MSIC code mapping included',
-      'Sandbox testing before anything goes live',
-    ],
-    // TODO: replace with real client quote
-    quote:
-      "We were still doing everything by spreadsheet. Zylen set the whole thing up for us — we never had to touch LHDN's portal ourselves.",
-    authorInitials: 'NC',
-    authorLabel: 'NGO Admin Coordinator',
-    authorRole: 'Registered society, KL',
-    mockupLabel: 'Setup Checklist',
+    mockupLabel: 'ESG Diversion Report',
   },
 ];
 
@@ -165,11 +165,11 @@ const FeatureTabs = () => {
         {/* ── Header ─────────────────────────────────────────────────────────── */}
         <div>
           <h2 className="font-montserrat text-3xl font-bold tracking-tight text-neutral-950 md:text-4xl">
-            How Zylen Works
+            What Happens After You Book
           </h2>
           <p className="mt-2 max-w-lg text-base text-slate-500">
-            From however you keep your books today to LHDN MyInvois — validated,
-            submitted, and monitored for you.
+            From the moment you book to the certificate in your inbox — every
+            step is licensed, tracked, and documented.
           </p>
         </div>
 

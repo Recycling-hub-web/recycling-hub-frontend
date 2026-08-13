@@ -16,19 +16,19 @@ export const ASSETS = {
 // Tagline: leads with the customer's biggest fear (having to change software) and the main benefit (speed).
 
 export const BRAND = {
-  name: 'Zylen',
-  tagline: 'E-Invoice Compliance Without Changing How You Work.',
-  email: 'contact@zylen.tech',
+  name: 'Recycling Hub',
+  tagline: 'Certified E-Waste Collection & Disposal for Malaysia.',
+  email: 'contact@recyclinghub.eco',
   phone: '+60 11-6080 3604',
-  website: 'zylen.tech',
+  website: 'recyclinghub.eco',
   whatsapp:
-    'https://wa.me/601160803604?text=Hi%20Zylen%2C%20I%27m%20interested%20in%20your%20LHDN%20MyInvois%20e-invoice%20integration%20service.%20Could%20you%20please%20share%20more%20details%20on%20the%20solution%20and%20pricing%20for%20my%20business%3F%20Thank%20you.',
-  calendly: 'https://calendly.com/zylen',
+    'https://wa.me/601160803604?text=Hi%20Recycling%20Hub%2C%20I%27m%20interested%20in%20your%20e-waste%20collection%20service.%20Could%20you%20please%20share%20more%20details%3F%20Thank%20you.',
+  calendly: 'https://calendly.com/recyclinghub',
   ssm: 'SSM: Pending registration',
   businessHours: 'Mon–Fri 9am–6pm · Sat 9am–1pm (MYT)',
   social: {
-    linkedin: 'https://linkedin.com/company/zylen',
-    instagram: 'https://www.instagram.com/zylen.invoce?utm_source=qr',
+    linkedin: 'https://linkedin.com/company/recyclinghub',
+    instagram: 'https://www.instagram.com/recyclinghub?utm_source=qr',
     facebook: 'https://www.facebook.com/share/1BoN37mHcY/?mibextid=wwXIfr',
   },
 };
@@ -49,25 +49,25 @@ export const NAV_LINKS = [
 
 export const PAGE_HEROES = {
   services: {
-    eyebrow: 'What We Build',
-    headline: 'Keep Your Tools,',
-    headlineAccent: 'Get Connected to MyInvois.',
+    eyebrow: 'What We Do',
+    headline: 'One Call,',
+    headlineAccent: 'Certified Disposal Handled End to End.',
     description:
-      'Spreadsheets, Wave, manual bookkeeping, or no system at all — Zylen sets up your full MyInvois compliance in 7 to 14 days. Fixed price. No new software required. Fully guided from registration to go-live.',
+      'Individual pickup or enterprise bulk collection — Recycling Hub handles licensed collection, certified data destruction, and full compliance documentation. Free for individuals. Custom-quoted for businesses.',
   },
   about: {
     eyebrow: 'Who We Are',
     headline: 'Three Engineers.',
     headlineAccent: 'One Mandate. Built for Malaysia.',
     description:
-      'We are a software agency based in Alor Setar and Petaling Jaya. We built Zylen because Malaysian businesses deserved an e-invoice integration partner that was local, technically honest, and priced fairly.',
+      'We are a software agency based in Alor Setar and Petaling Jaya. We built Recycling Hub because Malaysian businesses deserved an e-invoice integration partner that was local, technically honest, and priced fairly.',
   },
   contact: {
     eyebrow: 'Get In Touch',
     headline: 'Not Sure If You Need This?',
     headlineAccent: "Let's Find Out.",
     description:
-      'Book a free 30-minute call. We will review your accounting setup, explain exactly what LHDN requires, and give you a fixed-price proposal within 24 hours — no commitment, no pressure.',
+      "Book a free 15-minute call, or just WhatsApp us. We'll help you figure out whether individual pickup or bulk collection fits your situation — and get you a quote if you need one. No commitment, no pressure.",
   },
   pricing: {
     eyebrow: 'Pricing',
@@ -79,169 +79,72 @@ export const PAGE_HEROES = {
 };
 
 // ─── Hero ─────────────────────────────────────────────────────────────────────
-// Headline rewritten to name the problem directly. Subheadline leads with the four software names
-// (recognition triggers) before stating benefits. Urgency line restated to name both consequences.
+// B2B-weighted per business priority: primary CTA is the enterprise quote request, secondary is
+// the consumer pickup flow. Badge/trustItems reference DOE + SW110 status — TODO: swap in the real
+// DOE (JAS) registration number once issued; do not ship a fabricated one.
 
 export const HERO = {
-  badge: '🇲🇾 Guided MyInvois Setup · Built in Malaysia',
-  headline: "Keep Using What You Already Know. We'll Handle the Rest.",
+  badge: '🇲🇾 DOE-Registered E-Waste Collector', // TODO: append real reg. no., e.g. "DOE (JAS) Reg. No. B20XX/XXX"
+  headline: 'Certified E-Waste Disposal',
+  headlineAccent: 'Your Compliance Team Can Sign Off On.',
   subheadline:
-    'If your books run on spreadsheets, Wave, or manual records, Zylen quietly handles your LHDN MyInvois compliance in the background — and guides you through the entire setup, step by step.',
-  ctaPrimary: 'Book a Free Call',
-  ctaSecondary: 'See How It Works',
+    'Recycling Hub handles DOE- and SW110-compliant bulk collection, certified data destruction, and full ESG reporting for Malaysian businesses — plus free, instantly-paid pickup for individuals clearing out old devices.',
+  ctaPrimary: 'Request Bulk Quote',
+  ctaSecondary: 'Recycle & Get Paid',
   urgency:
-    "Malaysia's e-invoicing rollout is phased in through 2027 — we make sure you're set up well ahead of your deadline.",
-  trustItems: [],
+    'Improperly disposed e-waste is a compliance and data-security risk — not just an environmental one. We close both gaps in one collection.',
+  trustItems: [
+    'Free doorstep pickup',
+    'Instant DuitNow payment',
+    'DOE & SW110 compliant',
+  ],
 };
 
 // ─── Problem ──────────────────────────────────────────────────────────────────
-// Body rewritten to explain the technical gap precisely — MyInvois requires XML/JSON that no standard
-// software produces natively. This is the "aha" moment for SME owners who assumed their software handled it.
+// Stats are capability/process commitments (things Recycling Hub controls and guarantees), not
+// market statistics — deliberately avoiding invented industry figures (e.g. national e-waste
+// tonnage) that can't be verified. Same caution as TRUST_STRIP.
 
 export const PROBLEM = {
-  eyebrow: 'The Gap',
-  headline: "If Your Books Don't Talk to MyInvois Yet, You're Not Alone",
+  eyebrow: 'The Risk',
+  headline: 'Where Do Your Old Electronics Actually End Up?',
   stats: [
-    { value: '55 fields', label: 'Required per submission' },
-    { value: '0', label: 'New software to learn' },
-    { value: '100%', label: 'Sandbox-tested before go-live' },
+    { value: 'DOE', label: 'Licensed Collection & Disposal' },
+    { value: '0', label: 'Devices Sent to Landfill' },
+    { value: '100%', label: 'Certified Data Destruction' },
   ],
-  body: "Spreadsheets, Wave, and manual bookkeeping keep your records in order — but they weren't built to submit e-invoices to LHDN. MyInvois requires structured XML or JSON with 55 mandatory fields, submitted in real time through a government API, which none of those tools do on their own. That's the one piece Zylen adds, quietly, without asking you to change how you keep your books.",
+  body: "Scrap dealers, storage rooms, and the regular bin keep old electronics out of sight — but none of them wipe your data, document where the device went, or keep it out of a landfill. For a business, that's a compliance and data-security gap. For anyone, it's a device that's still recoverable sitting with someone who has no obligation to destroy it properly. Recycling Hub replaces that uncertainty with a licensed, documented, certificate-backed collection.",
   warning:
-    "Malaysia's e-invoicing mandate is rolling out in phases by revenue threshold through 2027. We'll help you find out where your organization stands and get you ready well ahead of your deadline.",
-};
-
-// ─── Services ─────────────────────────────────────────────────────────────────
-// Card descriptions updated to name who each tier is specifically for — not just what it does.
-
-export const SERVICES = {
-  eyebrow: 'What We Build',
-  headline: 'Three Ways to Get Compliant',
-  cards: [
-    {
-      name: 'Guided Setup',
-      price: 'From RM 4,000',
-      timeline: '7–10 days',
-      description:
-        'For organizations on spreadsheets, Wave, manual bookkeeping, or no system at all — no new software required.',
-      cta: 'Get Started',
-      popular: false,
-    },
-    {
-      name: 'Custom Connect',
-      price: 'From RM 6,000',
-      timeline: '10–14 days',
-      description:
-        'For organizations on proprietary ERP, custom POS systems, or in-house accounting tools.',
-      cta: 'Get Started',
-      popular: true,
-    },
-    {
-      name: 'Enterprise Connect',
-      price: 'Custom Quote',
-      timeline: '2–4 weeks',
-      description:
-        'For multi-branch operations, high-volume environments, and organizations with multiple legal entities.',
-      cta: 'Contact Us',
-      popular: false,
-    },
-  ],
+    'E-waste volumes in Malaysia are growing every year, and regulatory and ESG expectations around proper disposal are tightening with them. Getting a compliant process in place now costs less than explaining an uncontrolled one later.',
 };
 
 // ─── How It Works ─────────────────────────────────────────────────────────────
-// Step descriptions made more specific — naming real deliverables at each stage builds credibility
-// and reduces the "how does this actually work?" anxiety that delays B2B buying decisions.
+// Kept to 3 steps deliberately — this is the consumer/individual pickup flow, mirroring the
+// simple "book → collect → paid" pattern used by again.eco and erth.app. The deeper enterprise
+// process lives in B2B_SECTION instead, since bundling both here would bury the simple path.
 
 export const HOW_IT_WORKS = {
   eyebrow: 'The Process',
-  headline: 'From Discovery to Go-Live in 5 Steps',
+  headline: 'Recycle in 3 Simple Steps',
   steps: [
     {
       number: '01',
-      title: 'Discovery',
+      title: 'Book a Pickup',
       description:
-        'Free 15-minute call. We learn how you currently keep your books — spreadsheet, Wave, paper, or nothing at all — and your invoice volume.',
+        'Schedule a free collection online or over WhatsApp — takes under a minute.',
     },
     {
       number: '02',
-      title: 'Proposal',
+      title: 'We Collect',
       description:
-        'Fixed price and delivery timeline in your inbox within 24 hours. The scope is clear, the cost is locked, no change-order surprises.',
+        // TODO: confirm minimum device count/value (if any) and actual service coverage area
+        'Our team retrieves your devices at your doorstep, free of charge.',
     },
     {
       number: '03',
-      title: 'Setup',
+      title: 'Get Paid',
       description:
-        'We handle TIN registration, MSIC code mapping, and the technical setup — built around what you already use. You get staging access to review everything before it goes live.',
-    },
-    {
-      number: '04',
-      title: 'Testing',
-      description:
-        'Full LHDN sandbox validation — every invoice type, every edge case. Credit notes, debit notes, cancellations, and consolidated B2C submissions all tested.',
-    },
-    {
-      number: '05',
-      title: 'Go Live',
-      description:
-        "Deployment to LHDN's live environment, complete documentation handover, and 30 days of post-launch support at no extra cost.",
-    },
-  ],
-};
-
-// ─── Pricing ──────────────────────────────────────────────────────────────────
-// Integration Project description reframes ownership — "you own the code" removes the vendor-lock fear.
-// SaaS description updated to reflect its actual status (in development) rather than implying it's live.
-
-export const PRICING = {
-  eyebrow: 'Transparent Pricing',
-  headline: 'No Hidden Costs. No Surprises.',
-  note: 'All prices exclude SST. Contact us for a custom quote.',
-  tiers: [
-    {
-      name: 'Integration Project',
-      price: 'RM 4,000 – RM 8,000',
-      period: 'one-time',
-      description:
-        'We design, build, and test the full API bridge to LHDN MyInvois. You own the source code on go-live — no ongoing dependency on Zylen unless you choose it.',
-      features: [
-        'One-time fixed price',
-        'Source code included',
-        '30-day post-launch support',
-        'LHDN sandbox testing',
-      ],
-      cta: 'Get a Quote',
-      recommended: false,
-    },
-    {
-      name: 'Monthly Maintenance',
-      price: 'RM 300 – RM 800',
-      period: 'per month',
-      description:
-        'When LHDN updates MyInvois, your integration stays current automatically. Includes API version upgrades, bug fixes, and monthly health checks.',
-      features: [
-        'API version updates',
-        'Bug fixes & monitoring',
-        'Priority support',
-        'Monthly health reports',
-      ],
-      cta: 'Get Started',
-      recommended: true,
-    },
-    {
-      name: 'Zylen Connect SaaS',
-      price: 'RM 150 – RM 500',
-      period: 'per month',
-      description:
-        'Coming soon — a no-code platform for standard accounting software. Join the waitlist for early access and founding member pricing.',
-      features: [
-        'Plug-and-play setup',
-        'Dashboard & logs',
-        'Works with spreadsheets, Wave & more',
-        'Auto-updates included',
-      ],
-      cta: 'Join Waitlist',
-      recommended: false,
+        'Receive instant DuitNow payment the moment your devices are collected.',
     },
   ],
 };
@@ -249,19 +152,19 @@ export const PRICING = {
 // ─── About ────────────────────────────────────────────────────────────────────
 // Headline names the team size (three engineers) — human and honest for a startup.
 // Body copy names the specific cities (Alor Setar, Petaling Jaya) — local credibility matters to Malaysian SMEs.
-// Team bios rewritten to emphasise Zylen-specific roles, not just academic credentials.
+// Team bios rewritten to emphasise Recycling Hub-specific roles, not just academic credentials.
 
 export const ABOUT = {
   eyebrow: 'Who We Are',
   headline:
     'Three Engineers Building the Integration Agency Malaysian Businesses Actually Need.',
-  body: 'Zylen is a software agency based in Malaysia — Alor Setar and Petaling Jaya. We are engineers who saw the confusion around the MyInvois mandate and built the service we always wished existed: fixed price, honest timelines, full source code handover, and no disappearing act after go-live.',
+  body: 'Recycling Hub is a software agency based in Malaysia — Alor Setar and Petaling Jaya. We are engineers who saw the confusion around the MyInvois mandate and built the service we always wished existed: fixed price, honest timelines, full source code handover, and no disappearing act after go-live.',
   team: [
     {
       name: 'Kedir Jabir',
       role: 'Co-Founder · Software Engineer',
       tagline: 'Backend Engineer · LHDN API Integration',
-      bio: 'Based in Alor Setar, Kedah. ALX Software Engineering graduate with hands-on experience in production web systems. Leads backend architecture and LHDN MyInvois API integration at Zylen.',
+      bio: 'Based in Alor Setar, Kedah. ALX Software Engineering graduate with hands-on experience in production web systems. Leads backend architecture and LHDN MyInvois API integration at Recycling Hub.',
       linkedin: 'https://www.linkedin.com/in/ibnu-jabir/',
       initials: 'IJ',
     },
@@ -269,7 +172,7 @@ export const ABOUT = {
       name: 'Adnan Madi',
       role: 'Co-Founder · Frontend Developer',
       tagline: 'Frontend Engineer · MSc candidate at Universiti Malaya',
-      bio: 'Software engineer specialising in web systems and UI engineering. Based in Petaling Jaya, Selangor. Leads product and frontend development at Zylen.',
+      bio: 'Software engineer specialising in web systems and UI engineering. Based in Petaling Jaya, Selangor. Leads product and frontend development at Recycling Hub.',
       linkedin: 'https://www.linkedin.com/in/adnan-madi417/',
       initials: 'AM',
     },
@@ -277,20 +180,20 @@ export const ABOUT = {
       name: 'Abderrahmane Bouzemlal',
       role: 'Co-Founder · Software Engineering',
       tagline: 'Backend Engineer · Django & REST APIs',
-      bio: 'Based in Alor Setar, Kedah. Specialises in backend web applications using Django and REST APIs. Leads data integration and pipeline engineering at Zylen.',
+      bio: 'Based in Alor Setar, Kedah. Specialises in backend web applications using Django and REST APIs. Leads data integration and pipeline engineering at Recycling Hub.',
       linkedin: 'https://www.linkedin.com/in/abderrahmanebouzemlal/',
       initials: 'AB',
     },
   ],
 };
 
-// Mission: quote rewritten to name the actual problem that existed before Zylen — makes it
+// Mission: quote rewritten to name the actual problem that existed before Recycling Hub — makes it
 // specific and believable. Body reframes the offer in terms of what the reader escapes from.
 
 export const ABOUT_MISSION = {
   eyebrow: 'Our Mission',
   quote:
-    'We built Zylen because when the MyInvois mandate landed, Malaysian SMEs had three options: pay an expensive ERP vendor, wade through cryptic LHDN documentation, or submit manually and hope for the best. None of those is good enough.',
+    'We built Recycling Hub because when the MyInvois mandate landed, Malaysian SMEs had three options: pay an expensive ERP vendor, wade through cryptic LHDN documentation, or submit manually and hope for the best. None of those is good enough.',
   body: 'The e-invoice mandate is real, the fines are real, and the technical gap between your existing accounting software and LHDN MyInvois is real. We close that gap — in 7 to 14 days, at a fixed price, with full source code handover. No month-long vendor negotiations. No vague project scopes. No lock-in.',
 };
 
@@ -330,7 +233,7 @@ export const ABOUT_VALUES = [
 export const ABOUT_TIMELINE = [
   {
     year: '2024',
-    title: 'Zylen Founded',
+    title: 'Recycling Hub Founded',
     description:
       'Three engineers based in Malaysia set out to solve one problem: making the MyInvois mandate achievable for SMEs without massive cost or vendor lock-in.',
   },
@@ -348,9 +251,9 @@ export const ABOUT_TIMELINE = [
   },
   {
     year: '2025',
-    title: 'Zylen Connect in Development',
+    title: 'Recycling Hub Connect in Development',
     description:
-      'Began development of Zylen Connect — our self-serve SaaS platform designed for businesses that want plug-and-play MyInvois compliance without a custom build.',
+      'Began development of Recycling Hub Connect — our self-serve SaaS platform designed for businesses that want plug-and-play MyInvois compliance without a custom build.',
   },
 ];
 
@@ -392,30 +295,32 @@ export const ABOUT_WHO_WE_WORK_WITH = {
 
 export const BOOK_DEMO = {
   eyebrow: 'Talk to Us',
-  headline: 'Get Clarity on Your Compliance — Free 30-Minute Call',
+  headline:
+    'Get a Straight Answer on Your Bulk Collection — Free 15-Minute Call',
   bullets: [
-    'We map your exact accounting software to MyInvois — you leave knowing precisely what needs to be done',
-    'You see the full integration architecture before committing to anything',
-    'You receive a fixed-price, fixed-timeline proposal within 24 hours of the call',
-    'No obligation, no pressure — if we are not the right fit, we will tell you honestly',
+    'We ask about your device types, volume, and site location — no assumptions',
+    'You get a clear scope: what gets collected, when, and what documentation you receive',
+    'You receive a quote and proposed collection timeline within 24 hours of the call',
+    "No obligation, no pressure — if bulk collection isn't the right fit yet, we'll tell you honestly",
   ],
   ctaPrimary: 'Book a Free Call',
   ctaSecondary: 'WhatsApp Us Directly',
   trustNote:
-    'No commitment required · Proposal within 24 hours · Available on Zoom, Google Meet, or WhatsApp',
+    'No commitment required · Quote within 24 hours · Available on Zoom, Google Meet, or WhatsApp',
 };
 
 // ─── Trust Strip ──────────────────────────────────────────────────────────────
-// Label changed from "Trusted by finance teams" (implies existing clients) to product capability claims.
-// "100% LHDN Compliant" replaced with "Sandbox Pass Rate" — technically accurate, not misleading.
+// Deliberately capability-based, not fabricated social proof — no invented review counts or
+// customer totals. TODO: once real numbers exist (Google rating, customer count, DOE reg. no.),
+// replace these with actual figures; that's a stronger trust signal than any of the lines below.
 
 export const TRUST_STRIP = {
-  label: 'What you get when you work with Zylen',
+  label: 'Why Malaysian households and businesses choose Recycling Hub',
   stats: [
-    { value: '7-day', label: 'Average Setup Time' },
-    { value: '0', label: 'New Software to Learn' },
-    { value: '100%', label: 'Sandbox Pass Rate' },
-    { value: 'Phase 4', label: 'Mandate Ready' },
+    { value: 'DOE', label: 'Registered E-Waste Collector' },
+    { value: 'Free', label: 'Doorstep Pickup for Individuals' },
+    { value: 'Instant', label: 'DuitNow Payment on Collection' },
+    { value: 'SW110', label: 'Compliant Enterprise Collection' },
   ],
 };
 
@@ -437,48 +342,85 @@ export const CONNECTORS = {
 };
 
 // ─── Delivery Models ──────────────────────────────────────────────────────────
-// SaaS description updated to reflect its development status — "coming soon" is honest and
-// actually increases waitlist signups vs. implying a live product that doesn't exist yet.
+// Dual-track split (individual vs. business), matching the again.eco / erth.app homepage pattern.
+// Business card is `highlight: true` since B2B is the primary strategic focus — visually it should
+// read as the more prominent offer, not an equal-weight alternative to the consumer path.
 
 export const DELIVERY_MODELS = {
-  eyebrow: 'How We Deliver',
-  headline: 'Two Ways to Get Compliant',
+  eyebrow: 'How to Recycle With Us',
+  headline: 'Two Paths. One Compliant Recycling Partner.',
   models: [
     {
-      badge: 'Done For You',
-      name: 'Guided Setup & Submission',
-      price: 'RM 4,000 – RM 8,000',
-      period: 'one-time',
+      badge: 'For Individuals',
+      name: 'Recycle & Get Paid',
+      price: 'Free',
+      period: 'pickup + instant payout',
       description:
-        'We handle your entire MyInvois setup — TIN registration, MSIC code mapping, sandbox testing — and connect your invoicing quietly in the background. You keep working exactly as you do today.',
+        'Clearing out old phones, laptops, or gadgets? Book a free doorstep pickup and get paid instantly via DuitNow — no minimums, no paperwork.',
       features: [
-        '7–14 day setup',
-        'TIN & MSIC mapping included',
-        'LHDN sandbox testing included',
-        '30-day post-launch support',
+        'Free doorstep pickup',
+        'Instant DuitNow payment',
+        'All personal devices accepted',
+        'No account or contract needed',
       ],
-      cta: 'Get a Fixed-Price Quote',
+      cta: 'Recycle & Get Paid',
       ctaHref: '/contact',
       highlight: false,
     },
     {
-      badge: 'Coming Soon',
-      name: 'Zylen Connect SaaS',
-      price: 'RM 150 – RM 500',
-      period: 'per month',
+      badge: 'For Businesses',
+      name: 'Compliant Bulk Collection',
+      price: 'Custom Quote',
+      period: 'based on volume',
       description:
-        'Our self-serve compliance platform — currently in development. Built for teams on spreadsheets, Wave, or manual records who want plug-and-play MyInvois compliance without a custom setup.',
+        'DOE- and SW110-compliant collection for offices, warehouses, and factories — with certified data destruction and ESG-ready reporting your compliance team can rely on.',
       features: [
-        'Works with spreadsheets, Wave & manual records',
-        'Submission dashboard & error logs',
-        'Auto-updates for LHDN API changes',
-        'No developer needed',
+        'DOE/SW110-compliant bulk collection',
+        'Certified data destruction with serialized certificates',
+        'ESG & sustainability reporting included',
+        'Scheduled around your operations',
       ],
-      cta: 'Join the Waitlist',
+      cta: 'Request Bulk Quote',
       ctaHref: '/contact',
       highlight: true,
     },
   ],
+};
+
+// ─── B2B Section ──────────────────────────────────────────────────────────────
+// Deliberately centered on compliance risk reduction, certified destruction, and ESG reporting
+// value — not price or convenience — per instruction that B2B messaging should sell risk
+// reduction, not cost. `note` intentionally describes who this is FOR (an ICP statement), not a
+// social-proof claim — do not swap in named clients/industries unless they're real.
+
+export const B2B_SECTION = {
+  eyebrow: 'For Businesses',
+  headline: 'Turn E-Waste Into Verified Compliance, Not Audit Risk.',
+  subheadline:
+    "Improperly disposed electronics create data-breach exposure and compliance gaps your board doesn't want to explain. Recycling Hub closes that gap with licensed collection, certificate-backed destruction, and reporting your sustainability team can drop straight into an ESG disclosure.",
+  pillars: [
+    {
+      title: 'Compliant Bulk Collection',
+      description:
+        'SW110-licensed logistics for offices, warehouses, and factories, scheduled around your operations — not ours.',
+      icon: 'truck',
+    },
+    {
+      title: 'Certified Data Destruction',
+      description:
+        'On-site or facility shredding with a serialized certificate of destruction for every asset, satisfying PDPA and internal audit requirements.',
+      icon: 'shield',
+    },
+    {
+      title: 'ESG & Sustainability Reporting',
+      description:
+        'Tonnage recycled, landfill diverted, and estimated carbon impact — delivered in a format your sustainability team can cite directly.',
+      icon: 'chart',
+    },
+  ],
+  cta: 'Request Bulk Quote',
+  ctaHref: '/contact',
+  note: 'Built for finance, procurement, and sustainability teams that need paperwork they can hand straight to an auditor.',
 };
 
 // ─── Final CTA ────────────────────────────────────────────────────────────────
@@ -505,44 +447,46 @@ export const FAQ = {
   headlineAccent: 'Questions',
   items: [
     {
-      question: 'Do I need to change how I currently keep my books?',
+      question: 'Is there a minimum number of devices for a free pickup?',
       answer:
-        'No — and this is the most important thing to understand. Whether you run on spreadsheets, Wave, or manual bookkeeping, Zylen builds the missing piece so you keep working exactly as you do today. We handle the submission to LHDN MyInvois in the background. Nothing changes on your end except compliance.',
+        "No — whether it's a single old phone or a drawer full of devices, individual pickup is free and comes with instant DuitNow payment. There's no account or contract required.",
     },
     {
-      question: 'How long does the integration take?',
+      question: 'What happens to my data before a device is recycled?',
       answer:
-        "7 to 14 days from the discovery call to go-live on LHDN's live environment. Day 1 is the discovery call. Day 2 you receive a fixed-price proposal. The build starts the day after approval. Standard accounting software integrations go live in 7–10 days. Custom or legacy systems take 10–14 days.",
+        "Any data-bearing device — phones, laptops, hard drives, servers — goes through certified destruction before it's recycled. For individuals, that's included in every pickup. For businesses, you receive a serialized certificate of destruction per asset, so you have proof it happened.",
     },
     {
-      question: 'What exactly is LHDN MyInvois?',
+      question: 'How do I get paid for my old devices?',
       answer:
-        "MyInvois is the Malaysian government's e-invoicing portal operated by LHDN (Inland Revenue Board). Under the Finance Act 2023, every business above RM 1M annual revenue must submit invoices through MyInvois in a structured XML or JSON format with 55 mandatory fields — in real time, at the point of issuance. Standard accounting software does not do this automatically. That is the gap Zylen fills.",
+        'Individual pickups are paid instantly via DuitNow, at the moment your devices are collected — no waiting period, no manual payout request. Bulk and enterprise collection is quote-based rather than paid, since the focus there is compliant disposal and documentation.',
     },
     {
-      question: 'How much does it cost?',
+      question:
+        "What's the difference between individual and business collection?",
       answer:
-        'Integration projects are fixed price: RM 4,000 to RM 8,000 one-time, depending on your system complexity. You receive the full source code and 30 days of post-launch support. If you want ongoing coverage for LHDN API updates, monthly maintenance starts from RM 300. Our self-serve SaaS platform, Zylen Connect, starts from RM 150/month and is currently in development.',
+        "Individual pickup is for households clearing out personal devices — it's free, with instant payment, no minimums. Business or bulk collection is for offices, warehouses, and factories, and is scheduled around your operations with a custom quote based on volume and device types. Both are collected under the same DOE-registered, SW110-compliant process.",
     },
     {
-      question: 'What happens when LHDN updates their API?',
+      question:
+        'What documentation do we get for compliance or audit purposes?',
       answer:
-        'LHDN updates MyInvois periodically — field requirements change, API versions increment. Clients on our monthly maintenance plan get all updates included at no extra charge and with no downtime. If you took the one-time project without maintenance, we offer update packages on request at a fixed rate.',
+        'Business and bulk collections come with full chain-of-custody records, a serialized certificate of destruction for every data-bearing asset, and an ESG-ready diversion report covering tonnage recycled and landfill diverted — all retrievable on request.',
     },
     {
-      question: 'Is this a one-time build or an ongoing subscription?',
+      question: 'Is Recycling Hub actually licensed to handle e-waste?',
       answer:
-        'You choose. The Integration Project is a one-time fixed-price build — you own the source code, no lock-in. The Zylen Connect SaaS (in development) will be a monthly subscription with plug-and-play setup and automatic updates. Most clients on custom or complex systems start with the project, then add our maintenance plan for long-term peace of mind.',
+        'Yes — collection and processing is carried out under a registered DOE license and SW110 scheduled-waste compliance, not an informal or unlicensed setup.',
     },
     {
-      question: "What if we don't use any accounting software at all?",
+      question: 'What devices do you accept?',
       answer:
-        "That's completely fine — many of the organizations we work with run on spreadsheets or manual records only. We set up MyInvois submission around whatever you're already doing, even if that's a shared spreadsheet. There's no requirement to adopt new software first.",
+        "Phones, tablets, laptops, desktops, monitors, and office IT equipment like servers, printers, and routers, plus hard drives, SSDs, and other storage devices. Get in touch if you're unsure whether a specific item — especially large appliances — is covered.",
     },
     {
-      question: 'Do you guarantee LHDN approval after integration?',
+      question: 'Do you charge for bulk or enterprise collection?',
       answer:
-        "We build to LHDN's official API specification and run full sandbox validation before go-live — every edge case, every mandatory field, every invoice type. LHDN approval in the live environment depends on your business registration and data quality, which we cannot control. Our integrations have a 100% sandbox pass rate. If LHDN rejects a submission due to our integration, we fix it at no extra cost.",
+        "Individual pickup is always free. Bulk and enterprise collection is quoted based on volume and device types — request a quote and we'll confirm pricing before anything is scheduled.",
     },
   ],
 };
@@ -655,7 +599,7 @@ export const PRICING_ADDONS = [
   {
     title: 'Priority Onboarding',
     description:
-      'A dedicated Zylen engineer handles your full setup and gets you live within 3 working days of signing.',
+      'A dedicated Recycling Hub engineer handles your full setup and gets you live within 3 working days of signing.',
     price: 'RM 500 one-time',
   },
   {
@@ -712,11 +656,11 @@ export const PRICING_FAQ = [
 
 export const FOOTER = {
   services: [
-    { label: 'E-Invoice Integration', href: '/services' },
-    { label: 'How It Works', href: '/services#solutions' },
-    { label: 'Supported Systems', href: '/services#supported-systems' },
+    { label: 'Recycle & Get Paid', href: '/contact' },
+    { label: 'Bulk & Enterprise Collection', href: '/services' },
+    { label: 'How It Works', href: '/#how-it-works' },
     { label: 'Pricing', href: '/pricing' },
-    { label: 'Book a Free Call', href: '/contact' },
+    { label: 'Request a Quote', href: '/contact' },
   ],
   company: [
     { label: 'About Us', href: '/about' },

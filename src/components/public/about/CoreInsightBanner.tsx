@@ -28,11 +28,11 @@ const CoreInsightBanner = () => (
             </p>
           </div>
 
-          {/* Right: Zylen white icon */}
+          {/* Right: Recycling Hub white icon */}
           <div className="shrink-0 opacity-90 md:pr-4">
             <Image
               src={ASSETS.logo.whiteIconBg}
-              alt="Zylen"
+              alt="Recycling Hub"
               width={240}
               height={240}
               className="object-contain"

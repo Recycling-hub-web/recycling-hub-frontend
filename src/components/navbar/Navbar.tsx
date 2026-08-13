@@ -106,8 +106,6 @@ const Navbar = ({ variant = 'dark' }: NavbarProps) => {
       : 'text-white hover:bg-white/10';
   const getWhatsappVariant = () =>
     (light ? 'secondary' : 'outline-white') as 'secondary' | 'outline-white';
-  const getCallVariant = () =>
-    (light ? 'primary' : 'white') as 'primary' | 'white';
 
   return (
     <motion.nav
@@ -121,12 +119,12 @@ const Navbar = ({ variant = 'dark' }: NavbarProps) => {
         <Link href="/" className="flex shrink-0 items-center">
           {light ? (
             <span className="font-montserrat text-xl font-extrabold tracking-tight text-neutral-950 md:text-2xl">
-              Zylen
+              Recycling Hub
             </span>
           ) : (
             <Image
               src={ASSETS.logo.whiteLogo}
-              alt="Zylen"
+              alt="Recycling Hub"
               width={100}
               height={32}
               className="h-8 w-auto object-contain"
@@ -207,9 +205,6 @@ const Navbar = ({ variant = 'dark' }: NavbarProps) => {
             className="hidden lg:inline-flex"
           >
             WhatsApp Us
-          </Button>
-          <Button href="/contact" variant={getCallVariant()}>
-            Book a Free Call
           </Button>
         </div>
 
@@ -300,7 +295,7 @@ const Navbar = ({ variant = 'dark' }: NavbarProps) => {
                   WhatsApp Us
                 </Button>
                 <Button href="/contact" variant="primary" className="w-full">
-                  Book a Free Call
+                  Request a Quote
                 </Button>
               </div>
             </div>

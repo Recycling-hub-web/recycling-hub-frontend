@@ -1,6 +1,7 @@
 import type { ReactElement } from 'react';
 
 import { Meta } from '../components/layout/Meta';
+import { B2BSection } from '../components/public/home/B2BSection';
 import { ComparisonSection } from '../components/public/home/ComparisonSection';
 import { ConnectorsStrip } from '../components/public/home/ConnectorsStrip';
 import { DeliveryModels } from '../components/public/home/DeliveryModels';
@@ -10,7 +11,7 @@ import { HeroSection } from '../components/public/home/HeroSection';
 import { ProblemIllustration } from '../components/public/home/ProblemIllustration';
 import { ProblemStrip } from '../components/public/home/ProblemStrip';
 import { TrustStrip } from '../components/public/home/TrustStrip';
-import { WhyZylen } from '../components/public/home/WhyZylen';
+import { WhyRecyclingHub } from '../components/public/home/WhyRecyclingHub';
 import { FaqSection } from '../components/public/shared/FaqSection';
 import { HowItWorks } from '../components/public/shared/HowItWorks';
 import { AppConfig } from '../config/site.config';
@@ -21,17 +22,18 @@ const HomePage: NextPageWithLayout = () => (
   <>
     <Meta title={AppConfig.title} description={AppConfig.description} />
     <HeroSection />
+    <TrustStrip />
     <ProblemIllustration />
     <ProblemStrip />
-    <WhyZylen />
+    <WhyRecyclingHub />
     <ComparisonSection />
     <FeatureTabs />
     <HowItWorks />
     <DeliveryModels />
+    <B2BSection />
     <ConnectorsStrip />
     <FaqSection />
     <FinalCTA />
-    <TrustStrip />
   </>
 );
 

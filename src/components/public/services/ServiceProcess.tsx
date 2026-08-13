@@ -7,27 +7,27 @@ const ease = [0.22, 1, 0.36, 1] as const;
 const STEPS = [
   {
     number: '01',
-    title: 'Connect',
+    title: 'Request a Quote',
     description:
-      'We link your accounting system to Zylen using a secure API bridge — no changes to your existing workflow.',
+      'Tell us your device types, volume, and site location. No commitment required to get a number.',
   },
   {
     number: '02',
-    title: 'Validate',
+    title: 'Scheduled Collection',
     description:
-      'Every invoice is auto-formatted to the LHDN schema and validated for errors before submission.',
+      'Our SW110-compliant team collects on a timeline that fits your operations — one site or several.',
   },
   {
     number: '03',
-    title: 'Submit',
+    title: 'Certified Destruction',
     description:
-      'Invoices are submitted to MyInvois in real time. No manual portal logins, no copy-pasting.',
+      'Every data-bearing device is destroyed and documented, with a serialized certificate issued per asset.',
   },
   {
     number: '04',
-    title: 'Monitor',
+    title: 'ESG Report Delivered',
     description:
-      'Track every submission live. Get instant alerts on rejections with root cause analysis included.',
+      'A diversion report lands in your inbox — tonnage recycled, landfill avoided, ready for your sustainability records.',
   },
 ];
 
@@ -36,9 +36,9 @@ const ServiceProcess = () => (
     <div className="mx-auto max-w-7xl px-5 md:px-8">
       <div className="mb-14 text-center">
         <SectionHeading
-          eyebrow="How It Works"
-          headline="Automated End to End"
-          subtext="Four steps from your invoice to LHDN approval — all handled by Zylen."
+          eyebrow="For Businesses"
+          headline="Bulk Collection, Start to Finish"
+          subtext="Four steps from request to certified outcome — all handled by Recycling Hub."
         />
       </div>
 

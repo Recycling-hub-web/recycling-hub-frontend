@@ -17,11 +17,11 @@ type CardConfig = {
 
 const CARDS: CardConfig[] = [
   {
-    label: 'Spreadsheet',
-    avatarBg: '#3b82f6',
-    avatarText: 'XL',
-    invoice: 'Invoice #00421',
-    status: 'Not MyInvois format',
+    label: 'Scrap Dealer',
+    avatarBg: '#00612b',
+    avatarText: 'SD',
+    invoice: 'Old Company Laptops',
+    status: 'No data wipe performed',
     statusCls: 'text-slate-500',
     meta: '',
     motionY: 28,
@@ -29,11 +29,11 @@ const CARDS: CardConfig[] = [
     delay: 0.1,
   },
   {
-    label: 'Wave',
-    avatarBg: '#1370e2',
-    avatarText: 'W',
-    invoice: 'Invoice #00422',
-    status: 'No LHDN submission',
+    label: 'Storage Room',
+    avatarBg: '#008a3e',
+    avatarText: 'ST',
+    invoice: 'Boxes of Old Devices',
+    status: 'Just taking up space',
     statusCls: 'text-slate-500',
     meta: '',
     motionY: -10,
@@ -41,11 +41,11 @@ const CARDS: CardConfig[] = [
     delay: 0.2,
   },
   {
-    label: 'Manual Bookkeeping',
+    label: 'Regular Trash',
     avatarBg: '#94a3b8',
     avatarText: '?',
-    invoice: 'Handwritten ledger',
-    status: 'No compliance trail',
+    invoice: 'E-Waste in General Bin',
+    status: 'Illegal disposal risk',
     statusCls: 'text-slate-500',
     meta: '',
     motionY: 22,
@@ -123,11 +123,12 @@ const ProblemIllustration = () => (
         className="mb-20 text-center"
       >
         <h2 className="font-sans text-4xl font-bold tracking-tight text-neutral-950 md:text-5xl">
-          Great for bookkeeping. Not built for MyInvois.
+          Still Piling Up? Or Worse — In the Bin?
         </h2>
         <p className="mx-auto mt-5 max-w-[480px] text-lg leading-relaxed text-slate-500">
-          Spreadsheets, Wave, and manual records keep your books in order — they
-          just weren&apos;t designed to submit e-invoices to LHDN.
+          Scrap dealers, storage rooms, and the regular bin keep old electronics
+          out of sight — they just don&apos;t keep you compliant, or your data
+          safe.
         </p>
       </motion.div>
 
@@ -148,7 +149,7 @@ const ProblemIllustration = () => (
         transition={{ duration: 0.5, delay: 0.5, ease: EASE }}
         className="mt-20 text-center text-lg font-bold text-neutral-950"
       >
-        Same invoices. One quiet addition: LHDN-ready submission.
+        Same devices. One quiet difference: certified, compliant disposal.
       </motion.p>
     </div>
   </section>

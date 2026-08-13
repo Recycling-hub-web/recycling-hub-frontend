@@ -12,7 +12,10 @@ const TeamSection = () => (
   >
     <div className="relative mx-auto max-w-7xl px-5 md:px-8">
       <div className="mb-12 text-center">
-        <SectionHeading eyebrow="The People" headline="The Team Behind Zylen" />
+        <SectionHeading
+          eyebrow="The People"
+          headline="The Team Behind Recycling Hub"
+        />
       </div>
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

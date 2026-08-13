@@ -20,7 +20,7 @@ const ReusableHero = ({
     <div
       className="pointer-events-none absolute left-1/2 top-0 h-[500px] w-[800px] -translate-x-1/2 -translate-y-1/3 animate-glow-pulse rounded-full blur-[120px]"
       style={{
-        background: 'radial-gradient(ellipse, #1370e2 0%, transparent 70%)',
+        background: 'radial-gradient(ellipse, #008a3e 0%, transparent 70%)',
       }}
     />
 

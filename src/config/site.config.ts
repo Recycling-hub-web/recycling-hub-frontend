@@ -1,6 +1,7 @@
 export const AppConfig = {
-  site_name: 'Zylen',
-  title: 'Zylen - E-Invoice Integration Service',
-  description: 'Zylen provides seamless e-invoice integration services.',
+  site_name: 'Recycling Hub',
+  title: 'Recycling Hub - E-Invoice Integration Service',
+  description:
+    'Recycling Hub provides seamless e-invoice integration services.',
   locale: 'en',
 };

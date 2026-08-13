@@ -46,8 +46,9 @@ const PricingTiers = () => {
             <span className="font-semibold text-neutral-950">
               Coming Soon —
             </span>{' '}
-            these are early-access prices for Zylen Connect, our self-serve
-            platform, currently in development. Need MyInvois compliance now?{' '}
+            these are early-access prices for Recycling Hub Connect, our
+            self-serve platform, currently in development. Need MyInvois
+            compliance now?{' '}
             <Link
               href="/services#pricing"
               className="font-semibold text-neutral-950 underline-offset-2 hover:underline"

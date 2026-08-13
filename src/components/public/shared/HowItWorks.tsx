@@ -7,30 +7,6 @@ import { SectionHeading } from '../../ui/SectionHeading';
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 // ── Pastel flat icons ─────────────────────────────────────────────────────────
-const DiscoveryIcon = () => (
-  <svg viewBox="0 0 80 80" fill="none" className="size-full">
-    <circle
-      cx="34"
-      cy="34"
-      r="20"
-      fill="#DBEAFE"
-      stroke="#93C5FD"
-      strokeWidth="3.5"
-    />
-    <circle cx="34" cy="34" r="11" fill="#BFDBFE" />
-    <line
-      x1="49"
-      y1="49"
-      x2="64"
-      y2="64"
-      stroke="#60A5FA"
-      strokeWidth="4"
-      strokeLinecap="round"
-    />
-    <circle cx="34" cy="34" r="4" fill="#3B82F6" />
-  </svg>
-);
-
 const ProposalIcon = () => (
   <svg viewBox="0 0 80 80" fill="none" className="size-full">
     <rect
@@ -39,14 +15,14 @@ const ProposalIcon = () => (
       width="48"
       height="62"
       rx="7"
-      fill="#DBEAFE"
-      stroke="#93C5FD"
+      fill="#d6ece0"
+      stroke="#addac1"
       strokeWidth="3"
     />
-    <rect x="24" y="18" width="28" height="4" rx="2" fill="#93C5FD" />
-    <rect x="24" y="30" width="28" height="4" rx="2" fill="#BFDBFE" />
-    <rect x="24" y="42" width="18" height="4" rx="2" fill="#BFDBFE" />
-    <circle cx="56" cy="58" r="12" fill="#3B82F6" />
+    <rect x="24" y="18" width="28" height="4" rx="2" fill="#addac1" />
+    <rect x="24" y="30" width="28" height="4" rx="2" fill="#addac1" />
+    <rect x="24" y="42" width="18" height="4" rx="2" fill="#addac1" />
+    <circle cx="56" cy="58" r="12" fill="#008a3e" />
     <path
       d="M50 58l4 4 7-7"
       stroke="white"
@@ -65,8 +41,8 @@ const IntegrationIcon = () => (
       width="24"
       height="24"
       rx="6"
-      fill="#DBEAFE"
-      stroke="#93C5FD"
+      fill="#d6ece0"
+      stroke="#addac1"
       strokeWidth="3"
     />
     <rect
@@ -75,8 +51,8 @@ const IntegrationIcon = () => (
       width="24"
       height="24"
       rx="6"
-      fill="#BFDBFE"
-      stroke="#60A5FA"
+      fill="#addac1"
+      stroke="#52af7c"
       strokeWidth="3"
     />
     <line
@@ -84,18 +60,18 @@ const IntegrationIcon = () => (
       y1="40"
       x2="50"
       y2="40"
-      stroke="#60A5FA"
+      stroke="#52af7c"
       strokeWidth="2.5"
       strokeLinecap="round"
       strokeDasharray="5 4"
     />
-    <circle cx="40" cy="40" r="5" fill="#3B82F6" />
+    <circle cx="40" cy="40" r="5" fill="#008a3e" />
     <line
       x1="18"
       y1="18"
       x2="18"
       y2="28"
-      stroke="#93C5FD"
+      stroke="#addac1"
       strokeWidth="2"
       strokeLinecap="round"
     />
@@ -104,30 +80,9 @@ const IntegrationIcon = () => (
       y1="18"
       x2="62"
       y2="28"
-      stroke="#60A5FA"
+      stroke="#52af7c"
       strokeWidth="2"
       strokeLinecap="round"
-    />
-  </svg>
-);
-
-const TestingIcon = () => (
-  <svg viewBox="0 0 80 80" fill="none" className="size-full">
-    <circle
-      cx="40"
-      cy="40"
-      r="28"
-      fill="#DBEAFE"
-      stroke="#93C5FD"
-      strokeWidth="3"
-    />
-    <circle cx="40" cy="40" r="18" fill="#BFDBFE" />
-    <path
-      d="M28 40l8 8 16-16"
-      stroke="#3B82F6"
-      strokeWidth="4"
-      strokeLinecap="round"
-      strokeLinejoin="round"
     />
   </svg>
 );
@@ -136,76 +91,54 @@ const GoLiveIcon = () => (
   <svg viewBox="0 0 80 80" fill="none" className="size-full">
     <path
       d="M40 8 C52 16 62 28 62 44 C62 56 53 64 40 70 C27 64 18 56 18 44 C18 28 28 16 40 8Z"
-      fill="#DBEAFE"
-      stroke="#93C5FD"
+      fill="#d6ece0"
+      stroke="#addac1"
       strokeWidth="3"
     />
-    <circle cx="40" cy="40" r="9" fill="#3B82F6" />
+    <circle cx="40" cy="40" r="9" fill="#008a3e" />
     <path
       d="M32 60 L26 72 L38 67Z"
-      fill="#BFDBFE"
-      stroke="#93C5FD"
+      fill="#addac1"
+      stroke="#addac1"
       strokeWidth="2"
     />
     <path
       d="M48 60 L54 72 L42 67Z"
-      fill="#BFDBFE"
-      stroke="#93C5FD"
+      fill="#addac1"
+      stroke="#addac1"
       strokeWidth="2"
     />
   </svg>
 );
 
-const ICONS = [
-  DiscoveryIcon,
-  ProposalIcon,
-  IntegrationIcon,
-  TestingIcon,
-  GoLiveIcon,
-];
+const ICONS = [ProposalIcon, IntegrationIcon, GoLiveIcon];
 
 const STEP_EXTRAS = [
   {
-    subtitle: 'The Foundation',
+    subtitle: 'Takes Under a Minute',
     bullets: [
-      { bold: '15-minute free call', rest: ' to understand your system' },
-      { bold: 'Invoice volume & current setup', rest: ' reviewed together' },
-      { bold: 'Zero commitment', rest: ' required to move forward' },
+      { bold: 'Online or WhatsApp', rest: ' — whichever is faster for you' },
+      { bold: 'Pick a convenient time', rest: ' for doorstep collection' },
+      { bold: 'No account required', rest: ' to book a pickup' },
     ],
   },
   {
-    subtitle: 'Your Roadmap',
+    subtitle: 'Free, No Minimums',
     bullets: [
-      { bold: 'Fixed price', rest: ' — no hidden surprises' },
-      { bold: 'Delivered within 24 hours', rest: ' of discovery call' },
-      { bold: 'Clear timeline', rest: ' from day one' },
+      { bold: 'Our team comes to you', rest: ' at the scheduled time' },
+      { bold: 'All personal devices accepted', rest: ' in one visit' },
+      { bold: 'No cost to you', rest: ' — collection is always free' },
     ],
   },
   {
-    subtitle: 'The Setup',
+    subtitle: 'On the Spot',
     bullets: [
+      { bold: 'Instant DuitNow payment', rest: ' at the moment of collection' },
+      { bold: 'No waiting period', rest: ' or manual payout request' },
       {
-        bold: 'TIN registration & MSIC mapping',
-        rest: ' handled for you',
+        bold: 'Your devices are recycled',
+        rest: ' through certified channels',
       },
-      { bold: 'Staging environment', rest: ' access for your team to review' },
-      { bold: 'Zero disruption', rest: ' to your existing workflow' },
-    ],
-  },
-  {
-    subtitle: 'Quality Assurance',
-    bullets: [
-      { bold: 'Full LHDN sandbox validation', rest: ' on every scenario' },
-      { bold: 'Edge cases covered', rest: ' — credit notes, cancellations' },
-      { bold: 'Sign-off required', rest: ' before production deployment' },
-    ],
-  },
-  {
-    subtitle: 'Launch Day',
-    bullets: [
-      { bold: 'Production deployment', rest: ' handled end-to-end' },
-      { bold: 'Full documentation', rest: ' handover included' },
-      { bold: '30-day post-launch support', rest: ' at no extra cost' },
     ],
   },
 ];
@@ -243,7 +176,7 @@ const HowItWorks = () => {
 
           <div className="flex flex-col gap-20 md:gap-32">
             {HOW_IT_WORKS.steps.map((step, i) => {
-              const Icon = ICONS[i] ?? DiscoveryIcon;
+              const Icon = ICONS[i] ?? ProposalIcon;
               const extra = STEP_EXTRAS[i];
 
               return (

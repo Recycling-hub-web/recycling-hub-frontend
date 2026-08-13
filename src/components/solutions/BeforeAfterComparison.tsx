@@ -49,7 +49,7 @@ const BeforeAfterComparison = ({
       </p>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-        {/* Left — without Zylen */}
+        {/* Left — without Recycling Hub */}
         <div className="rounded-2xl border border-red-200 bg-red-50 p-8">
           <span className="mb-4 inline-block rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-600">
             {left.label}
@@ -70,7 +70,7 @@ const BeforeAfterComparison = ({
           </ul>
         </div>
 
-        {/* Right — with Zylen */}
+        {/* Right — with Recycling Hub */}
         <div className="rounded-2xl border border-green-200 bg-green-50 p-8">
           <span className="mb-4 inline-block rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
             {right.label}

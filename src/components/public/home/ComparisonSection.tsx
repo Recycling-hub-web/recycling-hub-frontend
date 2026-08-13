@@ -8,21 +8,21 @@ import { SectionHeading } from '../../ui/SectionHeading';
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 const OLD_WAY = [
-  'Manually re-entering invoice details into MyInvois',
-  'LHDN error codes with no one to explain them',
-  'Spreadsheets or notebooks with no compliance trail',
-  "Uncertainty about whether you're doing it right",
-  'No real-time submission status',
-  'No technical person in-house to set anything up',
+  'Sold to an unlicensed scrap dealer, no questions asked',
+  'Left in a storage room indefinitely, taking up space',
+  'Thrown in the regular bin — technically illegal, rarely enforced',
+  'No idea whether the data on the device was ever wiped',
+  'No paperwork if a regulator or auditor ever asks',
+  'No idea where the device physically ended up',
 ];
 
-const ZYLEN_WAY = [
-  'Auto-submission straight from what you already use',
-  'Real-time MyInvois submission & validation',
-  'LHDN error codes decoded automatically',
-  'Full audit trail and compliance logs',
-  'Zero manual re-entry of data',
-  'A guided setup team that handles it with you',
+const RECYCLING_HUB_WAY = [
+  'Collected by a DOE-registered, SW110-compliant team',
+  'Certified data destruction with a serialized certificate',
+  'Full chain-of-custody from pickup to processing',
+  'ESG-ready diversion report for your sustainability records',
+  'Instant DuitNow payment for individual pickups',
+  'A dedicated team that handles bulk collection for you',
 ];
 
 const XIcon = () => (
@@ -56,10 +56,10 @@ const OldWayCard = () => (
           The Usual Way
         </span>
         <h3 className="font-montserrat text-2xl font-extrabold tracking-tight text-neutral-950 md:text-3xl">
-          Manual. Uncertain. Time-Consuming.
+          Unregulated. Untraceable. Risky.
         </h3>
         <p className="mt-2 text-sm text-slate-400">
-          How most businesses handle e-invoicing today.
+          How most old electronics get disposed of today.
         </p>
 
         <div className="mt-8 h-px w-full bg-slate-100" />
@@ -88,27 +88,27 @@ const OldWayCard = () => (
   </div>
 );
 
-const ZylenWayCard = () => (
+const RecyclingHubWayCard = () => (
   <div
     className="py-16 md:py-24"
-    style={{ background: 'linear-gradient(145deg, #184e90 0%, #1370e2 100%)' }}
+    style={{ background: 'linear-gradient(145deg, #0a3d2e 0%, #008a3e 100%)' }}
   >
     <div className="mx-auto max-w-7xl px-5 md:px-8">
       <div className="mx-auto max-w-2xl">
         <span className="mb-4 inline-block rounded-full bg-white/15 px-3 py-1 text-xs font-semibold text-white">
-          With Zylen
+          With Recycling Hub
         </span>
         <h3 className="font-montserrat text-2xl font-extrabold tracking-tight text-white md:text-3xl">
-          Automated. Compliant. Effortless.
+          Licensed. Documented. Effortless.
         </h3>
         <p className="mt-2 text-sm text-white/50">
-          What you get when Zylen handles it for you.
+          What you get when Recycling Hub handles it for you.
         </p>
 
         <div className="mt-8 h-px w-full bg-white/10" />
 
         <ul className="mt-8 flex flex-col gap-4">
-          {ZYLEN_WAY.map((item, i) => (
+          {RECYCLING_HUB_WAY.map((item, i) => (
             <motion.li
               key={item}
               initial={{ opacity: 0, x: -12 }}
@@ -138,7 +138,7 @@ const ComparisonSection = () => (
       <div className="text-center">
         <SectionHeading
           eyebrow="Transformation"
-          headline="Stop Struggling With Compliance. Start Automating."
+          headline="Stop Guessing Where It Ends Up. Start Getting Proof."
         />
       </div>
     </div>
@@ -150,14 +150,14 @@ const ComparisonSection = () => (
 
     {/* Card 2 — sticky, slides over card 1 */}
     <div className="sticky top-20 z-[15] overflow-hidden rounded-t-3xl">
-      <ZylenWayCard />
+      <RecyclingHubWayCard />
     </div>
 
     {/* CTA — slides over both cards */}
     <div className="relative z-[20] bg-neutral-50 py-16 md:py-20">
       <FadeIn className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
         <Button href="/contact" variant="primary">
-          Book a Free Call
+          Request Bulk Quote
         </Button>
         <Button href={BRAND.whatsapp} variant="secondary">
           WhatsApp Us

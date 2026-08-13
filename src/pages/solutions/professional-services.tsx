@@ -10,8 +10,8 @@ import {
 } from 'react-icons/lu';
 
 import { Meta } from '../../components/layout/Meta';
+import { ServiceProcess } from '../../components/public/services/ServiceProcess';
 import { BookDemo } from '../../components/public/shared/BookDemo';
-import { HowItWorks } from '../../components/public/shared/HowItWorks';
 import { BeforeAfterComparison } from '../../components/solutions/BeforeAfterComparison';
 import { RelatedSolutions } from '../../components/solutions/RelatedSolutions';
 import { TrustBadges } from '../../components/solutions/TrustBadges';
@@ -26,76 +26,66 @@ import type { NextPageWithLayout } from '../../types/next';
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 const STATS = [
+  { value: 'DOE', label: 'Licensed collection and disposal' },
+  { value: '0', label: 'Devices resold with client data intact' },
   {
-    value: 'RM 1M+',
-    label: 'Annual revenue threshold for mandatory e-invoice compliance',
-  },
-  { value: '55', label: 'Mandatory fields required per MyInvois submission' },
-  {
-    value: '1 Jan 2027',
-    label: 'LHDN enforcement deadline — professional firms included',
+    value: '100%',
+    label: 'Certified destruction with serialized certificates',
   },
 ];
 
 const BENEFITS = [
   {
-    Icon: LuSignature,
-    title: 'Project & Retainer Invoicing',
+    Icon: LuClock,
+    title: 'Scheduled Office IT Collection',
     description:
-      'Auto-submit invoices for project milestones, monthly retainers, and consultancy fees directly to LHDN MyInvois.',
+      'Coordinate collection around your hardware refresh cycle — one office or several.',
   },
   {
-    Icon: LuClock,
-    title: 'Time-Based Billing Support',
+    Icon: LuSignature,
+    title: 'Certified Data Destruction',
     description:
-      'Map hourly billing, day rates, and disbursements into the 55 required MyInvois fields — handled automatically by our integration.',
+      'Every device that touched client files is destroyed to a certified standard, with a certificate per asset.',
   },
   {
     Icon: LuBadgeCheck,
-    title: 'Multi-Client Compliance',
+    title: 'PDPA-Aligned Handling',
     description:
-      'Issue compliant e-invoices across hundreds of clients and matters without touching each one manually. One integration covers them all.',
+      "Any data encountered during collection or destruction is handled only for that purpose, in line with Malaysia's PDPA.",
   },
   {
     Icon: LuPlugZap,
-    title: 'Works With However You Bill Today',
+    title: 'Works With However You Track Assets',
     description:
-      "Spreadsheets, a custom practice management system, or no formal system at all — we build the missing piece so your workflow doesn't change.",
+      'Spreadsheet, asset register, or no formal system — we build collection around what you already do.',
   },
-];
-
-const PRICING_FEATURES = [
-  '7–14 day delivery',
-  'LHDN sandbox testing included',
-  'Source code & documentation',
-  '30-day post-launch support',
 ];
 
 const FAQ_ITEMS = [
   {
-    question: 'Does the mandate apply to consultancies and professional firms?',
+    question: 'Does this apply to firms of any size?',
     answer:
-      'Yes. Law firms, accounting firms, architecture practices, engineering consultancies, management consultants, and any professional services firm with annual revenue above RM 1M must issue e-invoices through LHDN MyInvois.',
+      'Yes — from a small consultancy to a multi-branch firm, the same licensed process applies. Volume determines timeline and quote, not firm size.',
   },
   {
-    question: 'We invoice clients in multiple currencies. Can this be handled?',
+    question: 'How do you handle devices that held client files?',
     answer:
-      'Yes. MyInvois supports foreign currency invoices. Our integration maps your currency fields correctly and includes the required exchange rate fields as per LHDN specification.',
+      'Any data-bearing device goes through certified destruction before recycling, with a serialized certificate issued per asset — proof you can show a client or regulator if asked.',
   },
   {
-    question: 'What about disbursements and reimbursable expenses?',
+    question: 'Is this aligned with our confidentiality obligations?',
     answer:
-      'Disbursements billed to clients must also be submitted as e-invoices. We map all line items — including expenses, taxes, and discounts — to the correct MyInvois fields.',
+      "Our data handling aligns with Malaysia's PDPA — any data encountered during collection or destruction is handled only for that purpose, not retained or resold.",
   },
   {
-    question: "We're already using Xero or QuickBooks — is this still for us?",
+    question: 'Can you collect from multiple offices or branches?',
     answer:
-      "Possibly not, and we'll tell you honestly. If your platform already has certified MyInvois support, you may already be covered — worth checking with your provider first. Zylen is built for firms on spreadsheets, manual billing, or practice management systems without that support built in.",
+      'Yes — collection can be scheduled at a single office or coordinated across multiple branches.',
   },
   {
-    question: 'How long does the setup take?',
+    question: 'How long does collection take to arrange?',
     answer:
-      'Standard setups go live in 7–10 days. Custom practice management systems typically take 10–14 days. We start immediately after proposal approval.',
+      "Request a quote and we'll confirm pricing and a collection window within 24 hours.",
   },
 ];
 
@@ -117,20 +107,6 @@ const ChevronIcon = ({ open }: { open: boolean }) => (
   </motion.svg>
 );
 
-const CheckIcon = () => (
-  <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-neutral-100">
-    <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-      <path
-        d="M1.5 5l2.5 2.5 4.5-4.5"
-        stroke="#0f0f0f"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  </span>
-);
-
 const ProfessionalServicesPage: NextPageWithLayout = () => {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const toggleFaq = (i: number) => setOpenFaq(openFaq === i ? null : i);
@@ -138,16 +114,16 @@ const ProfessionalServicesPage: NextPageWithLayout = () => {
   return (
     <>
       <Meta
-        title="E-Invoice for Professional Services — Zylen"
-        description="Streamline MyInvois invoicing for consultancies, law firms, and professional service firms. LHDN-compliant integration in 7–14 days."
+        title="E-Waste Disposal for Professional Services — Recycling Hub"
+        description="Certified data destruction and disposal for office IT turnover — law firms, consultancies, and accounting practices. DOE/SW110-compliant, PDPA-aligned."
       />
 
       {/* ── Hero ─────────────────────────────────────────────────────────────── */}
       <ReusableHero
         eyebrow="Solutions · Professional Services"
-        headline="E-Invoice Compliance for"
+        headline="Certified E-Waste Disposal for"
         headlineAccent="Consultancies & Firms."
-        description="Law firms, accounting practices, engineering consultancies, and management firms above RM 1M must issue e-invoices through LHDN MyInvois. Zylen automates your client invoicing without changing how you work."
+        description="Old laptops, servers, and office IT often carry client files long after they're retired. Recycling Hub collects in bulk, certifies data destruction, and documents every batch — without your client data ever leaving your control unverified."
       />
 
       {/* ── Trust badges ─────────────────────────────────────────────────────── */}
@@ -158,7 +134,7 @@ const ProfessionalServicesPage: NextPageWithLayout = () => {
         <div className="mx-auto max-w-7xl px-5 md:px-8">
           <FadeIn>
             <p className="mb-10 text-center text-xs font-semibold uppercase tracking-[0.15em] text-slate-400">
-              The LHDN mandate applies to all professional service firms
+              Why firms choose licensed, certified disposal
             </p>
           </FadeIn>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -182,25 +158,25 @@ const ProfessionalServicesPage: NextPageWithLayout = () => {
       <BeforeAfterComparison
         eyebrow="The Reality"
         left={{
-          label: 'Without Zylen',
-          headline: 'Manual. Exposed. Risky.',
+          label: 'Without Recycling Hub',
+          headline: 'Stored. Unwiped. Exposed.',
           bullets: [
-            'Export invoices manually from spreadsheets or documents',
-            'Re-enter client billing data into MyInvois portal',
-            'Sensitive client billing information exposed during upload',
-            'Multi-currency and disbursements handled separately',
-            'Fee earners distracted by compliance admin',
+            'Retired laptops and servers stored in a cupboard indefinitely',
+            'No certainty that client files were ever properly wiped',
+            'Old equipment sold or scrapped through an unlicensed dealer',
+            'No documentation if a client or regulator asks about disposal',
+            'No ESG numbers for firm-wide sustainability reporting',
           ],
         }}
         right={{
-          label: 'With Zylen',
-          headline: 'Automated. Secure. Compliant.',
+          label: 'With Recycling Hub',
+          headline: 'Collected. Destroyed. Certified.',
           bullets: [
-            'Invoices auto-submitted directly from whatever you use',
-            'Zero re-entry — client data never leaves your system',
-            'Multi-currency and disbursements mapped correctly',
-            'Full audit trail across all client matters',
-            'Fee earners stay focused on client work',
+            'Scheduled bulk collection for office IT turnover',
+            'Certified destruction with a serialized certificate per device',
+            'Licensed, SW110-compliant disposal — not an informal reseller',
+            'Documentation ready if a client or regulator ever asks',
+            "ESG diversion report for your firm's sustainability reporting",
           ],
         }}
       />
@@ -208,8 +184,8 @@ const ProfessionalServicesPage: NextPageWithLayout = () => {
       {/* ── Urgency callout ──────────────────────────────────────────────────── */}
       <UrgencyCallout
         Icon={LuShieldAlert}
-        headline="Your client billing data stays in your system — never on ours."
-        body="Zylen builds a direct bridge between however you bill and LHDN MyInvois. We never store, log, or retain your client invoicing data. All transmissions are encrypted end-to-end. Your client confidentiality is protected throughout the entire compliance process."
+        headline="Client files don't disappear when a laptop gets retired."
+        body="Case files, client financials, and confidential correspondence often sit on devices long after they're taken out of service. Reselling or scrapping that hardware through an unlicensed channel is a confidentiality risk your firm carries, not the vendor. Recycling Hub destroys that data under a certified process before anything is recycled."
       />
 
       {/* ── Benefits ─────────────────────────────────────────────────────────── */}
@@ -217,9 +193,9 @@ const ProfessionalServicesPage: NextPageWithLayout = () => {
         <div className="mx-auto max-w-7xl px-5 md:px-8">
           <div className="mb-14 text-center">
             <SectionHeading
-              eyebrow="Built for Professional Firms"
-              headline="Client Invoicing, Fully Compliant"
-              subtext="Zylen handles the MyInvois technical layer so your fee earners stay focused on client work — not government portals."
+              eyebrow="Built for Professional Services"
+              headline="Bulk Collection, Fully Documented"
+              subtext="From a single office refresh to a multi-branch rollout — Recycling Hub handles every collection so your team doesn't have to."
               light
             />
           </div>
@@ -250,49 +226,27 @@ const ProfessionalServicesPage: NextPageWithLayout = () => {
       </section>
 
       {/* ── How it works ─────────────────────────────────────────────────────── */}
-      <HowItWorks />
+      <ServiceProcess />
 
       {/* ── Pricing ──────────────────────────────────────────────────────────── */}
       <section className="bg-white py-20 md:py-28">
         <div className="mx-auto max-w-7xl px-5 md:px-8">
-          <div className="mb-12 text-center">
+          <div className="text-center">
             <SectionHeading
-              eyebrow="Transparent Pricing"
-              headline="One Fixed Price. No Surprises."
-              subtext="Guided setup starts from RM 4,000, confirmed on a free call. Custom practice management systems are scoped individually."
+              eyebrow="Pricing"
+              headline="Quoted to Your Volume — No Guesswork"
+              subtext="Bulk collection pricing depends on device types and volume. Tell us what you're clearing out and we'll confirm a quote before anything is scheduled."
             />
           </div>
 
-          <FadeIn delay={0.15}>
-            <div className="mx-auto max-w-sm rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-              <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-slate-400">
-                Basic Connect
-              </p>
-              <p className="font-montserrat text-4xl font-extrabold tracking-tight text-neutral-950">
-                From RM 4,000
-              </p>
-              <p className="mt-1 text-sm text-slate-500">
-                one-time · source code yours
-              </p>
-
-              <ul className="mt-8 flex flex-col gap-3">
-                {PRICING_FEATURES.map((f) => (
-                  <li
-                    key={f}
-                    className="flex items-center gap-3 text-sm text-slate-700"
-                  >
-                    <CheckIcon />
-                    {f}
-                  </li>
-                ))}
-              </ul>
-
-              <div className="mt-8">
-                <Button href="/contact" className="w-full justify-center">
-                  Get a Free Estimate
-                </Button>
-              </div>
-            </div>
+          <FadeIn
+            delay={0.15}
+            className="mt-10 flex flex-col items-center gap-3"
+          >
+            <Button href="/contact">Request a Bulk Quote</Button>
+            <p className="text-sm text-slate-500">
+              No obligation · Response within 24 hours
+            </p>
           </FadeIn>
         </div>
       </section>
@@ -301,7 +255,7 @@ const ProfessionalServicesPage: NextPageWithLayout = () => {
       <section className="bg-white py-20 md:py-28">
         <div className="mx-auto max-w-3xl px-5 md:px-8">
           <h2 className="mb-12 text-center font-montserrat text-3xl font-bold leading-tight tracking-[-0.02em] text-neutral-950 md:text-4xl">
-            Questions from Professional Firms
+            Questions from Consultancies & Firms
           </h2>
 
           <div className="flex flex-col gap-3">

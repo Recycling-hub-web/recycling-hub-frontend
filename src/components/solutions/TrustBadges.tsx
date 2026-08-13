@@ -1,8 +1,8 @@
 const BADGES = [
-  '✓ LHDN MyInvois Compliant',
-  '✓ Phase 4 Ready',
-  '✓ Fixed Price — No Surprises',
-  '✓ Source Code Yours',
+  '✓ DOE-Registered Collector',
+  '✓ SW110 Compliant',
+  '✓ Certified Data Destruction',
+  '✓ ESG-Ready Reporting',
 ];
 
 const TrustBadges = () => (

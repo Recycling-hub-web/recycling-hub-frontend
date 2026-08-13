@@ -23,8 +23,8 @@ const Section = ({
 const PrivacyPage: NextPageWithLayout = () => (
   <>
     <Meta
-      title="Privacy Policy — Zylen"
-      description="How Zylen collects, uses, and protects your personal data in accordance with Malaysia's Personal Data Protection Act 2010."
+      title="Privacy Policy — Recycling Hub"
+      description="How Recycling Hub collects, uses, and protects your personal data in accordance with Malaysia's Personal Data Protection Act 2010."
     />
 
     <ReusableHero
@@ -41,22 +41,22 @@ const PrivacyPage: NextPageWithLayout = () => (
 
         <Section title="1. Who We Are">
           <p>
-            Zylen (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;) is a
+            Recycling Hub (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;) is a
             software company based in Malaysia that builds e-invoice integration
             services connecting businesses to LHDN MyInvois. Our registered
             contact email is{' '}
             <a
-              href="mailto:contact@zylen.tech"
+              href="mailto:contact@recyclinghub.eco"
               className="font-medium text-neutral-950 underline underline-offset-2"
             >
-              contact@zylen.tech
+              contact@recyclinghub.eco
             </a>
             .
           </p>
           <p>
             This Privacy Policy explains how we handle personal data collected
-            through our website (zylen.tech), our integration services, and any
-            communications with us. We are committed to complying with
+            through our website (recyclinghub.eco), our integration services,
+            and any communications with us. We are committed to complying with
             Malaysia&apos;s Personal Data Protection Act 2010 (PDPA).
           </p>
         </Section>
@@ -184,10 +184,10 @@ const PrivacyPage: NextPageWithLayout = () => (
           <p>
             To exercise any of these rights, contact us at{' '}
             <a
-              href="mailto:contact@zylen.tech"
+              href="mailto:contact@recyclinghub.eco"
               className="font-medium text-neutral-950 underline underline-offset-2"
             >
-              contact@zylen.tech
+              contact@recyclinghub.eco
             </a>
             . We will respond within 21 days.
           </p>
@@ -228,15 +228,15 @@ const PrivacyPage: NextPageWithLayout = () => (
           <p>
             Email:{' '}
             <a
-              href="mailto:contact@zylen.tech"
+              href="mailto:contact@recyclinghub.eco"
               className="font-medium text-neutral-950 underline underline-offset-2"
             >
-              contact@zylen.tech
+              contact@recyclinghub.eco
             </a>
             <br />
             WhatsApp: +60 11-6080 3604
             <br />
-            Website: zylen.tech
+            Website: recyclinghub.eco
           </p>
         </Section>
       </div>

@@ -125,7 +125,8 @@ module.exports = {
         '99p': '99%',
       },
       backgroundImage: {
-        'hero-gradient': 'linear-gradient(180deg, #0d1f3c 0%, #000000 100%)',
+        'hero-gradient':
+          'linear-gradient(180deg, #0F6E56 0%, #0A2E24 45%, #1A1A18 100%)',
       },
       boxShadow: {
         '3xl': '14px 17px 40px 4px',
@@ -182,18 +183,19 @@ module.exports = {
       white: '#ffffff',
 
       // ── Brand ───────────────────────────────────────────────────────────────
+      // 600 = Primary (Standard Recycling Green), 900 = Secondary (Industrial Deep Green)
       brand: {
-        50: '#eef9ff',
-        100: '#d9f0ff',
-        200: '#bce6ff',
-        300: '#8dd8ff',
-        400: '#58c2ff',
-        500: '#31a6ff',
-        600: '#1384f5',
-        700: '#1370e2',
-        800: '#165ab7',
-        900: '#184e90',
-        950: '#143057',
+        50: '#f0f8f3',
+        100: '#d6ece0',
+        200: '#addac1',
+        300: '#80c59f',
+        400: '#52af7c',
+        500: '#269c5b',
+        600: '#008a3e',
+        700: '#007535',
+        800: '#00612b',
+        900: '#0a3d2e',
+        950: '#072b20',
       },
 
       // ── Slate (UI neutrals — text, borders, backgrounds) ───────────────────

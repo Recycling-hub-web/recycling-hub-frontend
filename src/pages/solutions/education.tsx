@@ -10,8 +10,8 @@ import {
 } from 'react-icons/lu';
 
 import { Meta } from '../../components/layout/Meta';
+import { ServiceProcess } from '../../components/public/services/ServiceProcess';
 import { BookDemo } from '../../components/public/shared/BookDemo';
-import { HowItWorks } from '../../components/public/shared/HowItWorks';
 import { BeforeAfterComparison } from '../../components/solutions/BeforeAfterComparison';
 import { RelatedSolutions } from '../../components/solutions/RelatedSolutions';
 import { TrustBadges } from '../../components/solutions/TrustBadges';
@@ -26,78 +26,63 @@ import type { NextPageWithLayout } from '../../types/next';
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 const STATS = [
-  {
-    value: 'RM 1M+',
-    label: 'Annual revenue threshold for mandatory e-invoice compliance',
-  },
-  { value: '55', label: 'Mandatory fields required per MyInvois submission' },
-  {
-    value: '1 Jan 2027',
-    label: 'LHDN enforcement deadline — private education included',
-  },
+  { value: 'DOE', label: 'Licensed collection and disposal' },
+  { value: '0', label: 'Devices sent to landfill' },
+  { value: '100%', label: 'Certified data wipe on every device' },
 ];
 
 const BENEFITS = [
   {
-    Icon: LuBookOpen,
-    title: 'Tuition Fee Invoicing',
+    Icon: LuCalendarCheck,
+    title: 'Scheduled Lab & Campus Collection',
     description:
-      'Auto-submit tuition fee invoices to MyInvois every semester or intake cycle — no manual processing for each student.',
+      'Coordinate collection around your refresh cycle — one lab, one campus, or multiple sites.',
   },
   {
-    Icon: LuCalendarCheck,
-    title: 'Batch & Recurring Billing',
+    Icon: LuBookOpen,
+    title: 'Certified Data Destruction',
     description:
-      'Handle monthly fee schedules, instalment plans, and yearly billing in bulk. One integration covers every student record.',
+      'Every device that touched student or staff data is wiped or destroyed to a certified standard.',
   },
   {
     Icon: LuLayoutDashboard,
-    title: 'Multi-Programme Support',
+    title: 'Asset Write-Off Documentation',
     description:
-      'Issue compliant e-invoices across different programmes, campuses, and fee structures — all mapped correctly to MyInvois.',
+      'Every collected batch comes with paperwork your finance team can use for asset disposal records.',
   },
   {
     Icon: LuPlugZap,
-    title: 'Works With Whatever You Use Today',
+    title: 'Works With However You Track Assets',
     description:
-      'Spreadsheets, a student management system, or no formal system at all — we build the missing piece without disrupting your workflow.',
+      'Spreadsheet, asset tag system, or no formal tracking — we build collection around what you already do.',
   },
-];
-
-const PRICING_FEATURES = [
-  '7–14 day delivery',
-  'LHDN sandbox testing included',
-  'Source code & documentation',
-  '30-day post-launch support',
 ];
 
 const FAQ_ITEMS = [
   {
-    question:
-      'Does the LHDN e-invoice mandate apply to private schools and colleges?',
+    question: 'Does this apply to schools and colleges of any size?',
     answer:
-      'Yes. The mandate applies to all private education providers with annual revenue above RM 1M — including private schools, colleges, universities, tuition centres, and language schools.',
+      'Yes — from a single classroom refresh to a full campus upgrade, the same licensed process applies. Volume determines timeline and quote, not institution size.',
   },
   {
-    question: 'What types of education fees require e-invoices?',
+    question: 'We have an entire computer lab to retire. Can you handle that?',
     answer:
-      'Tuition fees, registration fees, examination fees, accommodation charges, and any other fee collected from students must be submitted as e-invoices through MyInvois. This applies whether billed monthly, per semester, or annually.',
+      'Yes. Bulk collection is built for exactly this — a full lab or campus-wide batch collected, documented, and processed in a scheduled run.',
   },
   {
-    question:
-      'We bill thousands of students. Can the integration handle volume?',
+    question: 'What happens to student or staff data on retired devices?',
     answer:
-      'Yes. Our integration is built for high-volume environments. We handle batch submissions, queue management, and error retry logic so every invoice reaches LHDN — even at scale.',
+      'Any data-bearing device — admin computers, lab machines, library terminals — goes through certified destruction before recycling, with a certificate issued per asset.',
   },
   {
-    question: 'Can you connect to our student management or ERP system?',
+    question: 'Can you collect from multiple campuses or buildings?',
     answer:
-      'Yes. If your system has an API, database export, or structured data format, we can build the integration. Our Custom Connect package is designed for exactly these scenarios.',
+      'Yes — collection can be scheduled at a single site or coordinated across multiple buildings or campuses.',
   },
   {
-    question: 'How long does the setup take?',
+    question: 'How long does collection take to arrange?',
     answer:
-      'Standard accounting software integrations go live in 7–10 days. Custom student management systems typically take 10–14 days. We start immediately after proposal approval.',
+      "Request a quote and we'll confirm pricing and a collection window within 24 hours.",
   },
 ];
 
@@ -119,20 +104,6 @@ const ChevronIcon = ({ open }: { open: boolean }) => (
   </motion.svg>
 );
 
-const CheckIcon = () => (
-  <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-neutral-100">
-    <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-      <path
-        d="M1.5 5l2.5 2.5 4.5-4.5"
-        stroke="#0f0f0f"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  </span>
-);
-
 const EducationPage: NextPageWithLayout = () => {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const toggleFaq = (i: number) => setOpenFaq(openFaq === i ? null : i);
@@ -140,16 +111,16 @@ const EducationPage: NextPageWithLayout = () => {
   return (
     <>
       <Meta
-        title="E-Invoice for Education & Colleges — Zylen"
-        description="E-invoice compliance for tuition fees and student billing. LHDN MyInvois integration for private schools, colleges, and universities in 7–14 days."
+        title="E-Waste Disposal for Education & Colleges — Recycling Hub"
+        description="Decommission computer labs and campus IT with certified data destruction and ESG reporting. DOE/SW110-compliant collection for schools and colleges."
       />
 
       {/* ── Hero ─────────────────────────────────────────────────────────────── */}
       <ReusableHero
         eyebrow="Solutions · Education & Colleges"
-        headline="E-Invoice Compliance for"
+        headline="Certified E-Waste Disposal for"
         headlineAccent="Schools & Colleges."
-        description="Private schools, colleges, and tuition centres above RM 1M annual revenue must issue e-invoices through LHDN MyInvois. Zylen automates your student billing — tuition fees, registration, and more."
+        description="Computer labs get refreshed, campus IT gets replaced — and the old equipment has to go somewhere responsible. Recycling Hub collects in bulk, wipes student and staff data, and documents every batch for your records."
       />
 
       {/* ── Trust badges ─────────────────────────────────────────────────────── */}
@@ -160,7 +131,7 @@ const EducationPage: NextPageWithLayout = () => {
         <div className="mx-auto max-w-7xl px-5 md:px-8">
           <FadeIn>
             <p className="mb-10 text-center text-xs font-semibold uppercase tracking-[0.15em] text-slate-400">
-              The LHDN mandate applies to private education providers
+              Why schools and colleges choose licensed disposal
             </p>
           </FadeIn>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -184,25 +155,25 @@ const EducationPage: NextPageWithLayout = () => {
       <BeforeAfterComparison
         eyebrow="The Reality"
         left={{
-          label: 'Without Zylen',
-          headline: 'Manual. Slow. Error-prone.',
+          label: 'Without Recycling Hub',
+          headline: 'Stored. Outdated. Unaccounted For.',
           bullets: [
-            'Upload student fee invoices one by one to MyInvois portal',
-            'Manually map tuition fees to 55 required fields',
-            'PTPTN and scholarship invoices handled separately',
-            'Rejected invoices require manual correction and resubmission',
-            'Admin team overwhelmed every intake cycle',
+            'Retired lab computers stacked in a storeroom for years',
+            'No record of whether student or staff data was wiped',
+            'Old equipment handed to whoever will take it, no questions asked',
+            'No documentation for asset write-offs',
+            'No sustainability numbers for institutional reporting',
           ],
         }}
         right={{
-          label: 'With Zylen',
-          headline: 'Automated. Accurate. Scalable.',
+          label: 'With Recycling Hub',
+          headline: 'Collected. Wiped. Documented.',
           bullets: [
-            'All student fee invoices auto-submitted from your existing system',
-            'PTPTN, scholarship, and cash fees handled correctly',
-            'Batch submission for entire intake in minutes',
-            'Errors caught before submission — zero rejected invoices',
-            'Admin team processes intake in hours, not days',
+            'Scheduled bulk collection for lab refreshes and campus-wide upgrades',
+            'Certified data destruction on every device that held student or staff data',
+            'Licensed, SW110-compliant disposal — not an informal handoff',
+            'Asset write-off documentation for your finance team',
+            'ESG diversion report for institutional sustainability reporting',
           ],
         }}
       />
@@ -210,8 +181,8 @@ const EducationPage: NextPageWithLayout = () => {
       {/* ── Urgency callout ──────────────────────────────────────────────────── */}
       <UrgencyCallout
         Icon={LuTriangleAlert}
-        headline="Private schools and colleges above RM 1M must comply by 1 January 2027."
-        body="The LHDN e-invoice mandate applies to all private education providers — including tuition centres, language schools, private colleges, and universities. Tuition fees, registration fees, examination fees, and any other student billing must be submitted through MyInvois."
+        headline="Retired lab and admin computers can still hold student records."
+        body="Library terminals, admin computers, and lab machines often carry student registration data, staff files, or exam records long after they're taken out of service. Handing them off without certified destruction is a data protection risk for your institution. Recycling Hub wipes or destroys that data before recycling."
       />
 
       {/* ── Benefits ─────────────────────────────────────────────────────────── */}
@@ -219,9 +190,9 @@ const EducationPage: NextPageWithLayout = () => {
         <div className="mx-auto max-w-7xl px-5 md:px-8">
           <div className="mb-14 text-center">
             <SectionHeading
-              eyebrow="Built for Education"
-              headline="Student Billing, Fully Automated"
-              subtext="From single-campus tuition centres to multi-programme colleges — Zylen handles your MyInvois compliance end to end."
+              eyebrow="Built for Education & Colleges"
+              headline="Bulk Collection, Fully Documented"
+              subtext="From a single lab refresh to a campus-wide upgrade — Recycling Hub handles every collection so your IT and facilities teams don't have to."
               light
             />
           </div>
@@ -252,49 +223,27 @@ const EducationPage: NextPageWithLayout = () => {
       </section>
 
       {/* ── How it works ─────────────────────────────────────────────────────── */}
-      <HowItWorks />
+      <ServiceProcess />
 
       {/* ── Pricing ──────────────────────────────────────────────────────────── */}
       <section className="bg-white py-20 md:py-28">
         <div className="mx-auto max-w-7xl px-5 md:px-8">
-          <div className="mb-12 text-center">
+          <div className="text-center">
             <SectionHeading
-              eyebrow="Transparent Pricing"
-              headline="One Fixed Price. No Surprises."
-              subtext="Guided setup starts from RM 4,000, confirmed on a free call. Custom student management systems are scoped individually."
+              eyebrow="Pricing"
+              headline="Quoted to Your Volume — No Guesswork"
+              subtext="Bulk collection pricing depends on device types and volume. Tell us what you're clearing out and we'll confirm a quote before anything is scheduled."
             />
           </div>
 
-          <FadeIn delay={0.15}>
-            <div className="mx-auto max-w-sm rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-              <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-slate-400">
-                Basic Connect
-              </p>
-              <p className="font-montserrat text-4xl font-extrabold tracking-tight text-neutral-950">
-                From RM 4,000
-              </p>
-              <p className="mt-1 text-sm text-slate-500">
-                one-time · source code yours
-              </p>
-
-              <ul className="mt-8 flex flex-col gap-3">
-                {PRICING_FEATURES.map((f) => (
-                  <li
-                    key={f}
-                    className="flex items-center gap-3 text-sm text-slate-700"
-                  >
-                    <CheckIcon />
-                    {f}
-                  </li>
-                ))}
-              </ul>
-
-              <div className="mt-8">
-                <Button href="/contact" className="w-full justify-center">
-                  Get a Free Estimate
-                </Button>
-              </div>
-            </div>
+          <FadeIn
+            delay={0.15}
+            className="mt-10 flex flex-col items-center gap-3"
+          >
+            <Button href="/contact">Request a Bulk Quote</Button>
+            <p className="text-sm text-slate-500">
+              No obligation · Response within 24 hours
+            </p>
           </FadeIn>
         </div>
       </section>
@@ -303,7 +252,7 @@ const EducationPage: NextPageWithLayout = () => {
       <section className="bg-white py-20 md:py-28">
         <div className="mx-auto max-w-3xl px-5 md:px-8">
           <h2 className="mb-12 text-center font-montserrat text-3xl font-bold leading-tight tracking-[-0.02em] text-neutral-950 md:text-4xl">
-            Questions from Education Providers
+            Questions from Schools & Colleges
           </h2>
 
           <div className="flex flex-col gap-3">

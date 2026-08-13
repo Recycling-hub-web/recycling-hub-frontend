@@ -62,8 +62,8 @@ const ServiceOverview = () => (
       <div className="mb-14 text-center">
         <SectionHeading
           eyebrow="Core Service"
-          headline="One Setup. Full Compliance."
-          subtext="Zylen sits between however you keep your books and LHDN's MyInvois API — handling formatting, validation, submission, and error recovery automatically."
+          headline="One Pickup. Full Compliance."
+          subtext="Recycling Hub sits between wherever your old electronics are now and a certified, documented outcome — handling collection, destruction, and reporting end to end."
         />
       </div>
 
@@ -71,8 +71,8 @@ const ServiceOverview = () => (
       <div className="mx-auto max-w-3xl">
         <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-stretch sm:justify-between">
           <FlowNode
-            label="Your Records"
-            sublabel="Spreadsheet · Wave · Manual · Custom ERP"
+            label="Your Devices"
+            sublabel="Individual · Office · Factory Floor"
             delay={0}
           />
 
@@ -87,8 +87,8 @@ const ServiceOverview = () => (
           </motion.div>
 
           <FlowNode
-            label="Zylen"
-            sublabel="Format · Validate · Submit · Monitor"
+            label="Recycling Hub"
+            sublabel="Collect · Destroy · Document · Report"
             accent
             delay={0.2}
           />
@@ -104,8 +104,8 @@ const ServiceOverview = () => (
           </motion.div>
 
           <FlowNode
-            label="LHDN MyInvois"
-            sublabel="Compliant · Approved · Tracked"
+            label="Certified Outcome"
+            sublabel="Compliant · Documented · Verified"
             delay={0.4}
           />
         </div>
@@ -118,9 +118,8 @@ const ServiceOverview = () => (
           transition={{ duration: 0.5, delay: 0.5, ease }}
           className="mt-8 rounded-xl border border-slate-100 bg-neutral-50 px-6 py-4 text-center text-sm leading-relaxed text-slate-600"
         >
-          No manual re-entry. No LHDN portal logins. No compliance risk. Your
-          invoices flow automatically — from your records to MyInvois in
-          seconds.
+          No unlicensed middlemen. No missing paperwork. No landfill risk. Your
+          devices go from pickup to certified disposal — fully tracked.
         </motion.div>
       </div>
     </div>

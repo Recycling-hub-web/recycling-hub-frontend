@@ -23,9 +23,9 @@ const FEATURES = [
         <line x1="16" y1="17" x2="8" y2="17" />
       </svg>
     ),
-    title: 'Automated Formatting',
+    title: 'Full Chain-of-Custody Documentation',
     description:
-      'Your invoice data is automatically mapped to the LHDN schema — all 55 required fields, correctly structured, every time.',
+      'Every device is logged at pickup and tracked through processing — you get a complete record of what happened to it, not just a receipt.',
   },
   {
     icon: (
@@ -43,9 +43,9 @@ const FEATURES = [
         <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
       </svg>
     ),
-    title: 'Real-Time Validation',
+    title: 'Certified Data Destruction',
     description:
-      'Invoices are checked against LHDN rules before submission. Errors are caught and flagged before they become rejections.',
+      'Every data-bearing device is wiped or shredded to a certified standard, with a serialized certificate issued per asset.',
   },
   {
     icon: (
@@ -63,9 +63,9 @@ const FEATURES = [
         <polyline points="12 6 12 12 16 14" />
       </svg>
     ),
-    title: 'Instant Status Tracking',
+    title: 'Instant Payment for Individuals',
     description:
-      'Every submission is tracked live. See approved, pending, and rejected invoices in one dashboard — with no manual checking.',
+      'Personal pickups are paid the moment your devices are collected — via DuitNow, on the spot, with no waiting period.',
   },
   {
     icon: (
@@ -84,9 +84,9 @@ const FEATURES = [
         <line x1="12" y1="17" x2="12.01" y2="17" />
       </svg>
     ),
-    title: 'Rejection Prevention',
+    title: 'Licensed Handling of Hazardous Components',
     description:
-      'When LHDN rejects an invoice, Zylen decodes the error code, identifies the root cause, and flags it for re-submission.',
+      'Batteries, screens, and other hazardous parts are separated and processed to DOE standard — nothing improperly discarded.',
   },
 ];
 
@@ -95,9 +95,9 @@ const ProductFeatures = () => (
     <div className="mx-auto max-w-7xl px-5 md:px-8">
       <div className="mb-14 text-center">
         <SectionHeading
-          eyebrow="What Zylen Does"
-          headline="Four Things That Keep You Compliant"
-          subtext="Every Zylen integration includes these capabilities — no add-ons, no extra fees."
+          eyebrow="What Recycling Hub Does"
+          headline="Four Things Every Collection Includes"
+          subtext="Every Recycling Hub pickup includes these — no add-ons, no extra fees."
         />
       </div>
 

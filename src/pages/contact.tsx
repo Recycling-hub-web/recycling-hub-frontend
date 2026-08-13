@@ -13,12 +13,13 @@ import type { NextPageWithLayout } from '../types/next';
 const ContactPage: NextPageWithLayout = () => (
   <>
     <Meta
-      title="Contact — Zylen E-Invoice Integration"
-      description="Have a question about e-invoice compliance? We're here to help. Email, WhatsApp, or book a free call."
+      title="Contact — Recycling Hub E-Waste Collection"
+      description="Have a question about e-waste collection or bulk disposal? We're here to help. Email, WhatsApp, or book a free call."
     />
     <ReusableHero
       eyebrow={PAGE_HEROES.contact.eyebrow}
       headline={PAGE_HEROES.contact.headline}
+      headlineAccent={PAGE_HEROES.contact.headlineAccent}
       description={PAGE_HEROES.contact.description}
     />
     <ContactOptions />
