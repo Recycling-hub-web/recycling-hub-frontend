@@ -1,9 +1,19 @@
+import { motion } from 'framer-motion';
+import Image from 'next/image';
+import Link from 'next/link';
 import { type FormEvent, useState } from 'react';
 import { FaFacebook, FaInstagram, FaLinkedin, FaTiktok } from 'react-icons/fa6';
-import { LuLeaf, LuShieldCheck, LuTruck } from 'react-icons/lu';
+import {
+  LuArrowUpRight,
+  LuShieldCheck,
+  LuSparkles,
+  LuTruck,
+} from 'react-icons/lu';
 
-import { BRAND } from '../../constants/content';
+import { ASSETS, BRAND } from '../../constants/content';
 import { Meta } from '../layout/Meta';
+
+const ease = [0.22, 1, 0.36, 1] as const;
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -15,47 +25,48 @@ const SOCIALS = [
   { label: 'TikTok', href: '#', Icon: FaTiktok },
 ];
 
-type CubeProps = {
-  cx: number;
-  cy: number;
-  s: number;
+// Same stock photography and organic-blob styling as the homepage
+// HeroBlobSection, so the coming-soon page reads as the same brand.
+const PHOTOS = {
+  motherboardMacro: '/assets/img/E-Wast-Recycler/E-Wast-Recycler-2.png',
+  tvShelf: '/assets/img/E-Wast-Recycler/E-Wast-Recycler-7.png',
+  radioShop: '/assets/img/E-Wast-Recycler/E-Wast-Recycler-8.png',
 };
 
-// Isometric cube: three rhombus faces (top / left / right) shaded to fake a
-// light source from the top-left, drawn in our own brand greens.
-const IsoCube = ({ cx, cy, s }: CubeProps) => {
-  const dx = s * 0.87;
-  const dy = s * 0.5;
-  return (
-    <g>
-      <polygon
-        points={`${cx},${cy - s} ${cx + dx},${cy - dy} ${cx},${cy} ${cx - dx},${cy - dy}`}
-        fill="#80c59f"
-      />
-      <polygon
-        points={`${cx - dx},${cy - dy} ${cx},${cy} ${cx},${cy + s} ${cx - dx},${cy + dy}`}
-        fill="#269c5b"
-      />
-      <polygon
-        points={`${cx + dx},${cy - dy} ${cx},${cy} ${cx},${cy + s} ${cx + dx},${cy + dy}`}
-        fill="#007535"
-      />
-    </g>
-  );
+const BLOB_SHAPES = [
+  '60% 40% 30% 70% / 60% 30% 70% 40%',
+  '30% 70% 70% 30% / 30% 30% 70% 70%',
+  '70% 30% 50% 50% / 50% 50% 30% 70%',
+];
+
+type BlobPhotoProps = {
+  src: string;
+  shapeIndex: number;
+  className?: string;
 };
 
-const CubeIllustration = () => (
-  <svg viewBox="0 0 400 400" className="mx-auto w-full max-w-sm">
-    {/* Scattered dot accents */}
-    <circle cx="340" cy="70" r="7" fill="#52af7c" opacity="0.8" />
-    <circle cx="60" cy="120" r="4" fill="#52af7c" opacity="0.5" />
-    <circle cx="90" cy="300" r="5" fill="#52af7c" opacity="0.6" />
-    <circle cx="330" cy="290" r="4" fill="#52af7c" opacity="0.4" />
-    <circle cx="230" cy="60" r="3" fill="#80c59f" opacity="0.6" />
+const BlobPhoto = ({ src, shapeIndex, className = '' }: BlobPhotoProps) => (
+  <div
+    className={`relative w-full overflow-hidden ${className}`}
+    style={{ borderRadius: BLOB_SHAPES[shapeIndex % BLOB_SHAPES.length] }}
+  >
+    <Image
+      src={src}
+      alt=""
+      fill
+      sizes="(min-width: 768px) 22vw, 45vw"
+      className="object-cover"
+    />
+  </div>
+);
 
-    <IsoCube cx={230} cy={190} s={90} />
-    <IsoCube cx={120} cy={290} s={44} />
-  </svg>
+const LaunchCard = () => (
+  <div className="flex aspect-square w-full flex-col justify-between rounded-[28px] bg-brand-600 p-5 text-white sm:p-6">
+    <LuSparkles size={18} />
+    <span className="text-sm font-bold leading-snug sm:text-base">
+      Launching soon
+    </span>
+  </div>
 );
 
 const ComingSoon = () => {
@@ -95,28 +106,47 @@ const ComingSoon = () => {
 
         <div className="relative mx-auto flex min-h-[calc(100vh-4rem)] max-w-6xl flex-col">
           {/* Top bar */}
-          <div className="flex items-center gap-1.5">
-            <LuLeaf size={16} className="text-brand-600" />
-            <span className="text-sm font-semibold text-neutral-950">
-              recycling hub
-              <span className="text-slate-400"> .eco</span>
-            </span>
-          </div>
+          <Link href="/" className="inline-flex w-fit">
+            <Image
+              src={ASSETS.logo.combinedColor}
+              alt="Recycling Hub"
+              width={140}
+              height={40}
+              className="h-7 w-auto object-contain"
+            />
+          </Link>
 
           {/* Main content */}
           <div className="grid flex-1 items-center gap-12 py-16 md:grid-cols-2">
             <div>
-              <h1 className="font-montserrat text-4xl font-extrabold leading-[1.08] tracking-tight text-neutral-950 sm:text-5xl md:text-6xl">
-                Something green is coming
-              </h1>
+              <motion.h1
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, ease }}
+                className="font-montserrat text-4xl font-extrabold leading-[1.1] tracking-tight text-neutral-950 sm:text-5xl md:text-6xl"
+              >
+                Something{' '}
+                <span className="inline-block rounded-full bg-brand-50 px-4 py-1 text-brand-700">
+                  Green
+                </span>{' '}
+                Is Coming
+              </motion.h1>
 
-              <p className="mt-6 max-w-sm text-base leading-relaxed text-slate-500">
+              <motion.p
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.1, ease }}
+                className="mt-6 max-w-sm text-base leading-relaxed text-slate-500"
+              >
                 Registered e-waste collection and recycling for homes and
                 businesses across Malaysia. Launching soon.
-              </p>
+              </motion.p>
 
               {/* Email capture */}
-              <form
+              <motion.form
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2, ease }}
                 onSubmit={handleSubmit}
                 noValidate
                 className="mt-8 w-full max-w-[380px]"
@@ -138,9 +168,12 @@ const ComingSoon = () => {
                   <button
                     type="submit"
                     disabled={submitted}
-                    className="shrink-0 rounded-full bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-700 disabled:opacity-50"
+                    className="group inline-flex shrink-0 items-center gap-2 rounded-full bg-brand-600 py-2.5 pl-5 pr-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-700 disabled:opacity-50"
                   >
                     Notify me
+                    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-white/20">
+                      <LuArrowUpRight size={14} />
+                    </span>
                   </button>
                 </div>
 
@@ -154,10 +187,15 @@ const ComingSoon = () => {
                     You&apos;re on the list
                   </p>
                 )}
-              </form>
+              </motion.form>
 
               {/* Trust badges */}
-              <div className="mt-6 flex flex-wrap gap-2.5">
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3, ease }}
+                className="mt-6 flex flex-wrap gap-2.5"
+              >
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-50 px-3 py-1.5 text-xs font-medium text-brand-700">
                   <LuShieldCheck size={14} />
                   DOE registered
@@ -166,13 +204,37 @@ const ComingSoon = () => {
                   <LuTruck size={14} />
                   Free doorstep pickup
                 </span>
-              </div>
+              </motion.div>
             </div>
 
-            {/* Illustration */}
-            <div>
-              <CubeIllustration />
-            </div>
+            {/* Photo collage */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.7, delay: 0.15, ease }}
+              className="mx-auto grid w-full max-w-sm grid-cols-2 gap-4 sm:max-w-md"
+            >
+              <BlobPhoto
+                src={PHOTOS.motherboardMacro}
+                shapeIndex={0}
+                className="aspect-square"
+              />
+
+              <div className="flex flex-col gap-4">
+                <BlobPhoto
+                  src={PHOTOS.tvShelf}
+                  shapeIndex={1}
+                  className="aspect-[4/3]"
+                />
+                <LaunchCard />
+              </div>
+
+              <BlobPhoto
+                src={PHOTOS.radioShop}
+                shapeIndex={2}
+                className="col-span-2 aspect-[16/9]"
+              />
+            </motion.div>
           </div>
 
           {/* Social links */}
