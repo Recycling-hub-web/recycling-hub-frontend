@@ -325,7 +325,7 @@ const RetailPage: NextPageWithLayout = () => {
 };
 
 RetailPage.getLayout = (page: ReactElement) => (
-  <PublicLayout>{page}</PublicLayout>
+  <PublicLayout navVariant="light">{page}</PublicLayout>
 );
 
 export default RetailPage;

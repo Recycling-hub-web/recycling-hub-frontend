@@ -48,7 +48,7 @@ const AboutPage: NextPageWithLayout = () => (
 );
 
 AboutPage.getLayout = (page: ReactElement) => (
-  <PublicLayout>{page}</PublicLayout>
+  <PublicLayout navVariant="light">{page}</PublicLayout>
 );
 
 export default AboutPage;

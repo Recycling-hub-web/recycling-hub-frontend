@@ -327,6 +327,8 @@ const NgoPage: NextPageWithLayout = () => {
   );
 };
 
-NgoPage.getLayout = (page: ReactElement) => <PublicLayout>{page}</PublicLayout>;
+NgoPage.getLayout = (page: ReactElement) => (
+  <PublicLayout navVariant="light">{page}</PublicLayout>
+);
 
 export default NgoPage;

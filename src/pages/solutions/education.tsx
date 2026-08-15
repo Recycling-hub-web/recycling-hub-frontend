@@ -320,7 +320,7 @@ const EducationPage: NextPageWithLayout = () => {
 };
 
 EducationPage.getLayout = (page: ReactElement) => (
-  <PublicLayout>{page}</PublicLayout>
+  <PublicLayout navVariant="light">{page}</PublicLayout>
 );
 
 export default EducationPage;

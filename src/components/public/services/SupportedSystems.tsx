@@ -143,7 +143,7 @@ const HubDiagram = () => {
 
       {/* White logo */}
       <image
-        href={ASSETS.logo.whiteIconBg}
+        href={ASSETS.logo.symbolWhite}
         x={CX - 44}
         y={CY - 44}
         width={88}

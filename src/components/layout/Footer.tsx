@@ -16,14 +16,14 @@ const FacebookIcon = () => (
 );
 
 const Footer = () => (
-  <footer className="bg-hero-gradient">
+  <footer className="border-t border-slate-200 bg-neutral-50">
     <div className="mx-auto max-w-7xl px-5 pb-8 pt-16 md:px-8 md:pt-20">
       <div className="grid gap-10 sm:grid-cols-2 md:grid-cols-4">
         {/* Brand column */}
         <div className="sm:col-span-2 md:col-span-1">
           <Link href="/" className="mb-5 inline-flex no-underline">
             <Image
-              src={ASSETS.logo.whiteLogo}
+              src={ASSETS.logo.combinedColor}
               alt="Recycling Hub"
               width={110}
               height={34}
@@ -31,14 +31,14 @@ const Footer = () => (
             />
           </Link>
 
-          <p className="mb-5 text-sm leading-relaxed text-white/55">
+          <p className="mb-5 text-sm leading-relaxed text-slate-500">
             {BRAND.tagline}
           </p>
 
           <div className="flex flex-col gap-1.5 text-sm">
             <a
               href={`mailto:${BRAND.email}`}
-              className="text-white/80 transition-colors hover:text-white"
+              className="text-neutral-950 transition-colors hover:text-brand-600"
             >
               {BRAND.email}
             </a>
@@ -46,11 +46,13 @@ const Footer = () => (
               href={BRAND.whatsapp}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-white/55 transition-colors hover:text-white/80"
+              className="text-slate-500 transition-colors hover:text-brand-600"
             >
               {BRAND.phone}
             </a>
-            <span className="text-xs text-white/40">{BRAND.businessHours}</span>
+            <span className="text-xs text-slate-400">
+              {BRAND.businessHours}
+            </span>
           </div>
 
           <div className="mt-5 flex items-center gap-2.5">
@@ -58,7 +60,7 @@ const Footer = () => (
               href={BRAND.social.instagram}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex size-8 items-center justify-center rounded-lg bg-white/10 text-white/55 transition-colors hover:bg-white/20 hover:text-white"
+              className="flex size-8 items-center justify-center rounded-lg bg-neutral-100 text-slate-500 transition-colors hover:bg-brand-50 hover:text-brand-600"
               aria-label="Instagram"
             >
               <InstagramIcon />
@@ -67,7 +69,7 @@ const Footer = () => (
               href={BRAND.social.facebook}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex size-8 items-center justify-center rounded-lg bg-white/10 text-white/55 transition-colors hover:bg-white/20 hover:text-white"
+              className="flex size-8 items-center justify-center rounded-lg bg-neutral-100 text-slate-500 transition-colors hover:bg-brand-50 hover:text-brand-600"
               aria-label="Facebook"
             >
               <FacebookIcon />
@@ -77,7 +79,7 @@ const Footer = () => (
 
         {/* Services */}
         <div>
-          <h4 className="mb-4 text-xs font-semibold uppercase tracking-widest text-white/40">
+          <h4 className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-400">
             Services
           </h4>
           <ul className="flex flex-col gap-2.5">
@@ -85,7 +87,7 @@ const Footer = () => (
               <li key={label}>
                 <Link
                   href={href}
-                  className="text-sm text-white/60 transition-colors hover:text-white"
+                  className="text-sm text-slate-500 transition-colors hover:text-neutral-950"
                 >
                   {label}
                 </Link>
@@ -96,7 +98,7 @@ const Footer = () => (
 
         {/* Company */}
         <div>
-          <h4 className="mb-4 text-xs font-semibold uppercase tracking-widest text-white/40">
+          <h4 className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-400">
             Company
           </h4>
           <ul className="flex flex-col gap-2.5">
@@ -104,7 +106,7 @@ const Footer = () => (
               <li key={label}>
                 <Link
                   href={href}
-                  className="text-sm text-white/60 transition-colors hover:text-white"
+                  className="text-sm text-slate-500 transition-colors hover:text-neutral-950"
                 >
                   {label}
                 </Link>
@@ -115,7 +117,7 @@ const Footer = () => (
 
         {/* Legal */}
         <div>
-          <h4 className="mb-4 text-xs font-semibold uppercase tracking-widest text-white/40">
+          <h4 className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-400">
             Legal
           </h4>
           <ul className="flex flex-col gap-2.5">
@@ -123,7 +125,7 @@ const Footer = () => (
               <li key={label}>
                 <Link
                   href={href}
-                  className="text-sm text-white/60 transition-colors hover:text-white"
+                  className="text-sm text-slate-500 transition-colors hover:text-neutral-950"
                 >
                   {label}
                 </Link>
@@ -133,7 +135,7 @@ const Footer = () => (
         </div>
       </div>
 
-      <div className="mt-12 border-t border-white/[0.10] pt-6 text-center text-xs text-white/35">
+      <div className="mt-12 border-t border-slate-200 pt-6 text-center text-xs text-slate-400">
         © {new Date().getFullYear()} Recycling Hub. All rights reserved. ·{' '}
         {BRAND.website}
       </div>

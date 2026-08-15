@@ -36,14 +36,14 @@ const PrivacyPage: NextPageWithLayout = () => (
     <section className="bg-white py-16 md:py-20">
       <div className="mx-auto max-w-3xl px-5 md:px-8">
         <p className="mb-10 text-xs text-slate-400">
-          Last updated: 3 July 2026 · Effective date: 3 July 2026
+          Last updated: 15 August 2026 · Effective date: 15 August 2026
         </p>
 
         <Section title="1. Who We Are">
           <p>
             Recycling Hub (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;) is a
-            software company based in Malaysia that builds e-invoice integration
-            services connecting businesses to LHDN MyInvois. Our registered
+            DOE-registered e-waste collection and recycling company operating in
+            Malaysia, serving both individuals and businesses. Our registered
             contact email is{' '}
             <a
               href="mailto:contact@recyclinghub.eco"
@@ -55,9 +55,10 @@ const PrivacyPage: NextPageWithLayout = () => (
           </p>
           <p>
             This Privacy Policy explains how we handle personal data collected
-            through our website (recyclinghub.eco), our integration services,
-            and any communications with us. We are committed to complying with
-            Malaysia&apos;s Personal Data Protection Act 2010 (PDPA).
+            through our website (recyclinghub.eco), our pickup and collection
+            services, and any communications with us. We are committed to
+            complying with Malaysia&apos;s Personal Data Protection Act 2010
+            (PDPA).
           </p>
         </Section>
 
@@ -67,17 +68,26 @@ const PrivacyPage: NextPageWithLayout = () => (
             <span className="font-medium text-neutral-800">
               Information you provide directly
             </span>{' '}
-            — your name, company name, email address, phone number, and business
-            details when you fill in our contact form, book a call, or engage
-            our services.
+            — your name, pickup address, email, phone number, and details about
+            the devices you want collected, when you book a pickup or request a
+            bulk quote.
           </p>
           <p>
             <span className="font-medium text-neutral-800">
-              Business and invoice data
+              Collection and device data
             </span>{' '}
-            — to perform e-invoice integrations, we may access invoice records,
-            accounting data, and system credentials provided by you. This data
-            is used solely to build and test your integration.
+            — information about the devices we collect, such as type, quantity,
+            and condition, used to calculate payment, process certified
+            destruction, and, for business clients, prepare certificates of
+            destruction and ESG diversion reports.
+          </p>
+          <p>
+            <span className="font-medium text-neutral-800">
+              Payment information
+            </span>{' '}
+            — for individual pickups, the DuitNow-linked details needed to pay
+            you for eligible devices. Payments are processed through regulated
+            payment rails; we do not store your full banking credentials.
           </p>
           <p>
             <span className="font-medium text-neutral-800">Usage data</span> —
@@ -90,16 +100,18 @@ const PrivacyPage: NextPageWithLayout = () => (
         <Section title="3. How We Use Your Information">
           <p>We use the information we collect to:</p>
           <ul className="flex list-inside list-disc flex-col gap-2 pl-1">
-            <li>Deliver and support your e-invoice integration project</li>
-            <li>Respond to enquiries and schedule discovery calls</li>
-            <li>Send project updates, proposals, and invoices</li>
+            <li>Schedule, confirm, and complete your collection</li>
+            <li>Pay you instantly via DuitNow for eligible devices</li>
             <li>
-              Notify you of LHDN API changes that may affect your integration
+              Prepare certificates of destruction and ESG diversion reports for
+              business and enterprise clients
+            </li>
+            <li>Respond to enquiries and bulk quote requests</li>
+            <li>
+              Comply with legal and regulatory obligations, including
+              recordkeeping required of a registered e-waste collector
             </li>
             <li>Improve our services and website experience</li>
-            <li>
-              Comply with legal and regulatory obligations under Malaysian law
-            </li>
           </ul>
           <p>
             We do not sell, rent, or trade your personal data to third parties
@@ -109,15 +121,16 @@ const PrivacyPage: NextPageWithLayout = () => (
 
         <Section title="4. Data Retention">
           <p>
-            We retain your personal data for as long as is necessary to fulfil
-            the purposes outlined in this policy, or as required by law. Project
-            data (code, credentials, and integration configurations) is deleted
-            or returned to you upon project completion or contract termination,
-            whichever is sooner.
+            We retain your personal data for as long as necessary to fulfil the
+            purposes set out in this policy, or as required by law. This
+            includes retaining collection and certificate records for a
+            reasonable period to support any future certificate requests or
+            audit needs, particularly for business and enterprise clients.
           </p>
           <p>
-            Contact and communication records are retained for up to 3 years for
-            legitimate business and legal purposes.
+            General contact and enquiry records are retained for up to 3 years
+            for legitimate business purposes, after which they are deleted or
+            anonymised.
           </p>
         </Section>
 
@@ -125,9 +138,9 @@ const PrivacyPage: NextPageWithLayout = () => (
           <p>
             We implement appropriate technical and organisational measures to
             protect your data against unauthorised access, disclosure,
-            alteration, or destruction. API credentials and sensitive business
-            data are handled over encrypted channels and are never stored beyond
-            the active project period.
+            alteration, or destruction. Payment details are handled through
+            regulated, encrypted payment channels, and device or business data
+            shared for bulk collections is treated as confidential.
           </p>
           <p>
             No method of transmission over the internet is 100% secure. While we
@@ -146,14 +159,16 @@ const PrivacyPage: NextPageWithLayout = () => (
               <span className="font-medium text-neutral-800">
                 Service providers
               </span>{' '}
-              — tools we use to run our business (e.g. email, scheduling,
-              project management) under strict confidentiality agreements.
+              — logistics partners who assist with collection, and payment
+              providers who process DuitNow payouts, under confidentiality
+              obligations.
             </li>
             <li>
               <span className="font-medium text-neutral-800">
-                Legal requirement
+                Legal or regulatory requirement
               </span>{' '}
-              — if required by law, court order, or government authority.
+              — where required by law, court order, or a government authority
+              such as the Department of Environment.
             </li>
             <li>
               <span className="font-medium text-neutral-800">
@@ -176,10 +191,13 @@ const PrivacyPage: NextPageWithLayout = () => (
               Request correction of inaccurate or incomplete personal data
             </li>
             <li>
-              Withdraw consent for us to process your data (where consent is the
-              basis for processing)
+              Withdraw consent for us to process your data, where consent is the
+              basis for processing
             </li>
-            <li>Request deletion of your data, subject to legal obligations</li>
+            <li>
+              Request deletion of your data, subject to our legal and
+              recordkeeping obligations
+            </li>
           </ul>
           <p>
             To exercise any of these rights, contact us at{' '}
@@ -204,8 +222,8 @@ const PrivacyPage: NextPageWithLayout = () => (
 
         <Section title="9. Links to Third-Party Sites">
           <p>
-            Our website may contain links to external websites (e.g. LHDN
-            MyInvois portal, LinkedIn). We are not responsible for the privacy
+            Our website may link to external services such as DuitNow/PayNet or
+            our social media pages. We are not responsible for the privacy
             practices or content of those sites and encourage you to review
             their privacy policies independently.
           </p>
@@ -245,7 +263,7 @@ const PrivacyPage: NextPageWithLayout = () => (
 );
 
 PrivacyPage.getLayout = (page: ReactElement) => (
-  <PublicLayout>{page}</PublicLayout>
+  <PublicLayout navVariant="light">{page}</PublicLayout>
 );
 
 export default PrivacyPage;

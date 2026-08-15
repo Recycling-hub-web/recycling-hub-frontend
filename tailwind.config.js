@@ -126,7 +126,7 @@ module.exports = {
       },
       backgroundImage: {
         'hero-gradient':
-          'linear-gradient(180deg, #0F6E56 0%, #0A2E24 45%, #1A1A18 100%)',
+          'linear-gradient(180deg, #008a3e 0%, #0a3d2e 45%, #072b20 100%)',
       },
       boxShadow: {
         '3xl': '14px 17px 40px 4px',

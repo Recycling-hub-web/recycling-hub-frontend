@@ -31,7 +31,7 @@ const PricingPage: NextPageWithLayout = () => (
 );
 
 PricingPage.getLayout = (page: ReactElement) => (
-  <PublicLayout>{page}</PublicLayout>
+  <PublicLayout navVariant="light">{page}</PublicLayout>
 );
 
 export default PricingPage;

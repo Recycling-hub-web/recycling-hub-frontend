@@ -118,18 +118,43 @@ const Navbar = ({ variant = 'dark' }: NavbarProps) => {
         {/* Logo */}
         <Link href="/" className="flex shrink-0 items-center">
           {light ? (
-            <span className="font-montserrat text-xl font-extrabold tracking-tight text-neutral-950 md:text-2xl">
-              Recycling Hub
-            </span>
+            <>
+              <Image
+                src={ASSETS.logo.combinedColor}
+                alt="Recycling Hub"
+                width={3100}
+                height={700}
+                className="hidden h-8 w-auto object-contain sm:block"
+                priority
+              />
+              <Image
+                src={ASSETS.logo.symbolColor}
+                alt="Recycling Hub"
+                width={560}
+                height={565}
+                className="size-8 object-contain sm:hidden"
+                priority
+              />
+            </>
           ) : (
-            <Image
-              src={ASSETS.logo.whiteLogo}
-              alt="Recycling Hub"
-              width={100}
-              height={32}
-              className="h-8 w-auto object-contain"
-              priority
-            />
+            <>
+              <Image
+                src={ASSETS.logo.combinedWhite}
+                alt="Recycling Hub"
+                width={3100}
+                height={700}
+                className="hidden h-8 w-auto object-contain sm:block"
+                priority
+              />
+              <Image
+                src={ASSETS.logo.symbolWhite}
+                alt="Recycling Hub"
+                width={560}
+                height={565}
+                className="size-8 object-contain sm:hidden"
+                priority
+              />
+            </>
           )}
         </Link>
 
