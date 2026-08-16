@@ -2,21 +2,32 @@
 // against `Dictionary` (derived below) so a missing translation key fails to
 // compile rather than silently falling back.
 //
-// Scope (Phase 2 adds Services + Solutions): navbar/footer chrome, the full
-// homepage, and the Services + Solutions sections are now bilingual. About
-// and Pricing are deliberately NOT included yet — those pages still carry
-// pre-rebrand invoicing-era copy (see their Meta descriptions) that needs a
-// content fix regardless of translation, so translating them now would just
-// double the cleanup work later. Legal pages (Terms/Privacy), the FAQ page,
-// Contact, Track & Trace, and Request a Quote also remain English-only for
-// a further pass.
+// Scope (Phase 4 adds Terms/Privacy): navbar/footer chrome, the full
+// homepage, Services, Solutions, Contact, FAQ, Track & Trace, Request a
+// Quote, and now the legal pages are bilingual. About and Pricing are
+// deliberately NOT included yet — those pages still carry pre-rebrand
+// invoicing-era copy (see their Meta descriptions) that needs a content fix
+// regardless of translation, so translating them now would just double the
+// cleanup work later.
+//
+// TODO: LEGAL REVIEW REQUIRED before the `legal.terms`/`legal.privacy`
+// Bahasa Melayu text (src/locales/bm.ts) is relied upon as a binding legal
+// document. It was AI-translated, not reviewed by a Malaysian-qualified
+// lawyer — the PDPA 2010 / DOE-SW110 references, liability limitation, and
+// governing-law clauses especially need verification. The English text
+// remains authoritative until that review happens.
 //
 // Structural/functional fields — hrefs, slugs, icon keys, which testimonial
 // visual to show — stay in `constants/content.ts` and are language-independent;
 // only the translatable copy lives here, keyed by the same slug so components
 // zip the two together at render time.
 
-import type { ServiceSlug, SolutionSlug } from '../constants/content';
+import {
+  BRAND,
+  type ServiceSlug,
+  type SolutionSlug,
+} from '../constants/content';
+import type { LegalSection } from '../types/legal';
 
 const en = {
   nav: {
@@ -1103,6 +1114,396 @@ const en = {
       prefix: "Individual pickup is always free and doesn't need a quote — ",
       linkText: 'book it directly via WhatsApp',
       suffix: '.',
+    },
+  },
+
+  legal: {
+    contactLabels: {
+      email: 'Email:',
+      whatsapp: 'WhatsApp:',
+      website: 'Website:',
+    },
+    terms: {
+      hero: {
+        eyebrow: 'Legal',
+        headline: 'Terms of Service',
+        description:
+          "The terms that govern your use of Recycling Hub's collection and disposal services.",
+      },
+      lastUpdatedLine:
+        'Last updated: 15 August 2026 · Effective date: 15 August 2026',
+      sections: [
+        {
+          title: '1. Acceptance of Terms',
+          blocks: [
+            {
+              type: 'p',
+              text: 'By accessing our website (recyclinghub.eco), booking a pickup, or otherwise engaging Recycling Hub ("we", "us", "our") for any service, you agree to be bound by these Terms of Service. If you do not agree, please do not use our website or services.',
+            },
+            {
+              type: 'p',
+              text: 'These terms apply to individuals booking a personal pickup and to businesses engaging us for bulk or enterprise collection. We may update these terms from time to time; continued use of our services after changes are posted constitutes acceptance of the revised terms.',
+            },
+          ],
+        },
+        {
+          title: '2. Description of Services',
+          blocks: [
+            {
+              type: 'p',
+              text: 'Recycling Hub provides licensed e-waste collection, including:',
+            },
+            {
+              type: 'ul',
+              items: [
+                'Free doorstep pickup of personal electronic devices from individuals, with instant payment for eligible devices',
+                'Scheduled bulk and enterprise collection for businesses, quoted according to device types and volume',
+                'Certified data destruction for any data-bearing device collected, whether from an individual or a business',
+                'ESG and sustainability diversion reporting for bulk and enterprise clients',
+              ],
+            },
+            {
+              type: 'p',
+              text: 'For bulk and enterprise collections, the exact scope, pricing, and schedule are confirmed in a quote provided to you before collection is scheduled.',
+            },
+          ],
+        },
+        {
+          title: '3. Accepted Devices and Exclusions',
+          blocks: [
+            {
+              type: 'p',
+              text: 'We accept phones and tablets, laptops and computers, monitors and displays, office and IT equipment, and data storage devices. If you are unsure whether an item is covered, contact us before booking and we will confirm.',
+            },
+            {
+              type: 'p',
+              text: 'We may decline to collect an item that is not electronic waste, that contains hazardous material outside the scope of our licence, or that was not disclosed accurately at the time of booking. Declining an item does not entitle you to any payment for that item.',
+            },
+          ],
+        },
+        {
+          title: '4. Your Responsibilities',
+          blocks: [
+            {
+              type: 'p',
+              text: 'To help us complete your collection safely and correctly, you agree to:',
+            },
+            {
+              type: 'ul',
+              items: [
+                'Provide accurate information about the devices you are surrendering, including quantity, type, and condition',
+                'Confirm that you are the lawful owner of each device, or are otherwise authorised to surrender it for recycling',
+                'Make devices reasonably accessible at the agreed pickup location and time',
+                'Where practical, remove or back up any data you wish to keep before collection — while we perform certified destruction on data-bearing devices, we are not responsible for data you did not remove beforehand',
+                'For business and enterprise collections, provide an accurate device inventory to support the quote and, where applicable, the certificate of destruction',
+              ],
+            },
+          ],
+        },
+        {
+          title: '5. Payment for Individual Pickups',
+          blocks: [
+            {
+              type: 'p',
+              text: "Individual pickups are free of charge, and eligible devices are paid for instantly via DuitNow at the time of collection. Payment amounts are based on our assessment of the device's type and condition at the point of collection, which may differ from any estimate given at the time of booking if the device's actual condition differs from what was described.",
+            },
+            {
+              type: 'p',
+              text: 'Some devices have no resale or material value and are collected and recycled at no cost to you, with no payment made in return. We will always confirm this before completing collection where reasonably possible.',
+            },
+          ],
+        },
+        {
+          title: '6. Payment for Bulk and Enterprise Collection',
+          blocks: [
+            {
+              type: 'p',
+              text: 'Bulk and enterprise collection is quoted individually based on device types, volume, and site requirements. Where a service fee applies, payment terms — including amount, currency, and due date — are set out in the quote or service agreement provided to you before collection is scheduled. All prices are in Malaysian Ringgit (MYR) and exclude applicable taxes unless stated otherwise.',
+            },
+          ],
+        },
+        {
+          title: '7. Scheduling and Collection',
+          blocks: [
+            {
+              type: 'p',
+              text: 'Collection windows are agreed at the time of booking. We will contact you if we need to reschedule. If you are not available at the agreed time and location without prior notice, we may need to rebook the collection for a later date.',
+            },
+          ],
+        },
+        {
+          title: '8. Ownership and Certified Data Destruction',
+          blocks: [
+            {
+              type: 'p',
+              text: 'Ownership of a device transfers to Recycling Hub once it is collected. Any data-bearing device we collect is processed through certified destruction, whether wiped or physically destroyed depending on the device and condition.',
+            },
+            {
+              type: 'p-link',
+              prefix:
+                'For business and enterprise collections, a certificate of destruction covering the assets collected is available on request. Individual pickups do not automatically receive a certificate, but one can be requested through our ',
+              linkText: 'certificate request page',
+              suffix: '.',
+              href: '/track-trace',
+            },
+          ],
+        },
+        {
+          title: '9. Environmental Compliance Disclaimer',
+          blocks: [
+            {
+              type: 'p',
+              text: "Recycling Hub is a DOE-registered e-waste collector, and our collection and processing activities are carried out under applicable scheduled waste requirements, including the SW110 classification, under Malaysia's Environmental Quality Act 1974 and its subsidiary regulations.",
+            },
+            {
+              type: 'p',
+              text: 'While we take reasonable care to ensure our operations remain compliant, we are not responsible for the accuracy of information you provide about a device, or for any regulatory obligation you may have that is separate from our own licensed activities.',
+            },
+          ],
+        },
+        {
+          title: '10. Limitation of Liability',
+          blocks: [
+            {
+              type: 'p',
+              text: 'To the maximum extent permitted by Malaysian law, Recycling Hub shall not be liable for any indirect, incidental, or consequential damages arising from your use of our services, including but not limited to loss of data that was not removed prior to collection, or loss arising from an inaccurate device description provided by you.',
+            },
+            {
+              type: 'p',
+              text: 'Our total liability for any claim arising from our services shall not exceed the total amount paid by you to us (or, for individual pickups where we paid you, the value of that payment) in the 3 months preceding the event giving rise to the claim.',
+            },
+          ],
+        },
+        {
+          title: '11. Cancellation',
+          blocks: [
+            {
+              type: 'p',
+              text: 'You may cancel or reschedule a booked pickup at no charge by contacting us before the scheduled collection window. For bulk and enterprise collections, cancellation terms may be specified in your service agreement where a deposit or scheduling fee applies.',
+            },
+          ],
+        },
+        {
+          title: '12. Confidentiality',
+          blocks: [
+            {
+              type: 'p',
+              text: 'For business and enterprise clients, we treat your device inventories, site information, and any business data shared with us as confidential, and will not disclose it to third parties except as required to complete the collection, issue certificates, or comply with the law.',
+            },
+          ],
+        },
+        {
+          title: '13. Governing Law',
+          blocks: [
+            {
+              type: 'p',
+              text: 'These Terms of Service are governed by and construed in accordance with the laws of Malaysia. Any disputes arising from these terms or our services shall be subject to the exclusive jurisdiction of the courts of Malaysia.',
+            },
+          ],
+        },
+        {
+          title: '14. Contact Us',
+          blocks: [
+            {
+              type: 'p',
+              text: 'If you have any questions about these Terms of Service, please contact us:',
+            },
+            { type: 'contact-block' },
+          ],
+        },
+      ] satisfies LegalSection[],
+    },
+    privacy: {
+      hero: {
+        eyebrow: 'Legal',
+        headline: 'Privacy Policy',
+        description: 'How we collect, use, and protect your information.',
+      },
+      lastUpdatedLine:
+        'Last updated: 15 August 2026 · Effective date: 15 August 2026',
+      sections: [
+        {
+          title: '1. Who We Are',
+          blocks: [
+            {
+              type: 'p-link',
+              prefix:
+                'Recycling Hub ("we", "us", "our") is a DOE-registered e-waste collection and recycling company operating in Malaysia, serving both individuals and businesses. Our registered contact email is ',
+              linkText: BRAND.email,
+              suffix: '.',
+              href: `mailto:${BRAND.email}`,
+            },
+            {
+              type: 'p',
+              text: "This Privacy Policy explains how we handle personal data collected through our website (recyclinghub.eco), our pickup and collection services, and any communications with us. We are committed to complying with Malaysia's Personal Data Protection Act 2010 (PDPA).",
+            },
+          ],
+        },
+        {
+          title: '2. Information We Collect',
+          blocks: [
+            {
+              type: 'p',
+              text: 'We collect information in the following ways:',
+            },
+            {
+              type: 'p-labeled',
+              label: 'Information you provide directly',
+              rest: 'your name, pickup address, email, phone number, and details about the devices you want collected, when you book a pickup or request a bulk quote.',
+            },
+            {
+              type: 'p-labeled',
+              label: 'Collection and device data',
+              rest: 'information about the devices we collect, such as type, quantity, and condition, used to calculate payment, process certified destruction, and, for business clients, prepare certificates of destruction and ESG diversion reports.',
+            },
+            {
+              type: 'p-labeled',
+              label: 'Payment information',
+              rest: 'for individual pickups, the DuitNow-linked details needed to pay you for eligible devices. Payments are processed through regulated payment rails; we do not store your full banking credentials.',
+            },
+            {
+              type: 'p-labeled',
+              label: 'Usage data',
+              rest: 'standard web analytics such as page views, browser type, and referral source collected via anonymised analytics tools. No personally identifiable information is collected at this layer.',
+            },
+          ],
+        },
+        {
+          title: '3. How We Use Your Information',
+          blocks: [
+            { type: 'p', text: 'We use the information we collect to:' },
+            {
+              type: 'ul',
+              items: [
+                'Schedule, confirm, and complete your collection',
+                'Pay you instantly via DuitNow for eligible devices',
+                'Prepare certificates of destruction and ESG diversion reports for business and enterprise clients',
+                'Respond to enquiries and bulk quote requests',
+                'Comply with legal and regulatory obligations, including recordkeeping required of a registered e-waste collector',
+                'Improve our services and website experience',
+              ],
+            },
+            {
+              type: 'p',
+              text: 'We do not sell, rent, or trade your personal data to third parties for marketing purposes.',
+            },
+          ],
+        },
+        {
+          title: '4. Data Retention',
+          blocks: [
+            {
+              type: 'p',
+              text: 'We retain your personal data for as long as necessary to fulfil the purposes set out in this policy, or as required by law. This includes retaining collection and certificate records for a reasonable period to support any future certificate requests or audit needs, particularly for business and enterprise clients.',
+            },
+            {
+              type: 'p',
+              text: 'General contact and enquiry records are retained for up to 3 years for legitimate business purposes, after which they are deleted or anonymised.',
+            },
+          ],
+        },
+        {
+          title: '5. Data Security',
+          blocks: [
+            {
+              type: 'p',
+              text: 'We implement appropriate technical and organisational measures to protect your data against unauthorised access, disclosure, alteration, or destruction. Payment details are handled through regulated, encrypted payment channels, and device or business data shared for bulk collections is treated as confidential.',
+            },
+            {
+              type: 'p',
+              text: 'No method of transmission over the internet is 100% secure. While we take every reasonable precaution, we cannot guarantee absolute security.',
+            },
+          ],
+        },
+        {
+          title: '6. Sharing of Information',
+          blocks: [
+            {
+              type: 'p',
+              text: 'We only share your information with third parties in the following limited circumstances:',
+            },
+            {
+              type: 'ul-labeled',
+              items: [
+                {
+                  label: 'Service providers',
+                  rest: 'logistics partners who assist with collection, and payment providers who process DuitNow payouts, under confidentiality obligations.',
+                },
+                {
+                  label: 'Legal or regulatory requirement',
+                  rest: 'where required by law, court order, or a government authority such as the Department of Environment.',
+                },
+                {
+                  label: 'Business transfers',
+                  rest: 'in the event of a merger or acquisition, your data may be transferred as part of that transaction.',
+                },
+              ],
+            },
+          ],
+        },
+        {
+          title: '7. Your Rights Under PDPA',
+          blocks: [
+            {
+              type: 'p',
+              text: "Under Malaysia's Personal Data Protection Act 2010, you have the right to:",
+            },
+            {
+              type: 'ul',
+              items: [
+                'Request access to the personal data we hold about you',
+                'Request correction of inaccurate or incomplete personal data',
+                'Withdraw consent for us to process your data, where consent is the basis for processing',
+                'Request deletion of your data, subject to our legal and recordkeeping obligations',
+              ],
+            },
+            {
+              type: 'p-link',
+              prefix: 'To exercise any of these rights, contact us at ',
+              linkText: BRAND.email,
+              suffix: '. We will respond within 21 days.',
+              href: `mailto:${BRAND.email}`,
+            },
+          ],
+        },
+        {
+          title: '8. Cookies',
+          blocks: [
+            {
+              type: 'p',
+              text: 'Our website uses minimal cookies required for basic functionality and anonymous analytics. We do not use advertising or tracking cookies. You may disable cookies in your browser settings, though some website features may not function as intended.',
+            },
+          ],
+        },
+        {
+          title: '9. Links to Third-Party Sites',
+          blocks: [
+            {
+              type: 'p',
+              text: 'Our website may link to external services such as DuitNow/PayNet or our social media pages. We are not responsible for the privacy practices or content of those sites and encourage you to review their privacy policies independently.',
+            },
+          ],
+        },
+        {
+          title: '10. Changes to This Policy',
+          blocks: [
+            {
+              type: 'p',
+              text: 'We may update this Privacy Policy from time to time. When we do, we will revise the "Last updated" date at the top of this page. Continued use of our services after changes are posted constitutes your acceptance of the updated policy.',
+            },
+          ],
+        },
+        {
+          title: '11. Contact Us',
+          blocks: [
+            {
+              type: 'p',
+              text: 'If you have any questions about this Privacy Policy or how we handle your data, please contact us:',
+            },
+            { type: 'contact-block' },
+          ],
+        },
+      ] satisfies LegalSection[],
     },
   },
 };

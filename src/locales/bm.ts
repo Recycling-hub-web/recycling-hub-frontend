@@ -7,8 +7,19 @@
 // precision matters. Established English/regulatory terms (DOE, SW110,
 // PDPA, ESG, DuitNow, Recycling Hub) are deliberately kept untranslated,
 // matching how they're actually used in Malaysian business Malay.
+//
+// TODO: LEGAL REVIEW REQUIRED before `legal.terms`/`legal.privacy` below is
+// relied upon as a binding legal document. This translation of the Terms of
+// Service and Privacy Policy has NOT been reviewed by a Malaysian-qualified
+// lawyer — the PDPA 2010 / DOE-SW110 references, liability limitation, and
+// governing-law clauses especially need verification. The English text at
+// /terms and /privacy remains authoritative until that review happens.
 
-import type { ServiceSlug, SolutionSlug } from '../constants/content';
+import {
+  BRAND,
+  type ServiceSlug,
+  type SolutionSlug,
+} from '../constants/content';
 import type { Dictionary } from './en';
 
 const bm: Dictionary = {
@@ -1090,6 +1101,400 @@ const bm: Dictionary = {
         'Kutipan individu sentiasa percuma dan tidak memerlukan sebut harga — ',
       linkText: 'tempah terus melalui WhatsApp',
       suffix: '.',
+    },
+  },
+
+  legal: {
+    contactLabels: {
+      email: 'E-mel:',
+      whatsapp: 'WhatsApp:',
+      website: 'Laman Web:',
+    },
+    terms: {
+      hero: {
+        eyebrow: 'Perundangan',
+        headline: 'Terma Perkhidmatan',
+        description:
+          'Terma yang mengawal penggunaan anda terhadap perkhidmatan kutipan dan pelupusan Recycling Hub.',
+      },
+      lastUpdatedLine:
+        'Kemas kini terakhir: 15 Ogos 2026 · Tarikh berkuat kuasa: 15 Ogos 2026',
+      sections: [
+        {
+          title: '1. Penerimaan Terma',
+          blocks: [
+            {
+              type: 'p',
+              text: 'Dengan mengakses laman web kami (recyclinghub.eco), menempah kutipan, atau melibatkan Recycling Hub ("kami") bagi sebarang perkhidmatan, anda bersetuju untuk terikat dengan Terma Perkhidmatan ini. Jika anda tidak bersetuju, sila jangan gunakan laman web atau perkhidmatan kami.',
+            },
+            {
+              type: 'p',
+              text: 'Terma ini terpakai kepada individu yang menempah kutipan peribadi dan kepada perniagaan yang melibatkan kami untuk kutipan pukal atau perusahaan. Kami boleh mengemas kini terma ini dari semasa ke semasa; penggunaan berterusan perkhidmatan kami selepas perubahan disiarkan membentuk penerimaan terhadap terma yang disemak.',
+            },
+          ],
+        },
+        {
+          title: '2. Penerangan Perkhidmatan',
+          blocks: [
+            {
+              type: 'p',
+              text: 'Recycling Hub menyediakan kutipan e-sisa berlesen, termasuk:',
+            },
+            {
+              type: 'ul',
+              items: [
+                'Kutipan percuma di rumah bagi peranti elektronik peribadi daripada individu, dengan bayaran segera untuk peranti yang layak',
+                'Kutipan pukal dan perusahaan berjadual untuk perniagaan, disebut harga mengikut jenis dan jumlah peranti',
+                'Pemusnahan data bertauliah bagi sebarang peranti membawa data yang dikutip, sama ada daripada individu atau perniagaan',
+                'Pelaporan pengalihan ESG dan kelestarian untuk pelanggan pukal dan perusahaan',
+              ],
+            },
+            {
+              type: 'p',
+              text: 'Bagi kutipan pukal dan perusahaan, skop, harga, dan jadual yang tepat disahkan dalam sebut harga yang diberikan kepada anda sebelum kutipan dijadualkan.',
+            },
+          ],
+        },
+        {
+          title: '3. Peranti Diterima dan Pengecualian',
+          blocks: [
+            {
+              type: 'p',
+              text: 'Kami menerima telefon dan tablet, komputer riba dan komputer, monitor dan paparan, peralatan pejabat dan IT, serta peranti storan data. Jika anda tidak pasti sama ada sesuatu item diliputi, hubungi kami sebelum menempah dan kami akan mengesahkannya.',
+            },
+            {
+              type: 'p',
+              text: 'Kami boleh menolak untuk mengutip item yang bukan e-sisa, yang mengandungi bahan berbahaya di luar skop lesen kami, atau yang tidak didedahkan dengan tepat semasa tempahan. Penolakan sesuatu item tidak memberi anda hak kepada sebarang bayaran bagi item tersebut.',
+            },
+          ],
+        },
+        {
+          title: '4. Tanggungjawab Anda',
+          blocks: [
+            {
+              type: 'p',
+              text: 'Untuk membantu kami melengkapkan kutipan anda dengan selamat dan betul, anda bersetuju untuk:',
+            },
+            {
+              type: 'ul',
+              items: [
+                'Memberikan maklumat yang tepat tentang peranti yang anda serahkan, termasuk kuantiti, jenis, dan keadaan',
+                'Mengesahkan bahawa anda adalah pemilik sah setiap peranti, atau diberi kuasa untuk menyerahkannya bagi tujuan kitar semula',
+                'Memastikan peranti mudah diakses secara munasabah pada lokasi dan masa kutipan yang dipersetujui',
+                'Jika praktikal, memadam atau membuat sandaran data yang ingin anda simpan sebelum kutipan — walaupun kami melaksanakan pemusnahan bertauliah pada peranti membawa data, kami tidak bertanggungjawab atas data yang tidak anda alihkan terlebih dahulu',
+                'Bagi kutipan perniagaan dan perusahaan, memberikan inventori peranti yang tepat untuk menyokong sebut harga dan, jika berkenaan, sijil pemusnahan',
+              ],
+            },
+          ],
+        },
+        {
+          title: '5. Bayaran untuk Kutipan Individu',
+          blocks: [
+            {
+              type: 'p',
+              text: 'Kutipan individu adalah percuma, dan peranti yang layak dibayar segera melalui DuitNow pada masa kutipan. Jumlah bayaran adalah berdasarkan penilaian kami terhadap jenis dan keadaan peranti pada ketika kutipan, yang mungkin berbeza daripada sebarang anggaran yang diberikan semasa tempahan jika keadaan sebenar peranti berbeza daripada yang diterangkan.',
+            },
+            {
+              type: 'p',
+              text: 'Sesetengah peranti tidak mempunyai nilai jualan semula atau bahan dan akan dikutip serta dikitar semula tanpa sebarang kos kepada anda, tanpa sebarang bayaran sebagai balasan. Kami akan sentiasa mengesahkan perkara ini sebelum melengkapkan kutipan, di mana munasabah untuk berbuat demikian.',
+            },
+          ],
+        },
+        {
+          title: '6. Bayaran untuk Kutipan Pukal dan Perusahaan',
+          blocks: [
+            {
+              type: 'p',
+              text: 'Kutipan pukal dan perusahaan disebut harga secara individu berdasarkan jenis peranti, jumlah, dan keperluan tapak. Jika yuran perkhidmatan dikenakan, terma bayaran — termasuk jumlah, mata wang, dan tarikh matang — dinyatakan dalam sebut harga atau perjanjian perkhidmatan yang diberikan kepada anda sebelum kutipan dijadualkan. Semua harga adalah dalam Ringgit Malaysia (MYR) dan tidak termasuk cukai yang berkenaan melainkan dinyatakan sebaliknya.',
+            },
+          ],
+        },
+        {
+          title: '7. Penjadualan dan Kutipan',
+          blocks: [
+            {
+              type: 'p',
+              text: 'Tempoh kutipan dipersetujui semasa tempahan. Kami akan menghubungi anda jika kami perlu menjadualkan semula. Jika anda tidak berada di lokasi pada masa yang dipersetujui tanpa notis awal, kami mungkin perlu menempah semula kutipan untuk tarikh kemudian.',
+            },
+          ],
+        },
+        {
+          title: '8. Pemilikan dan Pemusnahan Data Bertauliah',
+          blocks: [
+            {
+              type: 'p',
+              text: 'Pemilikan sesuatu peranti berpindah kepada Recycling Hub sebaik sahaja ia dikutip. Sebarang peranti membawa data yang kami kutip diproses melalui pemusnahan bertauliah, sama ada dipadam atau dimusnahkan secara fizikal bergantung kepada peranti dan keadaannya.',
+            },
+            {
+              type: 'p-link',
+              prefix:
+                'Bagi kutipan perniagaan dan perusahaan, sijil pemusnahan yang merangkumi aset yang dikutip tersedia atas permintaan. Kutipan individu tidak menerima sijil secara automatik, tetapi ia boleh diminta melalui ',
+              linkText: 'halaman permintaan sijil',
+              suffix: '.',
+              href: '/track-trace',
+            },
+          ],
+        },
+        {
+          title: '9. Penafian Pematuhan Alam Sekitar',
+          blocks: [
+            {
+              type: 'p',
+              text: 'Recycling Hub adalah pengumpul e-sisa berdaftar DOE, dan aktiviti kutipan serta pemprosesan kami dijalankan di bawah keperluan sisa terjadual yang berkenaan, termasuk klasifikasi SW110, di bawah Akta Kualiti Alam Sekeliling 1974 Malaysia dan peraturan sampingannya.',
+            },
+            {
+              type: 'p',
+              text: 'Walaupun kami mengambil langkah berjaga-jaga yang munasabah untuk memastikan operasi kami kekal mematuhi peraturan, kami tidak bertanggungjawab atas ketepatan maklumat yang anda berikan tentang sesuatu peranti, atau atas sebarang kewajipan kawal selia yang anda ada yang berasingan daripada aktiviti berlesen kami sendiri.',
+            },
+          ],
+        },
+        {
+          title: '10. Had Liabiliti',
+          blocks: [
+            {
+              type: 'p',
+              text: 'Setakat yang dibenarkan sepenuhnya oleh undang-undang Malaysia, Recycling Hub tidak akan bertanggungjawab atas sebarang kerugian tidak langsung, sampingan, atau berbangkit yang timbul daripada penggunaan perkhidmatan kami, termasuk tetapi tidak terhad kepada kehilangan data yang tidak dialihkan sebelum kutipan, atau kerugian yang timbul daripada penerangan peranti yang tidak tepat yang diberikan oleh anda.',
+            },
+            {
+              type: 'p',
+              text: 'Jumlah liabiliti kami bagi sebarang tuntutan yang timbul daripada perkhidmatan kami tidak akan melebihi jumlah keseluruhan yang dibayar oleh anda kepada kami (atau, bagi kutipan individu di mana kami membayar anda, nilai bayaran tersebut) dalam tempoh 3 bulan sebelum peristiwa yang menimbulkan tuntutan tersebut.',
+            },
+          ],
+        },
+        {
+          title: '11. Pembatalan',
+          blocks: [
+            {
+              type: 'p',
+              text: 'Anda boleh membatalkan atau menjadualkan semula kutipan yang ditempah tanpa sebarang caj dengan menghubungi kami sebelum tempoh kutipan yang dijadualkan. Bagi kutipan pukal dan perusahaan, terma pembatalan mungkin dinyatakan dalam perjanjian perkhidmatan anda jika deposit atau yuran penjadualan dikenakan.',
+            },
+          ],
+        },
+        {
+          title: '12. Kerahsiaan',
+          blocks: [
+            {
+              type: 'p',
+              text: 'Bagi pelanggan perniagaan dan perusahaan, kami melayan inventori peranti, maklumat tapak, dan sebarang data perniagaan yang dikongsi dengan kami sebagai sulit, dan tidak akan mendedahkannya kepada pihak ketiga kecuali sebagaimana diperlukan untuk melengkapkan kutipan, mengeluarkan sijil, atau mematuhi undang-undang.',
+            },
+          ],
+        },
+        {
+          title: '13. Undang-Undang Yang Terpakai',
+          blocks: [
+            {
+              type: 'p',
+              text: 'Terma Perkhidmatan ini dikawal selia dan ditafsirkan mengikut undang-undang Malaysia. Sebarang pertikaian yang timbul daripada terma ini atau perkhidmatan kami akan tertakluk kepada bidang kuasa eksklusif mahkamah Malaysia.',
+            },
+          ],
+        },
+        {
+          title: '14. Hubungi Kami',
+          blocks: [
+            {
+              type: 'p',
+              text: 'Jika anda mempunyai sebarang soalan tentang Terma Perkhidmatan ini, sila hubungi kami:',
+            },
+            { type: 'contact-block' },
+          ],
+        },
+      ],
+    },
+    privacy: {
+      hero: {
+        eyebrow: 'Perundangan',
+        headline: 'Dasar Privasi',
+        description:
+          'Cara kami mengumpul, menggunakan, dan melindungi maklumat anda.',
+      },
+      lastUpdatedLine:
+        'Kemas kini terakhir: 15 Ogos 2026 · Tarikh berkuat kuasa: 15 Ogos 2026',
+      sections: [
+        {
+          title: '1. Siapa Kami',
+          blocks: [
+            {
+              type: 'p-link',
+              prefix:
+                'Recycling Hub ("kami") adalah syarikat kutipan dan kitar semula e-sisa berdaftar DOE yang beroperasi di Malaysia, melayani individu dan perniagaan. E-mel hubungan berdaftar kami ialah ',
+              linkText: BRAND.email,
+              suffix: '.',
+              href: `mailto:${BRAND.email}`,
+            },
+            {
+              type: 'p',
+              text: 'Dasar Privasi ini menerangkan cara kami mengendalikan data peribadi yang dikumpul melalui laman web kami (recyclinghub.eco), perkhidmatan kutipan kami, dan sebarang komunikasi dengan kami. Kami komited untuk mematuhi Akta Perlindungan Data Peribadi 2010 (PDPA) Malaysia.',
+            },
+          ],
+        },
+        {
+          title: '2. Maklumat Yang Kami Kumpul',
+          blocks: [
+            {
+              type: 'p',
+              text: 'Kami mengumpul maklumat dengan cara berikut:',
+            },
+            {
+              type: 'p-labeled',
+              label: 'Maklumat yang anda berikan secara langsung',
+              rest: 'nama, alamat kutipan, e-mel, nombor telefon anda, dan butiran tentang peranti yang ingin dikutip, apabila anda menempah kutipan atau meminta sebut harga pukal.',
+            },
+            {
+              type: 'p-labeled',
+              label: 'Data kutipan dan peranti',
+              rest: 'maklumat tentang peranti yang kami kutip, seperti jenis, kuantiti, dan keadaan, digunakan untuk mengira bayaran, memproses pemusnahan bertauliah, dan, bagi pelanggan perniagaan, menyediakan sijil pemusnahan dan laporan pengalihan ESG.',
+            },
+            {
+              type: 'p-labeled',
+              label: 'Maklumat bayaran',
+              rest: 'bagi kutipan individu, butiran berkaitan DuitNow yang diperlukan untuk membayar anda bagi peranti yang layak. Bayaran diproses melalui saluran bayaran yang dikawal selia; kami tidak menyimpan kelayakan perbankan penuh anda.',
+            },
+            {
+              type: 'p-labeled',
+              label: 'Data penggunaan',
+              rest: 'analitik web standard seperti paparan halaman, jenis pelayar, dan sumber rujukan yang dikumpul melalui alat analitik yang dinamakan semula. Tiada maklumat yang boleh mengenal pasti individu dikumpul pada lapisan ini.',
+            },
+          ],
+        },
+        {
+          title: '3. Cara Kami Menggunakan Maklumat Anda',
+          blocks: [
+            {
+              type: 'p',
+              text: 'Kami menggunakan maklumat yang kami kumpul untuk:',
+            },
+            {
+              type: 'ul',
+              items: [
+                'Menjadualkan, mengesahkan, dan melengkapkan kutipan anda',
+                'Membayar anda segera melalui DuitNow bagi peranti yang layak',
+                'Menyediakan sijil pemusnahan dan laporan pengalihan ESG untuk pelanggan perniagaan dan perusahaan',
+                'Membalas pertanyaan dan permintaan sebut harga pukal',
+                'Mematuhi kewajipan undang-undang dan kawal selia, termasuk penyimpanan rekod yang diperlukan bagi pengumpul e-sisa berdaftar',
+                'Menambah baik perkhidmatan dan pengalaman laman web kami',
+              ],
+            },
+            {
+              type: 'p',
+              text: 'Kami tidak menjual, menyewa, atau berdagang data peribadi anda kepada pihak ketiga bagi tujuan pemasaran.',
+            },
+          ],
+        },
+        {
+          title: '4. Penyimpanan Data',
+          blocks: [
+            {
+              type: 'p',
+              text: 'Kami menyimpan data peribadi anda selama yang diperlukan untuk memenuhi tujuan yang dinyatakan dalam dasar ini, atau sebagaimana dikehendaki oleh undang-undang. Ini termasuk menyimpan rekod kutipan dan sijil untuk tempoh yang munasabah bagi menyokong sebarang permintaan sijil pada masa hadapan atau keperluan audit, khususnya bagi pelanggan perniagaan dan perusahaan.',
+            },
+            {
+              type: 'p',
+              text: 'Rekod hubungan dan pertanyaan am disimpan sehingga 3 tahun bagi tujuan perniagaan yang sah, selepas itu ia akan dipadam atau dinamakan semula.',
+            },
+          ],
+        },
+        {
+          title: '5. Keselamatan Data',
+          blocks: [
+            {
+              type: 'p',
+              text: 'Kami melaksanakan langkah teknikal dan organisasi yang sesuai untuk melindungi data anda daripada akses, pendedahan, pengubahan, atau pemusnahan yang tidak dibenarkan. Butiran bayaran dikendalikan melalui saluran bayaran yang dikawal selia dan disulitkan, dan data peranti atau perniagaan yang dikongsi bagi kutipan pukal dilayan sebagai sulit.',
+            },
+            {
+              type: 'p',
+              text: 'Tiada kaedah penghantaran melalui internet yang selamat 100%. Walaupun kami mengambil setiap langkah berjaga-jaga yang munasabah, kami tidak dapat menjamin keselamatan mutlak.',
+            },
+          ],
+        },
+        {
+          title: '6. Perkongsian Maklumat',
+          blocks: [
+            {
+              type: 'p',
+              text: 'Kami hanya berkongsi maklumat anda dengan pihak ketiga dalam keadaan terhad berikut:',
+            },
+            {
+              type: 'ul-labeled',
+              items: [
+                {
+                  label: 'Penyedia perkhidmatan',
+                  rest: 'rakan logistik yang membantu kutipan, dan penyedia pembayaran yang memproses bayaran DuitNow, di bawah kewajipan kerahsiaan.',
+                },
+                {
+                  label: 'Keperluan undang-undang atau kawal selia',
+                  rest: 'jika dikehendaki oleh undang-undang, perintah mahkamah, atau pihak berkuasa kerajaan seperti Jabatan Alam Sekitar.',
+                },
+                {
+                  label: 'Pemindahan perniagaan',
+                  rest: 'sekiranya berlaku penggabungan atau pengambilalihan, data anda mungkin dipindahkan sebagai sebahagian daripada transaksi tersebut.',
+                },
+              ],
+            },
+          ],
+        },
+        {
+          title: '7. Hak Anda Di Bawah PDPA',
+          blocks: [
+            {
+              type: 'p',
+              text: 'Di bawah Akta Perlindungan Data Peribadi 2010 Malaysia, anda mempunyai hak untuk:',
+            },
+            {
+              type: 'ul',
+              items: [
+                'Meminta akses kepada data peribadi anda yang kami simpan',
+                'Meminta pembetulan data peribadi yang tidak tepat atau tidak lengkap',
+                'Menarik balik kebenaran untuk kami memproses data anda, jika kebenaran adalah asas pemprosesan',
+                'Meminta pemadaman data anda, tertakluk kepada kewajipan undang-undang dan penyimpanan rekod kami',
+              ],
+            },
+            {
+              type: 'p-link',
+              prefix: 'Untuk menggunakan mana-mana hak ini, hubungi kami di ',
+              linkText: BRAND.email,
+              suffix: '. Kami akan membalas dalam masa 21 hari.',
+              href: `mailto:${BRAND.email}`,
+            },
+          ],
+        },
+        {
+          title: '8. Kuki',
+          blocks: [
+            {
+              type: 'p',
+              text: 'Laman web kami menggunakan kuki minimum yang diperlukan untuk fungsi asas dan analitik tanpa nama. Kami tidak menggunakan kuki pengiklanan atau penjejakan. Anda boleh melumpuhkan kuki dalam tetapan pelayar anda, walaupun sesetengah ciri laman web mungkin tidak berfungsi sepenuhnya.',
+            },
+          ],
+        },
+        {
+          title: '9. Pautan ke Laman Pihak Ketiga',
+          blocks: [
+            {
+              type: 'p',
+              text: 'Laman web kami mungkin memaut kepada perkhidmatan luaran seperti DuitNow/PayNet atau halaman media sosial kami. Kami tidak bertanggungjawab atas amalan privasi atau kandungan laman tersebut dan menggalakkan anda menyemak dasar privasi mereka secara berasingan.',
+            },
+          ],
+        },
+        {
+          title: '10. Perubahan Kepada Dasar Ini',
+          blocks: [
+            {
+              type: 'p',
+              text: 'Kami boleh mengemas kini Dasar Privasi ini dari semasa ke semasa. Apabila kami berbuat demikian, kami akan menyemak tarikh "Kemas kini terakhir" di bahagian atas halaman ini. Penggunaan berterusan perkhidmatan kami selepas perubahan disiarkan membentuk penerimaan anda terhadap dasar yang dikemas kini.',
+            },
+          ],
+        },
+        {
+          title: '11. Hubungi Kami',
+          blocks: [
+            {
+              type: 'p',
+              text: 'Jika anda mempunyai sebarang soalan tentang Dasar Privasi ini atau cara kami mengendalikan data anda, sila hubungi kami:',
+            },
+            { type: 'contact-block' },
+          ],
+        },
+      ],
     },
   },
 };
