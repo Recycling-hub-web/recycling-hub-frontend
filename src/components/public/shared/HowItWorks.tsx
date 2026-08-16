@@ -1,7 +1,7 @@
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
 
-import { HOW_IT_WORKS } from '../../../constants/content';
+import { useDictionary } from '../../../hooks/useDictionary';
 import { SectionHeading } from '../../ui/SectionHeading';
 
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
@@ -113,38 +113,10 @@ const GoLiveIcon = () => (
 
 const ICONS = [ProposalIcon, IntegrationIcon, GoLiveIcon];
 
-const STEP_EXTRAS = [
-  {
-    subtitle: 'Takes Under a Minute',
-    bullets: [
-      { bold: 'Online or WhatsApp', rest: ' — whichever is faster for you' },
-      { bold: 'Pick a convenient time', rest: ' for doorstep collection' },
-      { bold: 'No account required', rest: ' to book a pickup' },
-    ],
-  },
-  {
-    subtitle: 'Free, No Minimums',
-    bullets: [
-      { bold: 'Our team comes to you', rest: ' at the scheduled time' },
-      { bold: 'All personal devices accepted', rest: ' in one visit' },
-      { bold: 'No cost to you', rest: ' — collection is always free' },
-    ],
-  },
-  {
-    subtitle: 'On the Spot',
-    bullets: [
-      { bold: 'Instant DuitNow payment', rest: ' at the moment of collection' },
-      { bold: 'No waiting period', rest: ' or manual payout request' },
-      {
-        bold: 'Your devices are recycled',
-        rest: ' through certified channels',
-      },
-    ],
-  },
-];
-
 const HowItWorks = () => {
   const timelineRef = useRef<HTMLDivElement>(null);
+  const { home } = useDictionary();
+  const { howItWorks: content } = home;
 
   const { scrollYProgress } = useScroll({
     target: timelineRef,
@@ -159,8 +131,8 @@ const HowItWorks = () => {
         {/* Heading */}
         <div className="mb-20 text-center md:mb-28">
           <SectionHeading
-            eyebrow={HOW_IT_WORKS.eyebrow}
-            headline={HOW_IT_WORKS.headline}
+            eyebrow={content.eyebrow}
+            headline={content.headline}
           />
         </div>
 
@@ -175,9 +147,8 @@ const HowItWorks = () => {
           </div>
 
           <div className="flex flex-col gap-20 md:gap-32">
-            {HOW_IT_WORKS.steps.map((step, i) => {
+            {content.steps.map((step, i) => {
               const Icon = ICONS[i] ?? ProposalIcon;
-              const extra = STEP_EXTRAS[i];
 
               return (
                 <div
@@ -220,14 +191,14 @@ const HowItWorks = () => {
                     className="flex flex-col justify-center"
                   >
                     <p className="mb-1 text-sm font-semibold text-slate-400">
-                      {extra?.subtitle}
+                      {step.subtitle}
                     </p>
                     <h3 className="mb-5 font-montserrat text-2xl font-black uppercase tracking-tight text-slate-900 md:text-3xl">
                       {step.title}
                     </h3>
 
                     <ul className="space-y-3">
-                      {extra?.bullets.map((b, bi) => (
+                      {step.bullets.map((b, bi) => (
                         <motion.li
                           key={bi}
                           initial={{ opacity: 0, y: 12 }}

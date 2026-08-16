@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
 
-import { FAQ } from '../../../constants/content';
+import { useDictionary } from '../../../hooks/useDictionary';
 
 const ChevronIcon = ({ open }: { open: boolean }) => (
   <motion.svg
@@ -23,6 +23,8 @@ const ChevronIcon = ({ open }: { open: boolean }) => (
 
 const FaqSection = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const { home } = useDictionary();
+  const { faq: content } = home;
 
   const toggle = (i: number) => setOpenIndex(openIndex === i ? null : i);
 
@@ -30,11 +32,11 @@ const FaqSection = () => {
     <section className="bg-white py-20 md:py-28">
       <div className="mx-auto max-w-3xl px-5 md:px-8">
         <h2 className="mb-12 text-center font-montserrat text-3xl font-bold leading-tight tracking-[-0.02em] text-neutral-950 md:text-4xl lg:text-5xl">
-          {FAQ.headline} <span>{FAQ.headlineAccent}</span>
+          {content.headline} <span>{content.headlineAccent}</span>
         </h2>
 
         <div className="flex flex-col gap-3">
-          {FAQ.items.map((item, i) => {
+          {content.items.map((item, i) => {
             const isOpen = openIndex === i;
             return (
               <div

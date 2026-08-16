@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 
+import { useDictionary } from '../../../hooks/useDictionary';
 import { SectionHeading } from '../../ui/SectionHeading';
 
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
@@ -66,60 +67,57 @@ const LockIcon = () => (
   </svg>
 );
 
-const FEATURES = [
-  {
-    Icon: ShieldIcon,
-    title: 'Licensed Under DOE & SW110 — Every Collection Documented',
-    body: 'Recycling Hub collects and processes e-waste under a registered DOE license and SW110 scheduled-waste compliance. Every pickup is logged, tracked, and backed by paperwork you can hand to an auditor.',
-  },
-  {
-    Icon: PlugIcon,
-    title: 'One Partner, Whether It’s One Phone or a Whole Office',
-    body: "A single old laptop or a full office decommission — Recycling Hub runs the same licensed, documented process either way. You don't need a separate vendor for personal and enterprise volumes.",
-  },
-  {
-    Icon: LockIcon,
-    title: 'Certified Destruction. Zero Data Recovery.',
-    body: 'Every device carrying data goes through certified destruction with a serialized certificate. Recycling Hub does not resell or retain your data-bearing devices — destruction is verified, not assumed.',
-  },
-];
+const ICONS: Record<string, () => JSX.Element> = {
+  shield: ShieldIcon,
+  plug: PlugIcon,
+  lock: LockIcon,
+};
 
-const WhyRecyclingHub = () => (
-  <section className="bg-neutral-50 py-16 md:py-20">
-    <div className="mx-auto max-w-7xl px-5 md:px-8">
-      <div className="mb-14 text-center">
-        <SectionHeading
-          eyebrow="Why Recycling Hub"
-          headline="The Compliant Way to Get Rid of Old Electronics"
-          subtext="A scrap dealer or a storage room won't wipe your data, document the collection, or keep it out of a landfill. Recycling Hub handles the entire process — licensed, certified, and documented — for individuals and businesses alike."
-        />
+const WhyRecyclingHub = () => {
+  const {
+    home: { whyRecyclingHub: content },
+  } = useDictionary();
+
+  return (
+    <section className="bg-neutral-50 py-16 md:py-20">
+      <div className="mx-auto max-w-7xl px-5 md:px-8">
+        <div className="mb-14 text-center">
+          <SectionHeading
+            eyebrow={content.eyebrow}
+            headline={content.headline}
+            subtext={content.subtext}
+          />
+        </div>
+
+        <motion.div
+          variants={cardContainer}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: '-60px' }}
+          className="grid gap-6 md:grid-cols-3"
+        >
+          {content.features.map(({ icon, title, body }) => {
+            const Icon = ICONS[icon] ?? ShieldIcon;
+            return (
+              <motion.div
+                key={title}
+                variants={cardItem}
+                className="group flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-5 transition-shadow duration-300 hover:shadow-[0_8px_40px_rgba(5,57,89,0.08)] md:p-7"
+              >
+                <div className="mb-5 inline-flex size-12 items-center justify-center rounded-xl bg-neutral-100 text-neutral-950 transition-colors duration-300 group-hover:bg-neutral-950 group-hover:text-white">
+                  <Icon />
+                </div>
+                <h3 className="mb-3 font-montserrat text-base font-bold leading-snug tracking-[-0.01em] text-neutral-950 md:text-lg">
+                  {title}
+                </h3>
+                <p className="text-sm leading-relaxed text-slate-500">{body}</p>
+              </motion.div>
+            );
+          })}
+        </motion.div>
       </div>
-
-      <motion.div
-        variants={cardContainer}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, margin: '-60px' }}
-        className="grid gap-6 md:grid-cols-3"
-      >
-        {FEATURES.map(({ Icon, title, body }) => (
-          <motion.div
-            key={title}
-            variants={cardItem}
-            className="group flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-5 transition-shadow duration-300 hover:shadow-[0_8px_40px_rgba(5,57,89,0.08)] md:p-7"
-          >
-            <div className="mb-5 inline-flex size-12 items-center justify-center rounded-xl bg-neutral-100 text-neutral-950 transition-colors duration-300 group-hover:bg-neutral-950 group-hover:text-white">
-              <Icon />
-            </div>
-            <h3 className="mb-3 font-montserrat text-base font-bold leading-snug tracking-[-0.01em] text-neutral-950 md:text-lg">
-              {title}
-            </h3>
-            <p className="text-sm leading-relaxed text-slate-500">{body}</p>
-          </motion.div>
-        ))}
-      </motion.div>
-    </div>
-  </section>
-);
+    </section>
+  );
+};
 
 export { WhyRecyclingHub };

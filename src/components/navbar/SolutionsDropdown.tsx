@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { LuArrowRight, LuChevronDown } from 'react-icons/lu';
 
 import { SOLUTIONS } from '../../constants/content';
+import { useDictionary } from '../../hooks/useDictionary';
 import { SOLUTION_ICONS } from '../public/solutions/SolutionsGrid';
 
 // Only the two active primary markets are linked directly from the nav —
@@ -31,6 +32,7 @@ const SolutionsDropdown = ({ light }: SolutionsDropdownProps) => {
   const [open, setOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const dict = useDictionary();
 
   const isActiveSolutions = router.pathname.startsWith('/solutions');
   const showDot = isActiveSolutions || open;
@@ -83,7 +85,7 @@ const SolutionsDropdown = ({ light }: SolutionsDropdownProps) => {
         >
           <NavDot />
         </motion.span>
-        Solutions
+        {dict.nav.solutions}
         <motion.span
           animate={{ rotate: open ? 180 : 0 }}
           transition={{ duration: 0.2, ease: 'easeOut' }}
@@ -148,7 +150,7 @@ const SolutionsDropdown = ({ light }: SolutionsDropdownProps) => {
               href="/solutions"
               className="mt-1 flex items-center justify-between rounded-xl border-t border-slate-100 px-4 py-3 text-sm font-semibold text-brand-600 transition-colors duration-150 hover:bg-neutral-100"
             >
-              View All Solutions
+              {dict.nav.viewAllSolutions}
               <LuArrowRight size={15} />
             </Link>
           </motion.div>
@@ -163,6 +165,7 @@ const SolutionsDropdown = ({ light }: SolutionsDropdownProps) => {
 const SolutionsMobileAccordion = () => {
   const [open, setOpen] = useState(false);
   const router = useRouter();
+  const dict = useDictionary();
 
   const isActiveSolutions = router.pathname.startsWith('/solutions');
 
@@ -193,7 +196,7 @@ const SolutionsMobileAccordion = () => {
               <NavDot />
             </motion.span>
           )}
-          Solutions
+          {dict.nav.solutions}
         </span>
 
         <motion.span
@@ -238,7 +241,7 @@ const SolutionsMobileAccordion = () => {
                 href="/solutions"
                 className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-semibold text-brand-600 hover:bg-neutral-100"
               >
-                View All Solutions
+                {dict.nav.viewAllSolutions}
               </Link>
             </div>
           </motion.div>

@@ -1,6 +1,16 @@
 import { motion } from 'framer-motion';
 
+import { useDictionary } from '../../../hooks/useDictionary';
+
 const EASE = [0.22, 1, 0.36, 1] as const;
+
+// Purely visual per-card presentation — the actual copy (label/invoice/status)
+// comes from the locale dictionary and is zipped in by index below.
+const CARD_VISUALS = [
+  { avatarBg: '#00612b', motionY: 28, rotate: -2, delay: 0.1 },
+  { avatarBg: '#008a3e', motionY: -10, rotate: 0.5, delay: 0.2 },
+  { avatarBg: '#94a3b8', motionY: 22, rotate: 2.5, delay: 0.3 },
+];
 
 type CardConfig = {
   label: string;
@@ -8,51 +18,10 @@ type CardConfig = {
   avatarText: string;
   invoice: string;
   status: string;
-  statusCls: string;
-  meta: string;
   motionY: number;
   rotate: number;
   delay: number;
 };
-
-const CARDS: CardConfig[] = [
-  {
-    label: 'Scrap Dealer',
-    avatarBg: '#00612b',
-    avatarText: 'SD',
-    invoice: 'Old Company Laptops',
-    status: 'No data wipe performed',
-    statusCls: 'text-slate-500',
-    meta: '',
-    motionY: 28,
-    rotate: -2,
-    delay: 0.1,
-  },
-  {
-    label: 'Storage Room',
-    avatarBg: '#008a3e',
-    avatarText: 'ST',
-    invoice: 'Boxes of Old Devices',
-    status: 'Just taking up space',
-    statusCls: 'text-slate-500',
-    meta: '',
-    motionY: -10,
-    rotate: 0.5,
-    delay: 0.2,
-  },
-  {
-    label: 'Regular Trash',
-    avatarBg: '#94a3b8',
-    avatarText: '?',
-    invoice: 'E-Waste in General Bin',
-    status: 'Illegal disposal risk',
-    statusCls: 'text-slate-500',
-    meta: '',
-    motionY: 22,
-    rotate: 2.5,
-    delay: 0.3,
-  },
-];
 
 const IllustrationCard = ({
   label,
@@ -60,8 +29,6 @@ const IllustrationCard = ({
   avatarText,
   invoice,
   status,
-  statusCls,
-  meta,
   motionY,
   rotate,
   delay,
@@ -98,61 +65,64 @@ const IllustrationCard = ({
           {invoice}
         </p>
         <div className="mt-0.5 flex items-center gap-1.5">
-          <span className={`text-xs font-medium ${statusCls}`}>{status}</span>
-          {meta && (
-            <>
-              <span className="text-slate-300">·</span>
-              <span className="text-xs text-slate-400">{meta}</span>
-            </>
-          )}
+          <span className="text-xs font-medium text-slate-500">{status}</span>
         </div>
       </div>
     </div>
   </motion.div>
 );
 
-const ProblemIllustration = () => (
-  <section className="bg-[#fafafa] py-24">
-    <div className="mx-auto max-w-7xl px-5 md:px-8">
-      {/* Heading */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.55, ease: EASE }}
-        className="mb-20 text-center"
-      >
-        <h2 className="font-sans text-4xl font-bold tracking-tight text-neutral-950 md:text-5xl">
-          Still Piling Up? Or Worse — In the Bin?
-        </h2>
-        <p className="mx-auto mt-5 max-w-[480px] text-lg leading-relaxed text-slate-500">
-          Scrap dealers, storage rooms, and the regular bin keep old electronics
-          out of sight — they just don&apos;t keep you compliant, or your data
-          safe.
-        </p>
-      </motion.div>
+const ProblemIllustration = () => {
+  const {
+    home: { problemIllustration: content },
+  } = useDictionary();
 
-      {/* Cards — staggered row, scrollable until xl */}
-      <div className="-mx-5 overflow-x-auto px-5 [-ms-overflow-style:none] [scrollbar-width:none] xl:mx-0 xl:overflow-visible xl:px-0 [&::-webkit-scrollbar]:hidden">
-        <div className="flex min-w-max items-center justify-center gap-6 pb-4 xl:pb-0">
-          {CARDS.map((card) => (
-            <IllustrationCard key={card.label} {...card} />
-          ))}
+  const cards: CardConfig[] = content.cards.map((card, i) => ({
+    ...card,
+    ...CARD_VISUALS[i]!,
+  }));
+
+  return (
+    <section className="bg-[#fafafa] py-24">
+      <div className="mx-auto max-w-7xl px-5 md:px-8">
+        {/* Heading */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.55, ease: EASE }}
+          className="mb-20 text-center"
+        >
+          <h2 className="font-sans text-4xl font-bold tracking-tight text-neutral-950 md:text-5xl">
+            {content.headline}
+          </h2>
+          <p className="mx-auto mt-5 max-w-[480px] text-lg leading-relaxed text-slate-500">
+            {content.subtext}
+          </p>
+        </motion.div>
+
+        {/* Cards — staggered row, scrollable until xl */}
+        <div className="-mx-5 overflow-x-auto px-5 [-ms-overflow-style:none] [scrollbar-width:none] xl:mx-0 xl:overflow-visible xl:px-0 [&::-webkit-scrollbar]:hidden">
+          <div className="flex min-w-max items-center justify-center gap-6 pb-4 xl:pb-0">
+            {cards.map((card) => (
+              <IllustrationCard key={card.label} {...card} />
+            ))}
+          </div>
         </div>
-      </div>
 
-      {/* Bottom caption */}
-      <motion.p
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5, delay: 0.5, ease: EASE }}
-        className="mt-20 text-center text-lg font-bold text-neutral-950"
-      >
-        Same devices. One quiet difference: certified, compliant disposal.
-      </motion.p>
-    </div>
-  </section>
-);
+        {/* Bottom caption */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.5, ease: EASE }}
+          className="mt-20 text-center text-lg font-bold text-neutral-950"
+        >
+          {content.caption}
+        </motion.p>
+      </div>
+    </section>
+  );
+};
 
 export { ProblemIllustration };

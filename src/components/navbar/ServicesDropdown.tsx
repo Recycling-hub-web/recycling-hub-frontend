@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { LuArrowRight, LuChevronDown } from 'react-icons/lu';
 
 import { SERVICES } from '../../constants/content';
+import { useDictionary } from '../../hooks/useDictionary';
 import { SERVICE_ICONS } from '../public/services/ServicesGrid';
 
 const DOT_SPRING = { type: 'spring', stiffness: 600, damping: 25 } as const;
@@ -25,6 +26,7 @@ const ServicesDropdown = ({ light }: ServicesDropdownProps) => {
   const [open, setOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const dict = useDictionary();
 
   const isActiveServices = router.pathname.startsWith('/services');
   const showDot = isActiveServices || open;
@@ -77,7 +79,7 @@ const ServicesDropdown = ({ light }: ServicesDropdownProps) => {
         >
           <NavDot />
         </motion.span>
-        Services
+        {dict.nav.services}
         <motion.span
           animate={{ rotate: open ? 180 : 0 }}
           transition={{ duration: 0.2, ease: 'easeOut' }}
@@ -144,7 +146,7 @@ const ServicesDropdown = ({ light }: ServicesDropdownProps) => {
               href="/services"
               className="mt-1 flex items-center justify-between rounded-xl border-t border-slate-100 px-4 py-3 text-sm font-semibold text-brand-600 transition-colors duration-150 hover:bg-neutral-100"
             >
-              View All Services
+              {dict.nav.viewAllServices}
               <LuArrowRight size={15} />
             </Link>
           </motion.div>
@@ -159,6 +161,7 @@ const ServicesDropdown = ({ light }: ServicesDropdownProps) => {
 const ServicesMobileAccordion = () => {
   const [open, setOpen] = useState(false);
   const router = useRouter();
+  const dict = useDictionary();
 
   const isActiveServices = router.pathname.startsWith('/services');
 
@@ -189,7 +192,7 @@ const ServicesMobileAccordion = () => {
               <NavDot />
             </motion.span>
           )}
-          Services
+          {dict.nav.services}
         </span>
 
         <motion.span
@@ -234,7 +237,7 @@ const ServicesMobileAccordion = () => {
                 href="/services"
                 className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-semibold text-brand-600 hover:bg-neutral-100"
               >
-                View All Services
+                {dict.nav.viewAllServices}
               </Link>
             </div>
           </motion.div>

@@ -4,8 +4,10 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
-import { ASSETS, BRAND, NAV_LINKS } from '../../constants/content';
+import { ASSETS, BRAND } from '../../constants/content';
+import { useDictionary } from '../../hooks/useDictionary';
 import { Button } from '../ui/buttons/Button';
+import { LanguageSwitcher } from './LanguageSwitcher';
 import { ServicesDropdown, ServicesMobileAccordion } from './ServicesDropdown';
 import {
   SolutionsDropdown,
@@ -67,6 +69,14 @@ const Navbar = ({ variant = 'dark' }: NavbarProps) => {
   const [scrolled, setScrolled] = useState(false);
   const [hoveredHref, setHoveredHref] = useState<string | null>(null);
   const router = useRouter();
+  const dict = useDictionary();
+
+  const navLinks = [
+    { label: dict.nav.home, href: '/' },
+    { label: dict.nav.pricing, href: '/pricing' },
+    { label: dict.nav.about, href: '/about' },
+    { label: dict.nav.contact, href: '/contact' },
+  ];
 
   const isDark = variant === 'dark';
   const light = scrolled || !isDark;
@@ -164,7 +174,7 @@ const Navbar = ({ variant = 'dark' }: NavbarProps) => {
           className="hidden flex-1 items-center justify-center gap-1 md:flex lg:gap-1"
           onMouseLeave={() => setHoveredHref(null)}
         >
-          {NAV_LINKS.slice(0, 1).map((link) => {
+          {navLinks.slice(0, 1).map((link) => {
             const active = isActive(link.href);
             const hovered = hoveredHref === link.href;
             const showDot = active || hovered;
@@ -195,7 +205,7 @@ const Navbar = ({ variant = 'dark' }: NavbarProps) => {
           <ServicesDropdown light={light} />
           <SolutionsDropdown light={light} />
 
-          {NAV_LINKS.slice(1).map((link) => {
+          {navLinks.slice(1).map((link) => {
             const active = isActive(link.href);
             const hovered = hoveredHref === link.href;
             const showDot = active || hovered;
@@ -226,12 +236,13 @@ const Navbar = ({ variant = 'dark' }: NavbarProps) => {
 
         {/* CTA — desktop only */}
         <div className="hidden shrink-0 items-center gap-3 md:flex">
+          <LanguageSwitcher light={light} />
           <Button
             href={BRAND.whatsapp}
             variant={getWhatsappVariant()}
             className="hidden lg:inline-flex"
           >
-            WhatsApp Us
+            {dict.nav.whatsapp}
           </Button>
         </div>
 
@@ -255,7 +266,7 @@ const Navbar = ({ variant = 'dark' }: NavbarProps) => {
             className="overflow-hidden border-t border-slate-100 bg-white md:hidden"
           >
             <div className="flex flex-col gap-1 p-4">
-              {NAV_LINKS.slice(0, 1).map((link) => {
+              {navLinks.slice(0, 1).map((link) => {
                 const active = isActive(link.href);
                 return (
                   <Link
@@ -286,7 +297,7 @@ const Navbar = ({ variant = 'dark' }: NavbarProps) => {
               <ServicesMobileAccordion />
               <SolutionsMobileAccordion />
 
-              {NAV_LINKS.slice(1).map((link) => {
+              {navLinks.slice(1).map((link) => {
                 const active = isActive(link.href);
                 return (
                   <Link
@@ -315,19 +326,20 @@ const Navbar = ({ variant = 'dark' }: NavbarProps) => {
               })}
 
               <div className="mt-3 flex flex-col gap-3 border-t border-slate-100 pt-3">
+                <LanguageSwitcher light className="self-center" />
                 <Button
                   href={BRAND.whatsapp}
                   variant="secondary"
                   className="w-full"
                 >
-                  WhatsApp Us
+                  {dict.nav.whatsapp}
                 </Button>
                 <Button
                   href="/request-quote"
                   variant="primary"
                   className="w-full"
                 >
-                  Request a Quote
+                  {dict.nav.requestQuote}
                 </Button>
               </div>
             </div>

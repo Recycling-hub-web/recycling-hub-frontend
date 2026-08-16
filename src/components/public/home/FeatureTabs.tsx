@@ -1,145 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
 
-interface TabData {
-  label: string;
-  headline: string;
-  checklist: string[];
-  quote: string;
-  authorInitials: string;
-  authorLabel: string;
-  authorRole: string;
-  mockupLabel: string;
-}
-
-const TABS: TabData[] = [
-  {
-    label: 'Book & Schedule',
-    headline: 'Book a pickup in under a minute — for one device or a hundred.',
-    checklist: [
-      'Online form or WhatsApp booking',
-      'Flexible slots for households and offices',
-      'Bulk collection scheduled around your operations',
-      'No account or contract required for individuals',
-      'Confirmation sent immediately after booking',
-    ],
-    // TODO: replace with real client quote
-    quote:
-      'We had forty old laptops sitting in a storeroom for two years. Recycling Hub had them collected within a week of booking.',
-    authorInitials: 'OM',
-    authorLabel: 'Office Manager',
-    authorRole: 'KL trading company',
-    mockupLabel: 'Pickup Booking Confirmation',
-  },
-  {
-    label: 'Collect',
-    headline: 'Licensed collection, tracked from the moment we arrive.',
-    checklist: [
-      'DOE-registered, SW110-compliant collection team',
-      'Doorstep pickup for individuals, on-site for businesses',
-      'Every collected item logged at pickup',
-      'Secure transport to our processing facility',
-      'No device left unaccounted for',
-    ],
-    // TODO: replace with real client quote
-    quote:
-      'The team logged every single unit before it left our building. We had a full manifest the same day.',
-    authorInitials: 'FM',
-    authorLabel: 'Facilities Manager',
-    authorRole: 'Selangor manufacturer',
-    mockupLabel: 'Live Collection Log',
-  },
-  {
-    label: 'Sort & Process',
-    headline: 'Every device sorted, assessed, and routed correctly.',
-    checklist: [
-      'Devices assessed for reuse, refurbishment, or recycling',
-      'Components separated by material type',
-      'Hazardous components handled to DOE standard',
-      'Nothing sent to landfill',
-      'Processing facility open to compliance audits',
-    ],
-    // TODO: replace with real client quote
-    quote:
-      'We asked what actually happens after pickup, and Recycling Hub walked us through the whole process — nothing was vague.',
-    authorInitials: 'PL',
-    authorLabel: 'Procurement Lead',
-    authorRole: 'KL professional services firm',
-    mockupLabel: 'Processing Status Board',
-  },
-  {
-    label: 'Data Destruction',
-    headline: 'Every data-bearing device destroyed, not just deleted.',
-    checklist: [
-      'On-site or facility-based certified shredding',
-      'Serialized certificate of destruction per asset',
-      'PDPA-compliant handling throughout',
-      'No resale of data-bearing devices',
-      'Certificates available for audit within days',
-    ],
-    // TODO: replace with real client quote
-    quote:
-      'We needed proof our old servers were destroyed, not resold. The certificate covered every serial number.',
-    authorInitials: 'ITM',
-    authorLabel: 'IT Manager',
-    authorRole: 'Financial services firm',
-    mockupLabel: 'Certificate of Destruction',
-  },
-  {
-    label: 'Get Paid',
-    headline: 'Individuals get paid the moment their devices are collected.',
-    checklist: [
-      'Instant DuitNow payment on collection',
-      'No waiting period or manual payout request',
-      'Payment confirmed before our team leaves',
-      'No hidden deductions',
-      'Works for one device or a full clear-out',
-    ],
-    // TODO: replace with real client quote
-    quote:
-      'I had a drawer full of old phones. Payment landed in DuitNow before the pickup team even left.',
-    authorInitials: 'HS',
-    authorLabel: 'Household Seller',
-    authorRole: 'Petaling Jaya',
-    mockupLabel: 'DuitNow Payment Confirmation',
-  },
-  {
-    label: 'Compliance Docs',
-    headline: 'Every collection backed by paperwork your auditor will accept.',
-    checklist: [
-      'DOE and SW110 documentation per collection',
-      'Full chain-of-custody records',
-      'Certificates stored and retrievable on request',
-      'Ready for internal or third-party audit',
-      'No manual record-keeping needed on your end',
-    ],
-    // TODO: replace with real client quote
-    quote:
-      'When our auditors asked for e-waste disposal records, we had the full documentation within the hour.',
-    authorInitials: 'CO',
-    authorLabel: 'Compliance Officer',
-    authorRole: 'Klang Valley manufacturer',
-    mockupLabel: 'Compliance Documentation Pack',
-  },
-  {
-    label: 'ESG Reporting',
-    headline: 'Diversion reports your sustainability team can actually use.',
-    checklist: [
-      'Tonnage recycled per collection',
-      'Landfill diversion summary',
-      'Estimated carbon impact',
-      'Delivered in a format ready for ESG disclosures',
-      'Available on a per-collection or annual basis',
-    ],
-    // TODO: replace with real client quote
-    quote:
-      'The diversion report dropped straight into our sustainability disclosure with no extra formatting needed.',
-    authorInitials: 'SM',
-    authorLabel: 'Sustainability Manager',
-    authorRole: 'Malaysian NGO',
-    mockupLabel: 'ESG Diversion Report',
-  },
-];
+import { useDictionary } from '../../../hooks/useDictionary';
 
 const CheckBadge = () => (
   <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-brand-600">
@@ -157,7 +19,11 @@ const CheckBadge = () => (
 
 const FeatureTabs = () => {
   const [activeTab, setActiveTab] = useState(0);
-  const tab = TABS[activeTab]!;
+  const {
+    home: { featureTabs: content },
+  } = useDictionary();
+  const { tabs } = content;
+  const tab = tabs[activeTab]!;
 
   return (
     <section className="bg-white py-24">
@@ -165,11 +31,10 @@ const FeatureTabs = () => {
         {/* ── Header ─────────────────────────────────────────────────────────── */}
         <div>
           <h2 className="font-montserrat text-3xl font-bold tracking-tight text-neutral-950 md:text-4xl">
-            What Happens After You Book
+            {content.headline}
           </h2>
           <p className="mt-2 max-w-lg text-base text-slate-500">
-            From the moment you book to the certificate in your inbox — every
-            step is licensed, tracked, and documented.
+            {content.subtext}
           </p>
         </div>
 
@@ -179,7 +44,7 @@ const FeatureTabs = () => {
           role="tablist"
           aria-label="Feature tabs"
         >
-          {TABS.map((t, i) => (
+          {tabs.map((t, i) => (
             <button
               key={t.label}
               type="button"

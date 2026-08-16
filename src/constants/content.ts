@@ -40,17 +40,6 @@ export const BRAND = {
   },
 };
 
-// ─── Navbar ───────────────────────────────────────────────────────────────────
-// "Services" is rendered as its own dropdown (ServicesDropdown), not a plain
-// link, so it's deliberately left out of this list.
-
-export const NAV_LINKS = [
-  { label: 'Home', href: '/' },
-  { label: 'Pricing', href: '/pricing' },
-  { label: 'About', href: '/about' },
-  { label: 'Contact', href: '/contact' },
-];
-
 // ─── Page Heroes ──────────────────────────────────────────────────────────────
 // Each hero now speaks directly to the reader's specific concern on that page, not a generic brand statement.
 

@@ -1,4 +1,4 @@
-import { B2B_SECTION } from '../../../constants/content';
+import { useDictionary } from '../../../hooks/useDictionary';
 import { ArrowButton } from '../../ui/buttons/ArrowButton';
 import { FadeIn } from '../../ui/FadeIn';
 import { SectionHeading } from '../../ui/SectionHeading';
@@ -46,42 +46,47 @@ const ICONS: Record<PillarIcon, JSX.Element> = {
   ),
 };
 
-const B2BSection = () => (
-  <section className="relative overflow-hidden bg-hero-gradient py-20 md:py-28">
-    <div className="mx-auto max-w-6xl px-5 md:px-8">
-      <SectionHeading
-        light
-        eyebrow={B2B_SECTION.eyebrow}
-        headline={B2B_SECTION.headline}
-        subtext={B2B_SECTION.subheadline}
-      />
+const B2BSection = () => {
+  const { home } = useDictionary();
+  const { b2bSection: content } = home;
 
-      <div className="mt-14 grid gap-5 md:grid-cols-3">
-        {B2B_SECTION.pillars.map((pillar, i) => (
-          <FadeIn key={pillar.title} delay={i * 0.1}>
-            <div className="flex h-full flex-col rounded-2xl bg-white/10 p-6 ring-1 ring-white/15 backdrop-blur-sm">
-              <span className="flex size-11 items-center justify-center rounded-xl bg-white/15 text-white">
-                {ICONS[pillar.icon as PillarIcon]}
-              </span>
-              <h3 className="mt-5 font-montserrat text-lg font-bold text-white">
-                {pillar.title}
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-white/60">
-                {pillar.description}
-              </p>
-            </div>
-          </FadeIn>
-        ))}
+  return (
+    <section className="relative overflow-hidden bg-hero-gradient py-20 md:py-28">
+      <div className="mx-auto max-w-6xl px-5 md:px-8">
+        <SectionHeading
+          light
+          eyebrow={content.eyebrow}
+          headline={content.headline}
+          subtext={content.subheadline}
+        />
+
+        <div className="mt-14 grid gap-5 md:grid-cols-3">
+          {content.pillars.map((pillar, i) => (
+            <FadeIn key={pillar.title} delay={i * 0.1}>
+              <div className="flex h-full flex-col rounded-2xl bg-white/10 p-6 ring-1 ring-white/15 backdrop-blur-sm">
+                <span className="flex size-11 items-center justify-center rounded-xl bg-white/15 text-white">
+                  {ICONS[pillar.icon as PillarIcon]}
+                </span>
+                <h3 className="mt-5 font-montserrat text-lg font-bold text-white">
+                  {pillar.title}
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-white/60">
+                  {pillar.description}
+                </p>
+              </div>
+            </FadeIn>
+          ))}
+        </div>
+
+        <FadeIn delay={0.3} className="mt-12 flex flex-col items-center gap-4">
+          <ArrowButton href={content.ctaHref}>{content.cta}</ArrowButton>
+          <p className="max-w-md text-center text-sm text-white/50">
+            {content.note}
+          </p>
+        </FadeIn>
       </div>
-
-      <FadeIn delay={0.3} className="mt-12 flex flex-col items-center gap-4">
-        <ArrowButton href={B2B_SECTION.ctaHref}>{B2B_SECTION.cta}</ArrowButton>
-        <p className="max-w-md text-center text-sm text-white/50">
-          {B2B_SECTION.note}
-        </p>
-      </FadeIn>
-    </div>
-  </section>
-);
+    </section>
+  );
+};
 
 export { B2BSection };
