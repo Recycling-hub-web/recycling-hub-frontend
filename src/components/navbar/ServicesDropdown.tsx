@@ -4,14 +4,8 @@ import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 import { LuArrowRight, LuChevronDown } from 'react-icons/lu';
 
-import { SOLUTIONS } from '../../constants/content';
-import { SOLUTION_ICONS } from '../public/solutions/SolutionsGrid';
-
-// Only the two active primary markets are linked directly from the nav —
-// the other four segments are built and live at /solutions/<slug>, just not
-// surfaced here yet. Reachable via "View All Solutions" below until the
-// business is ready to actively market to those segments.
-const NAV_SOLUTIONS = SOLUTIONS.filter((s) => s.priority);
+import { SERVICES } from '../../constants/content';
+import { SERVICE_ICONS } from '../public/services/ServicesGrid';
 
 const DOT_SPRING = { type: 'spring', stiffness: 600, damping: 25 } as const;
 
@@ -23,17 +17,17 @@ const NavDot = () => (
 
 // ── Desktop dropdown ──────────────────────────────────────────────────────────
 
-type SolutionsDropdownProps = {
+type ServicesDropdownProps = {
   light: boolean;
 };
 
-const SolutionsDropdown = ({ light }: SolutionsDropdownProps) => {
+const ServicesDropdown = ({ light }: ServicesDropdownProps) => {
   const [open, setOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
-  const isActiveSolutions = router.pathname.startsWith('/solutions');
-  const showDot = isActiveSolutions || open;
+  const isActiveServices = router.pathname.startsWith('/services');
+  const showDot = isActiveServices || open;
 
   // Close on outside click
   useEffect(() => {
@@ -58,7 +52,7 @@ const SolutionsDropdown = ({ light }: SolutionsDropdownProps) => {
   const triggerIdleCls = light
     ? 'text-slate-500 hover:text-neutral-950'
     : 'text-white/75 hover:text-white';
-  const triggerCls = isActiveSolutions ? triggerActiveCls : triggerIdleCls;
+  const triggerCls = isActiveServices ? triggerActiveCls : triggerIdleCls;
 
   return (
     <div
@@ -83,7 +77,7 @@ const SolutionsDropdown = ({ light }: SolutionsDropdownProps) => {
         >
           <NavDot />
         </motion.span>
-        Solutions
+        Services
         <motion.span
           animate={{ rotate: open ? 180 : 0 }}
           transition={{ duration: 0.2, ease: 'easeOut' }}
@@ -101,54 +95,56 @@ const SolutionsDropdown = ({ light }: SolutionsDropdownProps) => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 6 }}
             transition={{ duration: 0.15, ease: 'easeOut' }}
-            className="absolute left-1/2 top-[calc(100%+8px)] z-50 w-80 -translate-x-1/2 rounded-2xl border border-slate-200 bg-white p-2 shadow-[0_8px_30px_rgba(0,0,0,0.08)]"
+            className="absolute left-1/2 top-[calc(100%+8px)] z-50 w-[38rem] -translate-x-1/2 rounded-2xl border border-slate-200 bg-white p-2 shadow-[0_8px_30px_rgba(0,0,0,0.08)]"
           >
-            {NAV_SOLUTIONS.map(({ slug, icon, title, summary }) => {
-              const href = `/solutions/${slug}`;
-              const Icon = SOLUTION_ICONS[icon];
-              const active = router.pathname === href;
-              return (
-                <Link
-                  key={slug}
-                  href={href}
-                  className={`group flex w-full items-start gap-3 rounded-xl p-4 transition-colors duration-150 ${
-                    active
-                      ? 'border border-slate-200 bg-neutral-100'
-                      : 'border border-transparent hover:border-slate-200 hover:bg-neutral-100'
-                  }`}
-                >
-                  <Icon
-                    size={20}
-                    strokeWidth={1.75}
-                    className={`mt-0.5 shrink-0 transition-colors duration-150 ${
+            <div className="grid grid-cols-2 gap-0.5">
+              {SERVICES.map(({ slug, icon, title, summary }) => {
+                const href = `/services/${slug}`;
+                const Icon = SERVICE_ICONS[icon];
+                const active = router.pathname === href;
+                return (
+                  <Link
+                    key={slug}
+                    href={href}
+                    className={`group flex w-full items-start gap-3 rounded-xl p-4 transition-colors duration-150 ${
                       active
-                        ? 'text-neutral-700'
-                        : 'text-slate-400 group-hover:text-neutral-700'
+                        ? 'border border-slate-200 bg-neutral-100'
+                        : 'border border-transparent hover:border-slate-200 hover:bg-neutral-100'
                     }`}
-                  />
-                  <div className="min-w-0">
-                    <p
-                      className={`text-sm font-semibold leading-snug transition-colors duration-150 ${
+                  >
+                    <Icon
+                      size={20}
+                      strokeWidth={1.75}
+                      className={`mt-0.5 shrink-0 transition-colors duration-150 ${
                         active
-                          ? 'text-neutral-950'
-                          : 'text-neutral-900 group-hover:text-neutral-950'
+                          ? 'text-neutral-700'
+                          : 'text-slate-400 group-hover:text-neutral-700'
                       }`}
-                    >
-                      {title}
-                    </p>
-                    <p className="mt-0.5 text-xs leading-relaxed text-slate-500">
-                      {summary}
-                    </p>
-                  </div>
-                </Link>
-              );
-            })}
+                    />
+                    <div className="min-w-0">
+                      <p
+                        className={`text-sm font-semibold leading-snug transition-colors duration-150 ${
+                          active
+                            ? 'text-neutral-950'
+                            : 'text-neutral-900 group-hover:text-neutral-950'
+                        }`}
+                      >
+                        {title}
+                      </p>
+                      <p className="mt-0.5 line-clamp-2 text-xs leading-relaxed text-slate-500">
+                        {summary}
+                      </p>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
 
             <Link
-              href="/solutions"
+              href="/services"
               className="mt-1 flex items-center justify-between rounded-xl border-t border-slate-100 px-4 py-3 text-sm font-semibold text-brand-600 transition-colors duration-150 hover:bg-neutral-100"
             >
-              View All Solutions
+              View All Services
               <LuArrowRight size={15} />
             </Link>
           </motion.div>
@@ -160,11 +156,11 @@ const SolutionsDropdown = ({ light }: SolutionsDropdownProps) => {
 
 // ── Mobile accordion ──────────────────────────────────────────────────────────
 
-const SolutionsMobileAccordion = () => {
+const ServicesMobileAccordion = () => {
   const [open, setOpen] = useState(false);
   const router = useRouter();
 
-  const isActiveSolutions = router.pathname.startsWith('/solutions');
+  const isActiveServices = router.pathname.startsWith('/services');
 
   useEffect(() => {
     setOpen(false);
@@ -176,13 +172,13 @@ const SolutionsMobileAccordion = () => {
         type="button"
         onClick={() => setOpen((o) => !o)}
         className={`flex w-full items-center justify-between rounded-lg px-3.5 py-2.5 text-sm font-medium transition-colors duration-150 ${
-          isActiveSolutions
+          isActiveServices
             ? 'bg-brand-50 text-brand-600'
             : 'text-slate-500 hover:bg-neutral-100 hover:text-neutral-950'
         }`}
       >
         <span className="flex items-center gap-2">
-          {isActiveSolutions && (
+          {isActiveServices && (
             <motion.span
               className="shrink-0 text-brand-600"
               initial={{ scale: 0 }}
@@ -193,7 +189,7 @@ const SolutionsMobileAccordion = () => {
               <NavDot />
             </motion.span>
           )}
-          Solutions
+          Services
         </span>
 
         <motion.span
@@ -215,9 +211,9 @@ const SolutionsMobileAccordion = () => {
             className="overflow-hidden"
           >
             <div className="ml-4 mt-1 flex flex-col gap-0.5 border-l border-slate-200 pl-3">
-              {NAV_SOLUTIONS.map(({ slug, icon, title }) => {
-                const href = `/solutions/${slug}`;
-                const Icon = SOLUTION_ICONS[icon];
+              {SERVICES.map(({ slug, icon, title }) => {
+                const href = `/services/${slug}`;
+                const Icon = SERVICE_ICONS[icon];
                 const active = router.pathname === href;
                 return (
                   <Link
@@ -235,10 +231,10 @@ const SolutionsMobileAccordion = () => {
                 );
               })}
               <Link
-                href="/solutions"
+                href="/services"
                 className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-semibold text-brand-600 hover:bg-neutral-100"
               >
-                View All Solutions
+                View All Services
               </Link>
             </div>
           </motion.div>
@@ -248,4 +244,4 @@ const SolutionsMobileAccordion = () => {
   );
 };
 
-export { SolutionsDropdown, SolutionsMobileAccordion };
+export { ServicesDropdown, ServicesMobileAccordion };

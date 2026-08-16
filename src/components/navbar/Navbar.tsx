@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 
 import { ASSETS, BRAND, NAV_LINKS } from '../../constants/content';
 import { Button } from '../ui/buttons/Button';
+import { ServicesDropdown, ServicesMobileAccordion } from './ServicesDropdown';
 import {
   SolutionsDropdown,
   SolutionsMobileAccordion,
@@ -163,7 +164,7 @@ const Navbar = ({ variant = 'dark' }: NavbarProps) => {
           className="hidden flex-1 items-center justify-center gap-1 md:flex lg:gap-1"
           onMouseLeave={() => setHoveredHref(null)}
         >
-          {NAV_LINKS.slice(0, 2).map((link) => {
+          {NAV_LINKS.slice(0, 1).map((link) => {
             const active = isActive(link.href);
             const hovered = hoveredHref === link.href;
             const showDot = active || hovered;
@@ -191,9 +192,10 @@ const Navbar = ({ variant = 'dark' }: NavbarProps) => {
             );
           })}
 
+          <ServicesDropdown light={light} />
           <SolutionsDropdown light={light} />
 
-          {NAV_LINKS.slice(2).map((link) => {
+          {NAV_LINKS.slice(1).map((link) => {
             const active = isActive(link.href);
             const hovered = hoveredHref === link.href;
             const showDot = active || hovered;
@@ -253,7 +255,7 @@ const Navbar = ({ variant = 'dark' }: NavbarProps) => {
             className="overflow-hidden border-t border-slate-100 bg-white md:hidden"
           >
             <div className="flex flex-col gap-1 p-4">
-              {NAV_LINKS.slice(0, 2).map((link) => {
+              {NAV_LINKS.slice(0, 1).map((link) => {
                 const active = isActive(link.href);
                 return (
                   <Link
@@ -281,9 +283,10 @@ const Navbar = ({ variant = 'dark' }: NavbarProps) => {
                 );
               })}
 
+              <ServicesMobileAccordion />
               <SolutionsMobileAccordion />
 
-              {NAV_LINKS.slice(2).map((link) => {
+              {NAV_LINKS.slice(1).map((link) => {
                 const active = isActive(link.href);
                 return (
                   <Link
@@ -319,7 +322,11 @@ const Navbar = ({ variant = 'dark' }: NavbarProps) => {
                 >
                   WhatsApp Us
                 </Button>
-                <Button href="/contact" variant="primary" className="w-full">
+                <Button
+                  href="/request-quote"
+                  variant="primary"
+                  className="w-full"
+                >
                   Request a Quote
                 </Button>
               </div>

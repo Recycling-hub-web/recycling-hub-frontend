@@ -5,18 +5,18 @@ import { SolutionDetailTemplate } from '../../components/public/solutions/Soluti
 import { PublicLayout } from '../../layouts/PublicLayout';
 import type { NextPageWithLayout } from '../../types/next';
 
-const NgoPage: NextPageWithLayout = () => (
+const HealthcarePage: NextPageWithLayout = () => (
   <>
     <Meta
-      title="E-Waste Solutions for NGOs & Non-Profits — Recycling Hub"
-      description="Flexible, lower-volume collection at partnership rates for nonprofits and community organizations."
+      title="E-Waste Solutions for Healthcare — Recycling Hub"
+      description="Chain-of-custody-tracked collection and certified destruction for retired hospital and clinic IT equipment."
     />
-    <SolutionDetailTemplate slug="ngo" />
+    <SolutionDetailTemplate slug="healthcare" />
   </>
 );
 
-NgoPage.getLayout = (page: ReactElement) => (
+HealthcarePage.getLayout = (page: ReactElement) => (
   <PublicLayout navVariant="light">{page}</PublicLayout>
 );
 
-export default NgoPage;
+export default HealthcarePage;
