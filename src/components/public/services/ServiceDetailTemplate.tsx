@@ -7,6 +7,7 @@ import {
   SERVICES,
   type ServiceSlug,
 } from '../../../constants/content';
+import { useDictionary } from '../../../hooks/useDictionary';
 import { Button } from '../../ui/buttons/Button';
 import { FadeIn } from '../../ui/FadeIn';
 import { ReusableHero } from '../../ui/hero';
@@ -18,28 +19,30 @@ type ServiceDetailTemplateProps = {
   slug: ServiceSlug;
 };
 
-const VISUAL_PLACEHOLDERS = {
-  photos: {
-    Icon: LuCamera,
-    label: 'Before/after collection photos — to be added once available',
-  },
-  certificate: {
-    Icon: LuFileText,
-    label: 'Sample certificate of destruction — to be added once finalized',
-  },
+const VISUAL_ICONS = {
+  photos: LuCamera,
+  certificate: LuFileText,
 };
 
 const ServiceDetailTemplate = ({ slug }: ServiceDetailTemplateProps) => {
+  const { nav, services: dictServices } = useDictionary();
   const service = SERVICES.find((s) => s.slug === slug)!;
-  const details = SERVICE_DETAILS[slug];
+  const structural = SERVICE_DETAILS[slug];
+  const { title } = dictServices.cards[slug];
+  const details = dictServices.detail[slug];
   const Icon = SERVICE_ICONS[service.icon];
-  const visual = details.visual ? VISUAL_PLACEHOLDERS[details.visual] : null;
+  const visual = structural.visual
+    ? {
+        Icon: VISUAL_ICONS[structural.visual],
+        label: dictServices.visualPlaceholders[structural.visual],
+      }
+    : null;
 
   return (
     <>
       <ReusableHero
-        eyebrow="Services"
-        headline={service.title}
+        eyebrow={nav.services}
+        headline={title}
         description={details.description}
       />
 
@@ -48,7 +51,7 @@ const ServiceDetailTemplate = ({ slug }: ServiceDetailTemplateProps) => {
         <div className="mx-auto max-w-3xl px-5 md:px-8">
           <FadeIn>
             <h2 className="mb-6 font-montserrat text-xl font-extrabold text-neutral-950">
-              What&apos;s Included
+              {dictServices.whatsIncludedHeading}
             </h2>
           </FadeIn>
 
@@ -107,34 +110,30 @@ const ServiceDetailTemplate = ({ slug }: ServiceDetailTemplateProps) => {
         <div className="mx-auto max-w-3xl px-5 text-center md:px-8">
           <FadeIn>
             <Button href={`/request-quote?service=${slug}`}>
-              Request a Quote
+              {nav.requestQuote}
             </Button>
           </FadeIn>
 
           {slug === 'collection-pickup' && (
             <FadeIn delay={0.1}>
               <p className="mt-4 text-sm text-slate-500">
-                Just clearing out a personal device? Individual pickup is free —{' '}
+                {dictServices.freeIndividualNote.prefix}
                 <a
                   href={BRAND.whatsapp}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="font-medium text-brand-600 underline underline-offset-2"
                 >
-                  book directly via WhatsApp
+                  {dictServices.freeIndividualNote.linkText}
                 </a>
-                , no quote required.
+                {dictServices.freeIndividualNote.suffix}
               </p>
             </FadeIn>
           )}
         </div>
       </section>
 
-      <ServicesGrid
-        excludeSlug={slug}
-        eyebrow="Explore More"
-        headline="Other Services"
-      />
+      <ServicesGrid excludeSlug={slug} variant="compact" />
     </>
   );
 };

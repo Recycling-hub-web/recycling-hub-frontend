@@ -11,6 +11,7 @@ import {
 } from 'react-icons/lu';
 
 import { SERVICES } from '../../../constants/content';
+import { useDictionary } from '../../../hooks/useDictionary';
 import { SectionHeading } from '../../ui/SectionHeading';
 
 const ease = [0.22, 1, 0.36, 1] as const;
@@ -28,33 +29,34 @@ export const SERVICE_ICONS: Record<ServiceIconKey, IconType> = {
 
 type ServicesGridProps = {
   excludeSlug?: string;
-  eyebrow?: string;
-  headline?: string;
-  subtext?: string;
+  variant?: 'landing' | 'compact';
 };
 
 const ServicesGrid = ({
   excludeSlug,
-  eyebrow = 'Our Services',
-  headline = 'Six Services. One License.',
-  subtext,
+  variant = 'landing',
 }: ServicesGridProps) => {
+  const { services: content } = useDictionary();
   const services = SERVICES.filter((s) => s.slug !== excludeSlug);
+  const heading =
+    variant === 'landing'
+      ? content.gridHeading.ourServices
+      : content.gridHeading.exploreMore;
 
   return (
     <section className="bg-white py-16 md:py-20">
       <div className="mx-auto max-w-7xl px-5 md:px-8">
         <div className="mb-14 text-center">
           <SectionHeading
-            eyebrow={eyebrow}
-            headline={headline}
-            subtext={subtext}
+            eyebrow={heading.eyebrow}
+            headline={heading.headline}
           />
         </div>
 
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {services.map(({ slug, icon, title, summary }, i) => {
+          {services.map(({ slug, icon }, i) => {
             const Icon = SERVICE_ICONS[icon];
+            const { title, summary } = content.cards[slug];
             return (
               <motion.div
                 key={slug}
@@ -77,7 +79,7 @@ const ServicesGrid = ({
                     {summary}
                   </p>
                   <p className="mt-5 text-xs font-semibold text-brand-600">
-                    Learn more →
+                    {content.learnMore} →
                   </p>
                 </Link>
               </motion.div>

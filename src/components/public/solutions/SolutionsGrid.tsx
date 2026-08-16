@@ -11,6 +11,7 @@ import {
 } from 'react-icons/lu';
 
 import { SOLUTIONS } from '../../../constants/content';
+import { useDictionary } from '../../../hooks/useDictionary';
 import { SectionHeading } from '../../ui/SectionHeading';
 
 const ease = [0.22, 1, 0.36, 1] as const;
@@ -31,6 +32,7 @@ type SolutionCardProps = {
   icon: SolutionIconKey;
   title: string;
   summary: string;
+  learnMoreLabel: string;
   featured?: boolean;
   delay?: number;
 };
@@ -40,6 +42,7 @@ const SolutionCard = ({
   icon,
   title,
   summary,
+  learnMoreLabel,
   featured = false,
   delay = 0,
 }: SolutionCardProps) => {
@@ -82,7 +85,7 @@ const SolutionCard = ({
           {summary}
         </p>
         <p className="mt-5 text-xs font-semibold text-brand-600">
-          Learn more →
+          {learnMoreLabel} →
         </p>
       </Link>
     </motion.div>
@@ -92,19 +95,18 @@ const SolutionCard = ({
 type SolutionsGridProps = {
   excludeSlug?: string;
   variant?: 'landing' | 'compact';
-  eyebrow?: string;
-  headline?: string;
-  subtext?: string;
 };
 
 const SolutionsGrid = ({
   excludeSlug,
   variant = 'landing',
-  eyebrow = 'Our Segments',
-  headline = 'Solutions for Every Sector',
-  subtext,
 }: SolutionsGridProps) => {
+  const { solutions: content } = useDictionary();
   const solutions = SOLUTIONS.filter((s) => s.slug !== excludeSlug);
+  const heading =
+    variant === 'landing'
+      ? content.gridHeading.ourSegments
+      : content.gridHeading.exploreMore;
 
   if (variant === 'compact') {
     return (
@@ -112,20 +114,20 @@ const SolutionsGrid = ({
         <div className="mx-auto max-w-7xl px-5 md:px-8">
           <div className="mb-14 text-center">
             <SectionHeading
-              eyebrow={eyebrow}
-              headline={headline}
-              subtext={subtext}
+              eyebrow={heading.eyebrow}
+              headline={heading.headline}
             />
           </div>
 
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {solutions.map(({ slug, icon, title, summary }, i) => (
+            {solutions.map(({ slug, icon }, i) => (
               <SolutionCard
                 key={slug}
                 slug={slug}
                 icon={icon}
-                title={title}
-                summary={summary}
+                title={content.cards[slug].title}
+                summary={content.cards[slug].summary}
+                learnMoreLabel={content.learnMore}
                 delay={i * 0.06}
               />
             ))}
@@ -143,21 +145,21 @@ const SolutionsGrid = ({
       <div className="mx-auto max-w-7xl px-5 md:px-8">
         <div className="mb-14 text-center">
           <SectionHeading
-            eyebrow={eyebrow}
-            headline={headline}
-            subtext={subtext}
+            eyebrow={heading.eyebrow}
+            headline={heading.headline}
           />
         </div>
 
         {featured.length > 0 && (
           <div className="mb-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
-            {featured.map(({ slug, icon, title, summary }, i) => (
+            {featured.map(({ slug, icon }, i) => (
               <SolutionCard
                 key={slug}
                 slug={slug}
                 icon={icon}
-                title={title}
-                summary={summary}
+                title={content.cards[slug].title}
+                summary={content.cards[slug].summary}
+                learnMoreLabel={content.learnMore}
                 featured
                 delay={i * 0.08}
               />
@@ -167,13 +169,14 @@ const SolutionsGrid = ({
 
         {rest.length > 0 && (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {rest.map(({ slug, icon, title, summary }, i) => (
+            {rest.map(({ slug, icon }, i) => (
               <SolutionCard
                 key={slug}
                 slug={slug}
                 icon={icon}
-                title={title}
-                summary={summary}
+                title={content.cards[slug].title}
+                summary={content.cards[slug].summary}
+                learnMoreLabel={content.learnMore}
                 delay={0.16 + i * 0.06}
               />
             ))}

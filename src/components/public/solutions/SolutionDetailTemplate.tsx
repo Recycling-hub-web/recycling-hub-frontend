@@ -3,9 +3,9 @@ import { LuCheck, LuMessageSquareQuote } from 'react-icons/lu';
 
 import {
   SOLUTION_DETAILS,
-  SOLUTIONS,
   type SolutionSlug,
 } from '../../../constants/content';
+import { useDictionary } from '../../../hooks/useDictionary';
 import { Button } from '../../ui/buttons/Button';
 import { FadeIn } from '../../ui/FadeIn';
 import { ReusableHero } from '../../ui/hero';
@@ -18,14 +18,16 @@ type SolutionDetailTemplateProps = {
 };
 
 const SolutionDetailTemplate = ({ slug }: SolutionDetailTemplateProps) => {
-  const solution = SOLUTIONS.find((s) => s.slug === slug)!;
-  const details = SOLUTION_DETAILS[slug];
+  const { nav, solutions: dictSolutions } = useDictionary();
+  const structural = SOLUTION_DETAILS[slug];
+  const { title } = dictSolutions.cards[slug];
+  const details = dictSolutions.detail[slug];
 
   return (
     <>
       <ReusableHero
-        eyebrow="Solutions"
-        headline={solution.title}
+        eyebrow={nav.solutions}
+        headline={title}
         description={details.framing}
       />
 
@@ -34,7 +36,8 @@ const SolutionDetailTemplate = ({ slug }: SolutionDetailTemplateProps) => {
         <div className="mx-auto max-w-3xl px-5 md:px-8">
           <FadeIn>
             <h2 className="mb-6 font-montserrat text-xl font-extrabold text-neutral-950">
-              Why {solution.title} Chooses Recycling Hub
+              {dictSolutions.whyUsHeadingPrefix} {title}{' '}
+              {dictSolutions.whyUsHeadingSuffix}
             </h2>
           </FadeIn>
 
@@ -77,16 +80,11 @@ const SolutionDetailTemplate = ({ slug }: SolutionDetailTemplateProps) => {
       {/* CTA */}
       <section className="bg-white py-16 text-center md:py-20">
         <FadeIn>
-          <Button href={details.cta.href}>{details.cta.label}</Button>
+          <Button href={structural.cta.href}>{details.ctaLabel}</Button>
         </FadeIn>
       </section>
 
-      <SolutionsGrid
-        excludeSlug={slug}
-        variant="compact"
-        eyebrow="Explore More"
-        headline="Other Solutions"
-      />
+      <SolutionsGrid excludeSlug={slug} variant="compact" />
     </>
   );
 };
