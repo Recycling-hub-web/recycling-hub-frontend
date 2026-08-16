@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 
 import { BRAND } from '../../../constants/content';
+import { useDictionary } from '../../../hooks/useDictionary';
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -10,52 +11,56 @@ const InstagramIcon = () => (
   </svg>
 );
 
-const SOCIALS = [
-  {
-    label: 'Instagram',
-    handle: '@recyclinghub.eco',
-    href: BRAND.social.instagram,
-    icon: <InstagramIcon />,
-    description: 'E-waste tips & recycling updates',
-  },
-];
+const SocialLinks = () => {
+  const { contact } = useDictionary();
 
-const SocialLinks = () => (
-  <section className="bg-neutral-50 py-12 md:py-16">
-    <div className="mx-auto max-w-7xl px-5 md:px-8">
-      <p className="mb-8 text-center text-xs font-semibold uppercase tracking-widest text-slate-400">
-        Follow Us
-      </p>
+  const SOCIALS = [
+    {
+      label: 'Instagram',
+      handle: '@recyclinghub.eco',
+      href: BRAND.social.instagram,
+      icon: <InstagramIcon />,
+      description: contact.instagramDescription,
+    },
+  ];
 
-      <div className="mx-auto flex max-w-lg flex-col gap-4 sm:flex-row">
-        {SOCIALS.map((s, i) => (
-          <motion.a
-            key={s.label}
-            href={s.href}
-            target="_blank"
-            rel="noopener noreferrer"
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.45, delay: i * 0.1, ease }}
-            whileHover={{ y: -3, transition: { duration: 0.2 } }}
-            className="flex flex-1 items-center gap-4 rounded-2xl border border-slate-200 bg-white px-6 py-5 transition-shadow duration-200 hover:shadow-md"
-          >
-            <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-neutral-100 text-neutral-950">
-              {s.icon}
-            </div>
-            <div>
-              <p className="font-montserrat text-sm font-extrabold text-neutral-950">
-                {s.label}
-              </p>
-              <p className="text-xs text-slate-500">{s.handle}</p>
-              <p className="mt-0.5 text-xs text-slate-500">{s.description}</p>
-            </div>
-          </motion.a>
-        ))}
+  return (
+    <section className="bg-neutral-50 py-12 md:py-16">
+      <div className="mx-auto max-w-7xl px-5 md:px-8">
+        <p className="mb-8 text-center text-xs font-semibold uppercase tracking-widest text-slate-400">
+          {contact.followUs}
+        </p>
+
+        <div className="mx-auto flex max-w-lg flex-col gap-4 sm:flex-row">
+          {SOCIALS.map((s, i) => (
+            <motion.a
+              key={s.label}
+              href={s.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.45, delay: i * 0.1, ease }}
+              whileHover={{ y: -3, transition: { duration: 0.2 } }}
+              className="flex flex-1 items-center gap-4 rounded-2xl border border-slate-200 bg-white px-6 py-5 transition-shadow duration-200 hover:shadow-md"
+            >
+              <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-neutral-100 text-neutral-950">
+                {s.icon}
+              </div>
+              <div>
+                <p className="font-montserrat text-sm font-extrabold text-neutral-950">
+                  {s.label}
+                </p>
+                <p className="text-xs text-slate-500">{s.handle}</p>
+                <p className="mt-0.5 text-xs text-slate-500">{s.description}</p>
+              </div>
+            </motion.a>
+          ))}
+        </div>
       </div>
-    </div>
-  </section>
-);
+    </section>
+  );
+};
 
 export { SocialLinks };

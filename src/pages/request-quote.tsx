@@ -4,7 +4,8 @@ import { type FormEvent, type ReactElement, useEffect, useState } from 'react';
 import { Meta } from '../components/layout/Meta';
 import { FadeIn } from '../components/ui/FadeIn';
 import { ReusableHero } from '../components/ui/hero';
-import { BRAND, REQUEST_QUOTE_PAGE, SERVICES } from '../constants/content';
+import { BRAND, SERVICES } from '../constants/content';
+import { useDictionary } from '../hooks/useDictionary';
 import { PublicLayout } from '../layouts/PublicLayout';
 import type { NextPageWithLayout } from '../types/next';
 
@@ -12,6 +13,7 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const RequestQuotePage: NextPageWithLayout = () => {
   const router = useRouter();
+  const { services, requestQuote: content } = useDictionary();
 
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
@@ -35,11 +37,11 @@ const RequestQuotePage: NextPageWithLayout = () => {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!fullName.trim()) {
-      setError('Please enter your full name.');
+      setError(content.form.errorNameRequired);
       return;
     }
     if (!EMAIL_PATTERN.test(email)) {
-      setError('Enter a valid email address.');
+      setError(content.form.errorEmailInvalid);
       return;
     }
     setError('');
@@ -57,10 +59,10 @@ const RequestQuotePage: NextPageWithLayout = () => {
       />
 
       <ReusableHero
-        eyebrow={REQUEST_QUOTE_PAGE.eyebrow}
-        headline={REQUEST_QUOTE_PAGE.headline}
-        headlineAccent={REQUEST_QUOTE_PAGE.headlineAccent}
-        description={REQUEST_QUOTE_PAGE.description}
+        eyebrow={content.hero.eyebrow}
+        headline={content.hero.headline}
+        headlineAccent={content.hero.headlineAccent}
+        description={content.hero.description}
       />
 
       <section className="bg-white pb-16 md:pb-20">
@@ -77,7 +79,7 @@ const RequestQuotePage: NextPageWithLayout = () => {
                     htmlFor="fullName"
                     className="text-xs font-semibold uppercase tracking-wide text-slate-500"
                   >
-                    Full name
+                    {content.form.fullName}
                   </label>
                   <input
                     id="fullName"
@@ -88,7 +90,7 @@ const RequestQuotePage: NextPageWithLayout = () => {
                       if (error) setError('');
                     }}
                     disabled={submitted}
-                    placeholder="Your name"
+                    placeholder={content.form.fullNamePlaceholder}
                     className="rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-neutral-950 placeholder:text-slate-400 focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20 disabled:bg-slate-50 disabled:text-slate-400"
                   />
                 </div>
@@ -98,7 +100,7 @@ const RequestQuotePage: NextPageWithLayout = () => {
                     htmlFor="email"
                     className="text-xs font-semibold uppercase tracking-wide text-slate-500"
                   >
-                    Email
+                    {content.form.email}
                   </label>
                   <input
                     id="email"
@@ -119,7 +121,7 @@ const RequestQuotePage: NextPageWithLayout = () => {
                     htmlFor="phone"
                     className="text-xs font-semibold uppercase tracking-wide text-slate-500"
                   >
-                    Phone
+                    {content.form.phone}
                   </label>
                   <input
                     id="phone"
@@ -127,7 +129,7 @@ const RequestQuotePage: NextPageWithLayout = () => {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     disabled={submitted}
-                    placeholder="+60 1x-xxx xxxx"
+                    placeholder={content.form.phonePlaceholder}
                     className="rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-neutral-950 placeholder:text-slate-400 focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20 disabled:bg-slate-50 disabled:text-slate-400"
                   />
                 </div>
@@ -137,7 +139,7 @@ const RequestQuotePage: NextPageWithLayout = () => {
                     htmlFor="company"
                     className="text-xs font-semibold uppercase tracking-wide text-slate-500"
                   >
-                    Company (if applicable)
+                    {content.form.company}
                   </label>
                   <input
                     id="company"
@@ -145,7 +147,7 @@ const RequestQuotePage: NextPageWithLayout = () => {
                     value={company}
                     onChange={(e) => setCompany(e.target.value)}
                     disabled={submitted}
-                    placeholder="Optional"
+                    placeholder={content.form.companyPlaceholder}
                     className="rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-neutral-950 placeholder:text-slate-400 focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20 disabled:bg-slate-50 disabled:text-slate-400"
                   />
                 </div>
@@ -155,7 +157,7 @@ const RequestQuotePage: NextPageWithLayout = () => {
                     htmlFor="service"
                     className="text-xs font-semibold uppercase tracking-wide text-slate-500"
                   >
-                    Service you&apos;re interested in
+                    {content.form.serviceLabel}
                   </label>
                   <select
                     id="service"
@@ -166,7 +168,7 @@ const RequestQuotePage: NextPageWithLayout = () => {
                   >
                     {SERVICES.map((s) => (
                       <option key={s.slug} value={s.slug}>
-                        {s.title}
+                        {services.cards[s.slug].title}
                       </option>
                     ))}
                   </select>
@@ -177,7 +179,7 @@ const RequestQuotePage: NextPageWithLayout = () => {
                     htmlFor="details"
                     className="text-xs font-semibold uppercase tracking-wide text-slate-500"
                   >
-                    Device types & estimated volume
+                    {content.form.detailsLabel}
                   </label>
                   <textarea
                     id="details"
@@ -185,7 +187,7 @@ const RequestQuotePage: NextPageWithLayout = () => {
                     onChange={(e) => setDetails(e.target.value)}
                     disabled={submitted}
                     rows={4}
-                    placeholder="E.g. ~40 desktops and monitors from a single office, one-off decommission"
+                    placeholder={content.form.detailsPlaceholder}
                     className="resize-none rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-neutral-950 placeholder:text-slate-400 focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20 disabled:bg-slate-50 disabled:text-slate-400"
                   />
                 </div>
@@ -194,21 +196,22 @@ const RequestQuotePage: NextPageWithLayout = () => {
               {error && <p className="mt-4 text-sm text-red-500">{error}</p>}
               {submitted && (
                 <p className="mt-4 text-sm font-medium text-brand-600">
-                  Request received — we&apos;ll confirm pricing and a collection
-                  window within 24 hours.
+                  {content.form.successMessage}
                 </p>
               )}
 
               <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
                 <p className="text-xs text-slate-400">
-                  Prefer to talk it through? WhatsApp us instead.
+                  {content.form.whatsappNote}
                 </p>
                 <button
                   type="submit"
                   disabled={submitted}
                   className="inline-flex w-full items-center justify-center rounded-full bg-brand-600 px-6 py-3 text-sm font-semibold text-white ring-2 ring-brand-600 ring-offset-2 transition-all duration-300 ease-out hover:bg-brand-700 hover:ring-brand-700 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
                 >
-                  {submitted ? 'Request Sent' : 'Submit Request'}
+                  {submitted
+                    ? content.form.submittedButton
+                    : content.form.submitButton}
                 </button>
               </div>
             </form>
@@ -216,16 +219,16 @@ const RequestQuotePage: NextPageWithLayout = () => {
 
           <FadeIn delay={0.1}>
             <p className="mt-6 text-center text-xs text-slate-400">
-              Individual pickup is always free and doesn&apos;t need a quote —{' '}
+              {content.footerNote.prefix}
               <a
                 href={BRAND.whatsapp}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="font-medium text-brand-600 underline underline-offset-2"
               >
-                book it directly via WhatsApp
+                {content.footerNote.linkText}
               </a>
-              .
+              {content.footerNote.suffix}
             </p>
           </FadeIn>
         </div>

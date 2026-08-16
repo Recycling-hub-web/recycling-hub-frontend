@@ -51,13 +51,6 @@ export const PAGE_HEROES = {
     description:
       'We are a software agency based in Alor Setar and Petaling Jaya. We built Recycling Hub because Malaysian businesses deserved an e-invoice integration partner that was local, technically honest, and priced fairly.',
   },
-  contact: {
-    eyebrow: 'Get In Touch',
-    headline: 'Not Sure If You Need This?',
-    headlineAccent: "Let's Find Out.",
-    description:
-      "Book a free 15-minute call, or just WhatsApp us. We'll help you figure out whether individual pickup or bulk collection fits your situation — and get you a quote if you need one. No commitment, no pressure.",
-  },
   pricing: {
     eyebrow: 'Pricing',
     headline: 'Fixed Price. No Retainers.',
@@ -479,99 +472,6 @@ export const FAQ = {
   ],
 };
 
-// ─── FAQ Page ─────────────────────────────────────────────────────────────────
-// A fuller, categorized version of FAQ for the dedicated /faq page. Reuses the
-// same original answers as FAQ where they overlap, plus a few new questions
-// covering booking, service area, and certificate requests — no new facts
-// invented beyond what's already established elsewhere on the site.
-
-export const FAQ_PAGE = {
-  eyebrow: 'FAQ',
-  headline: 'Questions, Answered',
-  subtext:
-    "Everything we're asked most — from booking a free pickup to requesting a certificate for a past collection. Can't find what you need? Reach out and we'll answer directly.",
-  categories: [
-    {
-      name: 'Getting Started',
-      items: [
-        {
-          question: 'What devices do you accept?',
-          answer:
-            "Phones, tablets, laptops, desktops, monitors, and office IT equipment like servers, printers, and routers, plus hard drives, SSDs, and other storage devices. Get in touch if you're unsure whether a specific item — especially large appliances — is covered.",
-        },
-        {
-          question: 'How do I book a pickup?',
-          answer:
-            'Book online or over WhatsApp — it takes under a minute. Tell us roughly what you have and where, and we confirm a collection time.',
-        },
-        {
-          question: 'Which areas do you serve?',
-          answer:
-            "Get in touch via WhatsApp or our contact form with your location and we'll confirm whether it's covered before you book anything.",
-        },
-        {
-          question:
-            "What's the difference between individual and business collection?",
-          answer:
-            "Individual pickup is for households clearing out personal devices — it's free, with instant payment, no minimums. Business or bulk collection is for offices, warehouses, and factories, and is scheduled around your operations with a custom quote based on volume and device types. Both are collected under the same DOE-registered, SW110-compliant process.",
-        },
-      ],
-    },
-    {
-      name: 'Individual Pickup',
-      items: [
-        {
-          question: 'Is there a minimum number of devices for a free pickup?',
-          answer:
-            "No — whether it's a single old phone or a drawer full of devices, individual pickup is free and comes with instant DuitNow payment. There's no account or contract required.",
-        },
-        {
-          question: 'How do I get paid for my old devices?',
-          answer:
-            'Individual pickups are paid instantly via DuitNow, at the moment your devices are collected — no waiting period, no manual payout request.',
-        },
-      ],
-    },
-    {
-      name: 'Business & Bulk Collection',
-      items: [
-        {
-          question: 'Do you charge for bulk or enterprise collection?',
-          answer:
-            "Individual pickup is always free. Bulk and enterprise collection is quoted based on volume and device types — request a quote and we'll confirm pricing before anything is scheduled.",
-        },
-        {
-          question:
-            'What documentation do we get for compliance or audit purposes?',
-          answer:
-            'Business and bulk collections come with full chain-of-custody records, a serialized certificate of destruction for every data-bearing asset, and an ESG-ready diversion report covering tonnage recycled and landfill diverted — all retrievable on request.',
-        },
-      ],
-    },
-    {
-      name: 'Data, Certificates & Compliance',
-      items: [
-        {
-          question: 'What happens to my data before a device is recycled?',
-          answer:
-            "Any data-bearing device — phones, laptops, hard drives, servers — goes through certified destruction before it's recycled. For individuals, that's included in every pickup. For businesses, you receive a serialized certificate of destruction per asset, so you have proof it happened.",
-        },
-        {
-          question: 'Is Recycling Hub actually licensed to handle e-waste?',
-          answer:
-            'Yes — collection and processing is carried out under a registered DOE license and SW110 scheduled-waste compliance, not an informal or unlicensed setup.',
-        },
-        {
-          question:
-            'How do I request a certificate or check my collection status?',
-          answer:
-            "Use our Track & Trace / Certificate Request page — submit your booking reference if you have one, or just describe the collection, and we'll email you what you need.",
-        },
-      ],
-    },
-  ],
-};
-
 // ─── Pricing Page ─────────────────────────────────────────────────────────────
 // Taglines rewritten to describe the specific customer situation, not the product feature —
 // a reader should see their own circumstance in one sentence and stop scrolling.
@@ -826,17 +726,6 @@ export const SERVICE_DETAILS: Record<
   'esg-reporting': {},
   'material-recovery': {},
   'compliance-documentation': {},
-};
-
-// ─── Request a Quote ──────────────────────────────────────────────────────────
-// Shared quote-request form linked to from every service sub-page's CTA.
-
-export const REQUEST_QUOTE_PAGE = {
-  eyebrow: 'Get a Quote',
-  headline: 'Request a',
-  headlineAccent: 'Quote.',
-  description:
-    'Tell us what you need collected and we’ll confirm pricing and a collection window — usually within 24 hours.',
 };
 
 // ─── Solutions Section ────────────────────────────────────────────────────────

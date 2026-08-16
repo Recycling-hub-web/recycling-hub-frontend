@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 
 import { BRAND } from '../../../constants/content';
+import { useDictionary } from '../../../hooks/useDictionary';
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -43,65 +44,68 @@ const GlobeIcon = () => (
   </svg>
 );
 
-const CONTACTS = [
-  {
-    icon: <EmailIcon />,
-    label: 'Email',
-    value: BRAND.email,
-    sub: 'We reply within 24 hours',
-    href: `mailto:${BRAND.email}`,
-    external: false,
-  },
-  {
-    icon: <WhatsAppIcon />,
-    label: 'WhatsApp',
-    value: BRAND.phone,
-    sub: 'Click to start a chat',
-    href: BRAND.whatsapp,
-    external: true,
-  },
-  {
-    icon: <GlobeIcon />,
-    label: 'Website',
-    value: BRAND.website,
-    sub: BRAND.businessHours,
-    href: `https://${BRAND.website}`,
-    external: true,
-  },
-];
+const ContactOptions = () => {
+  const { contact } = useDictionary();
 
-const ContactOptions = () => (
-  <section className="bg-white py-16 md:py-20">
-    <div className="mx-auto max-w-7xl px-5 md:px-8">
-      <div className="grid gap-5 sm:grid-cols-3">
-        {CONTACTS.map((c, i) => (
-          <motion.a
-            key={c.label}
-            href={c.href}
-            target={c.external ? '_blank' : undefined}
-            rel={c.external ? 'noopener noreferrer' : undefined}
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-60px' }}
-            transition={{ duration: 0.5, delay: i * 0.1, ease }}
-            whileHover={{ y: -4, transition: { duration: 0.2 } }}
-            className="flex flex-col items-center gap-4 rounded-2xl border border-slate-200 bg-slate-50 p-8 text-center transition-shadow duration-200 hover:shadow-md"
-          >
-            <div className="flex size-14 items-center justify-center rounded-xl bg-neutral-100 text-neutral-950">
-              {c.icon}
-            </div>
-            <div>
-              <p className="font-montserrat text-sm font-extrabold text-neutral-950">
-                {c.label}
-              </p>
-              <p className="mt-1 font-medium text-neutral-950">{c.value}</p>
-              <p className="mt-1 text-xs text-slate-500">{c.sub}</p>
-            </div>
-          </motion.a>
-        ))}
+  const CONTACTS = [
+    {
+      icon: <EmailIcon />,
+      value: BRAND.email,
+      href: `mailto:${BRAND.email}`,
+      external: false,
+    },
+    {
+      icon: <WhatsAppIcon />,
+      value: BRAND.phone,
+      href: BRAND.whatsapp,
+      external: true,
+    },
+    {
+      icon: <GlobeIcon />,
+      value: BRAND.website,
+      href: `https://${BRAND.website}`,
+      external: true,
+    },
+  ];
+
+  return (
+    <section className="bg-white py-16 md:py-20">
+      <div className="mx-auto max-w-7xl px-5 md:px-8">
+        <div className="grid gap-5 sm:grid-cols-3">
+          {CONTACTS.map((c, i) => {
+            const { label, sub } = contact.options[i]!;
+            return (
+              <motion.a
+                key={label}
+                href={c.href}
+                target={c.external ? '_blank' : undefined}
+                rel={c.external ? 'noopener noreferrer' : undefined}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-60px' }}
+                transition={{ duration: 0.5, delay: i * 0.1, ease }}
+                whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                className="flex flex-col items-center gap-4 rounded-2xl border border-slate-200 bg-slate-50 p-8 text-center transition-shadow duration-200 hover:shadow-md"
+              >
+                <div className="flex size-14 items-center justify-center rounded-xl bg-neutral-100 text-neutral-950">
+                  {c.icon}
+                </div>
+                <div>
+                  <p className="font-montserrat text-sm font-extrabold text-neutral-950">
+                    {label}
+                  </p>
+                  <p className="mt-1 font-medium text-neutral-950">{c.value}</p>
+                  <p className="mt-1 text-xs text-slate-500">
+                    {sub || BRAND.businessHours}
+                  </p>
+                </div>
+              </motion.a>
+            );
+          })}
+        </div>
       </div>
-    </div>
-  </section>
-);
+    </section>
+  );
+};
 
 export { ContactOptions };

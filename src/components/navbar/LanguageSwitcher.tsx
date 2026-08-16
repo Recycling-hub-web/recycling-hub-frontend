@@ -14,6 +14,11 @@ type LanguageSwitcherProps = {
 const LanguageSwitcher = ({ light, className = '' }: LanguageSwitcherProps) => {
   const router = useRouter();
   const activeLocale = router.locale ?? 'en';
+  // router.asPath includes the query string, which isn't known during the
+  // initial static render — using it unconditionally causes a hydration
+  // mismatch on pages with a query (e.g. /request-quote?service=...). Fall
+  // back to the stable pathname until the router has hydrated.
+  const currentPath = router.isReady ? router.asPath : router.pathname;
 
   const containerCls = light
     ? 'border-slate-200 bg-white'
@@ -34,7 +39,7 @@ const LanguageSwitcher = ({ light, className = '' }: LanguageSwitcherProps) => {
         return (
           <Link
             key={code}
-            href={router.asPath}
+            href={currentPath}
             locale={code}
             aria-current={active}
             className={`rounded-full px-2.5 py-1 transition-colors duration-150 ${

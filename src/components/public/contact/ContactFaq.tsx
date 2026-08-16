@@ -1,30 +1,8 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
 
+import { useDictionary } from '../../../hooks/useDictionary';
 import { SectionHeading } from '../../ui/SectionHeading';
-
-const ITEMS = [
-  {
-    question: 'How fast will I get a reply?',
-    answer:
-      'We aim to reply to all emails within 24 hours on business days. For urgent queries, WhatsApp is the fastest way to reach us — we typically respond within a few hours during business hours.',
-  },
-  {
-    question: 'Do you offer support in Bahasa Malaysia?',
-    answer:
-      'Yes. Our team is fluent in both English and Bahasa Malaysia. You are welcome to reach out in either language and we will respond accordingly.',
-  },
-  {
-    question: 'Do I need to prepare anything before the call?',
-    answer:
-      "No preparation needed. It helps if you know roughly how many devices you're looking to clear out and whether it's for personal use or a business — but even if you don't, we can work through it together.",
-  },
-  {
-    question: 'Is the consultation really free?',
-    answer:
-      'Yes, completely. There is no obligation to proceed after the call. We review your situation, answer your questions, and give you a clear picture of whether individual pickup or bulk collection fits — plus a quote if bulk collection applies.',
-  },
-];
 
 const ChevronIcon = ({ open }: { open: boolean }) => (
   <motion.svg
@@ -46,19 +24,19 @@ const ChevronIcon = ({ open }: { open: boolean }) => (
 
 const ContactFaq = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const {
+    contact: { faq },
+  } = useDictionary();
 
   return (
     <section className="bg-neutral-50 py-16 md:py-20">
       <div className="mx-auto max-w-3xl px-5 md:px-8">
         <div className="mb-12 text-center">
-          <SectionHeading
-            eyebrow="Quick Answers"
-            headline="Before You Reach Out"
-          />
+          <SectionHeading eyebrow={faq.eyebrow} headline={faq.headline} />
         </div>
 
         <div className="flex flex-col gap-3">
-          {ITEMS.map((item, i) => {
+          {faq.items.map((item, i) => {
             const isOpen = openIndex === i;
             return (
               <div

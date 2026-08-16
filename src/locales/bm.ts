@@ -840,6 +840,258 @@ const bm: Dictionary = {
       }
     >,
   },
+
+  bookDemo: {
+    eyebrow: 'Bercakap Dengan Kami',
+    headline:
+      'Dapatkan Jawapan Terus Mengenai Kutipan Pukal Anda — Panggilan Percuma 15 Minit',
+    bullets: [
+      'Kami bertanya tentang jenis peranti, jumlah, dan lokasi tapak anda — tiada andaian',
+      'Anda mendapat skop yang jelas: apa yang dikutip, bila, dan dokumentasi apa yang anda terima',
+      'Anda menerima sebut harga dan jadual kutipan yang dicadangkan dalam masa 24 jam selepas panggilan',
+      'Tiada kewajipan, tiada tekanan — jika kutipan pukal belum sesuai lagi, kami akan beritahu anda dengan jujur',
+    ],
+    ctaPrimary: 'Tempah Panggilan Percuma',
+    ctaSecondary: 'WhatsApp Kami Terus',
+    trustNote:
+      'Tiada komitmen diperlukan · Sebut harga dalam masa 24 jam · Tersedia di Zoom, Google Meet, atau WhatsApp',
+  },
+
+  contact: {
+    hero: {
+      eyebrow: 'Hubungi Kami',
+      headline: 'Tidak Pasti Sama Ada Anda Memerlukan Ini?',
+      headlineAccent: 'Mari Kita Ketahui.',
+      description:
+        'Tempah panggilan percuma 15 minit, atau WhatsApp kami sahaja. Kami akan bantu anda tentukan sama ada kutipan individu atau kutipan pukal sesuai dengan situasi anda — dan berikan sebut harga jika anda memerlukannya. Tiada komitmen, tiada tekanan.',
+    },
+    options: [
+      { label: 'E-mel', sub: 'Kami membalas dalam masa 24 jam' },
+      { label: 'WhatsApp', sub: 'Klik untuk mulakan perbualan' },
+      { label: 'Laman Web', sub: '' },
+    ],
+    faq: {
+      eyebrow: 'Jawapan Pantas',
+      headline: 'Sebelum Anda Menghubungi Kami',
+      items: [
+        {
+          question: 'Berapa cepat saya akan mendapat balasan?',
+          answer:
+            'Kami berusaha membalas semua e-mel dalam masa 24 jam pada hari bekerja. Untuk pertanyaan segera, WhatsApp adalah cara terpantas untuk menghubungi kami — kami biasanya membalas dalam beberapa jam semasa waktu operasi.',
+        },
+        {
+          question: 'Adakah anda menawarkan sokongan dalam Bahasa Malaysia?',
+          answer:
+            'Ya. Pasukan kami fasih dalam Bahasa Inggeris dan Bahasa Malaysia. Anda dialu-alukan untuk menghubungi kami dalam mana-mana bahasa dan kami akan membalas mengikutnya.',
+        },
+        {
+          question: 'Perlukah saya sediakan apa-apa sebelum panggilan?',
+          answer:
+            'Tiada persediaan diperlukan. Ia membantu jika anda tahu secara kasar berapa banyak peranti yang ingin dilupuskan dan sama ada untuk kegunaan peribadi atau perniagaan — tetapi jika tidak pun, kami boleh selesaikannya bersama.',
+        },
+        {
+          question: 'Adakah konsultasi ini benar-benar percuma?',
+          answer:
+            'Ya, sepenuhnya. Tiada kewajipan untuk meneruskan selepas panggilan. Kami menyemak situasi anda, menjawab soalan anda, dan memberi gambaran jelas sama ada kutipan individu atau kutipan pukal yang sesuai — ditambah sebut harga jika kutipan pukal berkenaan.',
+        },
+      ],
+    },
+    followUs: 'Ikuti Kami',
+    instagramDescription: 'Tip e-sisa & kemas kini kitar semula',
+  },
+
+  faqPage: {
+    eyebrow: 'Soalan Lazim',
+    headline: 'Soalan,',
+    headlineAccent: 'Dijawab.',
+    subtext:
+      'Semua yang paling kerap ditanya — daripada menempah kutipan percuma hingga meminta sijil untuk kutipan lampau. Tidak jumpa apa yang anda perlukan? Hubungi kami dan kami akan jawab terus.',
+    categories: [
+      {
+        name: 'Bermula',
+        items: [
+          {
+            question: 'Peranti apakah yang anda terima?',
+            answer:
+              'Telefon, tablet, komputer riba, desktop, monitor, dan peralatan IT pejabat seperti pelayan, pencetak, dan penghala, ditambah cakera keras, SSD, dan peranti storan lain. Hubungi kami jika anda tidak pasti sama ada item tertentu — terutamanya peralatan besar — diterima.',
+          },
+          {
+            question: 'Bagaimana saya menempah kutipan?',
+            answer:
+              'Tempah dalam talian atau melalui WhatsApp — ia mengambil masa kurang seminit. Beritahu kami secara kasar apa yang anda ada dan di mana, dan kami sahkan masa kutipan.',
+          },
+          {
+            question: 'Kawasan manakah yang anda khidmati?',
+            answer:
+              'Hubungi kami melalui WhatsApp atau borang hubungi kami dengan lokasi anda dan kami akan sahkan sama ada ia diliputi sebelum anda menempah apa-apa.',
+          },
+          {
+            question:
+              'Apakah perbezaan antara kutipan individu dan perniagaan?',
+            answer:
+              'Kutipan individu adalah untuk isi rumah yang ingin melupuskan peranti peribadi — ia percuma, dengan bayaran segera, tiada minimum. Kutipan perniagaan atau pukal adalah untuk pejabat, gudang, dan kilang, dan dijadualkan mengikut operasi anda dengan sebut harga khusus berdasarkan jumlah dan jenis peranti. Kedua-duanya dikutip di bawah proses yang sama, berdaftar DOE dan mematuhi SW110.',
+          },
+        ],
+      },
+      {
+        name: 'Kutipan Individu',
+        items: [
+          {
+            question:
+              'Adakah terdapat bilangan minimum peranti untuk kutipan percuma?',
+            answer:
+              'Tiada — sama ada satu telefon lama atau satu laci penuh peranti, kutipan individu adalah percuma dan disertakan bayaran DuitNow segera. Tiada akaun atau kontrak diperlukan.',
+          },
+          {
+            question: 'Bagaimana saya dibayar untuk peranti lama saya?',
+            answer:
+              'Kutipan individu dibayar segera melalui DuitNow, sejurus peranti anda dikutip — tiada tempoh menunggu, tiada permintaan bayaran manual.',
+          },
+        ],
+      },
+      {
+        name: 'Perniagaan & Kutipan Pukal',
+        items: [
+          {
+            question:
+              'Adakah anda mengenakan bayaran untuk kutipan pukal atau perusahaan?',
+            answer:
+              'Kutipan individu sentiasa percuma. Kutipan pukal dan perusahaan disebut harga berdasarkan jumlah dan jenis peranti — minta sebut harga dan kami akan sahkan harga sebelum apa-apa dijadualkan.',
+          },
+          {
+            question:
+              'Apakah dokumentasi yang kami terima untuk tujuan pematuhan atau audit?',
+            answer:
+              'Kutipan perniagaan dan pukal disertakan rekod rantaian jagaan yang lengkap, sijil pemusnahan bersiri bagi setiap aset yang membawa data, dan laporan pengalihan sedia ESG yang merangkumi tonaj dikitar semula dan pengalihan daripada tapak pelupusan — semuanya boleh diperoleh semula atas permintaan.',
+          },
+        ],
+      },
+      {
+        name: 'Data, Sijil & Pematuhan',
+        items: [
+          {
+            question:
+              'Apa yang berlaku kepada data saya sebelum peranti dikitar semula?',
+            answer:
+              'Sebarang peranti yang membawa data — telefon, komputer riba, cakera keras, pelayan — melalui pemusnahan bertauliah sebelum dikitar semula. Untuk individu, ini disertakan dalam setiap kutipan. Untuk perniagaan, anda menerima sijil pemusnahan bersiri bagi setiap aset, sebagai bukti ia telah dilakukan.',
+          },
+          {
+            question:
+              'Adakah Recycling Hub benar-benar berlesen untuk mengendalikan e-sisa?',
+            answer:
+              'Ya — kutipan dan pemprosesan dijalankan di bawah lesen DOE yang berdaftar dan mematuhi peraturan sisa terjadual SW110, bukan operasi tidak formal atau tidak berlesen.',
+          },
+          {
+            question:
+              'Bagaimana saya boleh meminta sijil atau menyemak status kutipan saya?',
+            answer:
+              'Gunakan halaman Jejak & Kesan / Permintaan Sijil kami — hantar rujukan tempahan anda jika ada, atau sekadar terangkan kutipan tersebut, dan kami akan e-melkan apa yang anda perlukan.',
+          },
+        ],
+      },
+    ],
+  },
+
+  trackTrace: {
+    hero: {
+      eyebrow: 'Jejak & Kesan',
+      headline: 'Minta',
+      headlineAccent: 'Sijil atau Status Anda.',
+      description:
+        'Semak status kutipan atau minta dokumentasi — sijil pemusnahan, laporan pengalihan ESG, atau kemas kini status — dan kami akan menghubungi anda semula.',
+    },
+    sectionHeading1: {
+      eyebrow: 'Apa Yang Anda Boleh Minta',
+      headline: 'Dokumentasi untuk Sebarang Kutipan',
+      subtext:
+        'Sama ada ia kutipan individu percuma atau kutipan perusahaan pukal, anda boleh minta dokumen yang berkaitan dengannya.',
+    },
+    requestInfo: [
+      {
+        title: 'Sijil Pemusnahan',
+        description:
+          'Bukti bersiri bahawa peranti membawa data telah dimusnahkan mengikut piawaian bertauliah — tersedia untuk kutipan pukal dan perusahaan, dan atas permintaan untuk kutipan individu.',
+      },
+      {
+        title: 'Laporan Pengalihan ESG',
+        description:
+          'Tonaj dikitar semula dan pengalihan daripada tapak pelupusan bagi satu kutipan, diformat untuk pelaporan kelestarian atau penderma anda.',
+      },
+      {
+        title: 'Kemas Kini Status Kutipan',
+        description:
+          'Tidak pasti status kutipan yang ditempah atau baru-baru ini? Hantar rujukan anda dan kami akan sahkan.',
+      },
+    ],
+    requestTypes: [
+      'Sijil Pemusnahan',
+      'Laporan Pengalihan ESG',
+      'Kemas Kini Status Kutipan',
+    ],
+    sectionHeading2: {
+      eyebrow: 'Hantar Permintaan',
+      headline: 'Beritahu Kami Apa Yang Anda Perlukan',
+    },
+    form: {
+      fullName: 'Nama penuh',
+      fullNamePlaceholder: 'Nama anda',
+      email: 'E-mel',
+      phone: 'Telefon (pilihan)',
+      phonePlaceholder: '+60 1x-xxx xxxx',
+      requestTypeLabel: 'Apa yang anda perlukan?',
+      referenceLabel: 'Rujukan tempahan atau kutipan (pilihan)',
+      referencePlaceholder:
+        'Tiada rujukan? Biarkan kosong dan tambah butiran dalam nota di bawah',
+      notesLabel: 'Nota (pilihan)',
+      notesPlaceholder:
+        'Anggaran tarikh kutipan, alamat, atau apa-apa lagi yang membantu kami mencari kutipan anda',
+      errorNameRequired: 'Sila masukkan nama penuh anda.',
+      errorEmailInvalid: 'Masukkan alamat e-mel yang sah.',
+      submitButton: 'Hantar Permintaan',
+      submittedButton: 'Permintaan Dihantar',
+      successPrefix: 'Permintaan diterima — kami akan e-melkan ',
+      successSuffix: ' anda dalam masa 2 hari bekerja.',
+      whatsappNote: 'Lebih suka berbincang terus? WhatsApp kami sahaja.',
+    },
+    closingNote:
+      'Permintaan dikendalikan oleh pasukan kami, bukan sistem automatik — jika nombor rujukan anda sukar dicari, terangkan sahaja kutipan tersebut sebaik mungkin dan kami akan padankan di pihak kami.',
+  },
+
+  requestQuote: {
+    hero: {
+      eyebrow: 'Dapatkan Sebut Harga',
+      headline: 'Minta',
+      headlineAccent: 'Sebut Harga.',
+      description:
+        'Beritahu kami apa yang perlu dikutip dan kami akan sahkan harga serta jadual kutipan — biasanya dalam masa 24 jam.',
+    },
+    form: {
+      fullName: 'Nama penuh',
+      fullNamePlaceholder: 'Nama anda',
+      email: 'E-mel',
+      phone: 'Telefon',
+      phonePlaceholder: '+60 1x-xxx xxxx',
+      company: 'Syarikat (jika berkenaan)',
+      companyPlaceholder: 'Pilihan',
+      serviceLabel: 'Perkhidmatan yang anda berminat',
+      detailsLabel: 'Jenis peranti & anggaran jumlah',
+      detailsPlaceholder:
+        'Cth. ~40 desktop dan monitor daripada satu pejabat, penutupan sekali sahaja',
+      errorNameRequired: 'Sila masukkan nama penuh anda.',
+      errorEmailInvalid: 'Masukkan alamat e-mel yang sah.',
+      submitButton: 'Hantar Permintaan',
+      submittedButton: 'Permintaan Dihantar',
+      successMessage:
+        'Permintaan diterima — kami akan sahkan harga dan jadual kutipan dalam masa 24 jam.',
+      whatsappNote: 'Lebih suka berbincang terus? WhatsApp kami sahaja.',
+    },
+    footerNote: {
+      prefix:
+        'Kutipan individu sentiasa percuma dan tidak memerlukan sebut harga — ',
+      linkText: 'tempah terus melalui WhatsApp',
+      suffix: '.',
+    },
+  },
 };
 
 export { bm };

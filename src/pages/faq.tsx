@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { Meta } from '../components/layout/Meta';
 import { BookDemo } from '../components/public/shared/BookDemo';
 import { ReusableHero } from '../components/ui/hero';
-import { FAQ_PAGE } from '../constants/content';
+import { useDictionary } from '../hooks/useDictionary';
 import { PublicLayout } from '../layouts/PublicLayout';
 import type { NextPageWithLayout } from '../types/next';
 
@@ -97,37 +97,41 @@ const CategoryFaq = ({
   );
 };
 
-const FaqPage: NextPageWithLayout = () => (
-  <>
-    <Meta
-      title="FAQ — Recycling Hub"
-      description="Answers to common questions about individual pickup, bulk and enterprise collection, certified data destruction, and certificate requests."
-    />
+const FaqPage: NextPageWithLayout = () => {
+  const { faqPage } = useDictionary();
 
-    <ReusableHero
-      eyebrow={FAQ_PAGE.eyebrow}
-      headline="Questions,"
-      headlineAccent="Answered."
-      description={FAQ_PAGE.subtext}
-    />
+  return (
+    <>
+      <Meta
+        title="FAQ — Recycling Hub"
+        description="Answers to common questions about individual pickup, bulk and enterprise collection, certified data destruction, and certificate requests."
+      />
 
-    <section className="bg-white py-16 md:py-20">
-      <div className="mx-auto max-w-3xl px-5 md:px-8">
-        <div className="flex flex-col gap-14">
-          {FAQ_PAGE.categories.map((category) => (
-            <CategoryFaq
-              key={category.name}
-              name={category.name}
-              items={category.items}
-            />
-          ))}
+      <ReusableHero
+        eyebrow={faqPage.eyebrow}
+        headline={faqPage.headline}
+        headlineAccent={faqPage.headlineAccent}
+        description={faqPage.subtext}
+      />
+
+      <section className="bg-white py-16 md:py-20">
+        <div className="mx-auto max-w-3xl px-5 md:px-8">
+          <div className="flex flex-col gap-14">
+            {faqPage.categories.map((category) => (
+              <CategoryFaq
+                key={category.name}
+                name={category.name}
+                items={category.items}
+              />
+            ))}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <BookDemo />
-  </>
-);
+      <BookDemo />
+    </>
+  );
+};
 
 FaqPage.getLayout = (page: ReactElement) => (
   <PublicLayout navVariant="light">{page}</PublicLayout>

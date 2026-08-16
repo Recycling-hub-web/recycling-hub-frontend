@@ -858,6 +858,253 @@ const en = {
       }
     >,
   },
+
+  bookDemo: {
+    eyebrow: 'Talk to Us',
+    headline:
+      'Get a Straight Answer on Your Bulk Collection — Free 15-Minute Call',
+    bullets: [
+      'We ask about your device types, volume, and site location — no assumptions',
+      'You get a clear scope: what gets collected, when, and what documentation you receive',
+      'You receive a quote and proposed collection timeline within 24 hours of the call',
+      "No obligation, no pressure — if bulk collection isn't the right fit yet, we'll tell you honestly",
+    ],
+    ctaPrimary: 'Book a Free Call',
+    ctaSecondary: 'WhatsApp Us Directly',
+    trustNote:
+      'No commitment required · Quote within 24 hours · Available on Zoom, Google Meet, or WhatsApp',
+  },
+
+  contact: {
+    hero: {
+      eyebrow: 'Get In Touch',
+      headline: 'Not Sure If You Need This?',
+      headlineAccent: "Let's Find Out.",
+      description:
+        "Book a free 15-minute call, or just WhatsApp us. We'll help you figure out whether individual pickup or bulk collection fits your situation — and get you a quote if you need one. No commitment, no pressure.",
+    },
+    options: [
+      { label: 'Email', sub: 'We reply within 24 hours' },
+      { label: 'WhatsApp', sub: 'Click to start a chat' },
+      { label: 'Website', sub: '' },
+    ],
+    faq: {
+      eyebrow: 'Quick Answers',
+      headline: 'Before You Reach Out',
+      items: [
+        {
+          question: 'How fast will I get a reply?',
+          answer:
+            'We aim to reply to all emails within 24 hours on business days. For urgent queries, WhatsApp is the fastest way to reach us — we typically respond within a few hours during business hours.',
+        },
+        {
+          question: 'Do you offer support in Bahasa Malaysia?',
+          answer:
+            'Yes. Our team is fluent in both English and Bahasa Malaysia. You are welcome to reach out in either language and we will respond accordingly.',
+        },
+        {
+          question: 'Do I need to prepare anything before the call?',
+          answer:
+            "No preparation needed. It helps if you know roughly how many devices you're looking to clear out and whether it's for personal use or a business — but even if you don't, we can work through it together.",
+        },
+        {
+          question: 'Is the consultation really free?',
+          answer:
+            'Yes, completely. There is no obligation to proceed after the call. We review your situation, answer your questions, and give you a clear picture of whether individual pickup or bulk collection fits — plus a quote if bulk collection applies.',
+        },
+      ],
+    },
+    followUs: 'Follow Us',
+    instagramDescription: 'E-waste tips & recycling updates',
+  },
+
+  faqPage: {
+    eyebrow: 'FAQ',
+    headline: 'Questions,',
+    headlineAccent: 'Answered.',
+    subtext:
+      "Everything we're asked most — from booking a free pickup to requesting a certificate for a past collection. Can't find what you need? Reach out and we'll answer directly.",
+    categories: [
+      {
+        name: 'Getting Started',
+        items: [
+          {
+            question: 'What devices do you accept?',
+            answer:
+              "Phones, tablets, laptops, desktops, monitors, and office IT equipment like servers, printers, and routers, plus hard drives, SSDs, and other storage devices. Get in touch if you're unsure whether a specific item — especially large appliances — is covered.",
+          },
+          {
+            question: 'How do I book a pickup?',
+            answer:
+              'Book online or over WhatsApp — it takes under a minute. Tell us roughly what you have and where, and we confirm a collection time.',
+          },
+          {
+            question: 'Which areas do you serve?',
+            answer:
+              "Get in touch via WhatsApp or our contact form with your location and we'll confirm whether it's covered before you book anything.",
+          },
+          {
+            question:
+              "What's the difference between individual and business collection?",
+            answer:
+              "Individual pickup is for households clearing out personal devices — it's free, with instant payment, no minimums. Business or bulk collection is for offices, warehouses, and factories, and is scheduled around your operations with a custom quote based on volume and device types. Both are collected under the same DOE-registered, SW110-compliant process.",
+          },
+        ],
+      },
+      {
+        name: 'Individual Pickup',
+        items: [
+          {
+            question: 'Is there a minimum number of devices for a free pickup?',
+            answer:
+              "No — whether it's a single old phone or a drawer full of devices, individual pickup is free and comes with instant DuitNow payment. There's no account or contract required.",
+          },
+          {
+            question: 'How do I get paid for my old devices?',
+            answer:
+              'Individual pickups are paid instantly via DuitNow, at the moment your devices are collected — no waiting period, no manual payout request.',
+          },
+        ],
+      },
+      {
+        name: 'Business & Bulk Collection',
+        items: [
+          {
+            question: 'Do you charge for bulk or enterprise collection?',
+            answer:
+              "Individual pickup is always free. Bulk and enterprise collection is quoted based on volume and device types — request a quote and we'll confirm pricing before anything is scheduled.",
+          },
+          {
+            question:
+              'What documentation do we get for compliance or audit purposes?',
+            answer:
+              'Business and bulk collections come with full chain-of-custody records, a serialized certificate of destruction for every data-bearing asset, and an ESG-ready diversion report covering tonnage recycled and landfill diverted — all retrievable on request.',
+          },
+        ],
+      },
+      {
+        name: 'Data, Certificates & Compliance',
+        items: [
+          {
+            question: 'What happens to my data before a device is recycled?',
+            answer:
+              "Any data-bearing device — phones, laptops, hard drives, servers — goes through certified destruction before it's recycled. For individuals, that's included in every pickup. For businesses, you receive a serialized certificate of destruction per asset, so you have proof it happened.",
+          },
+          {
+            question: 'Is Recycling Hub actually licensed to handle e-waste?',
+            answer:
+              'Yes — collection and processing is carried out under a registered DOE license and SW110 scheduled-waste compliance, not an informal or unlicensed setup.',
+          },
+          {
+            question:
+              'How do I request a certificate or check my collection status?',
+            answer:
+              "Use our Track & Trace / Certificate Request page — submit your booking reference if you have one, or just describe the collection, and we'll email you what you need.",
+          },
+        ],
+      },
+    ],
+  },
+
+  trackTrace: {
+    hero: {
+      eyebrow: 'Track & Trace',
+      headline: 'Request Your',
+      headlineAccent: 'Certificate or Status.',
+      description:
+        "Look up a collection or request documentation — a certificate of destruction, an ESG diversion report, or a status update — and we'll get back to you.",
+    },
+    sectionHeading1: {
+      eyebrow: 'What You Can Request',
+      headline: 'Documentation for Any Collection',
+      subtext:
+        'Whether it was a free individual pickup or a bulk enterprise collection, you can request the paperwork that goes with it.',
+    },
+    requestInfo: [
+      {
+        title: 'Certificate of Destruction',
+        description:
+          'Serialized proof that a data-bearing device was destroyed to a certified standard — available for bulk and enterprise collections, and on request for individual pickups.',
+      },
+      {
+        title: 'ESG Diversion Report',
+        description:
+          'Tonnage recycled and landfill diverted for a collection, formatted for your sustainability or donor reporting.',
+      },
+      {
+        title: 'Collection Status Update',
+        description:
+          "Not sure where things stand on a booked or recent pickup? Send us your reference and we'll confirm.",
+      },
+    ],
+    requestTypes: [
+      'Certificate of Destruction',
+      'ESG Diversion Report',
+      'Collection Status Update',
+    ],
+    sectionHeading2: {
+      eyebrow: 'Submit a Request',
+      headline: 'Tell Us What You Need',
+    },
+    form: {
+      fullName: 'Full name',
+      fullNamePlaceholder: 'Your name',
+      email: 'Email',
+      phone: 'Phone (optional)',
+      phonePlaceholder: '+60 1x-xxx xxxx',
+      requestTypeLabel: 'What do you need?',
+      referenceLabel: 'Booking or collection reference (optional)',
+      referencePlaceholder:
+        "Don't have one? Leave this blank and add details in the notes below",
+      notesLabel: 'Notes (optional)',
+      notesPlaceholder:
+        'Approximate pickup date, address, or anything else that helps us find your collection',
+      errorNameRequired: 'Please enter your full name.',
+      errorEmailInvalid: 'Enter a valid email address.',
+      submitButton: 'Submit Request',
+      submittedButton: 'Request Sent',
+      successPrefix: "Request received — we'll email your ",
+      successSuffix: ' within 2 business days.',
+      whatsappNote: 'Prefer to talk it through? WhatsApp us instead.',
+    },
+    closingNote:
+      "Requests are handled by our team, not an automated system — if your reference number is hard to find, just describe the collection as best you can and we'll match it on our end.",
+  },
+
+  requestQuote: {
+    hero: {
+      eyebrow: 'Get a Quote',
+      headline: 'Request a',
+      headlineAccent: 'Quote.',
+      description:
+        'Tell us what you need collected and we’ll confirm pricing and a collection window — usually within 24 hours.',
+    },
+    form: {
+      fullName: 'Full name',
+      fullNamePlaceholder: 'Your name',
+      email: 'Email',
+      phone: 'Phone',
+      phonePlaceholder: '+60 1x-xxx xxxx',
+      company: 'Company (if applicable)',
+      companyPlaceholder: 'Optional',
+      serviceLabel: "Service you're interested in",
+      detailsLabel: 'Device types & estimated volume',
+      detailsPlaceholder:
+        'E.g. ~40 desktops and monitors from a single office, one-off decommission',
+      errorNameRequired: 'Please enter your full name.',
+      errorEmailInvalid: 'Enter a valid email address.',
+      submitButton: 'Submit Request',
+      submittedButton: 'Request Sent',
+      successMessage:
+        "Request received — we'll confirm pricing and a collection window within 24 hours.",
+      whatsappNote: 'Prefer to talk it through? WhatsApp us instead.',
+    },
+    footerNote: {
+      prefix: "Individual pickup is always free and doesn't need a quote — ",
+      linkText: 'book it directly via WhatsApp',
+      suffix: '.',
+    },
+  },
 };
 
 export type Dictionary = typeof en;
