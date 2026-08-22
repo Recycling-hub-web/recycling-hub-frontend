@@ -51,10 +51,9 @@ const B2BSection = () => {
   const { b2bSection: content } = home;
 
   return (
-    <section className="relative overflow-hidden bg-hero-gradient py-20 md:py-28">
+    <section className="relative overflow-hidden bg-brand-50 py-20 md:py-28">
       <div className="mx-auto max-w-6xl px-5 md:px-8">
         <SectionHeading
-          light
           eyebrow={content.eyebrow}
           headline={content.headline}
           subtext={content.subheadline}
@@ -63,14 +62,14 @@ const B2BSection = () => {
         <div className="mt-14 grid gap-5 md:grid-cols-3">
           {content.pillars.map((pillar, i) => (
             <FadeIn key={pillar.title} delay={i * 0.1}>
-              <div className="flex h-full flex-col rounded-2xl bg-white/10 p-6 ring-1 ring-white/15 backdrop-blur-sm">
-                <span className="flex size-11 items-center justify-center rounded-xl bg-white/15 text-white">
+              <div className="flex h-full flex-col rounded-2xl bg-white p-6 ring-1 ring-slate-200">
+                <span className="flex size-11 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
                   {ICONS[pillar.icon as PillarIcon]}
                 </span>
-                <h3 className="mt-5 font-montserrat text-lg font-bold text-white">
+                <h3 className="mt-5 font-montserrat text-lg font-bold text-neutral-950">
                   {pillar.title}
                 </h3>
-                <p className="mt-2 text-sm leading-relaxed text-white/60">
+                <p className="mt-2 text-sm leading-relaxed text-slate-500">
                   {pillar.description}
                 </p>
               </div>
@@ -80,7 +79,7 @@ const B2BSection = () => {
 
         <FadeIn delay={0.3} className="mt-12 flex flex-col items-center gap-4">
           <ArrowButton href={content.ctaHref}>{content.cta}</ArrowButton>
-          <p className="max-w-md text-center text-sm text-white/50">
+          <p className="max-w-md text-center text-sm text-slate-500">
             {content.note}
           </p>
         </FadeIn>

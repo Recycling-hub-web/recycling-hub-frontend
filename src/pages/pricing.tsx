@@ -1,3 +1,4 @@
+import type { GetStaticProps } from 'next';
 import type { ReactElement } from 'react';
 
 import { Meta } from '../components/layout/Meta';
@@ -33,5 +34,9 @@ const PricingPage: NextPageWithLayout = () => (
 PricingPage.getLayout = (page: ReactElement) => (
   <PublicLayout navVariant="light">{page}</PublicLayout>
 );
+
+// Page is unpublished for now — direct navigation to /pricing (any locale)
+// renders the 404 page instead of this stale, pre-rebrand content.
+export const getStaticProps: GetStaticProps = async () => ({ notFound: true });
 
 export default PricingPage;

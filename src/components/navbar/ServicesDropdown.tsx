@@ -67,7 +67,7 @@ const ServicesDropdown = ({ light }: ServicesDropdownProps) => {
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className={`group flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium transition-colors duration-200 lg:text-sm ${triggerCls}`}
+        className={`group flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-xs font-medium transition-colors duration-200 lg:text-sm ${triggerCls}`}
       >
         <motion.span
           className="shrink-0"

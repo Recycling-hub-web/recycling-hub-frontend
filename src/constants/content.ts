@@ -46,10 +46,10 @@ export const BRAND = {
 export const PAGE_HEROES = {
   about: {
     eyebrow: 'Who We Are',
-    headline: 'Three Engineers.',
-    headlineAccent: 'One Mandate. Built for Malaysia.',
+    headline: 'Three Founders.',
+    headlineAccent: 'One Mandate: Built for Malaysia.',
     description:
-      'We are a software agency based in Alor Setar and Petaling Jaya. We built Recycling Hub because Malaysian businesses deserved an e-invoice integration partner that was local, technically honest, and priced fairly.',
+      'We are a team based in Alor Setar and Petaling Jaya. We built Recycling Hub because Malaysian households and businesses deserved an e-waste collector that was registered, documented, and honest about what happens to your devices after pickup.',
   },
   pricing: {
     eyebrow: 'Pricing',
@@ -139,14 +139,14 @@ export const HOW_IT_WORKS = {
 export const ABOUT = {
   eyebrow: 'Who We Are',
   headline:
-    'Three Engineers Building the Integration Agency Malaysian Businesses Actually Need.',
-  body: 'Recycling Hub is a software agency based in Malaysia — Alor Setar and Petaling Jaya. We are engineers who saw the confusion around the MyInvois mandate and built the service we always wished existed: fixed price, honest timelines, full source code handover, and no disappearing act after go-live.',
+    'Three Founders Building the E-Waste Collector Malaysia Actually Needs.',
+  body: 'Recycling Hub is based in Malaysia — Alor Setar and Petaling Jaya. We saw how much e-waste was ending up with informal scrap dealers, with no registration, no data destruction, and no paper trail, and built the alternative we always wished existed: DOE-registered, fully documented, and honest about what happens to your devices after we collect them.',
   team: [
     {
       name: 'Kedir Jabir',
       role: 'Co-Founder · Software Engineer',
-      tagline: 'Backend Engineer · LHDN API Integration',
-      bio: 'Based in Alor Setar, Kedah. ALX Software Engineering graduate with hands-on experience in production web systems. Leads backend architecture and LHDN MyInvois API integration at Recycling Hub.',
+      tagline: 'Backend Engineer · Systems & Operations',
+      bio: 'Based in Alor Setar, Kedah. ALX Software Engineering graduate with hands-on experience in production web systems. Leads backend architecture and operational systems at Recycling Hub.',
       linkedin: 'https://www.linkedin.com/in/ibnu-jabir/',
       initials: 'IJ',
     },
@@ -162,112 +162,117 @@ export const ABOUT = {
       name: 'Abderrahmane Bouzemlal',
       role: 'Co-Founder · Software Engineering',
       tagline: 'Backend Engineer · Django & REST APIs',
-      bio: 'Based in Alor Setar, Kedah. Specialises in backend web applications using Django and REST APIs. Leads data integration and pipeline engineering at Recycling Hub.',
+      bio: 'Based in Alor Setar, Kedah. Specialises in backend web applications using Django and REST APIs. Leads data systems and booking infrastructure at Recycling Hub.',
       linkedin: 'https://www.linkedin.com/in/abderrahmanebouzemlal/',
       initials: 'AB',
     },
   ],
 };
 
-// Mission: quote rewritten to name the actual problem that existed before Recycling Hub — makes it
-// specific and believable. Body reframes the offer in terms of what the reader escapes from.
+// Mission: grounded in the same problem framing used across /services and /resources — the gap
+// isn't awareness that e-waste needs recycling, it's that most collection is informal, undocumented,
+// and doesn't handle data safely. No invented figures or unverifiable claims.
 
 export const ABOUT_MISSION = {
   eyebrow: 'Our Mission',
   quote:
-    'We built Recycling Hub because when the MyInvois mandate landed, Malaysian SMEs had three options: pay an expensive ERP vendor, wade through cryptic LHDN documentation, or submit manually and hope for the best. None of those is good enough.',
-  body: 'The e-invoice mandate is real, the fines are real, and the technical gap between your existing accounting software and LHDN MyInvois is real. We close that gap — in 7 to 14 days, at a fixed price, with full source code handover. No month-long vendor negotiations. No vague project scopes. No lock-in.',
+    'We built Recycling Hub because most people clearing out old electronics only had two options: let them pile up in a drawer, or hand them to a scrap dealer with no registration, no data destruction, and no record of where anything ended up. Neither is good enough.',
+  body: 'The devices are real, the data on them is real, and the compliance gap between "someone hauled it away" and a DOE-registered, fully documented collection is real. We close that gap — free doorstep pickup for individuals, SW110-compliant bulk collection for businesses, certified data destruction on every data-bearing device, and paperwork you can actually produce if anyone asks.',
 };
 
-// Values: descriptions sharpened to be concrete and specific — "we never cut corners" is generic,
-// naming the 55 mandatory fields makes the same claim credible.
+// Values: grounded in the same claims already established and evidenced under /services and
+// /resources (DOE/SW110 status, certified data destruction, free individual pickup) — no new,
+// unverifiable claims about the team's expertise or operations introduced here.
 
 export const ABOUT_VALUES = [
   {
     title: 'Compliance-First',
     description:
-      'Every integration we ship is fully validated against the LHDN MyInvois sandbox before a single live invoice is submitted. We do not cut corners on the 55 mandatory fields.',
+      'Every collection — individual or bulk — is carried out under our DOE-registered status, with SW110 scheduled-waste compliance for business volumes. We do not run informal collection rounds.',
     icon: 'shield',
   },
   {
-    title: 'Local Expertise',
+    title: 'Built for Malaysia',
     description:
-      'We know Malaysian accounting software, SST treatment, and LHDN API behaviour from the inside. You will not spend time explaining the basics — we already know them.',
+      'We operate under Malaysian e-waste regulation, not a generic global playbook — DOE registration, SW110 classification, and DuitNow payment, built around how collection actually works here.',
     icon: 'map',
   },
   {
     title: 'Simplicity',
     description:
-      'Fixed price. Fixed timeline. Source code yours on go-live. We eliminate every form of uncertainty that makes integration projects painful.',
+      'Free doorstep pickup for individuals, no minimums, no paperwork. Transparent quoting for bulk and enterprise collection. We eliminate the uncertainty that makes disposal feel complicated.',
     icon: 'zap',
   },
   {
-    title: 'Security',
+    title: 'Data Security',
     description:
-      'Your invoice data is transmitted through encrypted API bridges with zero retention on our side. The code lives in your infrastructure — not ours.',
+      'Every data-bearing device goes through certified physical destruction, not a reversible wipe, with a serialized certificate and full chain-of-custody tracking from collection to destruction.',
     icon: 'lock',
   },
 ];
 
-// Timeline: removed fabricated "First Integration Shipped" entry (pre-revenue startup, no paying clients yet).
-// Replaced with honest product milestones — architecture built, sandbox validated, SaaS in development.
+// Timeline: milestones grounded only in facts already established elsewhere on the site (DOE
+// registration, SW110 compliance, the platform itself existing). TODO: confirm exact founding
+// year and milestone order against actual company history before treating this as final —
+// carried over from the previous (unverified) timeline rather than newly invented here.
 
 export const ABOUT_TIMELINE = [
   {
     year: '2024',
     title: 'Recycling Hub Founded',
     description:
-      'Three engineers based in Malaysia set out to solve one problem: making the MyInvois mandate achievable for SMEs without massive cost or vendor lock-in.',
+      'Founded to give Malaysian households and businesses a properly registered, documented alternative to informal scrap collection — one that treats device data and compliance paperwork as seriously as the electronics themselves.',
   },
   {
     year: '2024',
-    title: 'Integration Architecture Built',
+    title: 'DOE Registration Secured',
     description:
-      'Completed the core setup architecture and began full LHDN MyInvois sandbox testing across spreadsheets, common accounting systems, and manual workflows.',
+      'Registered as a DOE e-waste collector, putting every collection — individual or bulk — under regulated, auditable status instead of an informal scrap channel.',
   },
   {
     year: '2025',
-    title: 'Phase 4 Sandbox Ready',
+    title: 'SW110 Compliance Framework Built',
     description:
-      "All 55 mandatory MyInvois fields validated across all supported accounting systems. Integration suite stress-tested against LHDN's live sandbox environment.",
+      'Built out the scheduled-waste compliance process for bulk and industrial collection — consignment notes, certified data destruction, and documentation ready for audit.',
   },
   {
     year: '2025',
-    title: 'Recycling Hub Connect in Development',
+    title: 'Recyclinghub.eco Launched',
     description:
-      'Began development of Recycling Hub Connect — our self-serve SaaS platform designed for businesses that want plug-and-play MyInvois compliance without a custom build.',
+      'Launched the platform for booking free individual pickup, requesting bulk quotes, and retrieving collection certificates via Track & Trace.',
   },
 ];
 
-// Who We Work With: headline updated (not "trusted by" for a pre-revenue startup).
-// NGO category: removed MyCare, MAPIM, Hulwan, Aqsa Syarif — warm leads, not confirmed clients.
+// Who We Work With: categories mirror the market segments already established under /solutions
+// (Individuals & Households, Corporate & Enterprise, Government/NGO) rather than inventing new
+// customer types. "systems" replaced with accepted device categories — the accounting-software
+// list made no sense once this section covers e-waste collection, not e-invoice integration.
 
 export const ABOUT_WHO_WE_WORK_WITH = {
   eyebrow: 'Who We Work With',
-  headline: 'Built for Malaysian Businesses at Every Scale',
+  headline: 'Built for Malaysia at Every Scale',
   categories: [
     {
-      label: 'SMEs',
+      label: 'Individuals & Households',
       description:
-        'Small and medium enterprises across retail, trading, services, and manufacturing — navigating the e-invoice mandate and looking for a simple path to compliance.',
+        'Anyone clearing out old phones, laptops, or a drawer of dead electronics — free doorstep pickup, no minimums, instant DuitNow payment.',
     },
     {
-      label: 'Accounting Firms',
+      label: 'Corporate & Enterprise',
       description:
-        'Firms managing compliance for multiple clients who need a single, reliable integration partner to handle the technical side across their entire portfolio.',
+        'Offices, warehouses, and factories generating e-waste on an ongoing basis — recurring SW110-compliant collection, certified data destruction, and ESG reporting.',
     },
     {
-      label: 'NGOs & Non-Profits',
+      label: 'Government & NGOs',
       description:
-        'Registered societies, charitable foundations, and religious organisations above RM 1M annual revenue that must comply with the MyInvois mandate like any other entity.',
+        'Public sector agencies, GLCs, and registered non-profits that need procurement-ready compliance and transparent, auditable documentation.',
     },
   ],
-  systems: [
-    'Spreadsheets',
-    'Wave',
-    'Manual Bookkeeping',
-    'AutoCount / Xero / QuickBooks',
-    'Custom ERP',
+  deviceCategories: [
+    'Phones & Tablets',
+    'Laptops & Computers',
+    'Monitors & Displays',
+    'Small Office IT Peripherals',
   ],
 };
 
@@ -711,6 +716,45 @@ export const SERVICES = [
 ] as const;
 
 export type ServiceSlug = (typeof SERVICES)[number]['slug'];
+
+// ─── Resources Section ────────────────────────────────────────────────────────
+// Educational guides grounded in facts already established under /services —
+// each one expands on a single compliance/process topic (DOE, SW110, data
+// destruction, ESG, pickup prep, certificates) rather than introducing new claims.
+export const RESOURCES = [
+  {
+    slug: 'doe-registration-explained',
+    icon: 'badge-check',
+    title: 'What DOE Registration Means for You',
+  },
+  {
+    slug: 'sw110-compliance-for-businesses',
+    icon: 'factory',
+    title: 'SW110 Compliance for Businesses',
+  },
+  {
+    slug: 'certified-data-destruction-guide',
+    icon: 'lock',
+    title: 'How Certified Data Destruction Works',
+  },
+  {
+    slug: 'esg-reporting-for-ewaste',
+    icon: 'leaf',
+    title: 'ESG & Sustainability Reporting for E-Waste',
+  },
+  {
+    slug: 'preparing-devices-for-pickup',
+    icon: 'truck',
+    title: 'How to Prepare Your Devices for Pickup',
+  },
+  {
+    slug: 'understanding-your-certificate',
+    icon: 'file-check',
+    title: 'Understanding Your Recycling Certificate',
+  },
+] as const;
+
+export type ResourceSlug = (typeof RESOURCES)[number]['slug'];
 
 // Structural-only per service: which trust-callout visual placeholder (if any)
 // to render. The translatable copy (description, included bullets, trust

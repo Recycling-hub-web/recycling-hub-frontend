@@ -24,6 +24,7 @@
 
 import {
   BRAND,
+  type ResourceSlug,
   type ServiceSlug,
   type SolutionSlug,
 } from '../constants/content';
@@ -39,6 +40,7 @@ const en = {
     requestQuote: 'Request a Quote',
     services: 'Services',
     solutions: 'Solutions',
+    resources: 'Resources',
     viewAllServices: 'View All Services',
     viewAllSolutions: 'View All Solutions',
   },
@@ -55,7 +57,6 @@ const en = {
         href: '/services/bulk-industrial-collection',
       },
       { label: 'How It Works', href: '/#how-it-works' },
-      { label: 'Pricing', href: '/pricing' },
       { label: 'Track & Trace / Certificates', href: '/track-trace' },
       { label: 'Request a Quote', href: '/request-quote' },
     ],
@@ -63,6 +64,7 @@ const en = {
       { label: 'About Us', href: '/about' },
       { label: 'Meet the Team', href: '/about#team' },
       { label: 'Services', href: '/services' },
+      { label: 'Resources', href: '/resources' },
       { label: 'FAQ', href: '/faq' },
       { label: 'Contact', href: '/contact' },
     ],
@@ -384,6 +386,37 @@ const en = {
           ],
         },
       ],
+    },
+
+    splitHero: {
+      individual: {
+        badge: 'For Individuals',
+        headline: 'Free E-Waste Pickup You Can Trust.',
+        description:
+          'Recycling Hub picks up your old phones, laptops, and gadgets for free — DOE-registered and fully documented, with instant payment via DuitNow the moment we collect.',
+        features: [
+          'Free doorstep pickup',
+          'Instant DuitNow payment',
+          'DOE-registered and fully documented',
+          'No minimums, no paperwork',
+        ],
+        cta: 'Book Pickup',
+        ctaHref: '/contact',
+      },
+      business: {
+        badge: 'For Businesses',
+        headline: 'Registered Bulk Collection You Can Trust.',
+        description:
+          'Recycling Hub handles DOE- and SW110-compliant bulk collection for offices, warehouses, and factories — with certified data destruction and ESG-ready reporting, fully documented from pickup to disposal.',
+        features: [
+          'DOE/SW110-compliant bulk collection',
+          'Certified data destruction with serialized certificates',
+          'ESG & sustainability reporting included',
+          'Scheduled around your operations',
+        ],
+        cta: 'Request Bulk Quote',
+        ctaHref: '/request-quote?service=bulk-industrial-collection',
+      },
     },
 
     deliveryModels: {
@@ -719,6 +752,134 @@ const en = {
         included: string[];
         trust: { title: string; description: string };
       }
+    >,
+  },
+
+  resources: {
+    hero: {
+      eyebrow: 'Resources',
+      headline: 'Guides to Compliant, Documented E-Waste Disposal.',
+      description:
+        'Straight answers on DOE registration, SW110 compliance, data destruction, and everything else that makes a collection more than just a pickup.',
+    },
+    gridHeading: {
+      ourResources: { eyebrow: 'Guides', headline: 'Start Here' },
+      exploreMore: { eyebrow: 'Explore More', headline: 'Other Guides' },
+    },
+    learnMore: 'Read guide',
+    ctaLabel: 'Talk to Us',
+    cards: {
+      'doe-registration-explained': {
+        title: 'What DOE Registration Means for You',
+        summary:
+          'Why Recycling Hub’s DOE registration matters, and what it protects you from when you hand over e-waste.',
+      },
+      'sw110-compliance-for-businesses': {
+        title: 'SW110 Compliance for Businesses',
+        summary:
+          'What SW110 scheduled-waste classification means for offices, warehouses, and factories generating e-waste.',
+      },
+      'certified-data-destruction-guide': {
+        title: 'How Certified Data Destruction Works',
+        summary:
+          'What actually happens to the data on your old phones, laptops, and hard drives before they’re recycled.',
+      },
+      'esg-reporting-for-ewaste': {
+        title: 'ESG & Sustainability Reporting for E-Waste',
+        summary:
+          'How e-waste collection data turns into something your sustainability team can put directly into an ESG disclosure.',
+      },
+      'preparing-devices-for-pickup': {
+        title: 'How to Prepare Your Devices for Pickup',
+        summary:
+          'A practical checklist before your free doorstep collection, so pickup goes smoothly and your data stays yours.',
+      },
+      'understanding-your-certificate': {
+        title: 'Understanding Your Recycling Certificate',
+        summary:
+          'What’s on a Recycling Hub certificate, and how to use it for your own records or an audit.',
+      },
+    } satisfies Record<ResourceSlug, { title: string; summary: string }>,
+    detail: {
+      'doe-registration-explained': {
+        description:
+          'Not every company that collects old electronics is legally allowed to. Recycling Hub is a DOE-registered e-waste collector, which means our collection activity is authorized and accountable under Malaysia’s Department of Environment — not run through an informal scrap channel.',
+        keyPoints: [
+          'DOE registration authorizes us to collect e-waste as regulated waste, not as general scrap',
+          'Every pickup — individual or bulk — is carried out under this registered status, never an informal collection round',
+          'Working with an unregistered collector leaves you with no paper trail if your devices, or the data on them, end up somewhere they shouldn’t',
+          'Businesses need this for audit purposes — DOE-compliant paperwork is issued for every scheduled waste collection',
+        ],
+        takeaway:
+          'If a collector can’t show proof of DOE registration, that’s a compliance and data-security risk, not just a formality.',
+      },
+      'sw110-compliance-for-businesses': {
+        description:
+          'Bulk and industrial e-waste collection isn’t just pickup at scale — it’s carried out under SW110 scheduled-waste classification, under Malaysia’s Environmental Quality Act 1974 and its subsidiary regulations. That classification is what makes bulk collection auditable.',
+        keyPoints: [
+          'SW110 governs how scheduled electronic waste must be collected, transported, and disposed of by a licensed operator',
+          'A consignment note is issued for every SW110 collection — the paperwork an auditor will ask for',
+          'This is distinct from an informal haul-it-away arrangement, which leaves no compliance trail',
+          'Recurring collection is scheduled around your operating volume, not a one-off pickup dressed up as compliance',
+        ],
+        takeaway:
+          'If your business generates e-waste regularly, SW110 compliance is what turns disposal into something you can point to during an audit.',
+      },
+      'certified-data-destruction-guide': {
+        description:
+          'Any data-bearing device we collect goes through certified destruction before recycling — not a software wipe that could theoretically be reversed, but physical destruction of the storage media itself, logged and certified.',
+        keyPoints: [
+          'Physical destruction of storage media, not a reversible software wipe',
+          'A serialized certificate of destruction is issued per asset or per batch — tied to the specific devices, not a generic statement',
+          'Chain-of-custody tracking follows the device from collection to destruction, so nothing sits unaccounted for in between',
+          'Available as a standalone request for a specific device, or bundled into any collection',
+          'Certificates are retrievable anytime via Track & Trace',
+        ],
+        takeaway:
+          'If a recycler can’t produce a serialized certificate tied to your specific devices, you have no proof your data was actually destroyed.',
+      },
+      'esg-reporting-for-ewaste': {
+        description:
+          'Businesses collecting under Recycling Hub receive a diversion report summarizing what was collected and what happened to it — formatted for direct use in ESG disclosures, not raw data your team has to reformat.',
+        keyPoints: [
+          'Total weight collected and recycled, broken down by device category',
+          'Materials-recovered vs. landfill-diverted breakdown',
+          'Estimated carbon impact of the collection',
+          'Delivered per collection, or aggregated over a reporting period (quarterly, annually) on request',
+          'Every bulk and enterprise collection is eligible — request one with your next quote',
+        ],
+        takeaway:
+          'E-waste diversion is one of the more concrete, easily-evidenced line items you can bring into an ESG report.',
+      },
+      'preparing-devices-for-pickup': {
+        description:
+          'Individual pickup is free and doesn’t require paperwork on your end, but a few minutes of prep makes collection faster and safer for your data.',
+        keyPoints: [
+          'Back up anything you want to keep — devices are collected for certified destruction, not returned',
+          'Sign out of accounts and remove SIM/memory cards where possible, even though certified destruction handles the data either way',
+          'Group devices together so our team can confirm categories and count at the door',
+          'Have the device ready at the scheduled time — pickups are confirmed in advance, not unannounced drop-ins',
+          'Instant DuitNow payment is made at the point of collection for eligible personal devices',
+        ],
+        takeaway:
+          'You don’t need to do anything complicated — just have your devices ready and your bank details on hand for DuitNow.',
+      },
+      'understanding-your-certificate': {
+        description:
+          'Every collection generates documentation — a consignment note, a certificate of destruction if data-bearing devices were involved, and DOE-compliant paperwork you can hand straight to an auditor.',
+        keyPoints: [
+          'Consignment note issued for every scheduled waste collection',
+          'Certificate of destruction included for any data-bearing assets, serialized and tied to the specific devices destroyed',
+          'DOE-compliant collection and disposal paperwork retained for your records',
+          'Documentation delivered at the time of collection or shortly after',
+          'Past documentation is retrievable anytime via Track & Trace, not just at the time of collection',
+        ],
+        takeaway:
+          'Keep your certificate — it’s your proof of compliant, documented disposal if anyone ever asks.',
+      },
+    } satisfies Record<
+      ResourceSlug,
+      { description: string; keyPoints: string[]; takeaway: string }
     >,
   },
 

@@ -5,7 +5,6 @@ import { CoreInsightBanner } from '../components/public/about/CoreInsightBanner'
 import { FoundationSection } from '../components/public/about/FoundationSection';
 import { MissionStatement } from '../components/public/about/MissionStatement';
 import { StatisticsSection } from '../components/public/about/StatisticsSection';
-import { TeamSection } from '../components/public/about/TeamSection';
 import { WhoWeWorkWith } from '../components/public/about/WhoWeWorkWith';
 import { BookDemo } from '../components/public/shared/BookDemo';
 import { ReusableHero } from '../components/ui/hero';
@@ -16,8 +15,8 @@ import type { NextPageWithLayout } from '../types/next';
 const AboutPage: NextPageWithLayout = () => (
   <>
     <Meta
-      title="About — Recycling Hub E-Invoice Integration"
-      description="A Kuala Lumpur-based software agency dedicated to making Malaysian e-invoice compliance fast, affordable, and stress-free."
+      title="About — Recycling Hub E-Waste Collection & Disposal"
+      description="A Malaysia-based team dedicated to DOE-registered, fully documented e-waste collection and disposal for households and businesses."
     />
     <ReusableHero
       eyebrow={PAGE_HEROES.about.eyebrow}
@@ -34,9 +33,6 @@ const AboutPage: NextPageWithLayout = () => (
     </div>
     <div className="relative z-[20]">
       <StatisticsSection />
-    </div>
-    <div className="relative z-[25]">
-      <TeamSection />
     </div>
     <div className="relative z-[30]">
       <WhoWeWorkWith />

@@ -9,28 +9,27 @@ const FinalCTA = () => {
   const { finalCta: content } = home;
 
   return (
-    <section className="bg-hero-gradient py-20 md:py-28">
+    <section className="bg-white py-20 md:py-28">
       <div className="mx-auto max-w-7xl px-5 text-center md:px-8">
         <SectionHeading
           eyebrow={content.eyebrow}
           headline={content.headline}
           subtext={content.subtext}
-          light
         />
 
         <FadeIn delay={0.5}>
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Button href={content.ctaHref} variant="white">
+            <Button href={content.ctaHref} variant="primary">
               {content.cta}
             </Button>
-            <Button href={BRAND.whatsapp} variant="outline-white">
+            <Button href={BRAND.whatsapp} variant="secondary">
               {content.whatsapp}
             </Button>
           </div>
         </FadeIn>
 
         <FadeIn delay={0.65}>
-          <p className="mt-6 text-xs text-white/45">{content.note}</p>
+          <p className="mt-6 text-xs text-slate-500">{content.note}</p>
         </FadeIn>
       </div>
     </section>

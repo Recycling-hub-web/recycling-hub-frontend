@@ -10,6 +10,7 @@ import { FinalCTA } from '../components/public/home/FinalCTA';
 import { HeroBlobSection } from '../components/public/home/HeroBlobSection';
 import { ProblemIllustration } from '../components/public/home/ProblemIllustration';
 import { ProblemStrip } from '../components/public/home/ProblemStrip';
+import { SplitHeroSection } from '../components/public/home/SplitHeroSection';
 import { TrustStrip } from '../components/public/home/TrustStrip';
 import { WhyRecyclingHub } from '../components/public/home/WhyRecyclingHub';
 import { FaqSection } from '../components/public/shared/FaqSection';
@@ -22,6 +23,7 @@ const HomePage: NextPageWithLayout = () => (
   <>
     <Meta title={AppConfig.title} description={AppConfig.description} />
     <HeroBlobSection />
+    <SplitHeroSection />
     <TrustStrip />
     <ProblemIllustration />
     <ProblemStrip />

@@ -17,6 +17,7 @@
 
 import {
   BRAND,
+  type ResourceSlug,
   type ServiceSlug,
   type SolutionSlug,
 } from '../constants/content';
@@ -32,6 +33,7 @@ const bm: Dictionary = {
     requestQuote: 'Minta Sebut Harga',
     services: 'Perkhidmatan',
     solutions: 'Penyelesaian',
+    resources: 'Sumber',
     viewAllServices: 'Lihat Semua Perkhidmatan',
     viewAllSolutions: 'Lihat Semua Penyelesaian',
   },
@@ -48,7 +50,6 @@ const bm: Dictionary = {
         href: '/services/bulk-industrial-collection',
       },
       { label: 'Cara Ia Berfungsi', href: '/#how-it-works' },
-      { label: 'Harga', href: '/pricing' },
       { label: 'Jejak & Kesan / Sijil', href: '/track-trace' },
       { label: 'Minta Sebut Harga', href: '/request-quote' },
     ],
@@ -56,6 +57,7 @@ const bm: Dictionary = {
       { label: 'Tentang Kami', href: '/about' },
       { label: 'Kenali Pasukan Kami', href: '/about#team' },
       { label: 'Perkhidmatan', href: '/services' },
+      { label: 'Sumber', href: '/resources' },
       { label: 'Soalan Lazim', href: '/faq' },
       { label: 'Hubungi Kami', href: '/contact' },
     ],
@@ -389,6 +391,37 @@ const bm: Dictionary = {
       ],
     },
 
+    splitHero: {
+      individual: {
+        badge: 'Untuk Individu',
+        headline: 'Kutipan E-Sisa Percuma Yang Boleh Dipercayai.',
+        description:
+          'Recycling Hub mengutip telefon, komputer riba, dan gajet lama anda secara percuma — berdaftar DOE dan didokumenkan sepenuhnya, dengan bayaran segera melalui DuitNow sebaik sahaja kami mengutip.',
+        features: [
+          'Kutipan percuma di rumah',
+          'Bayaran DuitNow segera',
+          'Berdaftar DOE dan didokumenkan sepenuhnya',
+          'Tiada minimum, tiada dokumen',
+        ],
+        cta: 'Tempah Kutipan',
+        ctaHref: '/contact',
+      },
+      business: {
+        badge: 'Untuk Perniagaan',
+        headline: 'Kutipan Pukal Berdaftar Yang Boleh Dipercayai.',
+        description:
+          'Recycling Hub mengendalikan kutipan pukal mematuhi DOE dan SW110 untuk pejabat, gudang, dan kilang — dengan pemusnahan data bertauliah dan laporan sedia ESG, didokumenkan sepenuhnya dari kutipan hingga pelupusan.',
+        features: [
+          'Kutipan pukal mematuhi DOE/SW110',
+          'Pemusnahan data bertauliah dengan sijil bersiri',
+          'Laporan ESG & kelestarian disertakan',
+          'Dijadualkan mengikut operasi anda',
+        ],
+        cta: 'Minta Sebut Harga Pukal',
+        ctaHref: '/request-quote?service=bulk-industrial-collection',
+      },
+    },
+
     deliveryModels: {
       eyebrow: 'Cara Kitar Semula Bersama Kami',
       headline: 'Dua Laluan. Satu Rakan Kongsi Kitar Semula Bertauliah.',
@@ -709,6 +742,135 @@ const bm: Dictionary = {
         included: string[];
         trust: { title: string; description: string };
       }
+    >,
+  },
+
+  resources: {
+    hero: {
+      eyebrow: 'Sumber',
+      headline:
+        'Panduan untuk Pelupusan E-Sisa yang Mematuhi dan Didokumentasikan.',
+      description:
+        'Jawapan jelas tentang pendaftaran DOE, pematuhan SW110, pemusnahan data, dan segala-galanya yang menjadikan kutipan lebih daripada sekadar mengambil.',
+    },
+    gridHeading: {
+      ourResources: { eyebrow: 'Panduan', headline: 'Mula Di Sini' },
+      exploreMore: { eyebrow: 'Terokai Lagi', headline: 'Panduan Lain' },
+    },
+    learnMore: 'Baca panduan',
+    ctaLabel: 'Hubungi Kami',
+    cards: {
+      'doe-registration-explained': {
+        title: 'Apa Maksud Pendaftaran DOE untuk Anda',
+        summary:
+          'Mengapa pendaftaran DOE Recycling Hub penting, dan apa yang ia lindungi anda daripada apabila anda menyerahkan e-sisa.',
+      },
+      'sw110-compliance-for-businesses': {
+        title: 'Pematuhan SW110 untuk Perniagaan',
+        summary:
+          'Apa maksud klasifikasi sisa terjadual SW110 untuk pejabat, gudang, dan kilang yang menjana e-sisa.',
+      },
+      'certified-data-destruction-guide': {
+        title: 'Bagaimana Pemusnahan Data Bertauliah Berfungsi',
+        summary:
+          'Apa yang sebenarnya berlaku kepada data pada telefon, komputer riba, dan cakera keras lama anda sebelum ia dikitar semula.',
+      },
+      'esg-reporting-for-ewaste': {
+        title: 'Pelaporan ESG & Kelestarian untuk E-Sisa',
+        summary:
+          'Bagaimana data kutipan e-sisa bertukar menjadi sesuatu yang boleh dimasukkan terus oleh pasukan kelestarian anda ke dalam pendedahan ESG.',
+      },
+      'preparing-devices-for-pickup': {
+        title: 'Cara Menyediakan Peranti Anda untuk Kutipan',
+        summary:
+          'Senarai semak praktikal sebelum kutipan pintu rumah percuma anda, supaya kutipan berjalan lancar dan data anda kekal milik anda.',
+      },
+      'understanding-your-certificate': {
+        title: 'Memahami Sijil Kitar Semula Anda',
+        summary:
+          'Apa yang terkandung dalam sijil Recycling Hub, dan cara menggunakannya untuk rekod anda sendiri atau audit.',
+      },
+    } satisfies Record<ResourceSlug, { title: string; summary: string }>,
+    detail: {
+      'doe-registration-explained': {
+        description:
+          'Bukan setiap syarikat yang mengumpul peranti elektronik lama dibenarkan secara sah untuk berbuat demikian. Recycling Hub ialah pengumpul e-sisa berdaftar DOE, bermakna aktiviti pengumpulan kami dibenarkan dan bertanggungjawab di bawah Jabatan Alam Sekitar Malaysia — bukan dijalankan melalui saluran skrap tidak formal.',
+        keyPoints: [
+          'Pendaftaran DOE membenarkan kami mengumpul e-sisa sebagai sisa terkawal, bukan skrap am',
+          'Setiap kutipan — individu atau pukal — dijalankan di bawah status berdaftar ini, bukan pusingan kutipan tidak formal',
+          'Bekerja dengan pengumpul tidak berdaftar meninggalkan anda tanpa rekod bertulis jika peranti anda, atau data di dalamnya, berakhir di tempat yang tidak sepatutnya',
+          'Perniagaan memerlukan ini untuk tujuan audit — dokumen mematuhi DOE dikeluarkan bagi setiap kutipan sisa terjadual',
+        ],
+        takeaway:
+          'Jika pengumpul tidak dapat menunjukkan bukti pendaftaran DOE, itu adalah risiko pematuhan dan keselamatan data, bukan sekadar formaliti.',
+      },
+      'sw110-compliance-for-businesses': {
+        description:
+          'Kutipan e-sisa pukal dan perindustrian bukan sekadar kutipan berskala besar — ia dijalankan di bawah klasifikasi sisa terjadual SW110, di bawah Akta Kualiti Alam Sekeliling 1974 Malaysia dan peraturan subsidiarinya. Klasifikasi itulah yang menjadikan kutipan pukal boleh diaudit.',
+        keyPoints: [
+          'SW110 mengawal bagaimana sisa elektronik terjadual mesti dikumpul, diangkut, dan dilupuskan oleh pengendali berlesen',
+          'Nota konsainan dikeluarkan bagi setiap kutipan SW110 — dokumen yang akan diminta oleh juruaudit',
+          'Ini berbeza daripada aturan bawa-pergi tidak formal, yang tidak meninggalkan sebarang rekod pematuhan',
+          'Kutipan berulang dijadualkan mengikut jumlah operasi anda, bukan kutipan sekali sahaja yang dipersembahkan sebagai pematuhan',
+        ],
+        takeaway:
+          'Jika perniagaan anda menjana e-sisa secara berkala, pematuhan SW110 adalah apa yang menjadikan pelupusan sesuatu yang boleh anda tunjukkan semasa audit.',
+      },
+      'certified-data-destruction-guide': {
+        description:
+          'Sebarang peranti membawa data yang kami kumpul melalui pemusnahan bertauliah sebelum dikitar semula — bukan pemadaman perisian yang secara teorinya boleh diterbalikkan, tetapi pemusnahan fizikal media storan itu sendiri, direkodkan dan disijilkan.',
+        keyPoints: [
+          'Pemusnahan fizikal media storan, bukan pemadaman perisian yang boleh diterbalikkan',
+          'Sijil pemusnahan bersiri dikeluarkan bagi setiap aset atau kelompok — dikaitkan dengan peranti tertentu, bukan kenyataan generik',
+          'Penjejakan rantaian jagaan mengikuti peranti dari kutipan hingga pemusnahan, jadi tiada apa yang tidak dikira di antaranya',
+          'Tersedia sebagai permintaan berasingan untuk peranti tertentu, atau digabungkan dalam mana-mana kutipan',
+          'Sijil boleh diperoleh semula bila-bila masa melalui Jejak & Kesan',
+        ],
+        takeaway:
+          'Jika pengitar semula tidak dapat mengeluarkan sijil bersiri yang dikaitkan dengan peranti tertentu anda, anda tiada bukti data anda benar-benar dimusnahkan.',
+      },
+      'esg-reporting-for-ewaste': {
+        description:
+          'Perniagaan yang mengumpul bersama Recycling Hub menerima laporan pengalihan yang meringkaskan apa yang dikumpul dan apa yang berlaku kepadanya — diformatkan untuk kegunaan terus dalam pendedahan ESG, bukan data mentah yang perlu diformat semula oleh pasukan anda.',
+        keyPoints: [
+          'Jumlah berat dikumpul dan dikitar semula, dipecahkan mengikut kategori peranti',
+          'Pecahan bahan dipulihkan berbanding dialihkan daripada tapak pelupusan',
+          'Anggaran kesan karbon bagi kutipan tersebut',
+          'Diberikan bagi setiap kutipan, atau dikumpulkan sepanjang tempoh pelaporan (suku tahunan, tahunan) atas permintaan',
+          'Setiap kutipan pukal dan perusahaan layak — minta satu bersama sebut harga seterusnya anda',
+        ],
+        takeaway:
+          'Pengalihan e-sisa ialah salah satu item yang paling konkrit dan mudah dibuktikan yang boleh anda bawa ke dalam laporan ESG.',
+      },
+      'preparing-devices-for-pickup': {
+        description:
+          'Kutipan individu adalah percuma dan tidak memerlukan dokumen di pihak anda, tetapi beberapa minit persediaan menjadikan kutipan lebih pantas dan lebih selamat untuk data anda.',
+        keyPoints: [
+          'Sandarkan apa-apa yang anda ingin simpan — peranti dikumpul untuk pemusnahan bertauliah, bukan dipulangkan',
+          'Log keluar daripada akaun dan keluarkan kad SIM/memori jika boleh, walaupun pemusnahan bertauliah menguruskan data dalam apa jua keadaan',
+          'Kumpulkan peranti bersama supaya pasukan kami dapat mengesahkan kategori dan bilangan di depan pintu',
+          'Sediakan peranti pada masa yang dijadualkan — kutipan disahkan terlebih dahulu, bukan lawatan tanpa notis',
+          'Pembayaran DuitNow segera dibuat pada titik kutipan bagi peranti peribadi yang layak',
+        ],
+        takeaway:
+          'Anda tidak perlu melakukan apa-apa yang rumit — cuma sediakan peranti anda dan butiran bank untuk DuitNow.',
+      },
+      'understanding-your-certificate': {
+        description:
+          'Setiap kutipan menjana dokumentasi — nota konsainan, sijil pemusnahan jika peranti membawa data terlibat, dan dokumen mematuhi DOE yang boleh anda serahkan terus kepada juruaudit.',
+        keyPoints: [
+          'Nota konsainan dikeluarkan bagi setiap kutipan sisa terjadual',
+          'Sijil pemusnahan disertakan bagi sebarang aset membawa data, bersiri dan dikaitkan dengan peranti tertentu yang dimusnahkan',
+          'Dokumen kutipan dan pelupusan mematuhi DOE disimpan untuk rekod anda',
+          'Dokumentasi diberikan pada masa kutipan atau sejurus selepasnya',
+          'Dokumentasi lampau boleh diperoleh semula bila-bila masa melalui Jejak & Kesan, bukan hanya pada masa kutipan',
+        ],
+        takeaway:
+          'Simpan sijil anda — ia adalah bukti pelupusan yang mematuhi dan didokumentasikan jika sesiapa bertanya.',
+      },
+    } satisfies Record<
+      ResourceSlug,
+      { description: string; keyPoints: string[]; takeaway: string }
     >,
   },
 

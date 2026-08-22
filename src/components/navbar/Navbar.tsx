@@ -73,8 +73,8 @@ const Navbar = ({ variant = 'dark' }: NavbarProps) => {
 
   const navLinks = [
     { label: dict.nav.home, href: '/' },
-    { label: dict.nav.pricing, href: '/pricing' },
     { label: dict.nav.about, href: '/about' },
+    { label: dict.nav.resources, href: '/resources' },
     { label: dict.nav.contact, href: '/contact' },
   ];
 
@@ -183,7 +183,7 @@ const Navbar = ({ variant = 'dark' }: NavbarProps) => {
                 key={link.href}
                 href={link.href}
                 onMouseEnter={() => setHoveredHref(link.href)}
-                className={`group relative flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium transition-colors duration-200 lg:text-sm ${
+                className={`group relative flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-xs font-medium transition-colors duration-200 lg:text-sm ${
                   active ? getLinkActiveCls() : getLinkCls()
                 }`}
               >
@@ -214,7 +214,7 @@ const Navbar = ({ variant = 'dark' }: NavbarProps) => {
                 key={link.href}
                 href={link.href}
                 onMouseEnter={() => setHoveredHref(link.href)}
-                className={`group relative flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium transition-colors duration-200 lg:text-sm ${
+                className={`group relative flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-xs font-medium transition-colors duration-200 lg:text-sm ${
                   active ? getLinkActiveCls() : getLinkCls()
                 }`}
               >
