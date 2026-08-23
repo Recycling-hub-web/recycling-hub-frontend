@@ -5,11 +5,7 @@ import { useDictionary } from '../../../hooks/useDictionary';
 
 const ServicesTrustBar = () => {
   const { services } = useDictionary();
-  const items = [
-    services.trustBar[0],
-    `${BRAND.legalName} · ${BRAND.ssm}`,
-    services.trustBar[1],
-  ];
+  const items = [services.trustBar[0], BRAND.legalName, services.trustBar[1]];
 
   return (
     <section className="border-y border-slate-100 bg-neutral-50 py-6">

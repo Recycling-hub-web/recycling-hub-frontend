@@ -49,7 +49,7 @@ export const PAGE_HEROES = {
     headline: 'Three Founders.',
     headlineAccent: 'One Mandate: Built for Malaysia.',
     description:
-      'We are a team based in Alor Setar and Petaling Jaya. We built Recycling Hub because Malaysian households and businesses deserved an e-waste collector that was registered, documented, and honest about what happens to your devices after pickup.',
+      'We are a team based in Klang Valley. We built Recycling Hub because Malaysian households and businesses deserved an e-waste collector that was registered, documented, and honest about what happens to your devices after pickup.',
   },
   pricing: {
     eyebrow: 'Pricing',
@@ -133,14 +133,14 @@ export const HOW_IT_WORKS = {
 
 // ─── About ────────────────────────────────────────────────────────────────────
 // Headline names the team size (three engineers) — human and honest for a startup.
-// Body copy names the specific cities (Alor Setar, Petaling Jaya) — local credibility matters to Malaysian SMEs.
+// Body copy names Klang Valley — where the company operates, consistent with the Klang Valley-only pickup service area.
 // Team bios rewritten to emphasise Recycling Hub-specific roles, not just academic credentials.
 
 export const ABOUT = {
   eyebrow: 'Who We Are',
   headline:
     'Three Founders Building the E-Waste Collector Malaysia Actually Needs.',
-  body: 'Recycling Hub is based in Malaysia — Alor Setar and Petaling Jaya. We saw how much e-waste was ending up with informal scrap dealers, with no registration, no data destruction, and no paper trail, and built the alternative we always wished existed: DOE-registered, fully documented, and honest about what happens to your devices after we collect them.',
+  body: 'Recycling Hub is based in Klang Valley, Malaysia. We saw how much e-waste was ending up with informal scrap dealers, with no registration, no data destruction, and no paper trail, and built the alternative we always wished existed: DOE-registered, fully documented, and honest about what happens to your devices after we collect them.',
   team: [
     {
       name: 'Kedir Jabir',
