@@ -81,7 +81,7 @@ const en = {
       headlinePill: 'E-Waste',
       headlineSuffix: 'Recycling Services You Can Trust',
       subheadline:
-        'Recycling Hub picks up old electronics for free, wherever you are — for households clearing out a drawer of devices and for businesses decommissioning a whole office. Every collection is DOE-registered and fully documented.',
+        'Recycling Hub picks up old electronics for free across the Klang Valley — for households clearing out a drawer of devices and for businesses decommissioning a whole office. Every collection is DOE-registered and fully documented.',
       cta: 'Book Pickup',
       // TODO: replace with a real figure once available
       statCardLabel: 'Coming soon',
@@ -94,7 +94,7 @@ const en = {
       label: 'Why Malaysian households and businesses choose Recycling Hub',
       stats: [
         { value: 'DOE', label: 'Registered E-Waste Collector' },
-        { value: 'Free', label: 'Doorstep Pickup for Individuals' },
+        { value: 'Free', label: 'Doorstep Pickup in Klang Valley' },
         { value: 'Instant', label: 'DuitNow Payment on Collection' },
         { value: 'SW110', label: 'Compliant Enterprise Collection' },
       ],
@@ -227,7 +227,7 @@ const en = {
           headline: 'Licensed collection, tracked from the moment we arrive.',
           checklist: [
             'DOE-registered, SW110-compliant collection team',
-            'Doorstep pickup for individuals, on-site for businesses',
+            'Doorstep pickup for individuals in Klang Valley, on-site for businesses',
             'Every collected item logged at pickup',
             'Secure transport to our processing facility',
             'No device left unaccounted for',
@@ -351,7 +351,7 @@ const en = {
             },
             {
               bold: 'Pick a convenient time',
-              rest: ' for doorstep collection',
+              rest: ' for doorstep collection in Klang Valley',
             },
             { bold: 'No account required', rest: ' to book a pickup' },
           ],
@@ -393,9 +393,9 @@ const en = {
         badge: 'For Individuals',
         headline: 'Free E-Waste Pickup You Can Trust.',
         description:
-          'Recycling Hub picks up your old phones, laptops, and gadgets for free — DOE-registered and fully documented, with instant payment via DuitNow the moment we collect.',
+          'Recycling Hub picks up your old phones, laptops, and gadgets for free across Klang Valley — DOE-registered and fully documented, with instant payment via DuitNow the moment we collect.',
         features: [
-          'Free doorstep pickup',
+          'Free doorstep pickup in Klang Valley',
           'Instant DuitNow payment',
           'DOE-registered and fully documented',
           'No minimums, no paperwork',
@@ -429,9 +429,9 @@ const en = {
           price: 'Free',
           period: 'pickup + instant payout',
           description:
-            'Clearing out old phones, laptops, or gadgets? Book a free doorstep pickup and get paid instantly via DuitNow — no minimums, no paperwork.',
+            'Clearing out old phones, laptops, or gadgets? Book a free doorstep pickup in Klang Valley and get paid instantly via DuitNow — no minimums, no paperwork.',
           features: [
-            'Free doorstep pickup',
+            'Free doorstep pickup in Klang Valley',
             'Instant DuitNow payment',
             'All personal devices accepted',
             'No account or contract needed',
@@ -459,7 +459,7 @@ const en = {
         },
       ],
       footnote:
-        'Individual pickup is always free — bulk and enterprise pricing is confirmed after a quick assessment of your volume.',
+        'Individual pickup is always free across Klang Valley — bulk and enterprise pricing is confirmed after a quick assessment of your volume.',
     },
 
     b2bSection: {
@@ -513,7 +513,12 @@ const en = {
         {
           question: 'Is there a minimum number of devices for a free pickup?',
           answer:
-            "No — whether it's a single old phone or a drawer full of devices, individual pickup is free and comes with instant DuitNow payment. There's no account or contract required.",
+            "No — whether it's a single old phone or a drawer full of devices, individual pickup is free across Klang Valley and comes with instant DuitNow payment. There's no account or contract required.",
+        },
+        {
+          question: 'Which areas do you currently pick up from?',
+          answer:
+            "Free individual pickup is currently available across Klang Valley. If you're outside that area, get in touch and we'll let you know when coverage expands. Bulk and enterprise collection is assessed by location — request a quote and we'll confirm whether we can serve you.",
         },
         {
           question: 'What happens to my data before a device is recycled?',
@@ -529,7 +534,7 @@ const en = {
           question:
             "What's the difference between individual and business collection?",
           answer:
-            "Individual pickup is for households clearing out personal devices — it's free, with instant payment, no minimums. Business or bulk collection is for offices, warehouses, and factories, and is scheduled around your operations with a custom quote based on volume and device types. Both are collected under the same DOE-registered, SW110-compliant process.",
+            "Individual pickup is for households clearing out personal devices — it's free across Klang Valley, with instant payment, no minimums. Business or bulk collection is for offices, warehouses, and factories, and is scheduled around your operations with a custom quote based on volume, device types, and location. Both are collected under the same DOE-registered, SW110-compliant process.",
         },
         {
           question:
@@ -591,7 +596,7 @@ const en = {
     learnMore: 'Learn more',
     freeIndividualNote: {
       prefix:
-        'Just clearing out a personal device? Individual pickup is free — ',
+        'Just clearing out a personal device? Individual pickup is free across Klang Valley — ',
       linkText: 'book directly via WhatsApp',
       suffix: ', no quote required.',
     },
@@ -604,7 +609,7 @@ const en = {
       'collection-pickup': {
         title: 'E-Waste Collection & Pickup',
         summary:
-          'Scheduled doorstep collection for individual devices and household quantities, free of charge.',
+          'Scheduled doorstep collection for individual devices and household quantities, free of charge across Klang Valley.',
       },
       'bulk-industrial-collection': {
         title: 'Bulk & Industrial Collection',
@@ -635,12 +640,11 @@ const en = {
     detail: {
       'collection-pickup': {
         description:
-          'Recycling Hub collects end-of-life phones, laptops, tablets, monitors, and small IT peripherals directly from your home or office. Every pickup is scheduled in advance and confirmed before our team arrives, so collection happens on your terms, not as an unannounced drop-in.',
+          'Recycling Hub collects end-of-life phones, laptops, tablets, monitors, and small IT peripherals directly from your home or office across Klang Valley. Every pickup is scheduled in advance and confirmed before our team arrives, so collection happens on your terms, not as an unannounced drop-in.',
         included: [
-          'Doorstep collection for individual and household electronics — no minimum device count',
+          'Doorstep collection for individual and household electronics in Klang Valley — no minimum device count',
           'Accepted categories: phones & tablets, laptops & computers, monitors & displays, and small office IT peripherals',
-          // TODO: publish the exact list of serviced states/cities once the service area is finalized
-          'Service area confirmed by address before your booking is finalized',
+          'Currently available across Klang Valley — other areas coming soon',
           'Standard pickup is sized for individual and household quantities — higher-volume collection is handled under Bulk & Industrial Collection instead',
           'Instant DuitNow payment for eligible personal devices at the point of collection',
         ],
@@ -792,7 +796,7 @@ const en = {
       'preparing-devices-for-pickup': {
         title: 'How to Prepare Your Devices for Pickup',
         summary:
-          'A practical checklist before your free doorstep collection, so pickup goes smoothly and your data stays yours.',
+          'A practical checklist before your free doorstep collection in Klang Valley, so pickup goes smoothly and your data stays yours.',
       },
       'understanding-your-certificate': {
         title: 'Understanding Your Recycling Certificate',
@@ -853,7 +857,7 @@ const en = {
       },
       'preparing-devices-for-pickup': {
         description:
-          'Individual pickup is free and doesn’t require paperwork on your end, but a few minutes of prep makes collection faster and safer for your data.',
+          'Individual pickup is free across Klang Valley and doesn’t require paperwork on your end, but a few minutes of prep makes collection faster and safer for your data.',
         keyPoints: [
           'Back up anything you want to keep — devices are collected for certified destruction, not returned',
           'Sign out of accounts and remove SIM/memory cards where possible, even though certified destruction handles the data either way',
@@ -910,7 +914,7 @@ const en = {
       'individuals-households': {
         title: 'Individuals & Households',
         summary:
-          'Free doorstep pickup and instant DuitNow payment for personal electronics — no minimums, no paperwork.',
+          'Free doorstep pickup in Klang Valley and instant DuitNow payment for personal electronics — no minimums, no paperwork.',
       },
       'government-glc': {
         title: 'Government & GLC',
@@ -949,9 +953,9 @@ const en = {
       },
       'individuals-households': {
         framing:
-          "Clearing out an old phone, laptop, or a drawer full of dead chargers shouldn't take more effort than throwing it in the bin — but the bin isn't where it should go. Recycling Hub picks up your old electronics for free, wherever you are, and pays you instantly the moment they're collected.",
+          "Clearing out an old phone, laptop, or a drawer full of dead chargers shouldn't take more effort than throwing it in the bin — but the bin isn't where it should go. Recycling Hub picks up your old electronics for free across Klang Valley, and pays you instantly the moment they're collected.",
         whyUs: [
-          'Free doorstep pickup — no minimum device count, no account or contract needed',
+          'Free doorstep pickup in Klang Valley — no minimum device count, no account or contract needed',
           'Instant DuitNow payment the moment your devices are collected',
           'All personal devices accepted — phones, laptops, tablets, monitors, and more',
           'Certified data destruction included on every data-bearing device, with no extra step for you',
@@ -1113,13 +1117,13 @@ const en = {
           {
             question: 'Which areas do you serve?',
             answer:
-              "Get in touch via WhatsApp or our contact form with your location and we'll confirm whether it's covered before you book anything.",
+              "Free individual pickup is currently available across Klang Valley. If you're outside that area, get in touch and we'll let you know when coverage expands. Bulk and enterprise collection is assessed by location — request a quote and we'll confirm whether we can serve you.",
           },
           {
             question:
               "What's the difference between individual and business collection?",
             answer:
-              "Individual pickup is for households clearing out personal devices — it's free, with instant payment, no minimums. Business or bulk collection is for offices, warehouses, and factories, and is scheduled around your operations with a custom quote based on volume and device types. Both are collected under the same DOE-registered, SW110-compliant process.",
+              "Individual pickup is for households clearing out personal devices — it's free across Klang Valley, with instant payment, no minimums. Business or bulk collection is for offices, warehouses, and factories, and is scheduled around your operations with a custom quote based on volume, device types, and location. Both are collected under the same DOE-registered, SW110-compliant process.",
           },
         ],
       },
@@ -1129,7 +1133,7 @@ const en = {
           {
             question: 'Is there a minimum number of devices for a free pickup?',
             answer:
-              "No — whether it's a single old phone or a drawer full of devices, individual pickup is free and comes with instant DuitNow payment. There's no account or contract required.",
+              "No — whether it's a single old phone or a drawer full of devices, individual pickup is free across Klang Valley and comes with instant DuitNow payment. There's no account or contract required.",
           },
           {
             question: 'How do I get paid for my old devices?',
@@ -1272,7 +1276,8 @@ const en = {
       whatsappNote: 'Prefer to talk it through? WhatsApp us instead.',
     },
     footerNote: {
-      prefix: "Individual pickup is always free and doesn't need a quote — ",
+      prefix:
+        "Individual pickup is always free across Klang Valley and doesn't need a quote — ",
       linkText: 'book it directly via WhatsApp',
       suffix: '.',
     },
@@ -1317,7 +1322,7 @@ const en = {
             {
               type: 'ul',
               items: [
-                'Free doorstep pickup of personal electronic devices from individuals, with instant payment for eligible devices',
+                'Free doorstep pickup of personal electronic devices from individuals within Klang Valley, with instant payment for eligible devices',
                 'Scheduled bulk and enterprise collection for businesses, quoted according to device types and volume',
                 'Certified data destruction for any data-bearing device collected, whether from an individual or a business',
                 'ESG and sustainability diversion reporting for bulk and enterprise clients',

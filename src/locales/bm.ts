@@ -74,7 +74,7 @@ const bm: Dictionary = {
       headlinePill: 'E-Sisa',
       headlineSuffix: 'Berdaftar Yang Boleh Dipercayai',
       subheadline:
-        'Recycling Hub mengambil peranti elektronik lama secara percuma, di mana sahaja anda berada — untuk isi rumah yang ingin melupuskan peranti lama dan untuk perniagaan yang menutup keseluruhan pejabat. Setiap kutipan berdaftar dengan DOE dan didokumenkan sepenuhnya.',
+        'Recycling Hub mengambil peranti elektronik lama secara percuma di seluruh Klang Valley — untuk isi rumah yang ingin melupuskan peranti lama dan untuk perniagaan yang menutup keseluruhan pejabat. Setiap kutipan berdaftar dengan DOE dan didokumenkan sepenuhnya.',
       cta: 'Tempah Kutipan',
       statCardLabel: 'Akan datang',
       statCardValue: 'Statistik sebenar',
@@ -220,7 +220,7 @@ const bm: Dictionary = {
           headline: 'Kutipan berlesen, dijejaki sejak saat kami tiba.',
           checklist: [
             'Pasukan kutipan berdaftar DOE, mematuhi SW110',
-            'Kutipan di rumah untuk individu, di tapak untuk perniagaan',
+            'Kutipan di rumah untuk individu di Klang Valley, di tapak untuk perniagaan',
             'Setiap item yang dikutip direkod semasa kutipan',
             'Pengangkutan selamat ke fasiliti pemprosesan kami',
             'Tiada peranti yang tidak direkodkan',
@@ -345,7 +345,7 @@ const bm: Dictionary = {
             },
             {
               bold: 'Pilih masa yang sesuai',
-              rest: ' untuk kutipan di rumah',
+              rest: ' untuk kutipan di rumah di Klang Valley',
             },
             { bold: 'Tiada akaun diperlukan', rest: ' untuk menempah kutipan' },
           ],
@@ -396,9 +396,9 @@ const bm: Dictionary = {
         badge: 'Untuk Individu',
         headline: 'Kutipan E-Sisa Percuma Yang Boleh Dipercayai.',
         description:
-          'Recycling Hub mengutip telefon, komputer riba, dan gajet lama anda secara percuma — berdaftar DOE dan didokumenkan sepenuhnya, dengan bayaran segera melalui DuitNow sebaik sahaja kami mengutip.',
+          'Recycling Hub mengutip telefon, komputer riba, dan gajet lama anda secara percuma di seluruh Klang Valley — berdaftar DOE dan didokumenkan sepenuhnya, dengan bayaran segera melalui DuitNow sebaik sahaja kami mengutip.',
         features: [
-          'Kutipan percuma di rumah',
+          'Kutipan percuma di rumah di Klang Valley',
           'Bayaran DuitNow segera',
           'Berdaftar DOE dan didokumenkan sepenuhnya',
           'Tiada minimum, tiada dokumen',
@@ -432,9 +432,9 @@ const bm: Dictionary = {
           price: 'Percuma',
           period: 'kutipan + bayaran segera',
           description:
-            'Ingin melupuskan telefon, komputer riba, atau gajet lama? Tempah kutipan percuma di rumah dan dapat bayaran segera melalui DuitNow — tiada minimum, tiada dokumen.',
+            'Ingin melupuskan telefon, komputer riba, atau gajet lama? Tempah kutipan percuma di rumah di Klang Valley dan dapat bayaran segera melalui DuitNow — tiada minimum, tiada dokumen.',
           features: [
-            'Kutipan percuma di rumah',
+            'Kutipan percuma di rumah di Klang Valley',
             'Bayaran DuitNow segera',
             'Semua peranti peribadi diterima',
             'Tiada akaun atau kontrak diperlukan',
@@ -462,7 +462,7 @@ const bm: Dictionary = {
         },
       ],
       footnote:
-        'Kutipan individu sentiasa percuma — harga pukal dan perusahaan disahkan selepas penilaian ringkas jumlah anda.',
+        'Kutipan individu sentiasa percuma di seluruh Klang Valley — harga pukal dan perusahaan disahkan selepas penilaian ringkas jumlah anda.',
     },
 
     b2bSection: {
@@ -517,7 +517,12 @@ const bm: Dictionary = {
           question:
             'Adakah terdapat bilangan minimum peranti untuk kutipan percuma?',
           answer:
-            'Tiada — sama ada satu telefon lama atau satu laci penuh peranti, kutipan individu adalah percuma dan disertakan bayaran DuitNow segera. Tiada akaun atau kontrak diperlukan.',
+            'Tiada — sama ada satu telefon lama atau satu laci penuh peranti, kutipan individu adalah percuma di seluruh Klang Valley dan disertakan bayaran DuitNow segera. Tiada akaun atau kontrak diperlukan.',
+        },
+        {
+          question: 'Kawasan manakah yang anda kutip pada masa ini?',
+          answer:
+            'Kutipan individu percuma kini tersedia di seluruh Klang Valley. Jika anda berada di luar kawasan itu, hubungi kami dan kami akan maklumkan apabila liputan berkembang. Kutipan pukal dan perusahaan dinilai mengikut lokasi — minta sebut harga dan kami akan sahkan sama ada kami boleh berkhidmat untuk anda.',
         },
         {
           question:
@@ -597,7 +602,7 @@ const bm: Dictionary = {
     learnMore: 'Ketahui lebih lanjut',
     freeIndividualNote: {
       prefix:
-        'Hanya ingin melupuskan satu peranti peribadi? Kutipan individu adalah percuma — ',
+        'Hanya ingin melupuskan satu peranti peribadi? Kutipan individu adalah percuma di seluruh Klang Valley — ',
       linkText: 'tempah terus melalui WhatsApp',
       suffix: ', tiada sebut harga diperlukan.',
     },
@@ -610,7 +615,7 @@ const bm: Dictionary = {
       'collection-pickup': {
         title: 'Kutipan & Pengumpulan E-Sisa',
         summary:
-          'Kutipan berjadual di rumah untuk peranti individu dan jumlah isi rumah, secara percuma.',
+          'Kutipan berjadual di rumah untuk peranti individu dan jumlah isi rumah, secara percuma di seluruh Klang Valley.',
       },
       'bulk-industrial-collection': {
         title: 'Pengumpulan Pukal & Industri',
@@ -641,11 +646,11 @@ const bm: Dictionary = {
     detail: {
       'collection-pickup': {
         description:
-          'Recycling Hub mengutip telefon, komputer riba, tablet, monitor, dan peralatan IT kecil yang telah bersara terus dari rumah atau pejabat anda. Setiap kutipan dijadualkan terlebih dahulu dan disahkan sebelum pasukan kami tiba, jadi kutipan berlaku mengikut syarat anda, bukan lawatan tanpa notis.',
+          'Recycling Hub mengutip telefon, komputer riba, tablet, monitor, dan peralatan IT kecil yang telah bersara terus dari rumah atau pejabat anda di seluruh Klang Valley. Setiap kutipan dijadualkan terlebih dahulu dan disahkan sebelum pasukan kami tiba, jadi kutipan berlaku mengikut syarat anda, bukan lawatan tanpa notis.',
         included: [
-          'Kutipan di rumah untuk peranti elektronik individu dan isi rumah — tiada bilangan minimum peranti',
+          'Kutipan di rumah untuk peranti elektronik individu dan isi rumah di Klang Valley — tiada bilangan minimum peranti',
           'Kategori diterima: telefon & tablet, komputer riba & komputer, monitor & paparan, dan peralatan IT pejabat kecil',
-          'Kawasan perkhidmatan disahkan mengikut alamat sebelum tempahan anda dimuktamadkan',
+          'Kini tersedia di seluruh Klang Valley — kawasan lain akan datang',
           'Kutipan standard direka untuk jumlah individu dan isi rumah — kutipan jumlah lebih tinggi dikendalikan di bawah Pengumpulan Pukal & Industri',
           'Bayaran DuitNow segera untuk peranti peribadi yang layak semasa kutipan',
         ],
@@ -783,7 +788,7 @@ const bm: Dictionary = {
       'preparing-devices-for-pickup': {
         title: 'Cara Menyediakan Peranti Anda untuk Kutipan',
         summary:
-          'Senarai semak praktikal sebelum kutipan pintu rumah percuma anda, supaya kutipan berjalan lancar dan data anda kekal milik anda.',
+          'Senarai semak praktikal sebelum kutipan pintu rumah percuma anda di Klang Valley, supaya kutipan berjalan lancar dan data anda kekal milik anda.',
       },
       'understanding-your-certificate': {
         title: 'Memahami Sijil Kitar Semula Anda',
@@ -844,7 +849,7 @@ const bm: Dictionary = {
       },
       'preparing-devices-for-pickup': {
         description:
-          'Kutipan individu adalah percuma dan tidak memerlukan dokumen di pihak anda, tetapi beberapa minit persediaan menjadikan kutipan lebih pantas dan lebih selamat untuk data anda.',
+          'Kutipan individu adalah percuma di seluruh Klang Valley dan tidak memerlukan dokumen di pihak anda, tetapi beberapa minit persediaan menjadikan kutipan lebih pantas dan lebih selamat untuk data anda.',
         keyPoints: [
           'Sandarkan apa-apa yang anda ingin simpan — peranti dikumpul untuk pemusnahan bertauliah, bukan dipulangkan',
           'Log keluar daripada akaun dan keluarkan kad SIM/memori jika boleh, walaupun pemusnahan bertauliah menguruskan data dalam apa jua keadaan',
@@ -901,7 +906,7 @@ const bm: Dictionary = {
       'individuals-households': {
         title: 'Individu & Isi Rumah',
         summary:
-          'Kutipan percuma di rumah dan bayaran DuitNow segera untuk peranti elektronik peribadi — tiada minimum, tiada dokumen.',
+          'Kutipan percuma di rumah di Klang Valley dan bayaran DuitNow segera untuk peranti elektronik peribadi — tiada minimum, tiada dokumen.',
       },
       'government-glc': {
         title: 'Kerajaan & GLC',
@@ -940,9 +945,9 @@ const bm: Dictionary = {
       },
       'individuals-households': {
         framing:
-          'Melupuskan telefon lama, komputer riba, atau satu laci penuh pengecas mati tidak sepatutnya mengambil lebih usaha daripada membuangnya ke tong sampah — tetapi tong sampah bukan tempat ia patut pergi. Recycling Hub mengutip peranti elektronik lama anda secara percuma, di mana sahaja anda berada, dan membayar anda segera sejurus ia dikutip.',
+          'Melupuskan telefon lama, komputer riba, atau satu laci penuh pengecas mati tidak sepatutnya mengambil lebih usaha daripada membuangnya ke tong sampah — tetapi tong sampah bukan tempat ia patut pergi. Recycling Hub mengutip peranti elektronik lama anda secara percuma di seluruh Klang Valley, dan membayar anda segera sejurus ia dikutip.',
         whyUs: [
-          'Kutipan percuma di rumah — tiada bilangan minimum peranti, tiada akaun atau kontrak diperlukan',
+          'Kutipan percuma di rumah di Klang Valley — tiada bilangan minimum peranti, tiada akaun atau kontrak diperlukan',
           'Bayaran DuitNow segera sejurus peranti anda dikutip',
           'Semua peranti peribadi diterima — telefon, komputer riba, tablet, monitor, dan banyak lagi',
           'Pemusnahan data bertauliah disertakan pada setiap peranti membawa data, tanpa langkah tambahan untuk anda',
@@ -1096,13 +1101,13 @@ const bm: Dictionary = {
           {
             question: 'Kawasan manakah yang anda khidmati?',
             answer:
-              'Hubungi kami melalui WhatsApp atau borang hubungi kami dengan lokasi anda dan kami akan sahkan sama ada ia diliputi sebelum anda menempah apa-apa.',
+              'Kutipan individu percuma kini tersedia di seluruh Klang Valley. Jika anda berada di luar kawasan itu, hubungi kami dan kami akan maklumkan apabila liputan berkembang. Kutipan pukal dan perusahaan dinilai mengikut lokasi — minta sebut harga dan kami akan sahkan sama ada kami boleh berkhidmat untuk anda.',
           },
           {
             question:
               'Apakah perbezaan antara kutipan individu dan perniagaan?',
             answer:
-              'Kutipan individu adalah untuk isi rumah yang ingin melupuskan peranti peribadi — ia percuma, dengan bayaran segera, tiada minimum. Kutipan perniagaan atau pukal adalah untuk pejabat, gudang, dan kilang, dan dijadualkan mengikut operasi anda dengan sebut harga khusus berdasarkan jumlah dan jenis peranti. Kedua-duanya dikutip di bawah proses yang sama, berdaftar DOE dan mematuhi SW110.',
+              'Kutipan individu adalah untuk isi rumah yang ingin melupuskan peranti peribadi — ia percuma di seluruh Klang Valley, dengan bayaran segera, tiada minimum. Kutipan perniagaan atau pukal adalah untuk pejabat, gudang, dan kilang, dan dijadualkan mengikut operasi dan lokasi anda dengan sebut harga khusus. Kedua-duanya dikutip di bawah proses yang sama, berdaftar DOE dan mematuhi SW110.',
           },
         ],
       },
@@ -1113,7 +1118,7 @@ const bm: Dictionary = {
             question:
               'Adakah terdapat bilangan minimum peranti untuk kutipan percuma?',
             answer:
-              'Tiada — sama ada satu telefon lama atau satu laci penuh peranti, kutipan individu adalah percuma dan disertakan bayaran DuitNow segera. Tiada akaun atau kontrak diperlukan.',
+              'Tiada — sama ada satu telefon lama atau satu laci penuh peranti, kutipan individu adalah percuma di seluruh Klang Valley dan disertakan bayaran DuitNow segera. Tiada akaun atau kontrak diperlukan.',
           },
           {
             question: 'Bagaimana saya dibayar untuk peranti lama saya?',
@@ -1260,7 +1265,7 @@ const bm: Dictionary = {
     },
     footerNote: {
       prefix:
-        'Kutipan individu sentiasa percuma dan tidak memerlukan sebut harga — ',
+        'Kutipan individu sentiasa percuma di seluruh Klang Valley dan tidak memerlukan sebut harga — ',
       linkText: 'tempah terus melalui WhatsApp',
       suffix: '.',
     },
@@ -1305,7 +1310,7 @@ const bm: Dictionary = {
             {
               type: 'ul',
               items: [
-                'Kutipan percuma di rumah bagi peranti elektronik peribadi daripada individu, dengan bayaran segera untuk peranti yang layak',
+                'Kutipan percuma di rumah bagi peranti elektronik peribadi daripada individu dalam kawasan Klang Valley, dengan bayaran segera untuk peranti yang layak',
                 'Kutipan pukal dan perusahaan berjadual untuk perniagaan, disebut harga mengikut jenis dan jumlah peranti',
                 'Pemusnahan data bertauliah bagi sebarang peranti membawa data yang dikutip, sama ada daripada individu atau perniagaan',
                 'Pelaporan pengalihan ESG dan kelestarian untuk pelanggan pukal dan perusahaan',

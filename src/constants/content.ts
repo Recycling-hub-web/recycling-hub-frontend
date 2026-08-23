@@ -177,7 +177,7 @@ export const ABOUT_MISSION = {
   eyebrow: 'Our Mission',
   quote:
     'We built Recycling Hub because most people clearing out old electronics only had two options: let them pile up in a drawer, or hand them to a scrap dealer with no registration, no data destruction, and no record of where anything ended up. Neither is good enough.',
-  body: 'The devices are real, the data on them is real, and the compliance gap between "someone hauled it away" and a DOE-registered, fully documented collection is real. We close that gap — free doorstep pickup for individuals, SW110-compliant bulk collection for businesses, certified data destruction on every data-bearing device, and paperwork you can actually produce if anyone asks.',
+  body: 'The devices are real, the data on them is real, and the compliance gap between "someone hauled it away" and a DOE-registered, fully documented collection is real. We close that gap — free doorstep pickup for individuals in Klang Valley, SW110-compliant bulk collection for businesses, certified data destruction on every data-bearing device, and paperwork you can actually produce if anyone asks.',
 };
 
 // Values: grounded in the same claims already established and evidenced under /services and
@@ -200,7 +200,7 @@ export const ABOUT_VALUES = [
   {
     title: 'Simplicity',
     description:
-      'Free doorstep pickup for individuals, no minimums, no paperwork. Transparent quoting for bulk and enterprise collection. We eliminate the uncertainty that makes disposal feel complicated.',
+      'Free doorstep pickup for individuals in Klang Valley, no minimums, no paperwork. Transparent quoting for bulk and enterprise collection. We eliminate the uncertainty that makes disposal feel complicated.',
     icon: 'zap',
   },
   {
@@ -239,7 +239,7 @@ export const ABOUT_TIMELINE = [
     year: '2025',
     title: 'Recyclinghub.eco Launched',
     description:
-      'Launched the platform for booking free individual pickup, requesting bulk quotes, and retrieving collection certificates via Track & Trace.',
+      'Launched the platform for booking free individual pickup in Klang Valley, requesting bulk quotes, and retrieving collection certificates via Track & Trace.',
   },
 ];
 
@@ -255,7 +255,7 @@ export const ABOUT_WHO_WE_WORK_WITH = {
     {
       label: 'Individuals & Households',
       description:
-        'Anyone clearing out old phones, laptops, or a drawer of dead electronics — free doorstep pickup, no minimums, instant DuitNow payment.',
+        'Anyone clearing out old phones, laptops, or a drawer of dead electronics in Klang Valley — free doorstep pickup, no minimums, instant DuitNow payment.',
     },
     {
       label: 'Corporate & Enterprise',
