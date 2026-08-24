@@ -1,4 +1,6 @@
+import Link from 'next/link';
 import type { ReactElement } from 'react';
+import { LuArrowRight } from 'react-icons/lu';
 
 import { Meta } from '../../components/layout/Meta';
 import { SolutionsGrid } from '../../components/public/solutions/SolutionsGrid';
@@ -9,7 +11,7 @@ import type { NextPageWithLayout } from '../../types/next';
 
 const SolutionsPage: NextPageWithLayout = () => {
   const {
-    solutions: { hero },
+    solutions: { hero, crossLink },
   } = useDictionary();
 
   return (
@@ -25,6 +27,15 @@ const SolutionsPage: NextPageWithLayout = () => {
         description={hero.description}
       />
       <SolutionsGrid />
+      <div className="bg-white pb-16 text-center md:pb-20">
+        <Link
+          href={crossLink.href}
+          className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-600 hover:text-brand-700"
+        >
+          {crossLink.text} {crossLink.cta}
+          <LuArrowRight size={15} />
+        </Link>
+      </div>
     </>
   );
 };

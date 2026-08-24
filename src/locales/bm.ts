@@ -432,12 +432,12 @@ const bm: Dictionary = {
           price: 'Percuma',
           period: 'kutipan + bayaran segera',
           description:
-            'Ingin melupuskan telefon, komputer riba, atau gajet lama? Tempah kutipan percuma di rumah di Klang Valley dan dapat bayaran segera melalui DuitNow — tiada minimum, tiada dokumen.',
+            'Tiada kos, tiada muslihat — kutipan individu sentiasa percuma, dan bayaran DuitNow anda masuk sebaik sahaja kami mengutip. Itulah keseluruhan cerita harga kami.',
           features: [
-            'Kutipan percuma di rumah di Klang Valley',
-            'Bayaran DuitNow segera',
-            'Semua peranti peribadi diterima',
-            'Tiada akaun atau kontrak diperlukan',
+            'RM0 kepada anda — sentiasa percuma untuk individu',
+            'Dibayar segera melalui DuitNow semasa kutipan',
+            'Tiada yuran atau potongan tersembunyi',
+            'Tiada bilangan minimum peranti diperlukan',
           ],
           cta: 'Kitar Semula & Dapat Bayaran',
           ctaHref: '/contact',
@@ -449,12 +449,12 @@ const bm: Dictionary = {
           price: 'Sebut Harga Khusus',
           period: 'mengikut jumlah',
           description:
-            'Kutipan mematuhi DOE dan SW110 untuk pejabat, gudang, dan kilang — dengan pemusnahan data bertauliah dan laporan sedia ESG yang boleh dipercayai pasukan pematuhan anda.',
+            'Disebut harga mengikut jumlah, bukan agakan — beritahu kami secara kasar apa yang ingin anda lupuskan dan kami akan sahkan sebut harga sebelum apa-apa dijadualkan.',
           features: [
-            'Kutipan pukal mematuhi DOE/SW110',
-            'Pemusnahan data bertauliah dengan sijil bersiri',
-            'Laporan ESG & kelestarian disertakan',
-            'Dijadualkan mengikut operasi anda',
+            'Disebut harga mengikut jenis dan jumlah peranti — bukan kadar tetap',
+            'Disahkan secara bertulis sebelum sebarang kutipan dijadualkan',
+            'Dokumentasi pematuhan dan laporan ESG disertakan dalam sebut harga',
+            'Kutipan berulang dikenakan bayaran secara konsisten setiap kitaran',
           ],
           cta: 'Minta Sebut Harga Pukal',
           ctaHref: '/request-quote?service=bulk-industrial-collection',
@@ -591,6 +591,11 @@ const bm: Dictionary = {
       'Pengumpul E-Sisa Berdaftar DOE',
       'Pemusnahan Data Bertauliah pada Setiap Kutipan',
     ],
+    crossLink: {
+      text: 'Mencari pilihan mengikut sektor pula?',
+      cta: 'Lihat Penyelesaian',
+      href: '/solutions',
+    },
     gridHeading: {
       ourServices: {
         eyebrow: 'Perkhidmatan Kami',
@@ -886,6 +891,11 @@ const bm: Dictionary = {
       headlineAccent: 'Sektor demi Sektor.',
       description:
         'Dari sebuah isi rumah tunggal yang melupuskan peranti lama hingga sebuah perusahaan yang menutup pusat data, Recycling Hub menyesuaikan proses berdaftar DOE dan bertauliah yang sama mengikut keperluan sebenar setiap sektor.',
+    },
+    crossLink: {
+      text: 'Mencari pilihan mengikut jenis perkhidmatan pula?',
+      cta: 'Lihat Perkhidmatan',
+      href: '/services',
     },
     gridHeading: {
       ourSegments: {

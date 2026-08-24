@@ -19,13 +19,13 @@ const CoreInsightBanner = () => (
           {/* Left: text */}
           <div className="max-w-xl">
             <h2 className="font-montserrat text-2xl font-bold leading-snug text-white md:text-3xl">
-              Our Core Insight
+              What &ldquo;Handled Properly&rdquo; Actually Means
             </h2>
             <p className="mt-4 text-base leading-relaxed text-white/75">
-              The problem isn&apos;t that people don&apos;t want to recycle
-              their electronics — it&apos;s that the easiest option is usually
-              an unregistered scrap dealer. We believe compliant, documented
-              e-waste collection should be the easy option too.
+              A retired company laptop handed to an unregistered scrap dealer
+              has no log of what happened to the data on its drive, no
+              certificate proving it was destroyed, and no paperwork if an
+              auditor ever asks. The device disappears — the risk doesn&apos;t.
             </p>
           </div>
 

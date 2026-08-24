@@ -429,12 +429,12 @@ const en = {
           price: 'Free',
           period: 'pickup + instant payout',
           description:
-            'Clearing out old phones, laptops, or gadgets? Book a free doorstep pickup in Klang Valley and get paid instantly via DuitNow — no minimums, no paperwork.',
+            "No cost, no catch — individual pickup has always been free, and your DuitNow payout lands the moment we collect. That's the entire pricing story.",
           features: [
-            'Free doorstep pickup in Klang Valley',
-            'Instant DuitNow payment',
-            'All personal devices accepted',
-            'No account or contract needed',
+            '$0 to you — always free for individuals',
+            'Paid instantly via DuitNow at collection',
+            'No hidden fees or deductions',
+            'No minimum device count required',
           ],
           cta: 'Recycle & Get Paid',
           ctaHref: '/contact',
@@ -446,12 +446,12 @@ const en = {
           price: 'Custom Quote',
           period: 'based on volume',
           description:
-            'DOE- and SW110-compliant collection for offices, warehouses, and factories — with certified data destruction and ESG-ready reporting your compliance team can rely on.',
+            "Priced by volume, not guesswork — tell us roughly what you're clearing out and we'll confirm a quote before anything is scheduled.",
           features: [
-            'DOE/SW110-compliant bulk collection',
-            'Certified data destruction with serialized certificates',
-            'ESG & sustainability reporting included',
-            'Scheduled around your operations',
+            'Quoted by device type and volume — no flat rate',
+            'Confirmed in writing before any collection is scheduled',
+            'Compliance documentation and ESG reporting included in the quote',
+            'Recurring collection billed the same way each cycle',
           ],
           cta: 'Request Bulk Quote',
           ctaHref: '/request-quote?service=bulk-industrial-collection',
@@ -585,6 +585,11 @@ const en = {
       'DOE-Registered E-Waste Collector',
       'Certified Data Destruction on Every Collection',
     ],
+    crossLink: {
+      text: 'Looking for the right fit by sector instead?',
+      cta: 'Browse Solutions',
+      href: '/solutions',
+    },
     gridHeading: {
       ourServices: {
         eyebrow: 'Our Services',
@@ -894,6 +899,11 @@ const en = {
       headlineAccent: 'Sector by Sector.',
       description:
         'From a single household clearing out old devices to an enterprise retiring a data center, Recycling Hub adapts the same DOE-registered, certified process to what each sector actually needs.',
+    },
+    crossLink: {
+      text: 'Looking for the right fit by service type instead?',
+      cta: 'Browse Services',
+      href: '/services',
     },
     gridHeading: {
       ourSegments: {

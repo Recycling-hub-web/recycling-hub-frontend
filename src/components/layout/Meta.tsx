@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { NextSeo } from 'next-seo';
 
 import { AppConfig } from '../../config/site.config';
+import { BRAND } from '../../constants/content';
 
 type IMetaProps = {
   title: string;
@@ -10,8 +11,23 @@ type IMetaProps = {
   canonical?: string;
 };
 
+const SITE_URL = `https://${BRAND.website}`;
+
 const Meta = (props: IMetaProps) => {
   const router = useRouter();
+
+  const rawPath = router.asPath.split('?')[0]?.split('#')[0] ?? '/';
+  const path =
+    rawPath === '/bm' || rawPath.startsWith('/bm/')
+      ? rawPath.slice(3) || '/'
+      : rawPath;
+
+  const canonical = props.canonical ?? `${SITE_URL}${path}`;
+  const languageAlternates = [
+    { hrefLang: 'en', href: `${SITE_URL}${path}` },
+    { hrefLang: 'ms', href: `${SITE_URL}/bm${path}` },
+    { hrefLang: 'x-default', href: `${SITE_URL}${path}` },
+  ];
 
   return (
     <>
@@ -50,12 +66,13 @@ const Meta = (props: IMetaProps) => {
       <NextSeo
         title={props.title}
         description={props.description}
-        canonical={props.canonical}
+        canonical={canonical}
+        languageAlternates={languageAlternates}
         openGraph={{
           title: props.title,
           description: props.description,
-          url: props.canonical,
-          locale: AppConfig.locale,
+          url: canonical,
+          locale: router.locale === 'bm' ? 'ms_MY' : 'en_MY',
           site_name: AppConfig.site_name,
         }}
       />

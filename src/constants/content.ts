@@ -146,7 +146,7 @@ export const ABOUT = {
       name: 'Kedir Jabir',
       role: 'Co-Founder · Software Engineer',
       tagline: 'Backend Engineer · Systems & Operations',
-      bio: 'Based in Alor Setar, Kedah. ALX Software Engineering graduate with hands-on experience in production web systems. Leads backend architecture and operational systems at Recycling Hub.',
+      bio: 'ALX Software Engineering graduate with hands-on experience in production web systems. Leads backend architecture and operational systems at Recycling Hub.',
       linkedin: 'https://www.linkedin.com/in/ibnu-jabir/',
       initials: 'IJ',
     },
@@ -162,7 +162,7 @@ export const ABOUT = {
       name: 'Abderrahmane Bouzemlal',
       role: 'Co-Founder · Software Engineering',
       tagline: 'Backend Engineer · Django & REST APIs',
-      bio: 'Based in Alor Setar, Kedah. Specialises in backend web applications using Django and REST APIs. Leads data systems and booking infrastructure at Recycling Hub.',
+      bio: 'Specialises in backend web applications using Django and REST APIs. Leads data systems and booking infrastructure at Recycling Hub.',
       linkedin: 'https://www.linkedin.com/in/abderrahmanebouzemlal/',
       initials: 'AB',
     },
@@ -206,7 +206,7 @@ export const ABOUT_VALUES = [
   {
     title: 'Data Security',
     description:
-      'Every data-bearing device goes through certified physical destruction, not a reversible wipe, with a serialized certificate and full chain-of-custody tracking from collection to destruction.',
+      'Every data-bearing device goes through certified data destruction — physical, not a reversible software wipe — with a serialized certificate and full chain-of-custody tracking from collection to destruction.',
     icon: 'lock',
   },
 ];
