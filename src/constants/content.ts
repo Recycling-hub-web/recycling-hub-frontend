@@ -30,7 +30,6 @@ export const BRAND = {
   website: 'recyclinghub.eco',
   whatsapp:
     'https://wa.me/601128503845?text=Hi%20Recycling%20Hub%2C%20I%27m%20interested%20in%20your%20e-waste%20collection%20service.%20Could%20you%20please%20share%20more%20details%3F%20Thank%20you.',
-  calendly: 'https://calendly.com/recyclinghub',
   ssm: 'SSM: Pending registration',
   businessHours: 'Mon–Fri 9am–6pm · Sat 9am–1pm (MYT)',
   social: {
@@ -274,26 +273,6 @@ export const ABOUT_WHO_WE_WORK_WITH = {
     'Monitors & Displays',
     'Small Office IT Peripherals',
   ],
-};
-
-// ─── Book Demo ────────────────────────────────────────────────────────────────
-// Headline reframed from "see it in action" (product-centric) to "get clarity" (benefit-centric).
-// Bullets rewritten to be specific deliverables the prospect walks away with — not vague activities.
-
-export const BOOK_DEMO = {
-  eyebrow: 'Talk to Us',
-  headline:
-    'Get a Straight Answer on Your Bulk Collection — Free 15-Minute Call',
-  bullets: [
-    'We ask about your device types, volume, and site location — no assumptions',
-    'You get a clear scope: what gets collected, when, and what documentation you receive',
-    'You receive a quote and proposed collection timeline within 24 hours of the call',
-    "No obligation, no pressure — if bulk collection isn't the right fit yet, we'll tell you honestly",
-  ],
-  ctaPrimary: 'Book a Free Call',
-  ctaSecondary: 'WhatsApp Us Directly',
-  trustNote:
-    'No commitment required · Quote within 24 hours · Available on Zoom, Google Meet, or WhatsApp',
 };
 
 // ─── Trust Strip ──────────────────────────────────────────────────────────────

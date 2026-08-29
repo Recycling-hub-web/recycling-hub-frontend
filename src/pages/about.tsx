@@ -6,7 +6,6 @@ import { FoundationSection } from '../components/public/about/FoundationSection'
 import { MissionStatement } from '../components/public/about/MissionStatement';
 import { StatisticsSection } from '../components/public/about/StatisticsSection';
 import { WhoWeWorkWith } from '../components/public/about/WhoWeWorkWith';
-import { BookDemo } from '../components/public/shared/BookDemo';
 import { ReusableHero } from '../components/ui/hero';
 import { PAGE_HEROES } from '../constants/content';
 import { PublicLayout } from '../layouts/PublicLayout';
@@ -36,9 +35,6 @@ const AboutPage: NextPageWithLayout = () => (
     </div>
     <div className="relative z-[30]">
       <WhoWeWorkWith />
-    </div>
-    <div className="relative z-[35]">
-      <BookDemo />
     </div>
   </>
 );

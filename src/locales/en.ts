@@ -1045,29 +1045,13 @@ const en = {
     >,
   },
 
-  bookDemo: {
-    eyebrow: 'Talk to Us',
-    headline:
-      'Get a Straight Answer on Your Bulk Collection — Free 15-Minute Call',
-    bullets: [
-      'We ask about your device types, volume, and site location — no assumptions',
-      'You get a clear scope: what gets collected, when, and what documentation you receive',
-      'You receive a quote and proposed collection timeline within 24 hours of the call',
-      "No obligation, no pressure — if bulk collection isn't the right fit yet, we'll tell you honestly",
-    ],
-    ctaPrimary: 'Book a Free Call',
-    ctaSecondary: 'WhatsApp Us Directly',
-    trustNote:
-      'No commitment required · Quote within 24 hours · Available on Zoom, Google Meet, or WhatsApp',
-  },
-
   contact: {
     hero: {
       eyebrow: 'Get In Touch',
       headline: 'Not Sure If You Need This?',
       headlineAccent: "Let's Find Out.",
       description:
-        "Book a free 15-minute call, or just WhatsApp us. We'll help you figure out whether individual pickup or bulk collection fits your situation — and get you a quote if you need one. No commitment, no pressure.",
+        "Just WhatsApp us, or send a message below. We'll help you figure out whether individual pickup or bulk collection fits your situation — and get you a quote if you need one. No commitment, no pressure.",
     },
     options: [
       { label: 'Email', sub: 'We reply within 24 hours' },
@@ -1089,14 +1073,14 @@ const en = {
             'Yes. Our team is fluent in both English and Bahasa Malaysia. You are welcome to reach out in either language and we will respond accordingly.',
         },
         {
-          question: 'Do I need to prepare anything before the call?',
+          question: 'Do I need to prepare anything before reaching out?',
           answer:
-            "No preparation needed. It helps if you know roughly how many devices you're looking to clear out and whether it's for personal use or a business — but even if you don't, we can work through it together.",
+            "No preparation needed. It helps if you know roughly how many devices you're looking to clear out and whether it's for personal use or a business — but even if you don't, we can work through it together over WhatsApp or email.",
         },
         {
-          question: 'Is the consultation really free?',
+          question: 'Is getting a quote really free?',
           answer:
-            'Yes, completely. There is no obligation to proceed after the call. We review your situation, answer your questions, and give you a clear picture of whether individual pickup or bulk collection fits — plus a quote if bulk collection applies.',
+            "Yes, completely. There's no obligation to proceed. Send us your details and we'll review your situation, answer your questions, and give you a clear picture of whether individual pickup or bulk collection fits — plus a quote if bulk collection applies.",
         },
       ],
     },

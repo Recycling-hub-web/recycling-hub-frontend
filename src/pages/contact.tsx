@@ -4,7 +4,6 @@ import { Meta } from '../components/layout/Meta';
 import { ContactFaq } from '../components/public/contact/ContactFaq';
 import { ContactOptions } from '../components/public/contact/ContactOptions';
 import { SocialLinks } from '../components/public/contact/SocialLinks';
-import { BookDemo } from '../components/public/shared/BookDemo';
 import { ReusableHero } from '../components/ui/hero';
 import { useDictionary } from '../hooks/useDictionary';
 import { PublicLayout } from '../layouts/PublicLayout';
@@ -19,7 +18,7 @@ const ContactPage: NextPageWithLayout = () => {
     <>
       <Meta
         title="Contact — Recycling Hub E-Waste Collection"
-        description="Have a question about e-waste collection or bulk disposal? We're here to help. Email, WhatsApp, or book a free call."
+        description="Have a question about e-waste collection or bulk disposal? We're here to help. Reach us by email or WhatsApp."
       />
       <ReusableHero
         eyebrow={hero.eyebrow}
@@ -28,7 +27,6 @@ const ContactPage: NextPageWithLayout = () => {
         description={hero.description}
       />
       <ContactOptions />
-      <BookDemo />
       <ContactFaq />
       <SocialLinks />
     </>

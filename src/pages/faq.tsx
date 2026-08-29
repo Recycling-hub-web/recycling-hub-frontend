@@ -3,7 +3,6 @@ import type { ReactElement } from 'react';
 import { useState } from 'react';
 
 import { Meta } from '../components/layout/Meta';
-import { BookDemo } from '../components/public/shared/BookDemo';
 import { ReusableHero } from '../components/ui/hero';
 import { useDictionary } from '../hooks/useDictionary';
 import { PublicLayout } from '../layouts/PublicLayout';
@@ -127,8 +126,6 @@ const FaqPage: NextPageWithLayout = () => {
           </div>
         </div>
       </section>
-
-      <BookDemo />
     </>
   );
 };

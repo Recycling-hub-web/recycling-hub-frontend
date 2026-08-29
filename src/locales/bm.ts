@@ -1029,29 +1029,13 @@ const bm: Dictionary = {
     >,
   },
 
-  bookDemo: {
-    eyebrow: 'Bercakap Dengan Kami',
-    headline:
-      'Dapatkan Jawapan Terus Mengenai Kutipan Pukal Anda — Panggilan Percuma 15 Minit',
-    bullets: [
-      'Kami bertanya tentang jenis peranti, jumlah, dan lokasi tapak anda — tiada andaian',
-      'Anda mendapat skop yang jelas: apa yang dikutip, bila, dan dokumentasi apa yang anda terima',
-      'Anda menerima sebut harga dan jadual kutipan yang dicadangkan dalam masa 24 jam selepas panggilan',
-      'Tiada kewajipan, tiada tekanan — jika kutipan pukal belum sesuai lagi, kami akan beritahu anda dengan jujur',
-    ],
-    ctaPrimary: 'Tempah Panggilan Percuma',
-    ctaSecondary: 'WhatsApp Kami Terus',
-    trustNote:
-      'Tiada komitmen diperlukan · Sebut harga dalam masa 24 jam · Tersedia di Zoom, Google Meet, atau WhatsApp',
-  },
-
   contact: {
     hero: {
       eyebrow: 'Hubungi Kami',
       headline: 'Tidak Pasti Sama Ada Anda Memerlukan Ini?',
       headlineAccent: 'Mari Kita Ketahui.',
       description:
-        'Tempah panggilan percuma 15 minit, atau WhatsApp kami sahaja. Kami akan bantu anda tentukan sama ada kutipan individu atau kutipan pukal sesuai dengan situasi anda — dan berikan sebut harga jika anda memerlukannya. Tiada komitmen, tiada tekanan.',
+        'WhatsApp kami sahaja, atau hantar mesej di bawah. Kami akan bantu anda tentukan sama ada kutipan individu atau kutipan pukal sesuai dengan situasi anda — dan berikan sebut harga jika anda memerlukannya. Tiada komitmen, tiada tekanan.',
     },
     options: [
       { label: 'E-mel', sub: 'Kami membalas dalam masa 24 jam' },
@@ -1073,14 +1057,14 @@ const bm: Dictionary = {
             'Ya. Pasukan kami fasih dalam Bahasa Inggeris dan Bahasa Malaysia. Anda dialu-alukan untuk menghubungi kami dalam mana-mana bahasa dan kami akan membalas mengikutnya.',
         },
         {
-          question: 'Perlukah saya sediakan apa-apa sebelum panggilan?',
+          question: 'Perlukah saya sediakan apa-apa sebelum menghubungi anda?',
           answer:
-            'Tiada persediaan diperlukan. Ia membantu jika anda tahu secara kasar berapa banyak peranti yang ingin dilupuskan dan sama ada untuk kegunaan peribadi atau perniagaan — tetapi jika tidak pun, kami boleh selesaikannya bersama.',
+            'Tiada persediaan diperlukan. Ia membantu jika anda tahu secara kasar berapa banyak peranti yang ingin dilupuskan dan sama ada untuk kegunaan peribadi atau perniagaan — tetapi jika tidak pun, kami boleh selesaikannya bersama melalui WhatsApp atau e-mel.',
         },
         {
-          question: 'Adakah konsultasi ini benar-benar percuma?',
+          question: 'Adakah mendapatkan sebut harga ini benar-benar percuma?',
           answer:
-            'Ya, sepenuhnya. Tiada kewajipan untuk meneruskan selepas panggilan. Kami menyemak situasi anda, menjawab soalan anda, dan memberi gambaran jelas sama ada kutipan individu atau kutipan pukal yang sesuai — ditambah sebut harga jika kutipan pukal berkenaan.',
+            'Ya, sepenuhnya. Tiada kewajipan untuk meneruskan. Hantar butiran anda dan kami akan menyemak situasi anda, menjawab soalan anda, dan memberi gambaran jelas sama ada kutipan individu atau kutipan pukal yang sesuai — ditambah sebut harga jika kutipan pukal berkenaan.',
         },
       ],
     },
