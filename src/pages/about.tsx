@@ -3,7 +3,6 @@ import type { ReactElement } from 'react';
 import { Meta } from '../components/layout/Meta';
 import { CoreInsightBanner } from '../components/public/about/CoreInsightBanner';
 import { FoundationSection } from '../components/public/about/FoundationSection';
-import { MissionStatement } from '../components/public/about/MissionStatement';
 import { StatisticsSection } from '../components/public/about/StatisticsSection';
 import { WhoWeWorkWith } from '../components/public/about/WhoWeWorkWith';
 import { ReusableHero } from '../components/ui/hero';
@@ -24,9 +23,6 @@ const AboutPage: NextPageWithLayout = () => (
       description={PAGE_HEROES.about.description}
     />
     <FoundationSection />
-    <div className="sticky top-20 z-[10] overflow-hidden rounded-t-3xl">
-      <MissionStatement />
-    </div>
     <div className="sticky top-20 z-[15] overflow-hidden rounded-t-3xl">
       <CoreInsightBanner />
     </div>

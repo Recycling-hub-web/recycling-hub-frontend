@@ -22,10 +22,11 @@ const CoreInsightBanner = () => (
               What &ldquo;Handled Properly&rdquo; Actually Means
             </h2>
             <p className="mt-4 text-base leading-relaxed text-white/75">
-              A retired company laptop handed to an unregistered scrap dealer
-              has no log of what happened to the data on its drive, no
-              certificate proving it was destroyed, and no paperwork if an
-              auditor ever asks. The device disappears — the risk doesn&apos;t.
+              Every data-bearing device we collect gets a serialized certificate
+              of destruction and a chain-of-custody record from pickup to
+              processing — the exact paperwork an auditor, a compliance officer,
+              or you would ask for if anything about that device were ever in
+              question.
             </p>
           </div>
 
