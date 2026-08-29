@@ -30,7 +30,6 @@ export const BRAND = {
   website: 'recyclinghub.eco',
   whatsapp:
     'https://wa.me/601128503845?text=Hi%20Recycling%20Hub%2C%20I%27m%20interested%20in%20your%20e-waste%20collection%20service.%20Could%20you%20please%20share%20more%20details%3F%20Thank%20you.',
-  ssm: 'SSM: Pending registration',
   businessHours: 'Mon–Fri 9am–6pm · Sat 9am–1pm (MYT)',
   social: {
     linkedin: 'https://linkedin.com/company/recyclinghub',
@@ -166,17 +165,6 @@ export const ABOUT = {
       initials: 'AB',
     },
   ],
-};
-
-// Mission: grounded in the same problem framing used across /services and /resources — the gap
-// isn't awareness that e-waste needs recycling, it's that most collection is informal, undocumented,
-// and doesn't handle data safely. No invented figures or unverifiable claims.
-
-export const ABOUT_MISSION = {
-  eyebrow: 'Our Mission',
-  quote:
-    'We built Recycling Hub because most people clearing out old electronics only had two options: let them pile up in a drawer, or hand them to a scrap dealer with no registration, no data destruction, and no record of where anything ended up. Neither is good enough.',
-  body: 'The devices are real, the data on them is real, and the compliance gap between "someone hauled it away" and a DOE-registered, fully documented collection is real. We close that gap — free doorstep pickup for individuals in Klang Valley, SW110-compliant bulk collection for businesses, certified data destruction on every data-bearing device, and paperwork you can actually produce if anyone asks.',
 };
 
 // Values: grounded in the same claims already established and evidenced under /services and
@@ -388,18 +376,6 @@ export const B2B_SECTION = {
   cta: 'Request Bulk Quote',
   ctaHref: '/contact',
   note: 'Built for finance, procurement, and sustainability teams that need paperwork they can hand straight to an auditor.',
-};
-
-// ─── Final CTA ────────────────────────────────────────────────────────────────
-
-export const FINAL_CTA = {
-  eyebrow: 'Ready When You Are',
-  headline: 'Free Pickup for You. Certified Disposal for Your Business.',
-  subtext:
-    "Whether it's one old phone or a warehouse of retired equipment, Recycling Hub handles the collection, the certificates, and the paperwork. Request a bulk quote or book a free call — either way, you'll have an answer within 24 hours.",
-  cta: 'Request Bulk Quote',
-  ctaHref: '/contact',
-  note: 'No commitment required · Quote within 24 hours · Individual pickup always free',
 };
 
 // ─── FAQ ──────────────────────────────────────────────────────────────────────

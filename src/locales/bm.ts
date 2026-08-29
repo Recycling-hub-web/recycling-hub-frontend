@@ -72,7 +72,7 @@ const bm: Dictionary = {
     hero: {
       headlinePrefix: 'Perkhidmatan Kitar Semula',
       headlinePill: 'E-Sisa',
-      headlineSuffix: 'Berdaftar Yang Boleh Dipercayai',
+      headlineSuffix: 'Berdaftar di Klang Valley, Malaysia',
       subheadline:
         'Recycling Hub mengambil peranti elektronik lama secara percuma di seluruh Klang Valley — untuk isi rumah yang ingin melupuskan peranti lama dan untuk perniagaan yang menutup keseluruhan pejabat. Setiap kutipan berdaftar dengan DOE dan didokumenkan sepenuhnya.',
       cta: 'Tempah Kutipan',
@@ -520,31 +520,9 @@ const bm: Dictionary = {
             'Tiada — sama ada satu telefon lama atau satu laci penuh peranti, kutipan individu adalah percuma di seluruh Klang Valley dan disertakan bayaran DuitNow segera. Tiada akaun atau kontrak diperlukan.',
         },
         {
-          question: 'Kawasan manakah yang anda kutip pada masa ini?',
-          answer:
-            'Kutipan individu percuma kini tersedia di seluruh Klang Valley. Jika anda berada di luar kawasan itu, hubungi kami dan kami akan maklumkan apabila liputan berkembang. Kutipan pukal dan perusahaan dinilai mengikut lokasi — minta sebut harga dan kami akan sahkan sama ada kami boleh berkhidmat untuk anda.',
-        },
-        {
-          question:
-            'Apa yang berlaku kepada data saya sebelum peranti dikitar semula?',
-          answer:
-            'Sebarang peranti yang membawa data — telefon, komputer riba, cakera keras, pelayan — melalui proses pemusnahan bertauliah sebelum dikitar semula. Untuk individu, ini disertakan dalam setiap kutipan. Untuk perniagaan, anda menerima sijil pemusnahan bersiri bagi setiap aset, sebagai bukti ia telah dilakukan.',
-        },
-        {
           question: 'Bagaimana saya dibayar untuk peranti lama saya?',
           answer:
             'Kutipan individu dibayar segera melalui DuitNow, sejurus peranti anda dikutip — tiada tempoh menunggu, tiada permintaan bayaran manual. Kutipan pukal dan perusahaan adalah berasaskan sebut harga dan bukan dibayar, kerana fokusnya adalah pelupusan mematuhi peraturan dan dokumentasi.',
-        },
-        {
-          question: 'Apakah perbezaan antara kutipan individu dan perniagaan?',
-          answer:
-            'Kutipan individu adalah untuk isi rumah yang ingin melupuskan peranti peribadi — ia percuma, dengan bayaran segera, tiada minimum. Kutipan perniagaan atau pukal adalah untuk pejabat, gudang, dan kilang, dan dijadualkan mengikut operasi anda dengan sebut harga khusus berdasarkan jumlah dan jenis peranti. Kedua-duanya dikutip di bawah proses yang sama, berdaftar DOE dan mematuhi SW110.',
-        },
-        {
-          question:
-            'Apakah dokumentasi yang kami terima untuk tujuan pematuhan atau audit?',
-          answer:
-            'Kutipan perniagaan dan pukal disertakan rekod rantaian jagaan yang lengkap, sijil pemusnahan bersiri bagi setiap aset yang membawa data, dan laporan pengalihan sedia ESG yang merangkumi tonaj dikitar semula dan pengalihan daripada tapak pelupusan — semuanya boleh diperoleh semula atas permintaan.',
         },
         {
           question:
@@ -552,18 +530,9 @@ const bm: Dictionary = {
           answer:
             'Ya — kutipan dan pemprosesan dijalankan di bawah lesen DOE yang berdaftar dan mematuhi peraturan sisa terjadual SW110, bukan operasi tidak formal atau tidak berlesen.',
         },
-        {
-          question: 'Peranti apakah yang anda terima?',
-          answer:
-            'Telefon, tablet, komputer riba, desktop, monitor, dan peralatan IT pejabat seperti pelayan, pencetak, dan penghala, ditambah cakera keras, SSD, dan peranti storan lain. Hubungi kami jika anda tidak pasti sama ada item tertentu — terutamanya peralatan besar — diterima.',
-        },
-        {
-          question:
-            'Adakah anda mengenakan bayaran untuk kutipan pukal atau perusahaan?',
-          answer:
-            'Kutipan individu sentiasa percuma. Kutipan pukal dan perusahaan disebut harga berdasarkan jumlah dan jenis peranti — minta sebut harga dan kami akan sahkan harga sebelum apa-apa dijadualkan.',
-        },
       ],
+      seeMoreLabel: 'Lihat Semua Soalan Lazim',
+      seeMoreHref: '/faq',
     },
 
     finalCta: {
@@ -571,7 +540,7 @@ const bm: Dictionary = {
       headline:
         'Kutipan Percuma Untuk Anda. Pelupusan Bertauliah Untuk Perniagaan Anda.',
       subtext:
-        'Sama ada satu telefon lama atau segudang peralatan yang telah bersara, Recycling Hub menguruskan kutipan, sijil, dan dokumen. Minta sebut harga pukal atau tempah panggilan percuma — kedua-duanya, anda akan mendapat jawapan dalam masa 24 jam.',
+        'Sama ada satu telefon lama atau segudang peralatan yang telah bersara, Recycling Hub menguruskan kutipan, sijil, dan dokumen. Minta sebut harga pukal atau WhatsApp kami — kedua-duanya, anda akan mendapat jawapan dalam masa 24 jam.',
       cta: 'Minta Sebut Harga Pukal',
       ctaHref: '/request-quote?service=bulk-industrial-collection',
       whatsapp: 'WhatsApp Kami',

@@ -79,7 +79,7 @@ const en = {
     hero: {
       headlinePrefix: 'Registered',
       headlinePill: 'E-Waste',
-      headlineSuffix: 'Recycling Services You Can Trust',
+      headlineSuffix: 'Recycling in Klang Valley, Malaysia',
       subheadline:
         'Recycling Hub picks up old electronics for free across the Klang Valley — for households clearing out a drawer of devices and for businesses decommissioning a whole office. Every collection is DOE-registered and fully documented.',
       cta: 'Book Pickup',
@@ -516,55 +516,25 @@ const en = {
             "No — whether it's a single old phone or a drawer full of devices, individual pickup is free across Klang Valley and comes with instant DuitNow payment. There's no account or contract required.",
         },
         {
-          question: 'Which areas do you currently pick up from?',
-          answer:
-            "Free individual pickup is currently available across Klang Valley. If you're outside that area, get in touch and we'll let you know when coverage expands. Bulk and enterprise collection is assessed by location — request a quote and we'll confirm whether we can serve you.",
-        },
-        {
-          question: 'What happens to my data before a device is recycled?',
-          answer:
-            "Any data-bearing device — phones, laptops, hard drives, servers — goes through certified destruction before it's recycled. For individuals, that's included in every pickup. For businesses, you receive a serialized certificate of destruction per asset, so you have proof it happened.",
-        },
-        {
           question: 'How do I get paid for my old devices?',
           answer:
             'Individual pickups are paid instantly via DuitNow, at the moment your devices are collected — no waiting period, no manual payout request. Bulk and enterprise collection is quote-based rather than paid, since the focus there is compliant disposal and documentation.',
-        },
-        {
-          question:
-            "What's the difference between individual and business collection?",
-          answer:
-            "Individual pickup is for households clearing out personal devices — it's free across Klang Valley, with instant payment, no minimums. Business or bulk collection is for offices, warehouses, and factories, and is scheduled around your operations with a custom quote based on volume, device types, and location. Both are collected under the same DOE-registered, SW110-compliant process.",
-        },
-        {
-          question:
-            'What documentation do we get for compliance or audit purposes?',
-          answer:
-            'Business and bulk collections come with full chain-of-custody records, a serialized certificate of destruction for every data-bearing asset, and an ESG-ready diversion report covering tonnage recycled and landfill diverted — all retrievable on request.',
         },
         {
           question: 'Is Recycling Hub actually licensed to handle e-waste?',
           answer:
             'Yes — collection and processing is carried out under a registered DOE license and SW110 scheduled-waste compliance, not an informal or unlicensed setup.',
         },
-        {
-          question: 'What devices do you accept?',
-          answer:
-            "Phones, tablets, laptops, desktops, monitors, and office IT equipment like servers, printers, and routers, plus hard drives, SSDs, and other storage devices. Get in touch if you're unsure whether a specific item — especially large appliances — is covered.",
-        },
-        {
-          question: 'Do you charge for bulk or enterprise collection?',
-          answer:
-            "Individual pickup is always free. Bulk and enterprise collection is quoted based on volume and device types — request a quote and we'll confirm pricing before anything is scheduled.",
-        },
       ],
+      seeMoreLabel: 'See Full FAQ',
+      seeMoreHref: '/faq',
     },
 
     finalCta: {
       eyebrow: 'Ready When You Are',
       headline: 'Free Pickup for You. Certified Disposal for Your Business.',
       subtext:
-        "Whether it's one old phone or a warehouse of retired equipment, Recycling Hub handles the collection, the certificates, and the paperwork. Request a bulk quote or book a free call — either way, you'll have an answer within 24 hours.",
+        "Whether it's one old phone or a warehouse of retired equipment, Recycling Hub handles the collection, the certificates, and the paperwork. Request a bulk quote or WhatsApp us — either way, you'll have an answer within 24 hours.",
       cta: 'Request Bulk Quote',
       ctaHref: '/request-quote?service=bulk-industrial-collection',
       whatsapp: 'WhatsApp Us',

@@ -7,6 +7,7 @@ type FaqItem = { question: string; answer: string };
 type FaqAccordionProps = {
   items: readonly FaqItem[];
   heading: ReactNode;
+  footer?: ReactNode;
   sectionClassName?: string;
   answerClassName?: string;
 };
@@ -35,6 +36,7 @@ const ChevronIcon = ({ open }: { open: boolean }) => (
 const FaqAccordion = ({
   items,
   heading,
+  footer,
   sectionClassName = 'bg-white py-20 md:py-28',
   answerClassName = 'text-slate-600',
 }: FaqAccordionProps) => {
@@ -96,6 +98,8 @@ const FaqAccordion = ({
             );
           })}
         </div>
+
+        {footer}
       </div>
     </section>
   );
