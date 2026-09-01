@@ -13,6 +13,7 @@ import { useDictionary } from '../hooks/useDictionary';
 import { ApiError } from '../lib/api';
 import { isSafeRedirectPath } from '../lib/redirect';
 import { resendLoginOtp, verifyLoginOtp } from '../services/authService';
+import { ROLE_HOME } from '../types/auth';
 
 const VerifyOtpPage = () => {
   const router = useRouter();
@@ -45,7 +46,7 @@ const VerifyOtpPage = () => {
   // broken form.
   useEffect(() => {
     if (user) {
-      router.replace(user.role === 'admin' ? '/admin' : '/dashboard');
+      router.replace(ROLE_HOME[user.role]);
     } else if (!pendingOtp) {
       router.replace('/login');
     }

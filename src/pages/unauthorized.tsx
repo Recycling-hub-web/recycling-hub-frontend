@@ -5,13 +5,14 @@ import { AuthCard } from '../components/auth/AuthCard';
 import { Meta } from '../components/layout/Meta';
 import { useAuth } from '../contexts/AuthContext';
 import { useDictionary } from '../hooks/useDictionary';
+import { ROLE_HOME } from '../types/auth';
 
 const UnauthorizedPage = () => {
   const { user } = useAuth();
   const { auth } = useDictionary();
   const t = auth.unauthorized;
 
-  const ownLandingPage = user?.role === 'admin' ? '/admin' : '/dashboard';
+  const ownLandingPage = user ? ROLE_HOME[user.role] : '/dashboard';
 
   return (
     <>

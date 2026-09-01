@@ -14,10 +14,11 @@ import { useAuthFlow } from '../contexts/AuthFlowContext';
 import { useDictionary } from '../hooks/useDictionary';
 import { ApiError } from '../lib/api';
 import { isSafeRedirectPath } from '../lib/redirect';
+import { ROLE_HOME } from '../types/auth';
 
 const LoginPage = () => {
   const router = useRouter();
-  const { user, login } = useAuth();
+  const { user, login, refreshUser } = useAuth();
   const { setPendingOtp } = useAuthFlow();
   const { auth } = useDictionary();
   const t = auth.login;
@@ -40,7 +41,7 @@ const LoginPage = () => {
       router.replace(nextParam);
       return;
     }
-    router.replace(user.role === 'admin' ? '/admin' : '/dashboard');
+    router.replace(ROLE_HOME[user.role]);
   }, [user, nextParam, router]);
 
   if (user) return null;
@@ -58,6 +59,12 @@ const LoginPage = () => {
           : '';
         await router.push(`/verify-otp${query}`);
       } else {
+        // AuthContext doesn't auto-refetch after login() — without this,
+        // `user` stays null and RequireAuth on the destination page would
+        // immediately bounce back to /login. /dashboard (not a role-
+        // specific route here) resolves to the right one once `user` is
+        // populated, same as the OTP path below.
+        await refreshUser();
         router.replace(
           isSafeRedirectPath(nextParam) ? nextParam : '/dashboard',
         );

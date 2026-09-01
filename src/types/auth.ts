@@ -77,7 +77,22 @@ const ROLE_LABELS: Record<UserRole, string> = {
   resident: 'Resident',
 };
 
-export { ROLE_LABELS };
+// Where each role lands after login / on a role-mismatch bounce-back. Every
+// non-admin operational role gets its own dedicated layout+sidebar now
+// (src/layouts/OperationalLayout.tsx) instead of the old shared /dashboard.
+// `resident` has no real accounts for MVP — pickups are public/anonymous —
+// so it's unreachable in practice; /dashboard is kept alive as a redirect
+// stub for it and for any stale bookmark/link.
+const ROLE_HOME: Record<UserRole, string> = {
+  admin: '/admin',
+  staff: '/staff',
+  driver: '/driver',
+  receiving_officer: '/receiving',
+  accounting: '/accounting',
+  resident: '/dashboard',
+};
+
+export { ROLE_HOME, ROLE_LABELS };
 export type {
   CurrentUser,
   EmployeeProfile,

@@ -37,10 +37,15 @@ function splitLocale(pathname: string): {
 const withLocale = (locale: string | null, path: string) =>
   locale ? `/${locale}${path}` : path;
 
-// /dashboard has no entry here — every authenticated operational role
-// lands there, same as RequireAuth's client-side rule.
+// /dashboard has no entry here — it's a bare redirect stub open to any
+// authenticated role, same as RequireAuth's client-side rule; it forwards
+// each user to the routes below.
 const ROUTE_ROLES: Record<string, string[]> = {
   '/admin': ['admin'],
+  '/staff': ['staff'],
+  '/driver': ['driver'],
+  '/receiving': ['receiving_officer'],
+  '/accounting': ['accounting'],
 };
 
 function requiredRoles(pathname: string): string[] | null {
@@ -101,13 +106,29 @@ export async function middleware(request: NextRequest) {
   }
 }
 
+// Next.js statically extracts this array at build time, so it has to be a
+// plain literal — no computed/spread expression, even though it's
+// mechanically "/<route>/:path*" for each of admin/staff/driver/receiving/
+// accounting/dashboard across the default + en + bm locale prefixes.
 export const config = {
   matcher: [
     '/admin/:path*',
+    '/staff/:path*',
+    '/driver/:path*',
+    '/receiving/:path*',
+    '/accounting/:path*',
     '/dashboard/:path*',
     '/en/admin/:path*',
+    '/en/staff/:path*',
+    '/en/driver/:path*',
+    '/en/receiving/:path*',
+    '/en/accounting/:path*',
     '/en/dashboard/:path*',
     '/bm/admin/:path*',
+    '/bm/staff/:path*',
+    '/bm/driver/:path*',
+    '/bm/receiving/:path*',
+    '/bm/accounting/:path*',
     '/bm/dashboard/:path*',
   ],
 };

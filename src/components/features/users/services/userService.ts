@@ -1,5 +1,9 @@
-import { apiFetch } from '../lib/api';
-import type { UserDetail, UserListItem, UserRole } from '../types/auth';
+import { apiFetch } from '../../../../lib/api';
+import type {
+  UserDetail,
+  UserListItem,
+  UserRole,
+} from '../../../../types/auth';
 
 type Paginated<T> = {
   count: number;

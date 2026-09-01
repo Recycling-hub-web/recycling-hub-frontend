@@ -1,40 +1,14 @@
 import type { FormEvent } from 'react';
 import { useState } from 'react';
 
-import { ApiError } from '../../lib/api';
-import { createUser } from '../../services/userService';
-import { ROLE_LABELS, type UserRole } from '../../types/auth';
-import { InputField } from '../form/fields/InputField';
-import { SelectField } from '../form/fields/SelectField';
-import { AlertBanner } from '../ui/AlertBanner';
-import { Modal } from '../ui/modal/Modal';
-import { useToast } from '../ui/toast/ToastContext';
-
-// Residents have no accounts for MVP (pickups are public/anonymous) — see
-// apps.accounts.models.user.User.Role on the backend — so they're not a
-// creatable role here.
-const CREATABLE_ROLES: UserRole[] = [
-  'admin',
-  'staff',
-  'driver',
-  'receiving_officer',
-  'accounting',
-];
-
-const ROLE_OPTIONS = CREATABLE_ROLES.map((r) => ({
-  value: r,
-  label: ROLE_LABELS[r],
-}));
-
-// These roles get a Staff/Driver/Receiving-Officer/Accounting-style
-// employment profile (department/position/branch/joining date); Admin
-// does not.
-const ROLES_WITH_PROFILE: UserRole[] = [
-  'staff',
-  'driver',
-  'receiving_officer',
-  'accounting',
-];
+import { ROLE_LABELS, type UserRole } from '../../../../types/auth';
+import { InputField } from '../../../form/fields/InputField';
+import { SelectField } from '../../../form/fields/SelectField';
+import { AlertBanner } from '../../../ui/AlertBanner';
+import { Modal } from '../../../ui/modal/Modal';
+import { useToast } from '../../../ui/toast/ToastContext';
+import { ROLE_OPTIONS, ROLES_WITH_PROFILE } from '../constants';
+import { useCreateUser } from '../hooks';
 
 type CreateUserModalProps = {
   open: boolean;
@@ -68,9 +42,8 @@ const CreateUserModal = ({
   onCreated,
 }: CreateUserModalProps) => {
   const toast = useToast();
+  const { execute: createUser, loading: submitting, error } = useCreateUser();
   const [formData, setFormData] = useState<FormState>(INITIAL_STATE);
-  const [error, setError] = useState('');
-  const [submitting, setSubmitting] = useState(false);
 
   const updateFormData = (field: string, value: string) =>
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -79,14 +52,11 @@ const CreateUserModal = ({
 
   const handleClose = () => {
     setFormData(INITIAL_STATE);
-    setError('');
     onClose();
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setError('');
-    setSubmitting(true);
     try {
       await createUser({
         full_name: formData.full_name,
@@ -107,12 +77,8 @@ const CreateUserModal = ({
       );
       onCreated();
       handleClose();
-    } catch (err) {
-      setError(
-        err instanceof ApiError ? err.message : 'Could not create the user.',
-      );
-    } finally {
-      setSubmitting(false);
+    } catch {
+      // useCreateUser already captured the message in `error`, shown below.
     }
   };
 
