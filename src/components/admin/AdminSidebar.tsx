@@ -1,3 +1,5 @@
+'use client';
+
 import { LuLayoutDashboard, LuUsers } from 'react-icons/lu';
 
 import type { NavItem } from '../layout/Sidebar';

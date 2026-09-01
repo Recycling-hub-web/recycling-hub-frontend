@@ -1,3 +1,5 @@
+'use client';
+
 import {
   LuBriefcase,
   LuBuilding2,

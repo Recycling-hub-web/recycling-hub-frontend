@@ -10,32 +10,23 @@ import { NextResponse } from 'next/server';
 // migration. A bug or bypass here can make the UI show/hide the wrong
 // thing; it can never grant real access to data the backend wouldn't
 // already allow.
+//
+// NOTE ON LOCALE: the admin/staff/driver/receiving/accounting/dashboard
+// routes below (now served from src/app/, not src/pages/) are English-only
+// for now — Next's App Router can't resolve non-default-locale (/bm/*)
+// subpaths while next.config.js's legacy `i18n` block is still active for
+// the still-unmigrated src/pages/ public site (confirmed empirically
+// during the App Router migration; see the migration plan). So unlike the
+// pre-migration version of this file, there's no /en//bm locale-prefix
+// handling here anymore — redirects always go to the bare, unprefixed
+// path. Real bm support for these routes returns alongside the Phase 3
+// public-site i18n redesign.
 
 const ACCESS_COOKIE = 'rh_access';
-const LOCALE_PREFIXES = ['en', 'bm'];
 
 const secretKey = process.env.JWT_VERIFY_SECRET
   ? new TextEncoder().encode(process.env.JWT_VERIFY_SECRET)
   : null;
-
-/** Splits a leading /en or /bm off the pathname so route-matching below
- * doesn't need to know about locales, while still letting redirects land
- * the user back on the same locale they were on. */
-function splitLocale(pathname: string): {
-  locale: string | null;
-  rest: string;
-} {
-  for (const prefix of LOCALE_PREFIXES) {
-    if (pathname === `/${prefix}`) return { locale: prefix, rest: '/' };
-    if (pathname.startsWith(`/${prefix}/`)) {
-      return { locale: prefix, rest: pathname.slice(prefix.length + 1) };
-    }
-  }
-  return { locale: null, rest: pathname };
-}
-
-const withLocale = (locale: string | null, path: string) =>
-  locale ? `/${locale}${path}` : path;
 
 // /dashboard has no entry here — it's a bare redirect stub open to any
 // authenticated role, same as RequireAuth's client-side rule; it forwards
@@ -56,12 +47,12 @@ function requiredRoles(pathname: string): string[] | null {
 }
 
 export async function middleware(request: NextRequest) {
-  const { locale, rest: pathname } = splitLocale(request.nextUrl.pathname);
+  const { pathname } = request.nextUrl;
   const token = request.cookies.get(ACCESS_COOKIE)?.value;
 
   const redirectTo = (path: string, search = '') => {
     const url = request.nextUrl.clone();
-    url.pathname = withLocale(locale, path);
+    url.pathname = path;
     url.search = search;
     return NextResponse.redirect(url);
   };
@@ -108,8 +99,7 @@ export async function middleware(request: NextRequest) {
 
 // Next.js statically extracts this array at build time, so it has to be a
 // plain literal — no computed/spread expression, even though it's
-// mechanically "/<route>/:path*" for each of admin/staff/driver/receiving/
-// accounting/dashboard across the default + en + bm locale prefixes.
+// mechanically "/<route>/:path*" for each protected prefix.
 export const config = {
   matcher: [
     '/admin/:path*',
@@ -118,17 +108,5 @@ export const config = {
     '/receiving/:path*',
     '/accounting/:path*',
     '/dashboard/:path*',
-    '/en/admin/:path*',
-    '/en/staff/:path*',
-    '/en/driver/:path*',
-    '/en/receiving/:path*',
-    '/en/accounting/:path*',
-    '/en/dashboard/:path*',
-    '/bm/admin/:path*',
-    '/bm/staff/:path*',
-    '/bm/driver/:path*',
-    '/bm/receiving/:path*',
-    '/bm/accounting/:path*',
-    '/bm/dashboard/:path*',
   ],
 };

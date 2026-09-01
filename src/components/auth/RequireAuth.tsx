@@ -1,4 +1,4 @@
-import { useRouter } from 'next/router';
+import { usePathname, useRouter } from 'next/navigation';
 import type { ReactNode } from 'react';
 import { useEffect } from 'react';
 
@@ -21,17 +21,25 @@ type RequireAuthProps = {
 const RequireAuth = ({ children, roles }: RequireAuthProps) => {
   const { user, loading } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
 
   const isAuthorized = Boolean(user) && (!roles || roles.includes(user!.role));
 
   useEffect(() => {
     if (loading) return;
     if (!user) {
-      router.replace(`/login?next=${encodeURIComponent(router.asPath)}`);
+      // next/navigation has no `router.asPath`, and (unlike the old
+      // Pages Router version) deliberately not reconstructed from
+      // useSearchParams() here either — none of RequireAuth's routes read
+      // a query string, useSearchParams() forces the whole subtree out of
+      // static generation, and src/middleware.ts's own redirect (which
+      // runs first, before this client-side fallback ever fires in
+      // practice) already preserves the full path+search anyway.
+      router.replace(`/login?next=${encodeURIComponent(pathname ?? '/')}`);
     } else if (roles && !roles.includes(user.role)) {
       router.replace('/unauthorized');
     }
-  }, [loading, user, roles, router]);
+  }, [loading, user, roles, router, pathname]);
 
   if (loading || !isAuthorized) {
     return (

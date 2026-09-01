@@ -1,6 +1,8 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { usePathname } from 'next/navigation';
 import type { IconType } from 'react-icons';
 import { LuLogOut, LuX } from 'react-icons/lu';
 
@@ -42,7 +44,7 @@ const getInitials = (name: string) =>
  *
  * User identity + sign out live here, not in Topbar — one place, not two. */
 const Sidebar = ({ navItems, open, onClose }: SidebarProps) => {
-  const router = useRouter();
+  const pathname = usePathname();
   const { user, logout } = useAuth();
 
   return (
@@ -96,7 +98,7 @@ const Sidebar = ({ navItems, open, onClose }: SidebarProps) => {
 
         <ul className="flex flex-1 flex-col gap-1 overflow-y-auto px-3 py-6">
           {navItems.map(({ href, label, icon: Icon }) => {
-            const active = router.pathname === href;
+            const active = pathname === href;
             return (
               <li key={href} className="relative">
                 {active && (
