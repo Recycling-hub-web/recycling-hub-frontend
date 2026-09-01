@@ -1636,6 +1636,91 @@ const en = {
       ] satisfies LegalSection[],
     },
   },
+
+  // Internal operations sign-in (Admin/Staff/Driver/Receiving Officer/
+  // Accounting) — not part of the public marketing site, but bilingual for
+  // the same reason everything else here is: staff read Malay too.
+  auth: {
+    login: {
+      title: 'Sign in',
+      subtitle: 'Sign in to Recycling Hub operations.',
+      emailLabel: 'Email',
+      emailPlaceholder: 'you@recyclinghub.eco',
+      passwordLabel: 'Password',
+      passwordPlaceholder: '••••••••',
+      showPassword: 'Show password',
+      hidePassword: 'Hide password',
+      forgotPassword: 'Forgot password?',
+      submit: 'Sign in',
+      submitting: 'Signing in…',
+      genericError: 'Invalid email or password.',
+    },
+    verifyOtp: {
+      title: 'Enter your code',
+      subtitle: 'We sent a 6-digit verification code to your email.',
+      codeLabel: '6-digit code',
+      submit: 'Verify',
+      submitting: 'Verifying…',
+      resend: "Didn't get a code? Resend",
+      resendSending: 'Sending…',
+      resendSent: 'A new code has been sent.',
+      backToLogin: 'Back to sign in',
+      noPendingFlow: 'Your sign-in session has expired — please sign in again.',
+      genericError: 'Invalid or expired code.',
+    },
+    forgotPassword: {
+      title: 'Forgot your password?',
+      subtitle: "Enter your email and we'll send you a link to reset it.",
+      emailLabel: 'Email',
+      submit: 'Send reset link',
+      submitting: 'Sending…',
+      successTitle: 'Check your email',
+      successMessage:
+        "If that account exists, we've sent a password reset link to it.",
+      backToLogin: 'Back to sign in',
+    },
+    resetPassword: {
+      title: 'Reset your password',
+      subtitle: 'Choose a new password for your account.',
+      passwordLabel: 'New password',
+      confirmLabel: 'Confirm new password',
+      submit: 'Reset password',
+      submitting: 'Resetting…',
+      successTitle: 'Password updated',
+      successMessage: 'Your password has been reset — you can now sign in.',
+      signInNow: 'Sign in',
+      invalidToken:
+        'This link is invalid or has expired. Request a new one below.',
+      requestNewLink: 'Request a new link',
+      passwordMismatch: 'Passwords do not match.',
+    },
+    setPassword: {
+      title: 'Set your password',
+      subtitle:
+        'An administrator created an account for you on Recycling Hub. Set a password to finish activating it.',
+      passwordLabel: 'Password',
+      confirmLabel: 'Confirm password',
+      submit: 'Set password',
+      submitting: 'Setting password…',
+      successTitle: 'Account activated',
+      successMessage: 'Your password has been set — you can now sign in.',
+      signInNow: 'Sign in',
+      invalidToken:
+        'This invite link is invalid or has expired. Contact your administrator for a new one.',
+      passwordMismatch: 'Passwords do not match.',
+    },
+    accountLocked: {
+      title: 'Account temporarily locked',
+      message:
+        "We've temporarily locked this account after several failed sign-in attempts, to protect it. Please try again in a little while.",
+      backToLogin: 'Back to sign in',
+    },
+    unauthorized: {
+      title: "You don't have access to this",
+      message: "Your account doesn't have permission to view this page.",
+      backToDashboard: 'Back to my dashboard',
+    },
+  },
 };
 
 export type Dictionary = typeof en;

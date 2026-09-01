@@ -1627,6 +1627,92 @@ const bm: Dictionary = {
       ],
     },
   },
+
+  auth: {
+    login: {
+      title: 'Log Masuk',
+      subtitle: 'Log masuk ke operasi Recycling Hub.',
+      emailLabel: 'E-mel',
+      emailPlaceholder: 'anda@recyclinghub.eco',
+      passwordLabel: 'Kata Laluan',
+      passwordPlaceholder: '••••••••',
+      showPassword: 'Papar Kata Laluan',
+      hidePassword: 'Sembunyi Kata Laluan',
+      forgotPassword: 'Lupa Kata Laluan?',
+      submit: 'Log Masuk',
+      submitting: 'Sedang Log Masuk…',
+      genericError: 'E-mel atau kata laluan tidak sah.',
+    },
+    verifyOtp: {
+      title: 'Masukkan Kod Anda',
+      subtitle: 'Kami telah menghantar kod pengesahan 6-digit ke e-mel anda.',
+      codeLabel: 'Kod 6-Digit',
+      submit: 'Sahkan',
+      submitting: 'Sedang Mengesahkan…',
+      resend: 'Tidak Menerima Kod? Hantar Semula',
+      resendSending: 'Sedang Menghantar…',
+      resendSent: 'Kod baharu telah dihantar.',
+      backToLogin: 'Kembali Ke Log Masuk',
+      noPendingFlow: 'Sesi log masuk anda telah tamat — sila log masuk semula.',
+      genericError: 'Kod tidak sah atau telah tamat tempoh.',
+    },
+    forgotPassword: {
+      title: 'Lupa Kata Laluan Anda?',
+      subtitle:
+        'Masukkan e-mel anda dan kami akan menghantar pautan untuk menetapkan semula.',
+      emailLabel: 'E-mel',
+      submit: 'Hantar Pautan Tetapan Semula',
+      submitting: 'Sedang Menghantar…',
+      successTitle: 'Semak E-mel Anda',
+      successMessage:
+        'Jika akaun itu wujud, kami telah menghantar pautan tetapan semula kata laluan ke e-melnya.',
+      backToLogin: 'Kembali Ke Log Masuk',
+    },
+    resetPassword: {
+      title: 'Tetapkan Semula Kata Laluan Anda',
+      subtitle: 'Pilih kata laluan baharu untuk akaun anda.',
+      passwordLabel: 'Kata Laluan Baharu',
+      confirmLabel: 'Sahkan Kata Laluan Baharu',
+      submit: 'Tetapkan Semula Kata Laluan',
+      submitting: 'Sedang Menetapkan Semula…',
+      successTitle: 'Kata Laluan Dikemas Kini',
+      successMessage:
+        'Kata laluan anda telah ditetapkan semula — anda kini boleh log masuk.',
+      signInNow: 'Log Masuk',
+      invalidToken:
+        'Pautan ini tidak sah atau telah tamat tempoh. Minta pautan baharu di bawah.',
+      requestNewLink: 'Minta Pautan Baharu',
+      passwordMismatch: 'Kata laluan tidak sepadan.',
+    },
+    setPassword: {
+      title: 'Tetapkan Kata Laluan Anda',
+      subtitle:
+        'Seorang pentadbir telah mencipta akaun untuk anda di Recycling Hub. Tetapkan kata laluan untuk melengkapkan pengaktifan akaun.',
+      passwordLabel: 'Kata Laluan',
+      confirmLabel: 'Sahkan Kata Laluan',
+      submit: 'Tetapkan Kata Laluan',
+      submitting: 'Sedang Menetapkan Kata Laluan…',
+      successTitle: 'Akaun Diaktifkan',
+      successMessage:
+        'Kata laluan anda telah ditetapkan — anda kini boleh log masuk.',
+      signInNow: 'Log Masuk',
+      invalidToken:
+        'Pautan jemputan ini tidak sah atau telah tamat tempoh. Hubungi pentadbir anda untuk pautan baharu.',
+      passwordMismatch: 'Kata laluan tidak sepadan.',
+    },
+    accountLocked: {
+      title: 'Akaun Disekat Sementara',
+      message:
+        'Kami telah menyekat akaun ini buat sementara waktu selepas beberapa percubaan log masuk yang gagal, untuk melindunginya. Sila cuba lagi sebentar lagi.',
+      backToLogin: 'Kembali Ke Log Masuk',
+    },
+    unauthorized: {
+      title: 'Anda Tiada Akses Kepada Ini',
+      message:
+        'Akaun anda tidak mempunyai kebenaran untuk melihat halaman ini.',
+      backToDashboard: 'Kembali Ke Papan Pemuka Saya',
+    },
+  },
 };
 
 export { bm };
