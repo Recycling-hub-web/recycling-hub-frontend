@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { LuTrash2 } from 'react-icons/lu';
+import { useRouter } from 'next/navigation';
+import { LuEye, LuPencil, LuTrash2 } from 'react-icons/lu';
 
 import {
   ROLE_LABELS,
@@ -49,6 +50,8 @@ const UserTable = ({
   onToggleActive,
   onDeleteRequest,
 }: UserTableProps) => {
+  const router = useRouter();
+
   const renderRows = () => {
     if (loading) return <TableLoadingRow colSpan={COLUMN_COUNT} />;
     if (error)
@@ -69,10 +72,15 @@ const UserTable = ({
       );
     }
     return users.map((u) => (
-      <tr key={u.id} className="transition-colors hover:bg-slate-50">
+      <tr
+        key={u.id}
+        onClick={() => router.push(`/admin/users/${u.id}`)}
+        className="cursor-pointer transition-colors hover:bg-slate-50"
+      >
         <td className="px-6 py-4 font-medium text-slate-900">
           <Link
             href={`/admin/users/${u.id}`}
+            onClick={(e) => e.stopPropagation()}
             className="hover:text-brand-600 hover:underline"
           >
             {u.full_name}
@@ -85,21 +93,48 @@ const UserTable = ({
           </StatusBadge>
         </td>
         <td className="px-6 py-4">
-          <button type="button" onClick={() => onToggleActive(u)}>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleActive(u);
+            }}
+          >
             <StatusBadge variant={u.is_active ? 'success' : 'neutral'}>
               {u.is_active ? 'Active' : 'Inactive'}
             </StatusBadge>
           </button>
         </td>
-        <td className="px-6 py-4 text-right">
-          <button
-            type="button"
-            onClick={() => onDeleteRequest(u)}
-            aria-label={`Delete ${u.full_name}`}
-            className="inline-flex size-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-red-50 hover:text-red-600"
-          >
-            <LuTrash2 className="size-4" />
-          </button>
+        <td className="px-6 py-4">
+          <div className="flex items-center justify-end gap-1">
+            <Link
+              href={`/admin/users/${u.id}`}
+              onClick={(e) => e.stopPropagation()}
+              aria-label={`View ${u.full_name}`}
+              className="inline-flex size-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+            >
+              <LuEye className="size-4" />
+            </Link>
+            <Link
+              href={`/admin/users/${u.id}/edit`}
+              onClick={(e) => e.stopPropagation()}
+              aria-label={`Edit ${u.full_name}`}
+              className="inline-flex size-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+            >
+              <LuPencil className="size-4" />
+            </Link>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDeleteRequest(u);
+              }}
+              aria-label={`Delete ${u.full_name}`}
+              className="inline-flex size-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-red-50 hover:text-red-600"
+            >
+              <LuTrash2 className="size-4" />
+            </button>
+          </div>
         </td>
       </tr>
     ));
