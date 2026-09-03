@@ -9,6 +9,7 @@ import { LuArrowLeft } from 'react-icons/lu';
 import { ApiError } from '../../../../lib/api';
 import { InputField } from '../../../form/fields/InputField';
 import { SettingToggleInput } from '../../../form/toggle/SettingToggleInput';
+import { PageContainer } from '../../../layout/PageContainer';
 import { AlertBanner } from '../../../ui/AlertBanner';
 import { Card } from '../../../ui/card/Card';
 import { Loading } from '../../../ui/loading/Loading';
@@ -81,7 +82,7 @@ const EditUserView = ({ userId }: { userId: string }) => {
   }
 
   return (
-    <>
+    <PageContainer variant="form">
       <Link
         href={`/admin/users/${user.id}`}
         className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600"
@@ -147,7 +148,7 @@ const EditUserView = ({ userId }: { userId: string }) => {
           </div>
         </form>
       </Card>
-    </>
+    </PageContainer>
   );
 };
 

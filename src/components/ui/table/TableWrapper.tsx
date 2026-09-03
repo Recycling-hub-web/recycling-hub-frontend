@@ -36,7 +36,7 @@ const TableWrapper = ({ children, footer }: TableWrapperProps) => {
   }, [children]);
 
   return (
-    <div className="overflow-hidden rounded-lg border border-slate-200">
+    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
       <div className="relative">
         <div ref={scrollRef} className="overflow-x-auto">
           {children}

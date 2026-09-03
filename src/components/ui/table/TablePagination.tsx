@@ -1,4 +1,4 @@
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { LuArrowLeft, LuArrowRight } from 'react-icons/lu';
 
 type TablePaginationProps = {
   currentPage: number;
@@ -11,7 +11,7 @@ type TablePaginationProps = {
 };
 
 const navButtonClassName =
-  'flex items-center justify-center gap-2 rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-600 transition hover:border-slate-400 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-50';
+  'flex items-center justify-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-50';
 
 // Prev/Next were originally two near-identical copy-pasted button files
 // (differing only in icon-before-vs-after-text) — folded into this
@@ -57,7 +57,7 @@ const TablePagination = ({
           disabled={currentPage === 1}
           className={navButtonClassName}
         >
-          <ArrowLeft className="size-4" />
+          <LuArrowLeft className="size-4" />
           Prev
         </button>
         <span>
@@ -70,7 +70,7 @@ const TablePagination = ({
           className={navButtonClassName}
         >
           Next
-          <ArrowRight className="size-4" />
+          <LuArrowRight className="size-4" />
         </button>
       </div>
     </div>

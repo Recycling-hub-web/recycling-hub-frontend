@@ -5,6 +5,7 @@ import { LuPlus } from 'react-icons/lu';
 
 import { ApiError } from '../../../../lib/api';
 import type { UserListItem, UserRole } from '../../../../types/auth';
+import { PageContainer } from '../../../layout/PageContainer';
 import { FilterSelect } from '../../../ui/FilterSelect';
 import { ConfirmModal } from '../../../ui/modal/ConfirmModal';
 import { PageHeader } from '../../../ui/PageHeader';
@@ -68,7 +69,7 @@ const AdminUsersView = () => {
   };
 
   return (
-    <>
+    <PageContainer variant="table">
       <PageHeader
         title="Users"
         subtitle="Manage admin, staff, driver, receiving officer, and accounting accounts."
@@ -121,7 +122,7 @@ const AdminUsersView = () => {
         confirmVariant="danger"
         loading={deleting}
       />
-    </>
+    </PageContainer>
   );
 };
 

@@ -15,6 +15,7 @@ import {
 
 import { ApiError } from '../../../../lib/api';
 import { ROLE_LABELS } from '../../../../types/auth';
+import { PageContainer } from '../../../layout/PageContainer';
 import { StatusBadge } from '../../../ui/badges/StatusBadge';
 import { Card } from '../../../ui/card/Card';
 import { AppDate } from '../../../ui/date/AppDate';
@@ -65,7 +66,7 @@ const UserDetailsView = ({ userId }: { userId: string }) => {
   }
 
   return (
-    <>
+    <PageContainer variant="form">
       <Link
         href="/admin/users"
         className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600"
@@ -145,7 +146,7 @@ const UserDetailsView = ({ userId }: { userId: string }) => {
         confirmVariant="danger"
         loading={deleting}
       />
-    </>
+    </PageContainer>
   );
 };
 

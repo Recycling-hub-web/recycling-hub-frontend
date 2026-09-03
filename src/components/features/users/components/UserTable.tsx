@@ -69,8 +69,8 @@ const UserTable = ({
       );
     }
     return users.map((u) => (
-      <tr key={u.id}>
-        <td className="px-6 py-3.5 font-medium text-slate-900">
+      <tr key={u.id} className="transition-colors hover:bg-slate-50">
+        <td className="px-6 py-4 font-medium text-slate-900">
           <Link
             href={`/admin/users/${u.id}`}
             className="hover:text-brand-600 hover:underline"
@@ -78,20 +78,20 @@ const UserTable = ({
             {u.full_name}
           </Link>
         </td>
-        <td className="px-6 py-3.5 text-slate-500">{u.email}</td>
-        <td className="px-6 py-3.5">
+        <td className="px-6 py-4 text-slate-500">{u.email}</td>
+        <td className="px-6 py-4">
           <StatusBadge variant={ROLE_BADGE_VARIANT[u.role]}>
             {ROLE_LABELS[u.role]}
           </StatusBadge>
         </td>
-        <td className="px-6 py-3.5">
+        <td className="px-6 py-4">
           <button type="button" onClick={() => onToggleActive(u)}>
             <StatusBadge variant={u.is_active ? 'success' : 'neutral'}>
               {u.is_active ? 'Active' : 'Inactive'}
             </StatusBadge>
           </button>
         </td>
-        <td className="px-6 py-3.5 text-right">
+        <td className="px-6 py-4 text-right">
           <button
             type="button"
             onClick={() => onDeleteRequest(u)}

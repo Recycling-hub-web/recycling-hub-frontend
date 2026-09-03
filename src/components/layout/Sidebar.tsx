@@ -58,7 +58,7 @@ const Sidebar = ({ navItems, open, onClose }: SidebarProps) => {
       )}
 
       <nav
-        className={`fixed inset-y-0 start-0 z-50 flex w-64 shrink-0 flex-col border-e border-slate-200 bg-white transition-transform duration-200 ease-in-out lg:static lg:z-auto lg:w-60 lg:translate-x-0 ${
+        className={`fixed inset-y-0 start-0 z-50 flex w-64 shrink-0 flex-col bg-white shadow-[1px_0_0_rgba(15,23,42,0.06),4px_0_16px_-4px_rgba(15,23,42,0.06)] transition-transform duration-200 ease-in-out lg:static lg:z-auto lg:w-60 lg:translate-x-0 ${
           // Plain -translate-x-full, not the ltr:/rtl: variant — those
           // need a [dir] attribute on an ancestor to ever match, and
           // nothing in this project ever sets one (EN/BM only, always
@@ -96,67 +96,74 @@ const Sidebar = ({ navItems, open, onClose }: SidebarProps) => {
           </button>
         </div>
 
-        <ul className="flex flex-1 flex-col gap-1 overflow-y-auto px-3 py-6">
-          {navItems.map(({ href, label, icon: Icon }) => {
-            const active = pathname === href;
-            return (
-              <li key={href} className="relative">
-                {active && (
-                  <span
-                    className="absolute inset-y-1.5 start-0 w-1 rounded-full bg-brand-600"
-                    aria-hidden="true"
-                  />
-                )}
-                <Link
-                  href={href}
-                  className={`flex items-center gap-2.5 rounded-lg py-2 pe-3 ps-4 text-sm font-medium transition-colors ${
-                    active
-                      ? 'bg-brand-50 text-brand-700'
-                      : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
-                  }`}
-                >
-                  <Icon className="size-4 shrink-0" />
-                  {label}
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
+        <div className="flex flex-1 flex-col overflow-y-auto px-3 py-6">
+          <p className="mb-2 px-4 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+            Menu
+          </p>
+          <ul className="flex flex-col gap-1">
+            {navItems.map(({ href, label, icon: Icon }) => {
+              const active = pathname === href;
+              return (
+                <li key={href} className="relative">
+                  {active && (
+                    <span
+                      className="absolute inset-y-2 start-0 w-1 rounded-full bg-brand-600"
+                      aria-hidden="true"
+                    />
+                  )}
+                  <Link
+                    href={href}
+                    className={`flex items-center gap-2.5 rounded-xl py-2.5 pe-3 ps-4 text-sm font-medium transition-colors ${
+                      active
+                        ? 'bg-brand-50 text-brand-700 shadow-[inset_0_0_0_1px_rgba(0,138,62,0.12)]'
+                        : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                    }`}
+                  >
+                    <Icon className="size-4 shrink-0" />
+                    {label}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
 
         {user && (
-          <div className="border-t border-slate-200 p-3">
-            <div className="flex items-center gap-3 rounded-lg p-2">
-              <div className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-brand-100 text-xs font-bold text-brand-700">
-                {user.profile_photo?.url ? (
-                  // eslint-disable-next-line @next/next/no-img-element -- remote/presigned URL, not a static asset
-                  <img
-                    src={user.profile_photo.url}
-                    alt={user.full_name}
-                    className="size-full object-cover"
-                  />
-                ) : (
-                  getInitials(user.full_name)
-                )}
+          <div className="p-3">
+            <div className="rounded-xl bg-slate-50 p-2.5">
+              <div className="flex items-center gap-3 p-0.5">
+                <div className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-brand-100 text-xs font-bold text-brand-700">
+                  {user.profile_photo?.url ? (
+                    // eslint-disable-next-line @next/next/no-img-element -- remote/presigned URL, not a static asset
+                    <img
+                      src={user.profile_photo.url}
+                      alt={user.full_name}
+                      className="size-full object-cover"
+                    />
+                  ) : (
+                    getInitials(user.full_name)
+                  )}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-semibold text-neutral-950">
+                    {user.full_name}
+                  </p>
+                  <p className="truncate text-xs text-slate-400">
+                    {ROLE_LABELS[user.role]}
+                  </p>
+                </div>
               </div>
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-semibold text-neutral-950">
-                  {user.full_name}
-                </p>
-                <p className="truncate text-xs text-slate-400">
-                  {ROLE_LABELS[user.role]}
-                </p>
-              </div>
+              <button
+                type="button"
+                onClick={logout}
+                className="group mt-1.5 flex w-full items-center gap-3 rounded-lg p-2 text-start transition-colors hover:bg-white hover:shadow-sm"
+              >
+                <LuLogOut className="size-4 shrink-0 text-slate-400 transition-colors group-hover:text-red-600" />
+                <span className="text-sm font-medium text-slate-500 transition-colors group-hover:text-red-600">
+                  Sign out
+                </span>
+              </button>
             </div>
-            <button
-              type="button"
-              onClick={logout}
-              className="group mt-1 flex w-full items-center gap-3 rounded-lg p-2 text-start transition-colors hover:bg-red-50"
-            >
-              <LuLogOut className="size-4 shrink-0 text-slate-400 transition-colors group-hover:text-red-600" />
-              <span className="text-sm font-medium text-slate-500 transition-colors group-hover:text-red-600">
-                Sign out
-              </span>
-            </button>
           </div>
         )}
       </nav>
