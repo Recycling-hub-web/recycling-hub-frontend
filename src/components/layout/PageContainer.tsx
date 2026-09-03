@@ -23,7 +23,9 @@ const PageContainer = ({
   className = '',
   children,
 }: PageContainerProps) => (
-  <div className={`mx-auto ${VARIANT_MAX_WIDTH[variant]} ${className}`}>
+  <div
+    className={`mx-auto rounded-xl border-slate-200 bg-white px-6 py-5 ${VARIANT_MAX_WIDTH[variant]} ${className}`}
+  >
     {children}
   </div>
 );
