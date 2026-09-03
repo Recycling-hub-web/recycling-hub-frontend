@@ -2,6 +2,7 @@ import type { ReactElement } from 'react';
 
 import { Meta } from '../components/layout/Meta';
 import { ContactFaq } from '../components/public/contact/ContactFaq';
+import { ContactForm } from '../components/public/contact/ContactForm';
 import { ContactOptions } from '../components/public/contact/ContactOptions';
 import { SocialLinks } from '../components/public/contact/SocialLinks';
 import { ReusableHero } from '../components/ui/hero';
@@ -27,6 +28,7 @@ const ContactPage: NextPageWithLayout = () => {
         description={hero.description}
       />
       <ContactOptions />
+      <ContactForm />
       <ContactFaq />
       <SocialLinks />
     </>

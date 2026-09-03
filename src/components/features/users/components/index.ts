@@ -1,4 +1,3 @@
-export { AdminSidebar } from './AdminSidebar';
 export { AdminUsersView } from './AdminUsersView';
 export { CreateUserView } from './CreateUserView';
 export { EditUserView } from './EditUserView';

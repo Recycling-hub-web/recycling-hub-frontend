@@ -4,7 +4,7 @@ import type { ReactNode } from 'react';
 import { useState } from 'react';
 
 import { RequireAuth } from '../components/features/auth/components';
-import { AdminSidebar } from '../components/features/users/components';
+import { AdminSidebar } from '../components/layout/AdminSidebar';
 import { AppFooter } from '../components/layout/AppFooter';
 import { Topbar } from '../components/layout/Topbar';
 
