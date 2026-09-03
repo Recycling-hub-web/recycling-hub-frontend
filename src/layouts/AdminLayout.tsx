@@ -13,7 +13,7 @@ const AdminLayout = ({ children }: { children: ReactNode }) => {
 
   return (
     <RequireAuth roles={['admin']}>
-      <div className="flex min-h-screen bg-neutral-50">
+      <div className="flex min-h-screen bg-neutral-50 px-4 py-5 lg:gap-4 lg:px-6">
         <AdminSidebar
           open={sidebarOpen}
           onClose={() => setSidebarOpen(false)}
