@@ -9,7 +9,7 @@ type TopbarProps = {
  * trigger (hidden at lg, where Sidebar is always visible) plus a slot for
  * page-level content (breadcrumbs, actions) as that gets built. */
 const Topbar = ({ onMenuClick }: TopbarProps) => (
-  <header className="flex h-16 shrink-0 items-center bg-white px-4 shadow-[0_1px_0_rgba(15,23,42,0.06),0_2px_10px_-4px_rgba(15,23,42,0.05)] lg:px-6">
+  <header className="flex h-16 shrink-0 items-center border-b border-slate-200 bg-white px-4 shadow-sm lg:px-6">
     <button
       type="button"
       onClick={onMenuClick}

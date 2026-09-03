@@ -58,7 +58,7 @@ const Sidebar = ({ navItems, open, onClose }: SidebarProps) => {
       )}
 
       <nav
-        className={`fixed inset-y-0 start-0 z-50 flex w-64 shrink-0 flex-col bg-white shadow-[1px_0_0_rgba(15,23,42,0.06),4px_0_16px_-4px_rgba(15,23,42,0.06)] transition-transform duration-200 ease-in-out lg:static lg:z-auto lg:w-60 lg:translate-x-0 ${
+        className={`fixed inset-y-0 start-0 z-50 flex w-64 shrink-0 flex-col border-e border-slate-200 bg-white shadow-sm transition-transform duration-200 ease-in-out lg:static lg:z-auto lg:w-60 lg:translate-x-0 ${
           // Plain -translate-x-full, not the ltr:/rtl: variant — those
           // need a [dir] attribute on an ancestor to ever match, and
           // nothing in this project ever sets one (EN/BM only, always
@@ -115,7 +115,7 @@ const Sidebar = ({ navItems, open, onClose }: SidebarProps) => {
                     href={href}
                     className={`flex items-center gap-2.5 rounded-xl py-2.5 pe-3 ps-4 text-sm font-medium transition-colors ${
                       active
-                        ? 'bg-brand-50 text-brand-700 shadow-[inset_0_0_0_1px_rgba(0,138,62,0.12)]'
+                        ? 'bg-brand-50 text-brand-700 ring-1 ring-inset ring-brand-600/10'
                         : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
                     }`}
                   >
