@@ -3,8 +3,8 @@
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 
-import { useAuth } from '../../contexts/AuthContext';
-import { ROLE_HOME } from '../../types/auth';
+import { useAuth } from '../../../contexts/AuthContext';
+import { ROLE_HOME } from '../../../types/auth';
 
 // Every role now has its own dedicated dashboard (/admin, /staff, /driver,
 // /receiving, /accounting) — this bare route stays alive as a stable

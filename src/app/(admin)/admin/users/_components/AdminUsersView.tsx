@@ -6,19 +6,19 @@ import { LuPlus } from 'react-icons/lu';
 import {
   CreateUserModal,
   UserTable,
-} from '../../../../components/features/users/components';
-import { ROLE_FILTER_OPTIONS } from '../../../../components/features/users/constants';
+} from '../../../../../components/features/users/components';
+import { ROLE_FILTER_OPTIONS } from '../../../../../components/features/users/constants';
 import {
   useDeleteUser,
   useUpdateUser,
   useUsers,
-} from '../../../../components/features/users/hooks';
-import { FilterSelect } from '../../../../components/ui/FilterSelect';
-import { ConfirmModal } from '../../../../components/ui/modal/ConfirmModal';
-import { PageHeader } from '../../../../components/ui/PageHeader';
-import { useToast } from '../../../../components/ui/toast/ToastContext';
-import { ApiError } from '../../../../lib/api';
-import type { UserListItem, UserRole } from '../../../../types/auth';
+} from '../../../../../components/features/users/hooks';
+import { FilterSelect } from '../../../../../components/ui/FilterSelect';
+import { ConfirmModal } from '../../../../../components/ui/modal/ConfirmModal';
+import { PageHeader } from '../../../../../components/ui/PageHeader';
+import { useToast } from '../../../../../components/ui/toast/ToastContext';
+import { ApiError } from '../../../../../lib/api';
+import type { UserListItem, UserRole } from '../../../../../types/auth';
 
 const AdminUsersView = () => {
   const toast = useToast();

@@ -3,9 +3,9 @@
 import Link from 'next/link';
 import { LuLockKeyhole } from 'react-icons/lu';
 
-import { PasswordSetupForm } from '../../../components/auth/PasswordSetupForm';
-import { useResetPassword } from '../../../components/features/auth/hooks';
-import type { Dictionary } from '../../../lib/dictionary';
+import { PasswordSetupForm } from '../../../../components/auth/PasswordSetupForm';
+import { useResetPassword } from '../../../../components/features/auth/hooks';
+import type { Dictionary } from '../../../../lib/dictionary';
 
 const ResetPasswordView = ({
   t,

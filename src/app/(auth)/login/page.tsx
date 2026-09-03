@@ -3,7 +3,7 @@ import { Suspense } from 'react';
 
 import { Loading } from '../../../components/ui/loading/Loading';
 import { getDictionary } from '../../../lib/dictionary';
-import { LoginView } from './LoginView';
+import { LoginView } from './_components/LoginView';
 
 export const metadata: Metadata = {
   title: 'Sign In — Recycling Hub',
