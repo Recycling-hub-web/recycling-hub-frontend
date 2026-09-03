@@ -1,10 +1,8 @@
 import type { ReactElement } from 'react';
 
-import { ContactForm } from '../components/features/contact/components/ContactForm';
+import { ContactFormSection } from '../components/features/contact/components/ContactFormSection';
 import { Meta } from '../components/layout/Meta';
 import { ContactFaq } from '../components/public/contact/ContactFaq';
-import { ContactOptions } from '../components/public/contact/ContactOptions';
-import { SocialLinks } from '../components/public/contact/SocialLinks';
 import { ReusableHero } from '../components/ui/hero';
 import { useDictionary } from '../hooks/useDictionary';
 import { PublicLayout } from '../layouts/PublicLayout';
@@ -27,10 +25,8 @@ const ContactPage: NextPageWithLayout = () => {
         headlineAccent={hero.headlineAccent}
         description={hero.description}
       />
-      <ContactOptions />
-      <ContactForm />
+      <ContactFormSection />
       <ContactFaq />
-      <SocialLinks />
     </>
   );
 };

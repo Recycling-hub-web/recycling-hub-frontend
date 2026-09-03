@@ -12,12 +12,40 @@ import { apiLoginAs, loginAs } from './helpers/auth';
 const uniqueSubject = () => `E2E Contact Test ${Date.now()}`;
 
 test.describe('Public contact form', () => {
+  test('submit button is disabled until every required field is valid', async ({
+    page,
+  }) => {
+    await page.goto('/contact');
+    const submit = page.getByRole('button', { name: 'Send a Message' });
+
+    await expect(submit).toBeDisabled();
+
+    await page.locator('#firstName').fill('Playwright');
+    await expect(submit).toBeDisabled();
+    await page.locator('#lastName').fill('E2E');
+    await expect(submit).toBeDisabled();
+    await page.locator('#email').fill('not-an-email');
+    await expect(submit).toBeDisabled();
+    await page.locator('#phone').fill('+60123456789');
+    await expect(submit).toBeDisabled();
+    await page.locator('#subject').fill(uniqueSubject());
+    await expect(submit).toBeDisabled();
+    await page.locator('#message').fill('Should not submit yet.');
+    // Email is still invalid — every other field is filled.
+    await expect(submit).toBeDisabled();
+
+    await page.locator('#email').fill('e2e@example.com');
+    await expect(submit).toBeEnabled();
+  });
+
   test('submits and shows a success message', async ({ page }) => {
     const subject = uniqueSubject();
     await page.goto('/contact');
 
-    await page.locator('#fullName').fill('Playwright E2E');
+    await page.locator('#firstName').fill('Playwright');
+    await page.locator('#lastName').fill('E2E');
     await page.locator('#email').fill('e2e@example.com');
+    await page.locator('#phone').fill('+60123456789');
     await page.locator('#subject').fill(subject);
     await page
       .locator('#message')
@@ -29,7 +57,7 @@ test.describe('Public contact form', () => {
           res.url().includes('/api/v1/contact/') &&
           res.request().method() === 'POST',
       ),
-      page.getByRole('button', { name: 'Send Message' }).click(),
+      page.getByRole('button', { name: 'Send a Message' }).click(),
     ]);
 
     await expect(page.getByText(/received/i)).toBeVisible();
@@ -42,21 +70,6 @@ test.describe('Public contact form', () => {
     await apiLoginAs(page.request, 'admin');
     await page.request.delete(`/api/v1/contact/${id}/`);
   });
-
-  test('blocks submission with an invalid email', async ({ page }) => {
-    await page.goto('/contact');
-    await page.locator('#fullName').fill('Playwright E2E');
-    await page.locator('#email').fill('not-an-email');
-    await page.locator('#subject').fill(uniqueSubject());
-    await page.locator('#message').fill('Should not submit.');
-
-    await page.getByRole('button', { name: 'Send Message' }).click();
-
-    await expect(page.getByText(/valid email/i)).toBeVisible();
-    await expect(
-      page.getByRole('button', { name: 'Message Sent' }),
-    ).not.toBeVisible();
-  });
 });
 
 test.describe('Admin contact inbox', () => {
@@ -64,14 +77,16 @@ test.describe('Admin contact inbox', () => {
     // Seed a message to act on so this test doesn't depend on
     // whatever happens to already be in the inbox.
     const subject = uniqueSubject();
-    await page.request.post('/api/v1/contact/', {
+    const seeded = await page.request.post('/api/v1/contact/', {
       data: {
         full_name: 'Admin Delete Target',
         email: 'delete-target@example.com',
+        phone_number: '+60123456789',
         subject,
         message: 'Created by the admin e2e test, expected to be deleted.',
       },
     });
+    expect(seeded.ok()).toBe(true);
 
     await loginAs(page, 'admin');
     await page.goto('/admin/contact');
@@ -86,7 +101,12 @@ test.describe('Admin contact inbox', () => {
     await page.getByRole('button', { name: 'Delete', exact: true }).click();
 
     await expect(page.getByText(/message deleted/i)).toBeVisible();
-    await expect(row).not.toBeVisible();
+    // Not `row` — once the list re-fetches empty, the "No matches for
+    // ...'" empty-state text itself contains the subject as a substring
+    // and would still match that regex-based row locator. The subject
+    // cell rendered it as an exact link, so an exact-text check is
+    // actually specific to "the row still exists".
+    await expect(page.getByText(subject, { exact: true })).not.toBeVisible();
   });
 });
 
@@ -99,10 +119,12 @@ test.describe('Staff contact inbox', () => {
       data: {
         full_name: 'Staff View Target',
         email: 'staff-target@example.com',
+        phone_number: '+60123456789',
         subject,
         message: 'Created by the staff e2e test.',
       },
     });
+    expect(created.ok()).toBe(true);
     const { id: messageId } = await created.json();
 
     await loginAs(page, 'qaStaff');

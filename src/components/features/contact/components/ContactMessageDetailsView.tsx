@@ -7,6 +7,7 @@ import {
   LuArrowLeft,
   LuCalendar,
   LuMail,
+  LuPhone,
   LuReply,
   LuTrash2,
   LuUser,
@@ -146,6 +147,11 @@ const ContactMessageDetailsView = ({
             icon={<LuMail className="size-4" />}
             label="Email"
             value={message.email}
+          />
+          <InfoRow
+            icon={<LuPhone className="size-4" />}
+            label="Phone"
+            value={message.phone_number}
           />
           <InfoRow
             icon={<LuCalendar className="size-4" />}
