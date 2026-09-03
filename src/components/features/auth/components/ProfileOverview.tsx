@@ -9,12 +9,12 @@ import {
   LuPhone,
 } from 'react-icons/lu';
 
-import { useAuth } from '../../contexts/AuthContext';
-import { ROLE_LABELS } from '../../types/auth';
-import { Card } from '../ui/card/Card';
-import { AppDate } from '../ui/date/AppDate';
-import { InfoRow } from '../ui/InfoRow';
-import { PageHeader } from '../ui/PageHeader';
+import { useAuth } from '../../../../contexts/AuthContext';
+import { ROLE_LABELS } from '../../../../types/auth';
+import { Card } from '../../../ui/card/Card';
+import { AppDate } from '../../../ui/date/AppDate';
+import { InfoRow } from '../../../ui/InfoRow';
+import { PageHeader } from '../../../ui/PageHeader';
 
 /** The one real thing every operational role's dashboard shows today: their
  * own profile. Shared by /staff, /driver, /receiving, /accounting (and the

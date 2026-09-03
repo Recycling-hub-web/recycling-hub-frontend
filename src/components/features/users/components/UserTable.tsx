@@ -1,3 +1,5 @@
+'use client';
+
 import { LuTrash2 } from 'react-icons/lu';
 
 import {

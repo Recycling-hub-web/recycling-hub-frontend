@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 
-import { AdminUsersView } from './_components/AdminUsersView';
+import { AdminUsersView } from '../../../../components/features/users/components';
 
 export const metadata: Metadata = {
   title: 'Users — Recycling Hub Admin',

@@ -1,10 +1,12 @@
+'use client';
+
 import { usePathname, useRouter } from 'next/navigation';
 import type { ReactNode } from 'react';
 import { useEffect } from 'react';
 
-import { useAuth } from '../../contexts/AuthContext';
-import type { UserRole } from '../../types/auth';
-import { Loading } from '../ui/loading/Loading';
+import { useAuth } from '../../../../contexts/AuthContext';
+import type { UserRole } from '../../../../types/auth';
+import { Loading } from '../../../ui/loading/Loading';
 
 type RequireAuthProps = {
   children: ReactNode;

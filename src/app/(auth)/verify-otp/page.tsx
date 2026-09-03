@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 
+import { VerifyOtpView } from '../../../components/features/auth/components';
 import { Loading } from '../../../components/ui/loading/Loading';
 import { getDictionary } from '../../../lib/dictionary';
-import { VerifyOtpView } from './_components/VerifyOtpView';
 
 export const metadata: Metadata = {
   title: 'Verify Code — Recycling Hub',

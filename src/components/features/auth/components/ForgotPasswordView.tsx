@@ -5,10 +5,10 @@ import type { FormEvent } from 'react';
 import { useState } from 'react';
 import { LuCircleCheck, LuKeyRound } from 'react-icons/lu';
 
-import { AuthCard } from '../../../../components/auth/AuthCard';
-import { useForgotPassword } from '../../../../components/features/auth/hooks';
-import { InputField } from '../../../../components/form/fields/InputField';
 import type { Dictionary } from '../../../../lib/dictionary';
+import { InputField } from '../../../form/fields/InputField';
+import { useForgotPassword } from '../hooks';
+import { AuthCard } from './AuthCard';
 
 const ForgotPasswordView = ({
   t,

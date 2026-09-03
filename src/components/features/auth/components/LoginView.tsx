@@ -7,9 +7,6 @@ import type { FormEvent } from 'react';
 import { useEffect, useState } from 'react';
 import { LuKeyRound } from 'react-icons/lu';
 
-import { InputField } from '../../../../components/form/fields/InputField';
-import { PasswordField } from '../../../../components/form/fields/PasswordField';
-import { AlertBanner } from '../../../../components/ui/AlertBanner';
 import { ASSETS } from '../../../../constants/content';
 import { useAuth } from '../../../../contexts/AuthContext';
 import { useAuthFlow } from '../../../../contexts/AuthFlowContext';
@@ -17,6 +14,9 @@ import { ApiError } from '../../../../lib/api';
 import type { Dictionary } from '../../../../lib/dictionary';
 import { isSafeRedirectPath } from '../../../../lib/redirect';
 import { ROLE_HOME } from '../../../../types/auth';
+import { InputField } from '../../../form/fields/InputField';
+import { PasswordField } from '../../../form/fields/PasswordField';
+import { AlertBanner } from '../../../ui/AlertBanner';
 
 // Single-form redesign — login's own layout now, not the shared AuthCard
 // every other auth screen (verify-otp, forgot-password, …) still uses (a

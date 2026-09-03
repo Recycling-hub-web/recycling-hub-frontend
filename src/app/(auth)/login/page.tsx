@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 
+import { LoginView } from '../../../components/features/auth/components';
 import { Loading } from '../../../components/ui/loading/Loading';
 import { getDictionary } from '../../../lib/dictionary';
-import { LoginView } from './_components/LoginView';
 
 export const metadata: Metadata = {
   title: 'Sign In — Recycling Hub',

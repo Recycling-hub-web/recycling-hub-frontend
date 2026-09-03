@@ -2,9 +2,9 @@
 
 import { LuLockKeyhole } from 'react-icons/lu';
 
-import { PasswordSetupForm } from '../../../../components/auth/PasswordSetupForm';
-import { useSetPassword } from '../../../../components/features/auth/hooks';
 import type { Dictionary } from '../../../../lib/dictionary';
+import { useSetPassword } from '../hooks';
+import { PasswordSetupForm } from './PasswordSetupForm';
 
 const SetPasswordView = ({
   t,

@@ -5,19 +5,16 @@ import type { FormEvent } from 'react';
 import { useEffect, useState } from 'react';
 import { LuShieldCheck } from 'react-icons/lu';
 
-import { AuthCard } from '../../../../components/auth/AuthCard';
-import {
-  useResendOtp,
-  useVerifyOtp,
-} from '../../../../components/features/auth/hooks';
-import { OtpInputField } from '../../../../components/form/fields/OtpInputField';
-import { AlertBanner } from '../../../../components/ui/AlertBanner';
 import { useAuth } from '../../../../contexts/AuthContext';
 import { useAuthFlow } from '../../../../contexts/AuthFlowContext';
 import { ApiError } from '../../../../lib/api';
 import type { Dictionary } from '../../../../lib/dictionary';
 import { isSafeRedirectPath } from '../../../../lib/redirect';
 import { ROLE_HOME } from '../../../../types/auth';
+import { OtpInputField } from '../../../form/fields/OtpInputField';
+import { AlertBanner } from '../../../ui/AlertBanner';
+import { useResendOtp, useVerifyOtp } from '../hooks';
+import { AuthCard } from './AuthCard';
 
 const VerifyOtpView = ({ t }: { t: Dictionary['auth']['verifyOtp'] }) => {
   const router = useRouter();

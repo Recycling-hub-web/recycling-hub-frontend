@@ -3,10 +3,10 @@
 import Link from 'next/link';
 import { LuShieldAlert } from 'react-icons/lu';
 
-import { AuthCard } from '../../../../components/auth/AuthCard';
 import { useAuth } from '../../../../contexts/AuthContext';
 import type { Dictionary } from '../../../../lib/dictionary';
 import { ROLE_HOME } from '../../../../types/auth';
+import { AuthCard } from './AuthCard';
 
 const UnauthorizedView = ({ t }: { t: Dictionary['auth']['unauthorized'] }) => {
   const { user } = useAuth();

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
+import { UnauthorizedView } from '../../../components/features/auth/components';
 import { getDictionary } from '../../../lib/dictionary';
-import { UnauthorizedView } from './_components/UnauthorizedView';
 
 export const metadata: Metadata = {
   title: 'Access Denied — Recycling Hub',

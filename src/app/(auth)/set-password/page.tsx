@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
+import { SetPasswordView } from '../../../components/features/auth/components';
 import { getDictionary } from '../../../lib/dictionary';
-import { SetPasswordView } from './_components/SetPasswordView';
 
 export const metadata: Metadata = {
   title: 'Set Your Password — Recycling Hub',

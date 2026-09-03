@@ -3,8 +3,8 @@
 import type { ReactNode } from 'react';
 import { useState } from 'react';
 
-import { AdminSidebar } from '../components/admin/AdminSidebar';
-import { RequireAuth } from '../components/auth/RequireAuth';
+import { RequireAuth } from '../components/features/auth/components';
+import { AdminSidebar } from '../components/features/users/components';
 import { AppFooter } from '../components/layout/AppFooter';
 import { Topbar } from '../components/layout/Topbar';
 

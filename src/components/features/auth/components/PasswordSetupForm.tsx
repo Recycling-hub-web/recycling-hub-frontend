@@ -1,11 +1,13 @@
+'use client';
+
 import Link from 'next/link';
 import type { FormEvent, ReactNode } from 'react';
 import { useState } from 'react';
 import { LuCircleCheck } from 'react-icons/lu';
 
-import { ApiError } from '../../lib/api';
-import { PasswordField } from '../form/fields/PasswordField';
-import { AlertBanner } from '../ui/AlertBanner';
+import { ApiError } from '../../../../lib/api';
+import { PasswordField } from '../../../form/fields/PasswordField';
+import { AlertBanner } from '../../../ui/AlertBanner';
 import { AuthCard } from './AuthCard';
 
 type PasswordSetupCopy = {

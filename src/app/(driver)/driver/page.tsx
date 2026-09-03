@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 
-import { ProfileOverview } from '../../../components/dashboard/ProfileOverview';
+import { ProfileOverview } from '../../../components/features/auth/components';
 
 export const metadata: Metadata = {
   title: 'Driver — Recycling Hub',
