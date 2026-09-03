@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import { ApiError } from '../../../../lib/api';
-import type { ContactMessage } from '../../../../types/contact';
 import { getContactMessage } from '../services/contactService';
+import type { ContactMessage } from '../types';
 
 /** Fetches a single message's full detail — mirrors useUser's shape. */
 const useContactMessage = (id: string) => {

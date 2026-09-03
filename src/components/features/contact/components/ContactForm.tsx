@@ -1,9 +1,11 @@
+'use client';
+
 import { type FormEvent, useState } from 'react';
 
-import { useDictionary } from '../../../hooks/useDictionary';
-import { ApiError } from '../../../lib/api';
-import { submitContactMessage } from '../../features/contact/services/contactService';
-import { FadeIn } from '../../ui/FadeIn';
+import { useDictionary } from '../../../../hooks/useDictionary';
+import { ApiError } from '../../../../lib/api';
+import { FadeIn } from '../../../ui/FadeIn';
+import { submitContactMessage } from '../services/contactService';
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 

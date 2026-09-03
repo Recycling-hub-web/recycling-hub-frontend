@@ -1,8 +1,5 @@
 import { apiFetch } from '../../../../lib/api';
-import type {
-  ContactMessage,
-  ContactMessageStatus,
-} from '../../../../types/contact';
+import type { ContactMessage, ContactMessageStatus } from '../types';
 
 type Paginated<T> = {
   count: number;

@@ -1,8 +1,5 @@
-import {
-  CONTACT_STATUS_LABELS,
-  type ContactMessageStatus,
-} from '../../../types/contact';
 import type { BadgeVariant } from '../../ui/badges/variants';
+import { CONTACT_STATUS_LABELS, type ContactMessageStatus } from './types';
 
 const STATUS_FILTER_OPTIONS = [
   { value: '', label: 'All statuses' },

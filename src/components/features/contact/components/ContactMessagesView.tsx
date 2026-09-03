@@ -2,10 +2,6 @@
 
 import { useEffect, useState } from 'react';
 
-import type {
-  ContactMessage,
-  ContactMessageStatus,
-} from '../../../../types/contact';
 import { SearchInput } from '../../../form/filter/SearchInput';
 import { PageContainer } from '../../../layout/PageContainer';
 import { FilterSelect } from '../../../ui/FilterSelect';
@@ -14,6 +10,7 @@ import { PageHeader } from '../../../ui/PageHeader';
 import { useToast } from '../../../ui/toast/ToastContext';
 import { STATUS_FILTER_OPTIONS } from '../constants';
 import { useContactMessages, useDeleteContactMessage } from '../hooks';
+import type { ContactMessage, ContactMessageStatus } from '../types';
 import { ContactMessageTable } from './ContactMessageTable';
 
 const SEARCH_DEBOUNCE_MS = 350;

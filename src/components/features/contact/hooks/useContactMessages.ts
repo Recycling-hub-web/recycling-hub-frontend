@@ -1,11 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import { ApiError } from '../../../../lib/api';
-import type {
-  ContactMessage,
-  ContactMessageStatus,
-} from '../../../../types/contact';
 import { listContactMessages } from '../services/contactService';
+import type { ContactMessage, ContactMessageStatus } from '../types';
 
 type UseContactMessagesParams = {
   page: number;

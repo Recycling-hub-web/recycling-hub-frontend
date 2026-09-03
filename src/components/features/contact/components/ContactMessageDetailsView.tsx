@@ -12,7 +12,6 @@ import {
   LuUser,
 } from 'react-icons/lu';
 
-import type { ContactMessageStatus } from '../../../../types/contact';
 import { PageContainer } from '../../../layout/PageContainer';
 import { StatusBadge } from '../../../ui/badges/StatusBadge';
 import { Card } from '../../../ui/card/Card';
@@ -28,6 +27,7 @@ import {
   useDeleteContactMessage,
   useUpdateContactStatus,
 } from '../hooks';
+import type { ContactMessageStatus } from '../types';
 
 type ContactMessageDetailsViewProps = {
   messageId: string;

@@ -4,10 +4,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { LuEye, LuTrash2 } from 'react-icons/lu';
 
-import {
-  CONTACT_STATUS_LABELS,
-  type ContactMessage,
-} from '../../../../types/contact';
 import { StatusBadge } from '../../../ui/badges/StatusBadge';
 import { AppDate } from '../../../ui/date/AppDate';
 import {
@@ -18,6 +14,7 @@ import {
   TableWrapper,
 } from '../../../ui/table';
 import { STATUS_BADGE_VARIANT } from '../constants';
+import { CONTACT_STATUS_LABELS, type ContactMessage } from '../types';
 
 const PAGE_SIZE = 12;
 

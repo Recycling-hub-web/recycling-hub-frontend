@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
-import type { ContactMessageStatus } from '../../../../types/contact';
 import { updateContactMessageStatus } from '../services/contactService';
+import type { ContactMessageStatus } from '../types';
 
 const useUpdateContactStatus = () => {
   const [loading, setLoading] = useState(false);

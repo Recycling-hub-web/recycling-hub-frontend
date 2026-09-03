@@ -1,8 +1,8 @@
 import type { ReactElement } from 'react';
 
+import { ContactForm } from '../components/features/contact/components/ContactForm';
 import { Meta } from '../components/layout/Meta';
 import { ContactFaq } from '../components/public/contact/ContactFaq';
-import { ContactForm } from '../components/public/contact/ContactForm';
 import { ContactOptions } from '../components/public/contact/ContactOptions';
 import { SocialLinks } from '../components/public/contact/SocialLinks';
 import { ReusableHero } from '../components/ui/hero';
