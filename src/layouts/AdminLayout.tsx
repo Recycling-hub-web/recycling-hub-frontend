@@ -20,7 +20,7 @@ const AdminLayout = ({ children }: { children: ReactNode }) => {
         />
         <div className="flex min-w-0 flex-1 flex-col">
           <Topbar onMenuClick={() => setSidebarOpen(true)} />
-          <main className="flex-1 overflow-x-hidden px-6 py-8">{children}</main>
+          <main className="flex-1 overflow-x-hidden py-6">{children}</main>
           <AppFooter />
         </div>
       </div>

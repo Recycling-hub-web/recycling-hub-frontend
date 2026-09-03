@@ -1,13 +1,15 @@
 import { LuMenu } from 'react-icons/lu';
 
+import { NotificationsButton } from './NotificationsButton';
+
 type TopbarProps = {
   onMenuClick: () => void;
 };
 
 /** Reusable topbar for every sidebar layout. User identity + sign out live
- * in Sidebar now, not duplicated here — this is just the mobile menu
- * trigger (hidden at lg, where Sidebar is always visible) plus a slot for
- * page-level content (breadcrumbs, actions) as that gets built. */
+ * in Sidebar now, not duplicated here — this is the mobile menu trigger
+ * (hidden at lg, where Sidebar is always visible), notifications, and a
+ * slot for page-level content (breadcrumbs, actions) as that gets built. */
 const Topbar = ({ onMenuClick }: TopbarProps) => (
   <header className="flex h-16 shrink-0 items-center rounded-xl bg-white px-4 shadow-sm lg:px-6">
     <button
@@ -18,6 +20,9 @@ const Topbar = ({ onMenuClick }: TopbarProps) => (
     >
       <LuMenu className="size-5" />
     </button>
+    <div className="ms-auto">
+      <NotificationsButton />
+    </div>
   </header>
 );
 

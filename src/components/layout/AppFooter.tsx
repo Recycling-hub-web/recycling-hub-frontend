@@ -6,7 +6,7 @@
  * Named AppFooter (not Footer) specifically so the two can live side by
  * side in one components/layout/ without a name collision. */
 const AppFooter = () => (
-  <footer className="border-t border-slate-200 p-4 text-center text-xs text-slate-400 lg:px-6">
+  <footer className="p-4 text-center text-xs text-slate-400 lg:px-6">
     © {new Date().getFullYear()} Recycling Hub. All rights reserved.
   </footer>
 );
