@@ -7,11 +7,12 @@ import { listUsers } from '../services/userService';
 type UseUsersParams = {
   page: number;
   role?: UserRole;
+  search?: string;
 };
 
 /** Fetches one page of the user list — the single fetch UserTable/the
  * admin users page render from, not re-fetched per widget. */
-const useUsers = ({ page, role }: UseUsersParams) => {
+const useUsers = ({ page, role, search }: UseUsersParams) => {
   const [users, setUsers] = useState<UserListItem[]>([]);
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -21,7 +22,7 @@ const useUsers = ({ page, role }: UseUsersParams) => {
     setLoading(true);
     setError('');
     try {
-      const data = await listUsers({ page, role });
+      const data = await listUsers({ page, role, search });
       setUsers(data.results);
       setCount(data.count);
     } catch (err) {
@@ -29,7 +30,7 @@ const useUsers = ({ page, role }: UseUsersParams) => {
     } finally {
       setLoading(false);
     }
-  }, [page, role]);
+  }, [page, role, search]);
 
   useEffect(() => {
     refetch();

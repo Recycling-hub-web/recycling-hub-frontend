@@ -28,6 +28,7 @@ type UserTableProps = {
   page: number;
   onPageChange: (page: number) => void;
   roleFilter: UserRole | '';
+  search?: string;
   loading: boolean;
   error: string;
   onRetry: () => void;
@@ -44,6 +45,7 @@ const UserTable = ({
   page,
   onPageChange,
   roleFilter,
+  search,
   loading,
   error,
   onRetry,
@@ -63,11 +65,17 @@ const UserTable = ({
         />
       );
     if (users.length === 0) {
+      let emptySubtitle: string | undefined;
+      if (search) {
+        emptySubtitle = `No matches for "${search}".`;
+      } else if (roleFilter) {
+        emptySubtitle = 'Try a different role filter.';
+      }
       return (
         <TableEmptyRow
           colSpan={COLUMN_COUNT}
           title="No users found"
-          subtitle={roleFilter ? 'Try a different role filter.' : undefined}
+          subtitle={emptySubtitle}
         />
       );
     }

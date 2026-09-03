@@ -1,5 +1,5 @@
-import { Search } from 'lucide-react';
 import type { ChangeEventHandler } from 'react';
+import { LuSearch } from 'react-icons/lu';
 
 type SearchInputProps = {
   value: string;
@@ -15,7 +15,7 @@ const SearchInput = ({
   className = '',
 }: SearchInputProps) => (
   <div className={`relative min-w-[200px] flex-1 ${className}`}>
-    <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
+    <LuSearch className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
     <input
       type="text"
       value={value}

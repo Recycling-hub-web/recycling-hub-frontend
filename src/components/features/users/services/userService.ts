@@ -15,13 +15,19 @@ type Paginated<T> = {
 type ListUsersParams = {
   page?: number;
   role?: UserRole;
+  /** Case-insensitive partial match against full_name or email — a real
+   * backend query (see UserManagementView.get_queryset), not a client-side
+   * filter, since results are paginated and a client-side filter would
+   * silently miss matches sitting on other pages. */
+  search?: string;
 };
 
-const listUsers = ({ page = 1, role }: ListUsersParams = {}): Promise<
+const listUsers = ({ page = 1, role, search }: ListUsersParams = {}): Promise<
   Paginated<UserListItem>
 > => {
   const params = new URLSearchParams({ page: String(page) });
   if (role) params.set('role', role);
+  if (search) params.set('search', search);
   return apiFetch(`/accounts/users/?${params.toString()}`);
 };
 

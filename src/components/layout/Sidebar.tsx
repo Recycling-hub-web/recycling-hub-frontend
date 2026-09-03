@@ -67,7 +67,7 @@ const Sidebar = ({ navItems, open, onClose }: SidebarProps) => {
           open ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <div className="flex h-16 shrink-0 items-center justify-between border-b border-slate-200 pe-3 ps-5">
+        <div className="flex h-16 shrink-0 items-center justify-between border-b border-slate-200 pe-3 ps-5 lg:justify-center">
           <Link href="/" className="flex items-center">
             <Image
               src={ASSETS.logo.combinedColor}
