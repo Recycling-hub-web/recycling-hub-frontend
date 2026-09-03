@@ -12,6 +12,12 @@
 /coverage
 /.nyc_output
 
+# ─── Playwright ───────────────────────────────────────────────────────────────
+/test-results
+/playwright-report
+/blob-report
+/playwright/.cache
+
 # ─── Environment variables ────────────────────────────────────────────────────
 # Keep .env.example — it documents what variables are needed
 .env
