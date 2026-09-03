@@ -58,7 +58,7 @@ const Sidebar = ({ navItems, open, onClose }: SidebarProps) => {
       )}
 
       <nav
-        className={`fixed inset-y-0 start-0 z-50 flex h-screen w-64 shrink-0 flex-col rounded-xl border border-slate-200 bg-white shadow-sm transition-transform duration-200 ease-in-out lg:static lg:z-auto lg:w-60 lg:translate-x-0 ${
+        className={`fixed inset-y-0 start-0 z-50 flex w-64 shrink-0 flex-col rounded-xl border border-slate-200 bg-white shadow-sm transition-transform duration-200 ease-in-out lg:static lg:z-auto lg:w-60 lg:translate-x-0 ${
           // Plain -translate-x-full, not the ltr:/rtl: variant — those
           // need a [dir] attribute on an ancestor to ever match, and
           // nothing in this project ever sets one (EN/BM only, always
