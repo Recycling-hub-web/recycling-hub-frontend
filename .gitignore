@@ -127,3 +127,6 @@ bundle-stats.json
 # ─── AI assistant config ──────────────────────────────────────────────────────
 # Uncomment to exclude AI-assistant project memory from the repo:
 # .claude/
+
+# ─── Local-only docs ───────────────────────────────────────────────────────────
+docs/UI_PLAYBOOK.md

@@ -6,17 +6,18 @@ import { useState } from 'react';
 import { LuCircleCheck, LuKeyRound } from 'react-icons/lu';
 
 import { AuthCard } from '../../../components/auth/AuthCard';
+import { useForgotPassword } from '../../../components/features/auth/hooks';
 import { InputField } from '../../../components/form/fields/InputField';
 import type { Dictionary } from '../../../lib/dictionary';
-import { forgotPassword } from '../../../services/authService';
 
 const ForgotPasswordView = ({
   t,
 }: {
   t: Dictionary['auth']['forgotPassword'];
 }) => {
+  const { execute: submitForgotPassword, loading: submitting } =
+    useForgotPassword();
   const [formData, setFormData] = useState({ email: '' });
-  const [submitting, setSubmitting] = useState(false);
   const [sent, setSent] = useState(false);
 
   const updateFormData = (field: string, value: string) =>
@@ -24,14 +25,12 @@ const ForgotPasswordView = ({
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setSubmitting(true);
     try {
-      await forgotPassword(formData.email);
+      await submitForgotPassword(formData.email);
     } finally {
       // Always shows success, regardless of outcome — the backend itself
       // never reveals whether the email exists (ForgotPasswordView returns
       // 200 either way), so there's nothing to branch on here either.
-      setSubmitting(false);
       setSent(true);
     }
   };

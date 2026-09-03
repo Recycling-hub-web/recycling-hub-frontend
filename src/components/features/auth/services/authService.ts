@@ -1,5 +1,14 @@
-import { apiFetch } from '../lib/api';
-import type { CurrentUser } from '../types/auth';
+import { apiFetch } from '../../../../lib/api';
+import type { CurrentUser } from '../../../../types/auth';
+import { OTP_PURPOSE } from '../constants';
+
+// One-to-one with apps.authentication.urls on the backend — every route
+// below is a real endpoint there (see apps/authentication/views.py):
+// login/, logout/, otp/verify/, otp/resend/, password-forgot/,
+// password-reset/, password-change/, token/refresh/ (handled transparently
+// by apiFetch's own silent-retry, not called directly here). The one
+// backend route with no frontend caller yet is register/ (resident
+// self-registration — no resident accounts for MVP, pickups are public).
 
 type LoginResult =
   | { requiresOtp: true; channel: string }
@@ -24,7 +33,7 @@ const login = async (email: string, password: string): Promise<LoginResult> => {
 const verifyLoginOtp = (email: string, code: string): Promise<void> =>
   apiFetch('/auth/otp/verify/', {
     method: 'POST',
-    json: { email, code, purpose: 'login' },
+    json: { email, code, purpose: OTP_PURPOSE.LOGIN },
     skipAuth: true,
   });
 
@@ -33,7 +42,7 @@ const resendLoginOtp = (
 ): Promise<{ detail: string; channel: string }> =>
   apiFetch('/auth/otp/resend/', {
     method: 'POST',
-    json: { email, purpose: 'login' },
+    json: { email, purpose: OTP_PURPOSE.LOGIN },
     skipAuth: true,
   });
 
@@ -53,8 +62,8 @@ const forgotPassword = (email: string): Promise<{ detail: string }> =>
   });
 
 /** Same backend endpoint as `setPassword` — kept as two named exports so
- * call sites (reset-password.tsx vs set-password.tsx) read clearly, even
- * though the request shape is identical. */
+ * call sites (reset-password vs set-password) read clearly, even though
+ * the request shape is identical. */
 const resetPassword = (
   token: string,
   password: string,
@@ -70,7 +79,22 @@ const setPassword = (
   password: string,
 ): Promise<{ detail: string }> => resetPassword(token, password);
 
+/** POST /auth/password-change/ — IsAuthenticated on the backend (the
+ * account already has a password; this isn't the token-based reset flow
+ * above), so no skipAuth here, same as getCurrentUser. Not called from any
+ * screen yet — there's no "change password" UI built — kept ready for
+ * when one is. */
+const changePassword = (
+  oldPassword: string,
+  newPassword: string,
+): Promise<{ message: string }> =>
+  apiFetch('/auth/password-change/', {
+    method: 'POST',
+    json: { old_password: oldPassword, new_password: newPassword },
+  });
+
 export {
+  changePassword,
   forgotPassword,
   getCurrentUser,
   login,
@@ -80,3 +104,4 @@ export {
   setPassword,
   verifyLoginOtp,
 };
+export type { LoginResult };

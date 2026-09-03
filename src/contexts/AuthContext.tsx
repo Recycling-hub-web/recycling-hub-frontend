@@ -13,7 +13,7 @@ import {
   getCurrentUser,
   login as loginRequest,
   logout as logoutRequest,
-} from '../services/authService';
+} from '../components/features/auth/services/authService';
 import type { CurrentUser } from '../types/auth';
 
 type AuthContextValue = {

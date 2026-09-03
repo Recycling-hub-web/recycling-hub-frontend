@@ -1,15 +1,16 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import type { FormEvent } from 'react';
 import { useEffect, useState } from 'react';
-import { LuKeyRound, LuLogIn } from 'react-icons/lu';
+import { LuKeyRound } from 'react-icons/lu';
 
-import { AuthCard } from '../../../components/auth/AuthCard';
 import { InputField } from '../../../components/form/fields/InputField';
 import { PasswordField } from '../../../components/form/fields/PasswordField';
 import { AlertBanner } from '../../../components/ui/AlertBanner';
+import { ASSETS } from '../../../constants/content';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useAuthFlow } from '../../../contexts/AuthFlowContext';
 import { ApiError } from '../../../lib/api';
@@ -17,11 +18,13 @@ import type { Dictionary } from '../../../lib/dictionary';
 import { isSafeRedirectPath } from '../../../lib/redirect';
 import { ROLE_HOME } from '../../../types/auth';
 
-// Ported from src/pages/login.tsx — same logic, `next/router` swapped for
-// `next/navigation` (no `router.query`, so `next` comes from
-// useSearchParams; `router.asPath` has no equivalent, not needed here),
-// and `useDictionary()` swapped for a `t` prop supplied by the Server
-// Component page.tsx (always English for now — see src/app/layout.tsx).
+// Single-form redesign — login's own layout now, not the shared AuthCard
+// every other auth screen (verify-otp, forgot-password, …) still uses (a
+// split-screen version was tried first and dropped in favor of this).
+// Ported logic is unchanged from the original AuthCard version: same
+// next/navigation swap notes apply (no router.query — `next` comes from
+// useSearchParams; no router.asPath equivalent, not needed here), same
+// `t` prop supplied by the Server Component page.tsx.
 const LoginView = ({ t }: { t: Dictionary['auth']['login'] }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -81,52 +84,78 @@ const LoginView = ({ t }: { t: Dictionary['auth']['login'] }) => {
   };
 
   return (
-    <AuthCard
-      icon={<LuLogIn className="size-5" />}
-      title={t.title}
-      subtitle={t.subtitle}
-    >
-      <AlertBanner
-        message={error}
-        className="mb-0 mt-4 rounded-xl border px-4 py-3"
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-neutral-50 px-4 py-12">
+      {/* Faint radial brand tint behind the card — same treatment as
+       * ReusableHero's background, not a new pattern */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background: 'radial-gradient(ellipse, #d6ece0 0%, transparent 70%)',
+        }}
       />
 
-      <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
-        <InputField
-          label={t.emailLabel}
-          field="email"
-          type="email"
-          placeholder={t.emailPlaceholder}
-          formData={formData}
-          updateFormData={updateFormData}
-        />
-        <PasswordField
-          label={t.passwordLabel}
-          field="password"
-          placeholder={t.passwordPlaceholder}
-          formData={formData}
-          updateFormData={updateFormData}
-        />
+      <div className="relative w-full max-w-md rounded-2xl border border-slate-200 bg-white p-10 shadow-sm">
+        <Link href="/" className="flex justify-center">
+          <Image
+            src={ASSETS.logo.combinedColor}
+            alt="Recycling Hub"
+            width={3100}
+            height={700}
+            className="h-8 w-auto object-contain"
+            priority
+          />
+        </Link>
 
-        <div className="flex justify-end">
-          <Link
-            href="/forgot-password"
-            className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-brand-600"
-          >
-            <LuKeyRound className="size-3.5" />
-            {t.forgotPassword}
-          </Link>
+        <div className="mt-8 text-center">
+          <h1 className="font-montserrat text-2xl font-bold text-neutral-950">
+            {t.title}
+          </h1>
+          <p className="mt-1 text-sm text-slate-500">{t.subtitle}</p>
         </div>
 
-        <button
-          type="submit"
-          disabled={submitting}
-          className="w-full rounded-full bg-brand-600 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          {submitting ? t.submitting : t.submit}
-        </button>
-      </form>
-    </AuthCard>
+        <AlertBanner
+          message={error}
+          className="mb-0 mt-6 rounded-xl border px-4 py-3"
+        />
+
+        <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
+          <InputField
+            label={t.emailLabel}
+            field="email"
+            type="email"
+            placeholder={t.emailPlaceholder}
+            formData={formData}
+            updateFormData={updateFormData}
+          />
+          <PasswordField
+            label={t.passwordLabel}
+            field="password"
+            placeholder={t.passwordPlaceholder}
+            formData={formData}
+            updateFormData={updateFormData}
+          />
+
+          <div className="flex justify-end">
+            <Link
+              href="/forgot-password"
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-brand-600"
+            >
+              <LuKeyRound className="size-3.5" />
+              {t.forgotPassword}
+            </Link>
+          </div>
+
+          <button
+            type="submit"
+            disabled={submitting}
+            className="w-full rounded-full bg-brand-600 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {submitting ? t.submitting : t.submit}
+          </button>
+        </form>
+      </div>
+    </div>
   );
 };
 

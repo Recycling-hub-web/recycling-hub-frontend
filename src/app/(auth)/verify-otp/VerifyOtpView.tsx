@@ -6,6 +6,10 @@ import { useEffect, useState } from 'react';
 import { LuShieldCheck } from 'react-icons/lu';
 
 import { AuthCard } from '../../../components/auth/AuthCard';
+import {
+  useResendOtp,
+  useVerifyOtp,
+} from '../../../components/features/auth/hooks';
 import { OtpInputField } from '../../../components/form/fields/OtpInputField';
 import { AlertBanner } from '../../../components/ui/AlertBanner';
 import { useAuth } from '../../../contexts/AuthContext';
@@ -13,7 +17,6 @@ import { useAuthFlow } from '../../../contexts/AuthFlowContext';
 import { ApiError } from '../../../lib/api';
 import type { Dictionary } from '../../../lib/dictionary';
 import { isSafeRedirectPath } from '../../../lib/redirect';
-import { resendLoginOtp, verifyLoginOtp } from '../../../services/authService';
 import { ROLE_HOME } from '../../../types/auth';
 
 const VerifyOtpView = ({ t }: { t: Dictionary['auth']['verifyOtp'] }) => {
@@ -21,11 +24,11 @@ const VerifyOtpView = ({ t }: { t: Dictionary['auth']['verifyOtp'] }) => {
   const searchParams = useSearchParams();
   const { user, refreshUser } = useAuth();
   const { pendingOtp, setPendingOtp } = useAuthFlow();
+  const { execute: verifyOtp, loading: submitting } = useVerifyOtp();
+  const { execute: resendOtp, loading: resending } = useResendOtp();
 
   const [formData, setFormData] = useState({ code: '' });
   const [error, setError] = useState('');
-  const [submitting, setSubmitting] = useState(false);
-  const [resending, setResending] = useState(false);
   const [resent, setResent] = useState(false);
 
   const updateFormData = (field: string, value: string) =>
@@ -62,29 +65,23 @@ const VerifyOtpView = ({ t }: { t: Dictionary['auth']['verifyOtp'] }) => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError('');
-    setSubmitting(true);
     try {
-      await verifyLoginOtp(pendingOtp.email, formData.code);
+      await verifyOtp(pendingOtp.email, formData.code);
       await goToDestination();
     } catch (err) {
       setError(err instanceof ApiError ? err.message : t.genericError);
-    } finally {
-      setSubmitting(false);
     }
   };
 
   const handleResend = async () => {
     setError('');
     setResent(false);
-    setResending(true);
     try {
-      const result = await resendLoginOtp(pendingOtp.email);
+      const result = await resendOtp(pendingOtp.email);
       setPendingOtp({ email: pendingOtp.email, channel: result.channel });
       setResent(true);
     } catch (err) {
       setError(err instanceof ApiError ? err.message : t.genericError);
-    } finally {
-      setResending(false);
     }
   };
 

@@ -3,8 +3,8 @@
 import { LuLockKeyhole } from 'react-icons/lu';
 
 import { PasswordSetupForm } from '../../../components/auth/PasswordSetupForm';
+import { useSetPassword } from '../../../components/features/auth/hooks';
 import type { Dictionary } from '../../../lib/dictionary';
-import { setPassword } from '../../../services/authService';
 
 const SetPasswordView = ({
   t,
@@ -12,13 +12,17 @@ const SetPasswordView = ({
 }: {
   t: Dictionary['auth']['setPassword'];
   token: string;
-}) => (
-  <PasswordSetupForm
-    icon={<LuLockKeyhole className="size-5" />}
-    token={token}
-    copy={t}
-    onSubmit={setPassword}
-  />
-);
+}) => {
+  const { execute: setPassword } = useSetPassword();
+
+  return (
+    <PasswordSetupForm
+      icon={<LuLockKeyhole className="size-5" />}
+      token={token}
+      copy={t}
+      onSubmit={setPassword}
+    />
+  );
+};
 
 export { SetPasswordView };
