@@ -1,18 +1,19 @@
 'use client';
 
-import { LuLayoutDashboard, LuMail, LuUsers } from 'react-icons/lu';
+import { LuLayoutDashboard, LuMail, LuTruck, LuUsers } from 'react-icons/lu';
 
 import type { NavItem } from './Sidebar';
 import { Sidebar } from './Sidebar';
 
 // Lives in components/layout/, not inside any one feature folder — it
-// assembles nav items across features (Users, Contact, …), it isn't
-// itself part of any single feature's domain. Used to sit in
+// assembles nav items across features (Users, Contact, Pickups, …), it
+// isn't itself part of any single feature's domain. Used to sit in
 // features/users/components/ back when Users was Admin's only real
 // feature; Contact made that no longer true.
 const ADMIN_NAV_ITEMS: NavItem[] = [
   { href: '/admin', label: 'Overview', icon: LuLayoutDashboard },
   { href: '/admin/users', label: 'Users', icon: LuUsers },
+  { href: '/admin/pickups', label: 'Pickup Requests', icon: LuTruck },
   { href: '/admin/contact', label: 'Contact', icon: LuMail },
 ];
 
