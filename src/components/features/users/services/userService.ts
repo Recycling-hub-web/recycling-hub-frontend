@@ -40,10 +40,25 @@ type CreateUserPayload = {
 const createUser = (payload: CreateUserPayload): Promise<UserDetail> =>
   apiFetch('/accounts/users/', { method: 'POST', json: payload });
 
+const getUser = (id: string): Promise<UserDetail> =>
+  apiFetch(`/accounts/users/${id}/`);
+
+// `email` and `role` are deliberately not editable here even though
+// UserDetailSerializer accepts both on PATCH: role has no backend service
+// migrating the role-specific profile model (StaffProfile/DriverProfile/…)
+// when it changes — unlike creation, which goes through
+// User.objects.create_staff/create_driver/etc. — so a PATCH-ed role change
+// would leave a stale or missing profile row. Email is the login
+// credential; changing it here would take effect with no re-verification
+// step. Both need real backend work first, not a UI field that can quietly
+// corrupt data in the meantime.
 const updateUser = (
   id: string,
   payload: Partial<
-    Pick<UserDetail, 'full_name' | 'phone_number' | 'is_active'>
+    Pick<
+      UserDetail,
+      'full_name' | 'phone_number' | 'is_active' | 'is_2fa_enabled'
+    >
   >,
 ): Promise<UserDetail> =>
   apiFetch(`/accounts/users/${id}/`, { method: 'PATCH', json: payload });
@@ -51,5 +66,5 @@ const updateUser = (
 const deleteUser = (id: string): Promise<void> =>
   apiFetch(`/accounts/users/${id}/`, { method: 'DELETE' });
 
-export { createUser, deleteUser, listUsers, updateUser };
+export { createUser, deleteUser, getUser, listUsers, updateUser };
 export type { CreateUserPayload, ListUsersParams, Paginated };

@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { LuTrash2 } from 'react-icons/lu';
 
 import {
@@ -70,7 +71,12 @@ const UserTable = ({
     return users.map((u) => (
       <tr key={u.id}>
         <td className="px-6 py-3.5 font-medium text-slate-900">
-          {u.full_name}
+          <Link
+            href={`/admin/users/${u.id}`}
+            className="hover:text-brand-600 hover:underline"
+          >
+            {u.full_name}
+          </Link>
         </td>
         <td className="px-6 py-3.5 text-slate-500">{u.email}</td>
         <td className="px-6 py-3.5">

@@ -9,7 +9,10 @@ const useUpdateUser = () => {
   const execute = async (
     id: string,
     payload: Partial<
-      Pick<UserDetail, 'full_name' | 'phone_number' | 'is_active'>
+      Pick<
+        UserDetail,
+        'full_name' | 'phone_number' | 'is_active' | 'is_2fa_enabled'
+      >
     >,
   ) => {
     setLoading(true);
