@@ -244,60 +244,66 @@ const ContactFormSection = () => {
               </form>
             </div>
 
-            {/* Right — how to reach us, brand-green panel */}
-            <div className="flex flex-col justify-between p-6 ">
-              <div className="flex size-full flex-col gap-6 rounded-2xl bg-brand-700 text-white md:p-8">
-                <h3 className="text-lg font-bold">
-                  {content.sidePanel.heading}
-                </h3>
+            {/* Right — how to reach us, brand-green panel. Outer div is
+             * the actual grid item (md:col-span-2) and just supplies the
+             * gutter; the green box is the inner div so it reads as an
+             * inset card, not a fill flush against the outer card's
+             * edge. */}
+            <div className="p-4 md:col-span-2 md:p-6">
+              <div className="flex h-full flex-col justify-between gap-6 rounded-2xl bg-brand-700 p-6 text-white md:p-8">
+                <div>
+                  <h3 className="text-lg font-bold">
+                    {content.sidePanel.heading}
+                  </h3>
 
-                <div className="mt-6 flex flex-col gap-3">
-                  {CONTACT_CARDS.map((card) => (
-                    <a
-                      key={card.label}
-                      href={card.href}
-                      target={
-                        card.href.startsWith('http') ? '_blank' : undefined
-                      }
-                      rel={
-                        card.href.startsWith('http')
-                          ? 'noopener noreferrer'
-                          : undefined
-                      }
-                      className="flex items-center gap-3 rounded-2xl bg-white/10 px-4 py-3"
-                    >
-                      <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white/10">
-                        {card.icon}
-                      </span>
-                      <span className="min-w-0">
-                        <span className="block text-xs font-semibold text-white/70">
-                          {card.label}
+                  <div className="mt-6 flex flex-col gap-3">
+                    {CONTACT_CARDS.map((card) => (
+                      <a
+                        key={card.label}
+                        href={card.href}
+                        target={
+                          card.href.startsWith('http') ? '_blank' : undefined
+                        }
+                        rel={
+                          card.href.startsWith('http')
+                            ? 'noopener noreferrer'
+                            : undefined
+                        }
+                        className="flex items-center gap-3 rounded-2xl bg-white/10 px-4 py-3 transition hover:bg-white/15"
+                      >
+                        <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white/10">
+                          {card.icon}
                         </span>
-                        <span className="block truncate text-sm font-medium">
-                          {card.value}
+                        <span className="min-w-0">
+                          <span className="block text-xs font-semibold text-white/70">
+                            {card.label}
+                          </span>
+                          <span className="block truncate text-sm font-medium">
+                            {card.value}
+                          </span>
                         </span>
-                      </span>
-                    </a>
-                  ))}
+                      </a>
+                    ))}
+                  </div>
                 </div>
-              </div>
 
-              <div className="mt-8 border-t border-white/10 pt-6">
-                <p className="text-xs font-semibold uppercase tracking-widest text-white/50">
-                  {content.sidePanel.connectHeading}
-                </p>
-                <div className="mt-3 flex gap-2.5">
-                  {SOCIALS.map((s) => (
-                    <a
-                      key={s.href}
-                      href={s.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex size-9 items-center justify-center rounded-full bg-white/10 transition hover:bg-white/20"
-                    >
-                      {s.icon}
-                    </a>
-                  ))}
+                <div className="border-t border-white/10 pt-6">
+                  <p className="text-xs font-semibold uppercase tracking-widest text-white/50">
+                    {content.sidePanel.connectHeading}
+                  </p>
+                  <div className="mt-3 flex gap-2.5">
+                    {SOCIALS.map((s) => (
+                      <a
+                        key={s.href}
+                        href={s.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex size-9 items-center justify-center rounded-full bg-white/10 transition hover:bg-white/20"
+                      >
+                        {s.icon}
+                      </a>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
