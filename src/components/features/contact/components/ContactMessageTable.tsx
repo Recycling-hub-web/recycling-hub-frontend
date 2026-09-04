@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { LuEye, LuTrash2 } from 'react-icons/lu';
+import { LuEye, LuPencil, LuTrash2 } from 'react-icons/lu';
 
 import { StatusBadge } from '../../../ui/badges/StatusBadge';
 import { AppDate } from '../../../ui/date/AppDate';
@@ -120,6 +120,16 @@ const ContactMessageTable = ({
             >
               <LuEye className="size-4" />
             </Link>
+            {canDelete && (
+              <Link
+                href={`${basePath}/${m.id}/edit`}
+                onClick={(e) => e.stopPropagation()}
+                aria-label={`Edit message from ${m.full_name}`}
+                className="inline-flex size-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+              >
+                <LuPencil className="size-4" />
+              </Link>
+            )}
             {canDelete && (
               <button
                 type="button"

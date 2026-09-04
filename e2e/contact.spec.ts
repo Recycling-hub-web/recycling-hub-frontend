@@ -104,6 +104,12 @@ test.describe('Admin contact inbox', () => {
     const row = page.getByRole('row', { name: new RegExp(subject) });
     await expect(row).toBeVisible();
 
+    // The list row itself has an Edit icon too, not just the details
+    // page's Actions dropdown — admin only, same gate as Delete.
+    await expect(
+      row.getByRole('link', { name: /edit message from/i }),
+    ).toBeVisible();
+
     // Deleted from the list row's own delete action — unrelated to the
     // details page's Actions dropdown (see the edit test below for that).
     await row.getByRole('button', { name: /delete message from/i }).click();
@@ -191,6 +197,9 @@ test.describe('Staff contact inbox', () => {
     await expect(row).toBeVisible();
     await expect(
       row.getByRole('button', { name: /delete message from/i }),
+    ).toHaveCount(0);
+    await expect(
+      row.getByRole('link', { name: /edit message from/i }),
     ).toHaveCount(0);
 
     await row.getByRole('link', { name: /view message from/i }).click();
