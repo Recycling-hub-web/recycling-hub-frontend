@@ -53,8 +53,9 @@ const ScheduleModal = ({
     [collectors],
   );
 
-  const isValid = Boolean(formData.collector) && Boolean(formData.scheduled_at);
-
+  // Validated on submit, not proactively — the submit button only
+  // disables while the request is actually in flight; missing/invalid
+  // fields surface as inline errors once someone tries to submit.
   const validate = (): boolean => {
     const nextErrors: Record<string, string> = {};
     if (!formData.collector) nextErrors.collector = 'Choose a collector.';
@@ -110,7 +111,7 @@ const ScheduleModal = ({
           <button
             type="submit"
             form="schedule-pickup-form"
-            disabled={submitting || !isValid}
+            disabled={submitting}
             className="flex-1 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {submitting ? 'Scheduling…' : 'Schedule'}

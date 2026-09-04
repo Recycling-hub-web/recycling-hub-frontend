@@ -51,29 +51,32 @@ test.describe('Admin pickup requests', () => {
     await expect(page.getByText('Pending', { exact: true })).toBeVisible();
     await page.getByRole('button', { name: 'Schedule pickup' }).click();
 
-    // Schedule modal: submit is disabled until collector + datetime set.
+    // Schedule modal: submit is only ever disabled while in flight, not
+    // pre-emptively on validity — clicking with nothing filled in stays
+    // on the modal and shows inline errors instead.
     const scheduleSubmit = page.getByRole('button', {
       name: 'Schedule',
       exact: true,
     });
-    await expect(scheduleSubmit).toBeDisabled();
+    await expect(scheduleSubmit).toBeEnabled();
+    await scheduleSubmit.click();
+    await expect(page.getByText(/choose a collector/i)).toBeVisible();
 
     await page.locator('select').selectOption({ index: 1 });
-    await expect(scheduleSubmit).toBeDisabled();
-
     const future = new Date(Date.now() + 24 * 60 * 60 * 1000);
     const localValue = future.toISOString().slice(0, 16);
     await page.locator('input[type="datetime-local"]').fill(localValue);
-    await expect(scheduleSubmit).toBeEnabled();
 
     await scheduleSubmit.click();
     await expect(page.getByText('Scheduled', { exact: true })).toBeVisible();
+    await expect(page.getByText(/pickup scheduled/i)).toBeVisible();
 
     await page.getByRole('button', { name: 'Mark as collected' }).click();
     await page
       .getByRole('button', { name: 'Mark collected', exact: true })
       .click();
     await expect(page.getByText('Collected', { exact: true })).toBeVisible();
+    await expect(page.getByText(/marked as collected/i)).toBeVisible();
 
     // Terminal state — no more action buttons.
     await expect(
@@ -99,15 +102,22 @@ test.describe('Admin pickup requests', () => {
       name: 'Cancel pickup',
       exact: true,
     });
-    await expect(confirmCancel).toBeDisabled();
+    // Only ever disabled while in flight — clicking with an empty
+    // reason stays on the modal and shows an inline error instead of
+    // being blocked pre-emptively.
+    await expect(confirmCancel).toBeEnabled();
+    await confirmCancel.click();
+    await expect(
+      page.getByText(/cancellation reason is required/i),
+    ).toBeVisible();
 
     await page
       .getByPlaceholder(/why is this pickup being cancelled/i)
       .fill('No longer needed.');
-    await expect(confirmCancel).toBeEnabled();
     await confirmCancel.click();
 
     await expect(page.getByText('Cancelled', { exact: true })).toBeVisible();
+    await expect(page.getByText(/pickup cancelled/i)).toBeVisible();
     await expect(
       page.getByRole('button', { name: 'Schedule pickup' }),
     ).toHaveCount(0);

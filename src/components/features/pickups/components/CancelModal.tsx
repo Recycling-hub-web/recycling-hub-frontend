@@ -39,10 +39,10 @@ const CancelModal = ({
     setErrors((prev) => ({ ...prev, [field]: '' }));
   };
 
-  const isValid = formData.note.trim().length > 0;
-
+  // Validated on submit, not proactively — the submit button only
+  // disables while the request is actually in flight.
   const validate = (): boolean => {
-    if (!isValid) {
+    if (!formData.note.trim()) {
       setErrors({ note: 'A cancellation reason is required.' });
       return false;
     }
@@ -89,7 +89,7 @@ const CancelModal = ({
           <button
             type="submit"
             form="cancel-pickup-form"
-            disabled={submitting || !isValid}
+            disabled={submitting}
             className="flex-1 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {submitting ? 'Cancelling…' : 'Cancel pickup'}

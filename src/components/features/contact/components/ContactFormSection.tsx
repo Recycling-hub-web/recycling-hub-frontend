@@ -1,6 +1,6 @@
 'use client';
 
-import { type FormEvent, useMemo, useState } from 'react';
+import { type FormEvent, useState } from 'react';
 import {
   LuFacebook,
   LuHeadset,
@@ -16,6 +16,7 @@ import { ApiError } from '../../../../lib/api';
 import { InputField } from '../../../form/fields/InputField';
 import { TextareaField } from '../../../form/fields/TextareaField';
 import { FadeIn } from '../../../ui/FadeIn';
+import { useToast } from '../../../ui/toast/ToastContext';
 import { submitContactMessage } from '../services/contactService';
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -48,12 +49,12 @@ const ContactFormSection = () => {
   const {
     contact: { form: content },
   } = useDictionary();
+  const toast = useToast();
 
   const [formData, setFormData] = useState<FormState>(INITIAL_STATE);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [apiError, setApiError] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
 
   // Untyped `string` field, not `keyof FormState` — InputField/
   // TextareaField's updateFormData contract is generic across every
@@ -63,21 +64,11 @@ const ContactFormSection = () => {
     setErrors((prev) => ({ ...prev, [field]: '' }));
   };
 
-  // Every field is required — drives both the inline error messages on
-  // submit and the submit button's disabled state (recomputed on every
-  // keystroke so the button flips the instant the form becomes valid,
-  // not just after a failed submit attempt).
-  const isValid = useMemo(
-    () =>
-      Boolean(formData.firstName.trim()) &&
-      Boolean(formData.lastName.trim()) &&
-      EMAIL_PATTERN.test(formData.email) &&
-      Boolean(formData.phone.trim()) &&
-      Boolean(formData.subject.trim()) &&
-      Boolean(formData.message.trim()),
-    [formData],
-  );
-
+  // Validated on submit, not proactively on every keystroke — the submit
+  // button stays enabled the whole time (only disabled while the request
+  // is actually in flight) and errors surface inline once someone tries
+  // to send. See the post-submit navigation rule: create actions never
+  // pre-emptively disable on validity.
   const validate = (): boolean => {
     const nextErrors: Record<string, string> = {};
     if (!formData.firstName.trim())
@@ -98,6 +89,8 @@ const ContactFormSection = () => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setApiError('');
+    // On validation error: never navigate away, keep the entered values,
+    // show inline field errors — exactly what returning early here does.
     if (!validate()) return;
 
     setSubmitting(true);
@@ -109,7 +102,14 @@ const ContactFormSection = () => {
         subject: formData.subject.trim(),
         message: formData.message.trim(),
       });
-      setSubmitted(true);
+      // Create action, likely to be submitted more than once in a row
+      // (a visitor sending a second, unrelated question) — stay on the
+      // page and reset the form in place rather than navigating or
+      // freezing it in a "sent" state. The toast is the confirmation;
+      // nothing about staying put implies success on its own.
+      setFormData(INITIAL_STATE);
+      setErrors({});
+      toast.success(content.successMessage);
     } catch (err) {
       setApiError(err instanceof ApiError ? err.message : content.errorMessage);
     } finally {
@@ -167,7 +167,7 @@ const ContactFormSection = () => {
                     formData={formData}
                     errors={errors}
                     updateFormData={updateField}
-                    disabled={submitted}
+                    disabled={submitting}
                   />
                   <InputField
                     label={content.lastName}
@@ -176,7 +176,7 @@ const ContactFormSection = () => {
                     formData={formData}
                     errors={errors}
                     updateFormData={updateField}
-                    disabled={submitted}
+                    disabled={submitting}
                   />
                   <InputField
                     label={content.email}
@@ -186,7 +186,7 @@ const ContactFormSection = () => {
                     formData={formData}
                     errors={errors}
                     updateFormData={updateField}
-                    disabled={submitted}
+                    disabled={submitting}
                   />
                   <InputField
                     label={content.phone}
@@ -196,7 +196,7 @@ const ContactFormSection = () => {
                     formData={formData}
                     errors={errors}
                     updateFormData={updateField}
-                    disabled={submitted}
+                    disabled={submitting}
                   />
                   <div className="sm:col-span-2">
                     <InputField
@@ -206,7 +206,7 @@ const ContactFormSection = () => {
                       formData={formData}
                       errors={errors}
                       updateFormData={updateField}
-                      disabled={submitted}
+                      disabled={submitting}
                     />
                   </div>
                   <div className="sm:col-span-2">
@@ -224,21 +224,16 @@ const ContactFormSection = () => {
                 {apiError && (
                   <p className="mt-4 text-sm text-red-500">{apiError}</p>
                 )}
-                {submitted && (
-                  <p className="mt-4 text-sm font-medium text-brand-600">
-                    {content.successMessage}
-                  </p>
-                )}
 
                 <div className="mt-6 flex justify-end">
                   <button
                     type="submit"
-                    disabled={submitting || submitted || !isValid}
+                    disabled={submitting}
                     className="inline-flex w-full items-center justify-center rounded-full bg-brand-600 px-6 py-3 text-sm font-semibold text-white ring-2 ring-brand-600 ring-offset-2 transition-all duration-300 ease-out hover:bg-brand-700 hover:ring-brand-700 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
                   >
-                    {submitted && content.submittedButton}
-                    {!submitted && submitting && content.submittingButton}
-                    {!submitted && !submitting && content.submitButton}
+                    {submitting
+                      ? content.submittingButton
+                      : content.submitButton}
                   </button>
                 </div>
               </form>

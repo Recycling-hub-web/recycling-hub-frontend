@@ -21,6 +21,7 @@ import { AppDate } from '../../../ui/date/AppDate';
 import { InfoRow } from '../../../ui/InfoRow';
 import { Loading } from '../../../ui/loading/Loading';
 import { PageHeader } from '../../../ui/PageHeader';
+import { useToast } from '../../../ui/toast/ToastContext';
 import { STATUS_BADGE_VARIANT } from '../constants';
 import { usePickupRequest } from '../hooks';
 import { PICKUP_STATUS_LABELS } from '../types';
@@ -44,9 +45,27 @@ const PickupRequestDetailsView = ({
   basePath,
 }: PickupRequestDetailsViewProps) => {
   const { request, loading, error, refetch } = usePickupRequest(requestId);
+  const toast = useToast();
   const [scheduleOpen, setScheduleOpen] = useState(false);
   const [collectOpen, setCollectOpen] = useState(false);
   const [cancelOpen, setCancelOpen] = useState(false);
+
+  // Secondary/internal actions on a record — stay on this page (no
+  // navigation) and refresh it, but always pair that with an explicit
+  // toast: landing back on the same page a modal action was triggered
+  // from can't otherwise be distinguished from nothing having happened.
+  const handleScheduled = () => {
+    refetch();
+    toast.success('Pickup scheduled');
+  };
+  const handleCollected = () => {
+    refetch();
+    toast.success('Marked as collected');
+  };
+  const handleCancelled = () => {
+    refetch();
+    toast.success('Pickup cancelled');
+  };
 
   if (loading) return <Loading text="Loading pickup request…" />;
 
@@ -249,20 +268,20 @@ const PickupRequestDetailsView = ({
         requestId={request.id}
         open={scheduleOpen}
         onClose={() => setScheduleOpen(false)}
-        onScheduled={refetch}
+        onScheduled={handleScheduled}
       />
       <CollectModal
         requestId={request.id}
         quantityUnit={request.quantity_unit}
         open={collectOpen}
         onClose={() => setCollectOpen(false)}
-        onCollected={refetch}
+        onCollected={handleCollected}
       />
       <CancelModal
         requestId={request.id}
         open={cancelOpen}
         onClose={() => setCancelOpen(false)}
-        onCancelled={refetch}
+        onCancelled={handleCancelled}
       />
     </PageContainer>
   );

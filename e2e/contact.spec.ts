@@ -12,41 +12,35 @@ import { apiLoginAs, loginAs } from './helpers/auth';
 const uniqueSubject = () => `E2E Contact Test ${Date.now()}`;
 
 test.describe('Public contact form', () => {
-  test('submit button is disabled until every required field is valid', async ({
+  test('submit is only disabled while in flight, not pre-emptively on validity', async ({
     page,
   }) => {
     await page.goto('/contact');
     const submit = page.getByRole('button', { name: 'Send a Message' });
 
-    await expect(submit).toBeDisabled();
+    // Per the post-submit navigation rule: never disable pre-emptively
+    // based on form validity — an entirely empty form still gets a
+    // clickable submit button.
+    await expect(submit).toBeEnabled();
 
-    // InputField/TextareaField (the reusable form components this form
-    // now uses) set `data-field` on their wrapper div, not an `id` on
-    // the input itself — so field access goes through that, not `#id`.
-    await page.locator('[data-field="firstName"] input').fill('Playwright');
-    await expect(submit).toBeDisabled();
-    await page.locator('[data-field="lastName"] input').fill('E2E');
-    await expect(submit).toBeDisabled();
-    await page.locator('[data-field="email"] input').fill('not-an-email');
-    await expect(submit).toBeDisabled();
-    await page.locator('[data-field="phone"] input').fill('+60123456789');
-    await expect(submit).toBeDisabled();
-    await page.locator('[data-field="subject"] input').fill(uniqueSubject());
-    await expect(submit).toBeDisabled();
-    await page
-      .locator('[data-field="message"] textarea')
-      .fill('Should not submit yet.');
-    // Email is still invalid — every other field is filled.
-    await expect(submit).toBeDisabled();
+    await submit.click();
 
-    await page.locator('[data-field="email"] input').fill('e2e@example.com');
+    // Validation error: stay on the page, keep entered values (there
+    // are none yet), show inline field errors — never navigate away.
+    await expect(page.getByText(/please enter your first name/i)).toBeVisible();
+    await expect(page).toHaveURL(/\/contact$/);
     await expect(submit).toBeEnabled();
   });
 
-  test('submits and shows a success message', async ({ page }) => {
+  test('submits, resets the form in place, and shows a confirmation toast', async ({
+    page,
+  }) => {
     const subject = uniqueSubject();
     await page.goto('/contact');
 
+    // InputField/TextareaField (the reusable form components this form
+    // uses) set `data-field` on their wrapper div, not an `id` on the
+    // input itself — so field access goes through that, not `#id`.
     await page.locator('[data-field="firstName"] input').fill('Playwright');
     await page.locator('[data-field="lastName"] input').fill('E2E');
     await page.locator('[data-field="email"] input').fill('e2e@example.com');
@@ -65,10 +59,18 @@ test.describe('Public contact form', () => {
       page.getByRole('button', { name: 'Send a Message' }).click(),
     ]);
 
+    // Create action, likely submitted more than once in a row — stays
+    // on the same page (no navigation) and the form resets in place,
+    // paired with an explicit toast as the actual confirmation.
+    await expect(page).toHaveURL(/\/contact$/);
     await expect(page.getByText(/received/i)).toBeVisible();
+    await expect(page.locator('[data-field="firstName"] input')).toHaveValue(
+      '',
+    );
+    await expect(page.locator('[data-field="subject"] input')).toHaveValue('');
     await expect(
-      page.getByRole('button', { name: 'Message Sent' }),
-    ).toBeVisible();
+      page.getByRole('button', { name: 'Send a Message' }),
+    ).toBeEnabled();
 
     // Keep the dev DB tidy across repeated runs.
     const { id } = await response.json();
