@@ -36,6 +36,26 @@ const updateContactMessageStatus = (
 ): Promise<ContactMessage> =>
   apiFetch(`/contact/${id}/`, { method: 'PATCH', json: { status } });
 
+type UpdateContactMessagePayload = Partial<{
+  full_name: string;
+  email: string;
+  phone_number: string;
+  subject: string;
+  message: string;
+}>;
+
+// Admin only on the backend (ContactMessageViewSet.get_serializer_class
+// returns ContactMessageAdminUpdateSerializer only for an admin
+// requester on partial_update) — a staff-role token gets a 200 back but
+// these fields are silently dropped, not applied. Same endpoint as
+// updateContactMessageStatus (PATCH /contact/<id>/), just a different
+// field set.
+const updateContactMessage = (
+  id: string,
+  payload: UpdateContactMessagePayload,
+): Promise<ContactMessage> =>
+  apiFetch(`/contact/${id}/`, { method: 'PATCH', json: payload });
+
 // Admin only on the backend (ContactMessageViewSet.get_permissions) — a
 // staff-role token gets a real 403 here, not just a hidden button.
 const deleteContactMessage = (id: string): Promise<void> =>
@@ -62,10 +82,12 @@ export {
   getContactMessage,
   listContactMessages,
   submitContactMessage,
+  updateContactMessage,
   updateContactMessageStatus,
 };
 export type {
   ListContactMessagesParams,
   Paginated,
   SubmitContactMessagePayload,
+  UpdateContactMessagePayload,
 };

@@ -1,0 +1,193 @@
+'use client';
+
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import type { FormEvent } from 'react';
+import { useEffect, useState } from 'react';
+import { LuArrowLeft } from 'react-icons/lu';
+
+import { ApiError } from '../../../../lib/api';
+import { InputField } from '../../../form/fields/InputField';
+import { TextareaField } from '../../../form/fields/TextareaField';
+import { PageContainer } from '../../../layout/PageContainer';
+import { AlertBanner } from '../../../ui/AlertBanner';
+import { Card } from '../../../ui/card/Card';
+import { Loading } from '../../../ui/loading/Loading';
+import { PageHeader } from '../../../ui/PageHeader';
+import { useToast } from '../../../ui/toast/ToastContext';
+import { useContactMessage, useUpdateContactMessage } from '../hooks';
+
+type FormState = {
+  full_name: string;
+  email: string;
+  phone_number: string;
+  subject: string;
+  message: string;
+};
+
+type EditContactMessageViewProps = {
+  messageId: string;
+  basePath: '/admin/contact';
+};
+
+// Admin only — see ContactMessageViewSet.get_serializer_class, which
+// only lets an admin requester write these fields on partial_update; a
+// staff token would get them silently dropped. The route this renders
+// under is only linked from the details page's admin-only Edit button,
+// but the real gate is the backend, same principle as contact delete.
+const EditContactMessageView = ({
+  messageId,
+  basePath,
+}: EditContactMessageViewProps) => {
+  const router = useRouter();
+  const toast = useToast();
+  const {
+    message,
+    loading: loadingMessage,
+    error: loadError,
+  } = useContactMessage(messageId);
+  const { execute: updateMessage, loading: submitting } =
+    useUpdateContactMessage();
+  const [formData, setFormData] = useState<FormState | null>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [apiError, setApiError] = useState('');
+
+  useEffect(() => {
+    if (!message) return;
+    setFormData({
+      full_name: message.full_name,
+      email: message.email,
+      phone_number: message.phone_number,
+      subject: message.subject,
+      message: message.message,
+    });
+  }, [message]);
+
+  const updateFormData = (field: string, value: string) => {
+    setFormData((prev) => (prev ? { ...prev, [field]: value } : prev));
+    setErrors((prev) => ({ ...prev, [field]: '' }));
+  };
+
+  const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  const validate = (data: FormState): boolean => {
+    const nextErrors: Record<string, string> = {};
+    if (!data.full_name.trim()) nextErrors.full_name = 'Full name is required.';
+    if (!EMAIL_PATTERN.test(data.email))
+      nextErrors.email = 'Enter a valid email address.';
+    if (!data.phone_number.trim())
+      nextErrors.phone_number = 'Phone number is required.';
+    if (!data.subject.trim()) nextErrors.subject = 'Subject is required.';
+    if (!data.message.trim()) nextErrors.message = 'Message is required.';
+    setErrors(nextErrors);
+    return Object.keys(nextErrors).length === 0;
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!formData || !message) return;
+    setApiError('');
+    // Validation error: stay on this page, keep entered values, show
+    // inline errors — never navigate away.
+    if (!validate(formData)) return;
+
+    try {
+      await updateMessage(message.id, formData);
+      toast.success('Message updated');
+      router.push(`${basePath}/${message.id}`);
+    } catch (err) {
+      setApiError(
+        err instanceof ApiError ? err.message : 'Could not save this message.',
+      );
+    }
+  };
+
+  if (loadingMessage) return <Loading text="Loading message…" />;
+
+  if (loadError || !message || !formData) {
+    return (
+      <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+        {loadError || 'Message not found.'}
+      </div>
+    );
+  }
+
+  return (
+    <PageContainer variant="form">
+      <Link
+        href={`${basePath}/${message.id}`}
+        className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600"
+      >
+        <LuArrowLeft className="size-4" />
+        Back to message
+      </Link>
+
+      <PageHeader title="Edit message" subtitle={message.subject} />
+
+      <Card className="p-5">
+        <form className="space-y-4" onSubmit={handleSubmit}>
+          <AlertBanner message={apiError} />
+
+          <InputField
+            label="Full name"
+            field="full_name"
+            formData={formData}
+            errors={errors}
+            updateFormData={updateFormData}
+            disabled={submitting}
+          />
+          <InputField
+            label="Email"
+            field="email"
+            type="email"
+            formData={formData}
+            errors={errors}
+            updateFormData={updateFormData}
+            disabled={submitting}
+          />
+          <InputField
+            label="Phone number"
+            field="phone_number"
+            formData={formData}
+            errors={errors}
+            updateFormData={updateFormData}
+            disabled={submitting}
+          />
+          <InputField
+            label="Subject"
+            field="subject"
+            formData={formData}
+            errors={errors}
+            updateFormData={updateFormData}
+            disabled={submitting}
+          />
+          <TextareaField
+            label="Message"
+            field="message"
+            formData={formData}
+            errors={errors}
+            updateFormData={updateFormData}
+          />
+
+          <div className="flex gap-2 pt-2">
+            <Link
+              href={`${basePath}/${message.id}`}
+              className="flex-1 rounded-lg border border-slate-200 px-4 py-2 text-center text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+            >
+              Cancel
+            </Link>
+            <button
+              type="submit"
+              disabled={submitting}
+              className="flex-1 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {submitting ? 'Saving…' : 'Save changes'}
+            </button>
+          </div>
+        </form>
+      </Card>
+    </PageContainer>
+  );
+};
+
+export { EditContactMessageView };

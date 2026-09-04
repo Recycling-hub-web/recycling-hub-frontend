@@ -115,6 +115,41 @@ test.describe('Admin contact inbox', () => {
     // actually specific to "the row still exists".
     await expect(page.getByText(subject, { exact: true })).not.toBeVisible();
   });
+
+  test('can edit the submitted content, not just status', async ({ page }) => {
+    const subject = uniqueSubject();
+    const seeded = await page.request.post('/api/v1/contact/', {
+      data: {
+        full_name: 'Before Edit',
+        email: 'before-edit@example.com',
+        phone_number: '+60123456789',
+        subject,
+        message: 'Original message body.',
+      },
+    });
+    expect(seeded.ok()).toBe(true);
+    const { id: messageId } = await seeded.json();
+
+    await loginAs(page, 'admin');
+    await page.goto(`/admin/contact/${messageId}`);
+
+    await page.getByRole('link', { name: 'Edit' }).click();
+    await expect(page).toHaveURL(`/admin/contact/${messageId}/edit`);
+
+    const nameField = page.locator('[data-field="full_name"] input');
+    await expect(nameField).toHaveValue('Before Edit');
+    await nameField.fill('After Edit');
+    await page.getByRole('button', { name: 'Save changes' }).click();
+
+    // Update/edit action: navigates to the record's details page, with
+    // the confirmation shown on arrival there — not a stay-and-reset
+    // pattern (that's for create actions only).
+    await expect(page).toHaveURL(`/admin/contact/${messageId}`);
+    await expect(page.getByText(/message updated/i)).toBeVisible();
+    await expect(page.getByText('From After Edit')).toBeVisible();
+
+    await page.request.delete(`/api/v1/contact/${messageId}/`);
+  });
 });
 
 test.describe('Staff contact inbox', () => {
@@ -151,6 +186,7 @@ test.describe('Staff contact inbox', () => {
     await expect(
       page.getByRole('button', { name: 'Delete', exact: true }),
     ).toHaveCount(0);
+    await expect(page.getByRole('link', { name: 'Edit' })).toHaveCount(0);
 
     // Status is a dropdown, not a button row.
     await page.getByRole('combobox').selectOption('follow_up');
@@ -162,6 +198,19 @@ test.describe('Staff contact inbox', () => {
       `/api/v1/contact/${messageId}/`,
     );
     expect(deleteResponse.status()).toBe(403);
+
+    // A staff PATCH with content fields is accepted (200) but silently
+    // ignored — ContactMessageViewSet.get_serializer_class only hands
+    // an admin requester the serializer that recognizes them. Confirm
+    // the name genuinely didn't change, not just that no error came
+    // back.
+    const patchResponse = await page.request.patch(
+      `/api/v1/contact/${messageId}/`,
+      { data: { full_name: 'Hacked By Staff' } },
+    );
+    expect(patchResponse.ok()).toBe(true);
+    const patched = await patchResponse.json();
+    expect(patched.full_name).toBeUndefined();
 
     // Clean up via admin so this test doesn't leave data behind.
     await loginAs(page, 'admin');

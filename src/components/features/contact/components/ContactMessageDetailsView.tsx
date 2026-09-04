@@ -7,6 +7,7 @@ import {
   LuArrowLeft,
   LuCalendar,
   LuMail,
+  LuPencil,
   LuPhone,
   LuReply,
   LuTrash2,
@@ -117,6 +118,15 @@ const ContactMessageDetailsView = ({
               <LuReply className="size-4" />
               Reply by email
             </a>
+            {canDelete && (
+              <Link
+                href={`${basePath}/${message.id}/edit`}
+                className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+              >
+                <LuPencil className="size-4" />
+                Edit
+              </Link>
+            )}
             {canDelete && (
               <button
                 type="button"
