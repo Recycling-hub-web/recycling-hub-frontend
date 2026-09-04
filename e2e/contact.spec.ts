@@ -104,6 +104,8 @@ test.describe('Admin contact inbox', () => {
     const row = page.getByRole('row', { name: new RegExp(subject) });
     await expect(row).toBeVisible();
 
+    // Deleted from the list row's own delete action — unrelated to the
+    // details page's Actions dropdown (see the edit test below for that).
     await row.getByRole('button', { name: /delete message from/i }).click();
     await page.getByRole('button', { name: 'Delete', exact: true }).click();
 
@@ -133,7 +135,10 @@ test.describe('Admin contact inbox', () => {
     await loginAs(page, 'admin');
     await page.goto(`/admin/contact/${messageId}`);
 
-    await page.getByRole('link', { name: 'Edit' }).click();
+    // Reply/Edit/Delete are one Actions dropdown on the details page,
+    // not three separate header buttons.
+    await page.getByRole('button', { name: 'Actions' }).click();
+    await page.getByRole('menuitem', { name: 'Edit' }).click();
     await expect(page).toHaveURL(`/admin/contact/${messageId}/edit`);
 
     const nameField = page.locator('[data-field="full_name"] input');
@@ -183,10 +188,16 @@ test.describe('Staff contact inbox', () => {
 
     await row.getByRole('link', { name: /view message from/i }).click();
     await expect(page).toHaveURL(new RegExp(`/staff/contact/${messageId}`));
+
+    // The Actions dropdown only ever contains Reply by email for staff
+    // — Edit/Delete menu items don't exist at all, not just hidden.
+    await page.getByRole('button', { name: 'Actions' }).click();
     await expect(
-      page.getByRole('button', { name: 'Delete', exact: true }),
-    ).toHaveCount(0);
-    await expect(page.getByRole('link', { name: 'Edit' })).toHaveCount(0);
+      page.getByRole('menuitem', { name: 'Reply by email' }),
+    ).toBeVisible();
+    await expect(page.getByRole('menuitem', { name: 'Edit' })).toHaveCount(0);
+    await expect(page.getByRole('menuitem', { name: 'Delete' })).toHaveCount(0);
+    await page.keyboard.press('Escape');
 
     // Status is a dropdown, not a button row.
     await page.getByRole('combobox').selectOption('follow_up');

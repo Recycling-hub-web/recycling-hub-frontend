@@ -16,6 +16,8 @@ import {
 
 import { PageContainer } from '../../../layout/PageContainer';
 import { StatusBadge } from '../../../ui/badges/StatusBadge';
+import type { DropdownItem } from '../../../ui/buttons/ActionsDropdown';
+import { ActionsDropdown } from '../../../ui/buttons/ActionsDropdown';
 import { Card } from '../../../ui/card/Card';
 import { AppDate } from '../../../ui/date/AppDate';
 import { FilterSelect } from '../../../ui/FilterSelect';
@@ -96,6 +98,36 @@ const ContactMessageDetailsView = ({
     );
   }
 
+  // Reply/Edit/Delete used to be three separate header buttons —
+  // collapsed into one dropdown so the header stays a single control,
+  // not a row that keeps growing every time an action is added.
+  const actionItems: DropdownItem[] = [
+    {
+      label: 'Reply by email',
+      icon: LuReply,
+      onClick: () => {
+        window.location.href = `mailto:${message.email}?subject=${encodeURIComponent(`Re: ${message.subject}`)}`;
+      },
+      color: 'info',
+    },
+    ...(canDelete
+      ? [
+          {
+            label: 'Edit',
+            icon: LuPencil,
+            onClick: () => router.push(`${basePath}/${message.id}/edit`),
+            color: 'neutral' as const,
+          },
+          {
+            label: 'Delete',
+            icon: LuTrash2,
+            onClick: () => setConfirmOpen(true),
+            color: 'danger' as const,
+          },
+        ]
+      : []),
+  ];
+
   return (
     <PageContainer variant="form">
       <Link
@@ -109,36 +141,7 @@ const ContactMessageDetailsView = ({
       <PageHeader
         title={message.subject}
         subtitle={`From ${message.full_name}`}
-        actions={
-          <>
-            <a
-              href={`mailto:${message.email}?subject=${encodeURIComponent(`Re: ${message.subject}`)}`}
-              className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
-            >
-              <LuReply className="size-4" />
-              Reply by email
-            </a>
-            {canDelete && (
-              <Link
-                href={`${basePath}/${message.id}/edit`}
-                className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
-              >
-                <LuPencil className="size-4" />
-                Edit
-              </Link>
-            )}
-            {canDelete && (
-              <button
-                type="button"
-                onClick={() => setConfirmOpen(true)}
-                className="inline-flex items-center gap-1.5 rounded-full border border-red-200 px-4 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-50"
-              >
-                <LuTrash2 className="size-4" />
-                Delete
-              </button>
-            )}
-          </>
-        }
+        actions={<ActionsDropdown items={actionItems} />}
       />
 
       <div className="mb-5">
