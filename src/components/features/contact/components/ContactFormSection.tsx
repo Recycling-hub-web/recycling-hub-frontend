@@ -13,6 +13,8 @@ import {
 import { BRAND } from '../../../../constants/content';
 import { useDictionary } from '../../../../hooks/useDictionary';
 import { ApiError } from '../../../../lib/api';
+import { InputField } from '../../../form/fields/InputField';
+import { TextareaField } from '../../../form/fields/TextareaField';
 import { FadeIn } from '../../../ui/FadeIn';
 import { submitContactMessage } from '../services/contactService';
 
@@ -38,9 +40,10 @@ const INITIAL_STATE: FormState = {
 
 /** Merges what used to be two separate sections (the submission form and
  * the "how to reach us" cards) into the one two-column card this page's
- * design calls for — light form on the left, dark contact-methods +
- * socials panel on the right. Posts straight to the real ContactMessage
- * endpoint (skipAuth, anonymous), same as before the merge. */
+ * design calls for — light form on the left, a brand-green (bg-brand-700,
+ * not a dark/neutral fill) contact-methods + socials panel on the right.
+ * Posts straight to the real ContactMessage endpoint (skipAuth,
+ * anonymous), same as before the merge. */
 const ContactFormSection = () => {
   const {
     contact: { form: content },
@@ -52,7 +55,10 @@ const ContactFormSection = () => {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-  const updateField = (field: keyof FormState, value: string) => {
+  // Untyped `string` field, not `keyof FormState` — InputField/
+  // TextareaField's updateFormData contract is generic across every
+  // form they're used in, this feature's form included.
+  const updateField = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     setErrors((prev) => ({ ...prev, [field]: '' }));
   };
@@ -111,11 +117,6 @@ const ContactFormSection = () => {
     }
   };
 
-  const inputClass =
-    'rounded-full border border-slate-200 bg-white px-4 py-3 text-sm text-neutral-950 placeholder:text-slate-400 focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20 disabled:bg-slate-50 disabled:text-slate-400';
-  const errorInputClass =
-    'border-red-400 focus:border-red-500 focus:ring-red-500/20';
-
   const CONTACT_CARDS = [
     {
       icon: <LuHeadset className="size-5" />,
@@ -145,7 +146,7 @@ const ContactFormSection = () => {
 
   return (
     <section className="bg-white pb-16 md:pb-20">
-      <div className="mx-auto max-w-5xl px-5 md:px-8">
+      <div className="mx-auto max-w-6xl px-5 md:px-8">
         <FadeIn>
           <div className="overflow-hidden rounded-3xl border border-slate-200 shadow-sm md:grid md:grid-cols-5">
             {/* Left — the form */}
@@ -158,131 +159,65 @@ const ContactFormSection = () => {
               </p>
 
               <form onSubmit={handleSubmit} noValidate className="mt-6">
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div className="flex flex-col gap-1.5">
-                    <label
-                      htmlFor="firstName"
-                      className="text-xs font-semibold uppercase tracking-wide text-slate-500"
-                    >
-                      {content.firstName}
-                    </label>
-                    <input
-                      id="firstName"
-                      type="text"
-                      value={formData.firstName}
-                      onChange={(e) => updateField('firstName', e.target.value)}
-                      disabled={submitted}
-                      placeholder={content.firstNamePlaceholder}
-                      className={`${inputClass} ${errors.firstName ? errorInputClass : ''}`}
-                    />
-                    {errors.firstName && (
-                      <p className="text-xs text-red-500">{errors.firstName}</p>
-                    )}
-                  </div>
-
-                  <div className="flex flex-col gap-1.5">
-                    <label
-                      htmlFor="lastName"
-                      className="text-xs font-semibold uppercase tracking-wide text-slate-500"
-                    >
-                      {content.lastName}
-                    </label>
-                    <input
-                      id="lastName"
-                      type="text"
-                      value={formData.lastName}
-                      onChange={(e) => updateField('lastName', e.target.value)}
-                      disabled={submitted}
-                      placeholder={content.lastNamePlaceholder}
-                      className={`${inputClass} ${errors.lastName ? errorInputClass : ''}`}
-                    />
-                    {errors.lastName && (
-                      <p className="text-xs text-red-500">{errors.lastName}</p>
-                    )}
-                  </div>
-
-                  <div className="flex flex-col gap-1.5">
-                    <label
-                      htmlFor="email"
-                      className="text-xs font-semibold uppercase tracking-wide text-slate-500"
-                    >
-                      {content.email}
-                    </label>
-                    <input
-                      id="email"
-                      type="email"
-                      value={formData.email}
-                      onChange={(e) => updateField('email', e.target.value)}
-                      disabled={submitted}
-                      placeholder={content.emailPlaceholder}
-                      className={`${inputClass} ${errors.email ? errorInputClass : ''}`}
-                    />
-                    {errors.email && (
-                      <p className="text-xs text-red-500">{errors.email}</p>
-                    )}
-                  </div>
-
-                  <div className="flex flex-col gap-1.5">
-                    <label
-                      htmlFor="phone"
-                      className="text-xs font-semibold uppercase tracking-wide text-slate-500"
-                    >
-                      {content.phone}
-                    </label>
-                    <input
-                      id="phone"
-                      type="tel"
-                      value={formData.phone}
-                      onChange={(e) => updateField('phone', e.target.value)}
-                      disabled={submitted}
-                      placeholder={content.phonePlaceholder}
-                      className={`${inputClass} ${errors.phone ? errorInputClass : ''}`}
-                    />
-                    {errors.phone && (
-                      <p className="text-xs text-red-500">{errors.phone}</p>
-                    )}
-                  </div>
-
-                  <div className="flex flex-col gap-1.5 sm:col-span-2">
-                    <label
-                      htmlFor="subject"
-                      className="text-xs font-semibold uppercase tracking-wide text-slate-500"
-                    >
-                      {content.subject}
-                    </label>
-                    <input
-                      id="subject"
-                      type="text"
-                      value={formData.subject}
-                      onChange={(e) => updateField('subject', e.target.value)}
-                      disabled={submitted}
+                <div className="grid gap-x-4 sm:grid-cols-2">
+                  <InputField
+                    label={content.firstName}
+                    field="firstName"
+                    placeholder={content.firstNamePlaceholder}
+                    formData={formData}
+                    errors={errors}
+                    updateFormData={updateField}
+                    disabled={submitted}
+                  />
+                  <InputField
+                    label={content.lastName}
+                    field="lastName"
+                    placeholder={content.lastNamePlaceholder}
+                    formData={formData}
+                    errors={errors}
+                    updateFormData={updateField}
+                    disabled={submitted}
+                  />
+                  <InputField
+                    label={content.email}
+                    field="email"
+                    type="email"
+                    placeholder={content.emailPlaceholder}
+                    formData={formData}
+                    errors={errors}
+                    updateFormData={updateField}
+                    disabled={submitted}
+                  />
+                  <InputField
+                    label={content.phone}
+                    field="phone"
+                    type="tel"
+                    placeholder={content.phonePlaceholder}
+                    formData={formData}
+                    errors={errors}
+                    updateFormData={updateField}
+                    disabled={submitted}
+                  />
+                  <div className="sm:col-span-2">
+                    <InputField
+                      label={content.subject}
+                      field="subject"
                       placeholder={content.subjectPlaceholder}
-                      className={`${inputClass} ${errors.subject ? errorInputClass : ''}`}
-                    />
-                    {errors.subject && (
-                      <p className="text-xs text-red-500">{errors.subject}</p>
-                    )}
-                  </div>
-
-                  <div className="flex flex-col gap-1.5 sm:col-span-2">
-                    <label
-                      htmlFor="message"
-                      className="text-xs font-semibold uppercase tracking-wide text-slate-500"
-                    >
-                      {content.message}
-                    </label>
-                    <textarea
-                      id="message"
-                      value={formData.message}
-                      onChange={(e) => updateField('message', e.target.value)}
+                      formData={formData}
+                      errors={errors}
+                      updateFormData={updateField}
                       disabled={submitted}
-                      rows={4}
-                      placeholder={content.messagePlaceholder}
-                      className={`resize-none rounded-3xl ${inputClass} ${errors.message ? errorInputClass : ''}`}
                     />
-                    {errors.message && (
-                      <p className="text-xs text-red-500">{errors.message}</p>
-                    )}
+                  </div>
+                  <div className="sm:col-span-2">
+                    <TextareaField
+                      label={content.message}
+                      field="message"
+                      placeholder={content.messagePlaceholder}
+                      formData={formData}
+                      errors={errors}
+                      updateFormData={updateField}
+                    />
                   </div>
                 </div>
 
@@ -309,9 +244,9 @@ const ContactFormSection = () => {
               </form>
             </div>
 
-            {/* Right — how to reach us, dark panel */}
-            <div className="flex flex-col justify-between bg-neutral-950 p-6 text-white md:col-span-2 md:p-8">
-              <div>
+            {/* Right — how to reach us, brand-green panel */}
+            <div className="flex flex-col justify-between p-6 ">
+              <div className="flex size-full flex-col gap-6 rounded-2xl bg-brand-700 text-white md:p-8">
                 <h3 className="text-lg font-bold">
                   {content.sidePanel.heading}
                 </h3>
@@ -329,7 +264,7 @@ const ContactFormSection = () => {
                           ? 'noopener noreferrer'
                           : undefined
                       }
-                      className="flex items-center gap-3 rounded-2xl bg-white/10 px-4 py-3 transition hover:bg-white/15"
+                      className="flex items-center gap-3 rounded-2xl bg-white/10 px-4 py-3"
                     >
                       <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white/10">
                         {card.icon}

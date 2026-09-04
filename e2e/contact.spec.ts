@@ -20,21 +20,26 @@ test.describe('Public contact form', () => {
 
     await expect(submit).toBeDisabled();
 
-    await page.locator('#firstName').fill('Playwright');
+    // InputField/TextareaField (the reusable form components this form
+    // now uses) set `data-field` on their wrapper div, not an `id` on
+    // the input itself — so field access goes through that, not `#id`.
+    await page.locator('[data-field="firstName"] input').fill('Playwright');
     await expect(submit).toBeDisabled();
-    await page.locator('#lastName').fill('E2E');
+    await page.locator('[data-field="lastName"] input').fill('E2E');
     await expect(submit).toBeDisabled();
-    await page.locator('#email').fill('not-an-email');
+    await page.locator('[data-field="email"] input').fill('not-an-email');
     await expect(submit).toBeDisabled();
-    await page.locator('#phone').fill('+60123456789');
+    await page.locator('[data-field="phone"] input').fill('+60123456789');
     await expect(submit).toBeDisabled();
-    await page.locator('#subject').fill(uniqueSubject());
+    await page.locator('[data-field="subject"] input').fill(uniqueSubject());
     await expect(submit).toBeDisabled();
-    await page.locator('#message').fill('Should not submit yet.');
+    await page
+      .locator('[data-field="message"] textarea')
+      .fill('Should not submit yet.');
     // Email is still invalid — every other field is filled.
     await expect(submit).toBeDisabled();
 
-    await page.locator('#email').fill('e2e@example.com');
+    await page.locator('[data-field="email"] input').fill('e2e@example.com');
     await expect(submit).toBeEnabled();
   });
 
@@ -42,13 +47,13 @@ test.describe('Public contact form', () => {
     const subject = uniqueSubject();
     await page.goto('/contact');
 
-    await page.locator('#firstName').fill('Playwright');
-    await page.locator('#lastName').fill('E2E');
-    await page.locator('#email').fill('e2e@example.com');
-    await page.locator('#phone').fill('+60123456789');
-    await page.locator('#subject').fill(subject);
+    await page.locator('[data-field="firstName"] input').fill('Playwright');
+    await page.locator('[data-field="lastName"] input').fill('E2E');
+    await page.locator('[data-field="email"] input').fill('e2e@example.com');
+    await page.locator('[data-field="phone"] input').fill('+60123456789');
+    await page.locator('[data-field="subject"] input').fill(subject);
     await page
-      .locator('#message')
+      .locator('[data-field="message"] textarea')
       .fill('Submitted by the Playwright e2e suite.');
 
     const [response] = await Promise.all([
