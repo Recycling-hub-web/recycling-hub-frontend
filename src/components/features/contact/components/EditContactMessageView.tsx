@@ -8,6 +8,7 @@ import { LuArrowLeft } from 'react-icons/lu';
 
 import { ApiError } from '../../../../lib/api';
 import { InputField } from '../../../form/fields/InputField';
+import { SelectField } from '../../../form/fields/SelectField';
 import { TextareaField } from '../../../form/fields/TextareaField';
 import { PageContainer } from '../../../layout/PageContainer';
 import { AlertBanner } from '../../../ui/AlertBanner';
@@ -16,7 +17,9 @@ import { Card } from '../../../ui/card/Card';
 import { Loading } from '../../../ui/loading/Loading';
 import { PageHeader } from '../../../ui/PageHeader';
 import { useToast } from '../../../ui/toast/ToastContext';
+import { STATUS_OPTIONS } from '../constants';
 import { useContactMessage, useUpdateContactMessage } from '../hooks';
+import type { ContactMessageStatus } from '../types';
 
 type FormState = {
   full_name: string;
@@ -24,6 +27,7 @@ type FormState = {
   phone_number: string;
   subject: string;
   message: string;
+  status: ContactMessageStatus;
 };
 
 type EditContactMessageViewProps = {
@@ -61,6 +65,7 @@ const EditContactMessageView = ({
       phone_number: message.phone_number,
       subject: message.subject,
       message: message.message,
+      status: message.status,
     });
   }, [message]);
 
@@ -122,7 +127,8 @@ const EditContactMessageView = ({
     formData.email !== message.email ||
     formData.phone_number !== message.phone_number ||
     formData.subject !== message.subject ||
-    formData.message !== message.message;
+    formData.message !== message.message ||
+    formData.status !== message.status;
 
   return (
     <PageContainer variant="form">
@@ -174,6 +180,15 @@ const EditContactMessageView = ({
               updateFormData={updateFormData}
               disabled={submitting}
             />
+            <SelectField
+              label="Status"
+              field="status"
+              options={STATUS_OPTIONS}
+              formData={formData}
+              errors={errors}
+              updateFormData={updateFormData}
+              disabled={submitting}
+            />
             <div className="sm:col-span-2">
               <TextareaField
                 label="Message"
@@ -185,20 +200,12 @@ const EditContactMessageView = ({
             </div>
           </div>
 
-          <div className="flex gap-5 pt-2">
-            <Button
-              href={`${basePath}/${message.id}`}
-              variant="secondary"
-              className="flex-1"
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              disabled={submitting || !hasChanges}
-              className="flex-1"
-            >
+          <div className="flex flex-col gap-3 pt-2">
+            <Button type="submit" disabled={submitting || !hasChanges}>
               {submitting ? 'Saving…' : 'Save changes'}
+            </Button>
+            <Button href={`${basePath}/${message.id}`} variant="secondary">
+              Cancel
             </Button>
           </div>
         </form>

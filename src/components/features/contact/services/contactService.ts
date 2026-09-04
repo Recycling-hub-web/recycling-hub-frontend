@@ -42,6 +42,7 @@ type UpdateContactMessagePayload = Partial<{
   phone_number: string;
   subject: string;
   message: string;
+  status: ContactMessageStatus;
 }>;
 
 // Admin only on the backend (ContactMessageViewSet.get_serializer_class

@@ -150,11 +150,30 @@ test.describe('Admin contact inbox', () => {
     // Save has nothing to do until a field actually differs from what
     // was loaded — disabled on arrival, not just while submitting.
     const saveButton = page.getByRole('button', { name: 'Save changes' });
+    const cancelButton = page.getByRole('link', { name: 'Cancel' });
     await expect(saveButton).toBeDisabled();
+
+    // Save/Cancel are stacked full-width (Save first), not a two-up row.
+    const saveBox = await saveButton.boundingBox();
+    const cancelBox = await cancelButton.boundingBox();
+    expect(saveBox).not.toBeNull();
+    expect(cancelBox).not.toBeNull();
+    expect(saveBox!.y).toBeLessThan(cancelBox!.y);
+    expect(saveBox!.width).toBeGreaterThan(400);
+    expect(cancelBox!.width).toBeGreaterThan(400);
 
     const nameField = page.locator('[data-field="full_name"] input');
     await expect(nameField).toHaveValue('Before Edit');
     await nameField.fill('After Edit');
+    await expect(saveButton).toBeEnabled();
+
+    // Status is editable here too (admin only) — same field, same
+    // dirty-check as every other input on this form.
+    const statusField = page.locator('[data-field="status"] select');
+    await expect(statusField).toHaveValue('pending');
+    await nameField.fill('Before Edit'); // revert name, isolate the status change
+    await expect(saveButton).toBeDisabled();
+    await statusField.selectOption('follow_up');
     await expect(saveButton).toBeEnabled();
 
     await saveButton.click();
@@ -164,7 +183,8 @@ test.describe('Admin contact inbox', () => {
     // pattern (that's for create actions only).
     await expect(page).toHaveURL(`/admin/contact/${messageId}`);
     await expect(page.getByText(/message updated/i)).toBeVisible();
-    await expect(page.getByText('From After Edit')).toBeVisible();
+    await expect(page.getByText('Before Edit').first()).toBeVisible();
+    await expect(page.getByText(/follow.?up/i).first()).toBeVisible();
 
     await page.request.delete(`/api/v1/contact/${messageId}/`);
   });
