@@ -89,16 +89,18 @@ const ContactMessageTable = ({
         onClick={() => router.push(`${basePath}/${m.id}`)}
         className="cursor-pointer transition-colors hover:bg-slate-50"
       >
-        <td className="px-6 py-4 font-medium text-slate-900">
+        <td className="max-w-[180px] px-6 py-4 font-medium text-slate-900">
           <Link
             href={`${basePath}/${m.id}`}
             onClick={(e) => e.stopPropagation()}
-            className="hover:text-brand-600 hover:underline"
+            className="block truncate hover:text-brand-600 hover:underline"
           >
             {m.full_name}
           </Link>
         </td>
-        <td className="px-6 py-4 text-slate-500">{m.email}</td>
+        <td className="max-w-[200px] truncate px-6 py-4 text-slate-500">
+          {m.email}
+        </td>
         <td className="max-w-xs truncate px-6 py-4 text-slate-700">
           {m.subject}
         </td>
