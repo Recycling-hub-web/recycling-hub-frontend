@@ -150,17 +150,7 @@ test.describe('Admin contact inbox', () => {
     // Save has nothing to do until a field actually differs from what
     // was loaded — disabled on arrival, not just while submitting.
     const saveButton = page.getByRole('button', { name: 'Save changes' });
-    const cancelButton = page.getByRole('link', { name: 'Cancel' });
     await expect(saveButton).toBeDisabled();
-
-    // Save/Cancel are stacked full-width (Save first), not a two-up row.
-    const saveBox = await saveButton.boundingBox();
-    const cancelBox = await cancelButton.boundingBox();
-    expect(saveBox).not.toBeNull();
-    expect(cancelBox).not.toBeNull();
-    expect(saveBox!.y).toBeLessThan(cancelBox!.y);
-    expect(saveBox!.width).toBeGreaterThan(400);
-    expect(cancelBox!.width).toBeGreaterThan(400);
 
     const nameField = page.locator('[data-field="full_name"] input');
     await expect(nameField).toHaveValue('Before Edit');

@@ -200,12 +200,20 @@ const EditContactMessageView = ({
             </div>
           </div>
 
-          <div className="flex flex-col gap-3 pt-2">
-            <Button type="submit" disabled={submitting || !hasChanges}>
-              {submitting ? 'Saving…' : 'Save changes'}
-            </Button>
-            <Button href={`${basePath}/${message.id}`} variant="secondary">
+          <div className="flex gap-5 pt-2">
+            <Button
+              href={`${basePath}/${message.id}`}
+              variant="secondary"
+              className="flex-1"
+            >
               Cancel
+            </Button>
+            <Button
+              type="submit"
+              disabled={submitting || !hasChanges}
+              className="flex-1"
+            >
+              {submitting ? 'Saving…' : 'Save changes'}
             </Button>
           </div>
         </form>
