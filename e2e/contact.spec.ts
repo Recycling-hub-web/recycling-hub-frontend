@@ -152,7 +152,8 @@ test.describe('Staff contact inbox', () => {
       page.getByRole('button', { name: 'Delete', exact: true }),
     ).toHaveCount(0);
 
-    await page.getByRole('button', { name: 'Follow-up' }).click();
+    // Status is a dropdown, not a button row.
+    await page.getByRole('combobox').selectOption('follow_up');
     await expect(page.getByText(/status updated/i)).toBeVisible();
 
     // The real gate is the backend permission, not the hidden button —

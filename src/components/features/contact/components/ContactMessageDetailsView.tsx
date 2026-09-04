@@ -17,6 +17,7 @@ import { PageContainer } from '../../../layout/PageContainer';
 import { StatusBadge } from '../../../ui/badges/StatusBadge';
 import { Card } from '../../../ui/card/Card';
 import { AppDate } from '../../../ui/date/AppDate';
+import { FilterSelect } from '../../../ui/FilterSelect';
 import { InfoRow } from '../../../ui/InfoRow';
 import { Loading } from '../../../ui/loading/Loading';
 import { ConfirmModal } from '../../../ui/modal/ConfirmModal';
@@ -52,10 +53,10 @@ const ContactMessageDetailsView = ({
     useDeleteContactMessage();
   const [confirmOpen, setConfirmOpen] = useState(false);
 
-  const handleStatusChange = async (value: ContactMessageStatus) => {
-    if (!message) return;
+  const handleStatusChange = async (value: string) => {
+    if (!message || value === message.status) return;
     try {
-      await updateStatus(message.id, value);
+      await updateStatus(message.id, value as ContactMessageStatus);
       toast.success('Status updated');
       refetch();
     } catch {
@@ -172,23 +173,12 @@ const ContactMessageDetailsView = ({
 
       <Card className="mt-4 p-5">
         <p className="mb-3 text-sm font-semibold text-slate-900">Status</p>
-        <div className="flex flex-wrap gap-2">
-          {STATUS_OPTIONS.map((opt) => (
-            <button
-              key={opt.value}
-              type="button"
-              disabled={updatingStatus}
-              onClick={() => handleStatusChange(opt.value)}
-              className={`rounded-full px-4 py-2 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-60 ${
-                message.status === opt.value
-                  ? 'bg-brand-600 text-white'
-                  : 'border border-slate-200 text-slate-600 hover:bg-slate-50'
-              }`}
-            >
-              {opt.label}
-            </button>
-          ))}
-        </div>
+        <FilterSelect
+          value={message.status}
+          onChange={handleStatusChange}
+          options={STATUS_OPTIONS}
+          disabled={updatingStatus}
+        />
       </Card>
 
       {canDelete && (
