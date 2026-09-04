@@ -125,49 +125,53 @@ const EditContactMessageView = ({
       <PageHeader title="Edit message" subtitle={message.subject} />
 
       <Card className="p-5">
-        <form className="space-y-4" onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}>
           <AlertBanner message={apiError} />
 
-          <InputField
-            label="Full name"
-            field="full_name"
-            formData={formData}
-            errors={errors}
-            updateFormData={updateFormData}
-            disabled={submitting}
-          />
-          <InputField
-            label="Email"
-            field="email"
-            type="email"
-            formData={formData}
-            errors={errors}
-            updateFormData={updateFormData}
-            disabled={submitting}
-          />
-          <InputField
-            label="Phone number"
-            field="phone_number"
-            formData={formData}
-            errors={errors}
-            updateFormData={updateFormData}
-            disabled={submitting}
-          />
-          <InputField
-            label="Subject"
-            field="subject"
-            formData={formData}
-            errors={errors}
-            updateFormData={updateFormData}
-            disabled={submitting}
-          />
-          <TextareaField
-            label="Message"
-            field="message"
-            formData={formData}
-            errors={errors}
-            updateFormData={updateFormData}
-          />
+          <div className="grid gap-x-4 sm:grid-cols-2">
+            <InputField
+              label="Full name"
+              field="full_name"
+              formData={formData}
+              errors={errors}
+              updateFormData={updateFormData}
+              disabled={submitting}
+            />
+            <InputField
+              label="Email"
+              field="email"
+              type="email"
+              formData={formData}
+              errors={errors}
+              updateFormData={updateFormData}
+              disabled={submitting}
+            />
+            <InputField
+              label="Phone number"
+              field="phone_number"
+              formData={formData}
+              errors={errors}
+              updateFormData={updateFormData}
+              disabled={submitting}
+            />
+            <InputField
+              label="Subject"
+              field="subject"
+              formData={formData}
+              errors={errors}
+              updateFormData={updateFormData}
+              disabled={submitting}
+            />
+            <div className="sm:col-span-2">
+              <TextareaField
+                label="Message"
+                field="message"
+                formData={formData}
+                errors={errors}
+                updateFormData={updateFormData}
+              />
+            </div>
+          </div>
 
           <div className="flex gap-2 pt-2">
             <Link
