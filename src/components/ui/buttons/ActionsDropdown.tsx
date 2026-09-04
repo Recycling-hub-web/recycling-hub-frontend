@@ -90,7 +90,7 @@ const ActionsDropdown = ({
         onClick={toggle}
         aria-expanded={open}
         aria-haspopup="true"
-        className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium transition-all duration-150 ${
+        className={`flex items-center gap-2 rounded-full border px-3 py-2 text-sm font-medium transition-all duration-150 ${
           open
             ? 'border-slate-300 bg-slate-100 text-slate-800 shadow-inner'
             : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50'
@@ -124,11 +124,11 @@ const ActionsDropdown = ({
                   type="button"
                   role="menuitem"
                   onClick={() => handleItemClick(item.onClick)}
-                  className={`group flex w-full items-center gap-3 rounded-lg border border-transparent px-3 py-2.5 text-left text-sm transition-all duration-150 ${colorClasses.row}`}
+                  className={`group flex w-full items-center gap-3 rounded-full border border-transparent px-3 py-2.5 text-left text-sm transition-all duration-150 ${colorClasses.row}`}
                   style={{ transitionDelay: open ? `${i * 30}ms` : '0ms' }}
                 >
                   <div
-                    className={`flex size-8 shrink-0 items-center justify-center rounded-lg transition-colors duration-150 ${colorClasses.icon}`}
+                    className={`flex size-8 shrink-0 items-center justify-center rounded-full transition-colors duration-150 ${colorClasses.icon}`}
                   >
                     <Icon className="size-4" />
                   </div>
