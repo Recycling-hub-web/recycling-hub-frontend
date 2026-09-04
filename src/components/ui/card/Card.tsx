@@ -9,7 +9,7 @@ type CardProps = HTMLAttributes<HTMLDivElement> & {
 // that don't exist here, so the card rendered with no visible shadow at all.
 const Card = ({ children, className = '', ...rest }: CardProps) => (
   <div
-    className={`relative flex flex-col rounded-2xl border border-slate-200 bg-white shadow-sm ${className}`}
+    className={`relative flex flex-col rounded-2xl border border-slate-100 bg-white  ${className}`}
     {...rest}
   >
     {children}
