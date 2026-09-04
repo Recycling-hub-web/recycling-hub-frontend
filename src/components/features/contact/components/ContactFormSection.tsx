@@ -15,6 +15,7 @@ import { useDictionary } from '../../../../hooks/useDictionary';
 import { ApiError } from '../../../../lib/api';
 import { InputField } from '../../../form/fields/InputField';
 import { TextareaField } from '../../../form/fields/TextareaField';
+import { Button } from '../../../ui/buttons/Button';
 import { FadeIn } from '../../../ui/FadeIn';
 import { useToast } from '../../../ui/toast/ToastContext';
 import { submitContactMessage } from '../services/contactService';
@@ -226,15 +227,15 @@ const ContactFormSection = () => {
                 )}
 
                 <div className="mt-6 flex justify-end">
-                  <button
+                  <Button
                     type="submit"
                     disabled={submitting}
-                    className="inline-flex w-full items-center justify-center rounded-full bg-brand-600 px-6 py-3 text-sm font-semibold text-white ring-2 ring-brand-600 ring-offset-2 transition-all duration-300 ease-out hover:bg-brand-700 hover:ring-brand-700 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+                    className="w-full sm:w-auto"
                   >
                     {submitting
                       ? content.submittingButton
                       : content.submitButton}
-                  </button>
+                  </Button>
                 </div>
               </form>
             </div>

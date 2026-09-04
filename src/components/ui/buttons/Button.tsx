@@ -9,6 +9,12 @@ type ButtonProps = {
   href?: string;
   onClick?: () => void;
   className?: string;
+  /** Ignored when `href` is set (an anchor/Link has no submit behavior).
+   * Defaults to 'button' — pass 'submit' to make this a real form
+   * submit trigger rather than requiring a separate onClick that
+   * duplicates the form's own submit handler. */
+  type?: 'button' | 'submit';
+  disabled?: boolean;
 };
 
 const variants: Record<ButtonVariant, string> = {
@@ -38,8 +44,10 @@ const Button = ({
   href,
   onClick,
   className = '',
+  type = 'button',
+  disabled = false,
 }: ButtonProps) => {
-  const cls = `${base} ${variants[variant]} ${className}`;
+  const cls = `${base} ${variants[variant]} ${className} ${disabled ? 'pointer-events-none opacity-50' : ''}`;
 
   if (href) {
     if (isExternal(href)) {
@@ -62,7 +70,7 @@ const Button = ({
   }
 
   return (
-    <button type="button" onClick={onClick} className={cls}>
+    <button type={type} onClick={onClick} disabled={disabled} className={cls}>
       {children}
     </button>
   );
