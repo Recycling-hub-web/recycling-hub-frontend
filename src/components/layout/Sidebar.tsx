@@ -47,6 +47,21 @@ const Sidebar = ({ navItems, open, onClose }: SidebarProps) => {
   const pathname = usePathname();
   const { user, logout } = useAuth();
 
+  // Exact match wasn't enough — pathname === href never matches a
+  // sub-route (a details/edit page under a nav item's own href, e.g.
+  // /admin/contact/[id]), leaving nothing marked active there. Every
+  // nav item whose href prefixes the current path is a candidate; only
+  // the longest/most-specific one wins, otherwise "Overview" (/admin)
+  // and "Contact" (/admin/contact) would both light up on
+  // /admin/contact/[id].
+  const activeHref = navItems
+    .map((item) => item.href)
+    .filter(
+      (candidate) =>
+        pathname === candidate || pathname?.startsWith(`${candidate}/`),
+    )
+    .sort((a, b) => b.length - a.length)[0];
+
   return (
     <>
       {open && (
@@ -102,7 +117,7 @@ const Sidebar = ({ navItems, open, onClose }: SidebarProps) => {
           </p>
           <ul className="flex flex-col gap-1">
             {navItems.map(({ href, label, icon: Icon }) => {
-              const active = pathname === href;
+              const active = href === activeHref;
               return (
                 <li key={href} className="relative">
                   {active && (

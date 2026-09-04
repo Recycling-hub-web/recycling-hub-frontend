@@ -11,6 +11,7 @@ import { InputField } from '../../../form/fields/InputField';
 import { TextareaField } from '../../../form/fields/TextareaField';
 import { PageContainer } from '../../../layout/PageContainer';
 import { AlertBanner } from '../../../ui/AlertBanner';
+import { Button } from '../../../ui/buttons/Button';
 import { Card } from '../../../ui/card/Card';
 import { Loading } from '../../../ui/loading/Loading';
 import { PageHeader } from '../../../ui/PageHeader';
@@ -112,6 +113,17 @@ const EditContactMessageView = ({
     );
   }
 
+  // `message` is the snapshot useContactMessage loaded — this component
+  // never refetches it mid-edit, so comparing formData against it
+  // directly is a safe, real dirty-check, not just a first-render diff.
+  // Save has nothing useful to do until something's actually different.
+  const hasChanges =
+    formData.full_name !== message.full_name ||
+    formData.email !== message.email ||
+    formData.phone_number !== message.phone_number ||
+    formData.subject !== message.subject ||
+    formData.message !== message.message;
+
   return (
     <PageContainer variant="form">
       <Link
@@ -147,7 +159,7 @@ const EditContactMessageView = ({
               disabled={submitting}
             />
             <InputField
-              label="Phone number"
+              label="Contact details"
               field="phone_number"
               formData={formData}
               errors={errors}
@@ -173,20 +185,21 @@ const EditContactMessageView = ({
             </div>
           </div>
 
-          <div className="flex gap-2 pt-2">
-            <Link
+          <div className="flex gap-5 pt-2">
+            <Button
               href={`${basePath}/${message.id}`}
-              className="flex-1 rounded-lg border border-slate-200 px-4 py-2 text-center text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+              variant="secondary"
+              className="flex-1"
             >
               Cancel
-            </Link>
-            <button
+            </Button>
+            <Button
               type="submit"
-              disabled={submitting}
-              className="flex-1 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-60"
+              disabled={submitting || !hasChanges}
+              className="flex-1"
             >
               {submitting ? 'Saving…' : 'Save changes'}
-            </button>
+            </Button>
           </div>
         </form>
       </Card>

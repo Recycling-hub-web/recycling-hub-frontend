@@ -164,7 +164,7 @@ const ContactMessageDetailsView = ({
           />
           <InfoRow
             icon={<LuPhone className="size-4" />}
-            label="Phone"
+            label="Contact details"
             value={message.phone_number}
           />
           <InfoRow

@@ -141,10 +141,17 @@ test.describe('Admin contact inbox', () => {
     await page.getByRole('menuitem', { name: 'Edit' }).click();
     await expect(page).toHaveURL(`/admin/contact/${messageId}/edit`);
 
+    // Save has nothing to do until a field actually differs from what
+    // was loaded — disabled on arrival, not just while submitting.
+    const saveButton = page.getByRole('button', { name: 'Save changes' });
+    await expect(saveButton).toBeDisabled();
+
     const nameField = page.locator('[data-field="full_name"] input');
     await expect(nameField).toHaveValue('Before Edit');
     await nameField.fill('After Edit');
-    await page.getByRole('button', { name: 'Save changes' }).click();
+    await expect(saveButton).toBeEnabled();
+
+    await saveButton.click();
 
     // Update/edit action: navigates to the record's details page, with
     // the confirmation shown on arrival there — not a stay-and-reset
