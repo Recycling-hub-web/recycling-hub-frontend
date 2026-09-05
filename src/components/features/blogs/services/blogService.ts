@@ -24,16 +24,24 @@ type ListBlogPostsParams = {
   /** DRF's SearchFilter — matches title/excerpt/content
    * (BlogPostViewSet.search_fields). */
   search?: string;
+  /** Override the server's default page size (12) — for option pickers
+   * (e.g. usePostOptions' Related Posts picker) that need the full set
+   * in one request rather than the real paginated table's page-at-a-time
+   * flow. Backed by apps.core.pagination.DefaultPagination, capped at
+   * 200 server-side. */
+  page_size?: number;
 };
 
 const listBlogPosts = ({
   page = 1,
   status,
   search,
+  page_size,
 }: ListBlogPostsParams = {}): Promise<Paginated<BlogPost>> => {
   const params = new URLSearchParams({ page: String(page) });
   if (status) params.set('status', status);
   if (search) params.set('search', search);
+  if (page_size) params.set('page_size', String(page_size));
   return apiFetch(`/blogs/?${params.toString()}`);
 };
 
@@ -46,9 +54,13 @@ type CategoryOption = { id: string; name: string };
 // generic Category endpoint (features/categories/ only ever manages the
 // `materials` module) scoped to `posts` instead, for the category
 // picker. Kept minimal (just id/name) rather than importing
-// features/categories' materials-hardcoded service.
+// features/categories' materials-hardcoded service. page_size=200
+// (server-capped, apps.core.pagination.DefaultPagination) so the picker
+// shows every posts-category rather than silently truncating to the
+// first 12 — a real bug this surfaced live once enough categories
+// existed to spill past page 1.
 const listPostCategories = (): Promise<Paginated<CategoryOption>> =>
-  apiFetch(`/categories/?module=${CATEGORY_MODULE}`);
+  apiFetch(`/categories/?module=${CATEGORY_MODULE}&page_size=200`);
 
 // The detail serializer only returns `category` as an id, same as
 // Categories' own `parent` — resolve its name with one extra fetch
@@ -110,6 +122,10 @@ const listBlogTags = ({ search }: ListBlogTagsParams = {}): Promise<
 > => {
   const params = new URLSearchParams();
   if (search) params.set('search', search);
+  // page_size=200 (server-capped) — this list backs both the Tags CRUD
+  // table (no pagination controls, see BlogTagTable) and the Tags
+  // picker on Create/Edit; both silently truncated to 12 before this.
+  params.set('page_size', '200');
   return apiFetch(`/blogs/tags/?${params.toString()}`);
 };
 

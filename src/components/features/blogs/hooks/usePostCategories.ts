@@ -4,9 +4,10 @@ import { NONE_CATEGORY } from '../constants';
 import { listPostCategories } from '../services/blogService';
 
 /** Options for the category SelectField — sourced from the `posts`-scoped
- * slice of the generic Category model (see blogService.listPostCategories).
- * Fetches once per mount; today's real data has zero posts-categories
- * seeded, so this will just show "None" until one exists. */
+ * slice of the generic Category model (see blogService.listPostCategories,
+ * which requests page_size=200 so this shows every posts-category rather
+ * than truncating to the first 12). Fetches once per mount; shows just
+ * "None" until at least one posts-category exists. */
 const usePostCategories = () => {
   const [options, setOptions] = useState<{ value: string; label: string }[]>([
     { value: NONE_CATEGORY, label: 'None' },

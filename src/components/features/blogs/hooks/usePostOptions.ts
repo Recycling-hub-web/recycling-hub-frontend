@@ -2,17 +2,16 @@ import { useEffect, useState } from 'react';
 
 import { listBlogPosts } from '../services/blogService';
 
-/** Options for the Related Posts picker — sourced from one page of
- * listBlogPosts (same "documented limitation, not silently broken"
- * pattern as usePostCategories/the Categories Parent picker: fine while
- * the real post count fits on one page, would need search/pagination if
- * it ever doesn't). Excludes the post being edited — it can't relate to
- * itself (BlogRelation.clean()). */
+/** Options for the Related Posts picker — sourced from listBlogPosts
+ * with page_size=200 (server-capped, apps.core.pagination) so it shows
+ * every post rather than silently truncating to page 1's 12. Excludes
+ * the post being edited — it can't relate to itself
+ * (BlogRelation.clean()). */
 const usePostOptions = (excludeId?: string) => {
   const [options, setOptions] = useState<{ id: string; name: string }[]>([]);
 
   useEffect(() => {
-    listBlogPosts({ page: 1 }).then((data) => {
+    listBlogPosts({ page: 1, page_size: 200 }).then((data) => {
       setOptions(
         data.results
           .filter((p) => p.id !== excludeId)
