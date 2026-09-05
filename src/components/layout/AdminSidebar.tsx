@@ -1,6 +1,12 @@
 'use client';
 
-import { LuLayoutDashboard, LuMail, LuTruck, LuUsers } from 'react-icons/lu';
+import {
+  LuLayoutDashboard,
+  LuMail,
+  LuTag,
+  LuTruck,
+  LuUsers,
+} from 'react-icons/lu';
 
 import type { NavItem } from './Sidebar';
 import { Sidebar } from './Sidebar';
@@ -15,6 +21,7 @@ const ADMIN_NAV_ITEMS: NavItem[] = [
   { href: '/admin/users', label: 'Users', icon: LuUsers },
   { href: '/admin/pickups', label: 'Pickup Requests', icon: LuTruck },
   { href: '/admin/contact', label: 'Contact', icon: LuMail },
+  { href: '/admin/categories', label: 'Categories', icon: LuTag },
 ];
 
 type AdminSidebarProps = {

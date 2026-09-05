@@ -1,4 +1,4 @@
-import { LuLayoutDashboard, LuMail, LuTruck } from 'react-icons/lu';
+import { LuLayoutDashboard, LuMail, LuTag, LuTruck } from 'react-icons/lu';
 
 import type { NavItem } from '../components/layout/Sidebar';
 import type { UserRole } from '../types/auth';
@@ -11,15 +11,16 @@ type OperationalRoleConfig = {
 };
 
 // Each role's own route + sidebar. Only "Overview" (and, for staff,
-// "Pickup Requests"/"Contact") is wired to real pages today — the rest of
-// each role's section (assigned tasks, reports) lands here as that
-// workflow work gets built, same "roles first, then workflows" pattern
-// the admin sidebar started with. Staff sees the same pickups/contact
-// management admin does (same components, basePath="/staff/…") but
-// without contact delete — enforced on the backend too
-// (ContactMessageViewSet.get_permissions), not just a hidden button
-// here. Pickups has no such split: admin and staff share identical
-// permissions on that module (CollectionRequestViewSet).
+// "Pickup Requests"/"Contact"/"Categories") is wired to real pages today
+// — the rest of each role's section (assigned tasks, reports) lands here
+// as that workflow work gets built, same "roles first, then workflows"
+// pattern the admin sidebar started with. Staff sees the same
+// pickups/contact management admin does (same components,
+// basePath="/staff/…") but without contact delete — enforced on the
+// backend too (ContactMessageViewSet.get_permissions), not just a hidden
+// button here. Pickups and Categories have no such split: admin and
+// staff share identical permissions on both modules
+// (CollectionRequestViewSet / CategoryViewSet + IsStaffOrReadOnly).
 const OPERATIONAL_ROLES: Record<OperationalRole, OperationalRoleConfig> = {
   staff: {
     route: '/staff',
@@ -27,6 +28,7 @@ const OPERATIONAL_ROLES: Record<OperationalRole, OperationalRoleConfig> = {
       { href: '/staff', label: 'Overview', icon: LuLayoutDashboard },
       { href: '/staff/pickups', label: 'Pickup Requests', icon: LuTruck },
       { href: '/staff/contact', label: 'Contact', icon: LuMail },
+      { href: '/staff/categories', label: 'Categories', icon: LuTag },
     ],
   },
   driver: {
