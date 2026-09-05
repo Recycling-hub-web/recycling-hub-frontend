@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  LuLayers,
   LuLayoutDashboard,
   LuMail,
   LuTag,
@@ -22,6 +23,7 @@ const ADMIN_NAV_ITEMS: NavItem[] = [
   { href: '/admin/pickups', label: 'Pickup Requests', icon: LuTruck },
   { href: '/admin/contact', label: 'Contact', icon: LuMail },
   { href: '/admin/categories', label: 'Categories', icon: LuTag },
+  { href: '/admin/classifications', label: 'Classifications', icon: LuLayers },
 ];
 
 type AdminSidebarProps = {
