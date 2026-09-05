@@ -1,3 +1,4 @@
+import type { APIRequestContext } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 import path from 'path';
 
@@ -13,9 +14,22 @@ import { loginAs } from './helpers/auth';
  * same spirit as Categories' is_active), and the edit form's Status
  * field doubles as the only way to republish — same pattern as
  * Categories' reactivate-via-status.
+ *
+ * Publishing now requires a category (BlogPostSerializer.validate,
+ * added alongside the module-expansion pass) — both tests below seed a
+ * `posts`-module category via the API before attempting to publish,
+ * same as they'd need to in real use.
  */
 
 const uniqueTitle = (label: string) => `E2E Blog Post ${label} ${Date.now()}`;
+
+const seedPostsCategory = async (request: APIRequestContext, name: string) => {
+  const res = await request.post('/api/v1/categories/', {
+    data: { name, module: 'posts' },
+  });
+  expect(res.ok()).toBe(true);
+  return (await res.json()).id as string;
+};
 
 test.describe('Admin blog posts', () => {
   test('creates, edits content/category/status, then archives a post', async ({
@@ -25,6 +39,10 @@ test.describe('Admin blog posts', () => {
     const updatedTitle = `${title} Updated`;
 
     await loginAs(page, 'admin');
+    const categoryId = await seedPostsCategory(
+      page.request,
+      uniqueTitle('Category'),
+    );
     await page.goto('/admin/blogs');
 
     // Create: validation error stays on the page and shows inline
@@ -75,6 +93,10 @@ test.describe('Admin blog posts', () => {
     await page
       .locator('[data-field="content"] textarea')
       .fill('Updated body text.');
+    // Publishing requires a category — see BlogPostSerializer.validate.
+    await page
+      .locator('[data-field="category"] select')
+      .selectOption(categoryId);
     await page
       .locator('[data-field="status"] select')
       .selectOption('published');
@@ -94,6 +116,14 @@ test.describe('Admin blog posts', () => {
     // Publishing sets published_at server-side — no longer "Not
     // published yet".
     await expect(page.getByText('Not published yet')).not.toBeVisible();
+
+    // The category can't be deleted while a post still references it —
+    // CategoryViewSet.perform_destroy's existing collection_requests
+    // guard, extended to blog_posts alongside this module expansion.
+    const blockedDelete = await page.request.delete(
+      `/api/v1/categories/${categoryId}/`,
+    );
+    expect(blockedDelete.status()).toBe(400);
 
     // Archive (soft-delete): a secondary action launched from the
     // details page stays put and refetches, showing the new state in
@@ -118,7 +148,11 @@ test.describe('Admin blog posts', () => {
       page.getByText('Published', { exact: true }).first(),
     ).toBeVisible();
 
-    // Clean up so repeated runs don't pile up.
+    // Clean up so repeated runs don't pile up. The category itself is
+    // left as harmless residue rather than deleted — the post is only
+    // archived, not actually removed, so it still references this
+    // category and the delete-blocked-while-in-use guard
+    // (CategoryViewSet.perform_destroy) would correctly reject it.
     const postId = page.url().split('/').pop() as string;
     await page.request.delete(`/api/v1/blogs/${postId}/`);
   });
@@ -129,6 +163,10 @@ test.describe('Staff blog posts', () => {
     const title = uniqueTitle('Staff');
 
     await loginAs(page, 'qaStaff');
+    const categoryId = await seedPostsCategory(
+      page.request,
+      uniqueTitle('Staff Category'),
+    );
     await page.goto('/staff/blogs');
 
     await page.getByRole('link', { name: /new post/i }).click();
@@ -142,9 +180,10 @@ test.describe('Staff blog posts', () => {
     const postId = page.url().split('/').pop() as string;
 
     // Staff can publish content too — no admin-only restriction on this
-    // module, unlike contact messages.
+    // module, unlike contact messages. Publishing requires a category
+    // (BlogPostSerializer.validate).
     const patchResponse = await page.request.patch(`/api/v1/blogs/${postId}/`, {
-      data: { status: 'published' },
+      data: { status: 'published', category: categoryId },
     });
     expect(patchResponse.ok()).toBe(true);
     const patched = await patchResponse.json();

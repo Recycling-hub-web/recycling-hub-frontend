@@ -11,11 +11,6 @@ import { useBlogPosts } from '../hooks';
 
 const PAGE_SIZE = 12;
 
-// content has no separate excerpt field — same truncation spirit as
-// admin's table cells, just for prose instead of a table cell.
-const excerpt = (content: string, max = 160) =>
-  content.length > max ? `${content.slice(0, max).trimEnd()}…` : content;
-
 /** Public — the presigned-upload/status-filter machinery from the admin
  * BlogPostsView doesn't apply here, so this is its own component rather
  * than reusing BlogPostsView with a "public mode" flag. Anonymous
@@ -87,7 +82,7 @@ const PublicBlogListView = () => {
                     {post.title}
                   </h3>
                   <p className="mt-3 flex-1 text-sm leading-relaxed text-slate-500">
-                    {excerpt(post.content)}
+                    {post.excerpt}
                   </p>
                   <p className="mt-5 flex items-center gap-1 text-xs font-semibold text-brand-600">
                     Read more <LuArrowRight className="size-3.5" />
