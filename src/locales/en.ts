@@ -65,6 +65,7 @@ const en = {
       { label: 'Meet the Team', href: '/about#team' },
       { label: 'Services', href: '/services' },
       { label: 'Resources', href: '/resources' },
+      { label: 'Blog', href: '/resources/blog' },
       { label: 'FAQ', href: '/faq' },
       { label: 'Contact', href: '/contact' },
     ],

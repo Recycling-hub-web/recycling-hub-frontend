@@ -58,6 +58,7 @@ const bm: Dictionary = {
       { label: 'Kenali Pasukan Kami', href: '/about#team' },
       { label: 'Perkhidmatan', href: '/services' },
       { label: 'Sumber', href: '/resources' },
+      { label: 'Blog', href: '/resources/blog' },
       { label: 'Soalan Lazim', href: '/faq' },
       { label: 'Hubungi Kami', href: '/contact' },
     ],
