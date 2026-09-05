@@ -87,11 +87,7 @@ const BlogPostTable = ({
         className="cursor-pointer transition-colors hover:bg-slate-50"
       >
         <td className="max-w-[280px] px-6 py-4 font-medium text-slate-900">
-          <Link
-            href={`${basePath}/${p.id}`}
-            onClick={(e) => e.stopPropagation()}
-            className="flex items-center gap-2.5 truncate hover:text-brand-600 hover:underline"
-          >
+          <div className="flex items-center gap-2.5">
             {p.cover_image?.public_url ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -104,8 +100,31 @@ const BlogPostTable = ({
                 <LuNewspaper className="size-4" />
               </span>
             )}
-            <span className="truncate">{p.title}</span>
-          </Link>
+            <div className="min-w-0">
+              <Link
+                href={`${basePath}/${p.id}`}
+                onClick={(e) => e.stopPropagation()}
+                className="block truncate hover:text-brand-600 hover:underline"
+              >
+                {p.title}
+              </Link>
+              {/* The post's real public URL — only live once published,
+                  same gate as BlogPostDetailsView's "View live" button. */}
+              {p.status === 'published' ? (
+                <Link
+                  href={`/resources/blog/${p.slug}`}
+                  onClick={(e) => e.stopPropagation()}
+                  className="block truncate text-xs text-slate-400 hover:text-brand-600 hover:underline"
+                >
+                  /{p.slug}
+                </Link>
+              ) : (
+                <span className="block truncate text-xs text-slate-400">
+                  /{p.slug}
+                </span>
+              )}
+            </div>
+          </div>
         </td>
         <td className="max-w-[160px] truncate px-6 py-4 text-slate-500">
           {p.category ? categoryNameById[p.category] ?? '—' : '—'}

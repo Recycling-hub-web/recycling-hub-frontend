@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import {
   LuArrowLeft,
   LuCalendar,
+  LuExternalLink,
   LuEye,
   LuMapPin,
   LuNewspaper,
@@ -20,6 +21,7 @@ import { PageContainer } from '../../../layout/PageContainer';
 import { StatusBadge } from '../../../ui/badges/StatusBadge';
 import type { DropdownItem } from '../../../ui/buttons/ActionsDropdown';
 import { ActionsDropdown } from '../../../ui/buttons/ActionsDropdown';
+import { Button } from '../../../ui/buttons/Button';
 import { Card } from '../../../ui/card/Card';
 import { AppDate } from '../../../ui/date/AppDate';
 import { InfoRow } from '../../../ui/InfoRow';
@@ -139,7 +141,17 @@ const BlogPostDetailsView = ({
       <PageHeader
         title={post.title}
         subtitle={`/${post.slug}`}
-        actions={<ActionsDropdown items={actionItems} />}
+        actions={
+          <div className="flex items-center gap-2">
+            {post.status === 'published' && (
+              <Button href={`/resources/blog/${post.slug}`} variant="secondary">
+                <LuExternalLink className="mr-1.5 size-4" />
+                View live
+              </Button>
+            )}
+            <ActionsDropdown items={actionItems} />
+          </div>
+        }
       />
 
       <div className="mb-5 flex flex-wrap items-center gap-2">
