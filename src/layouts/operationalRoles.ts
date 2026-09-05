@@ -1,4 +1,5 @@
 import {
+  LuHardDrive,
   LuLayers,
   LuLayoutDashboard,
   LuMail,
@@ -17,17 +18,18 @@ type OperationalRoleConfig = {
 };
 
 // Each role's own route + sidebar. Only "Overview" (and, for staff,
-// "Pickup Requests"/"Contact"/"Categories"/"Classifications") is wired to
-// real pages today — the rest of each role's section (assigned tasks,
-// reports) lands here as that workflow work gets built, same "roles
-// first, then workflows" pattern the admin sidebar started with. Staff
-// sees the same pickups/contact management admin does (same components,
-// basePath="/staff/…") but without contact delete — enforced on the
-// backend too (ContactMessageViewSet.get_permissions), not just a hidden
-// button here. Pickups, Categories, and Classifications have no such
-// split: admin and staff share identical permissions on all three
-// modules (CollectionRequestViewSet / CategoryViewSet + IsStaffOrReadOnly
-// / ClassificationView + IsAdminOrStaffUser).
+// "Pickup Requests"/"Contact"/"Categories"/"Classifications"/"Storage
+// Files") is wired to real pages today — the rest of each role's section
+// (assigned tasks, reports) lands here as that workflow work gets built,
+// same "roles first, then workflows" pattern the admin sidebar started
+// with. Staff sees the same pickups/contact management admin does (same
+// components, basePath="/staff/…") but without contact delete —
+// enforced on the backend too (ContactMessageViewSet.get_permissions),
+// not just a hidden button here. Pickups, Categories, Classifications,
+// and Storage Files have no such split: admin and staff share identical
+// permissions on all four modules (CollectionRequestViewSet /
+// CategoryViewSet + IsStaffOrReadOnly / ClassificationView /
+// FileRecordViewSet + IsAdminOrStaffUser).
 const OPERATIONAL_ROLES: Record<OperationalRole, OperationalRoleConfig> = {
   staff: {
     route: '/staff',
@@ -40,6 +42,11 @@ const OPERATIONAL_ROLES: Record<OperationalRole, OperationalRoleConfig> = {
         href: '/staff/classifications',
         label: 'Classifications',
         icon: LuLayers,
+      },
+      {
+        href: '/staff/storage-files',
+        label: 'Storage Files',
+        icon: LuHardDrive,
       },
     ],
   },

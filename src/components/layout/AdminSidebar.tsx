@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  LuHardDrive,
   LuLayers,
   LuLayoutDashboard,
   LuMail,
@@ -24,6 +25,7 @@ const ADMIN_NAV_ITEMS: NavItem[] = [
   { href: '/admin/contact', label: 'Contact', icon: LuMail },
   { href: '/admin/categories', label: 'Categories', icon: LuTag },
   { href: '/admin/classifications', label: 'Classifications', icon: LuLayers },
+  { href: '/admin/storage-files', label: 'Storage Files', icon: LuHardDrive },
 ];
 
 type AdminSidebarProps = {
