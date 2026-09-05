@@ -5,6 +5,7 @@ import {
   LuLayers,
   LuLayoutDashboard,
   LuMail,
+  LuNewspaper,
   LuTag,
   LuTruck,
   LuUsers,
@@ -26,6 +27,7 @@ const ADMIN_NAV_ITEMS: NavItem[] = [
   { href: '/admin/categories', label: 'Categories', icon: LuTag },
   { href: '/admin/classifications', label: 'Classifications', icon: LuLayers },
   { href: '/admin/storage-files', label: 'Storage Files', icon: LuHardDrive },
+  { href: '/admin/blogs', label: 'Blog Posts', icon: LuNewspaper },
 ];
 
 type AdminSidebarProps = {
