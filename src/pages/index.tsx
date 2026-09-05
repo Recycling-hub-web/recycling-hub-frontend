@@ -7,6 +7,7 @@ import { ConnectorsStrip } from '../components/public/home/ConnectorsStrip';
 import { DeliveryModels } from '../components/public/home/DeliveryModels';
 import { FinalCTA } from '../components/public/home/FinalCTA';
 import { HeroBlobSection } from '../components/public/home/HeroBlobSection';
+import { LatestBlogSection } from '../components/public/home/LatestBlogSection';
 import { ProblemIllustration } from '../components/public/home/ProblemIllustration';
 import { ProblemStrip } from '../components/public/home/ProblemStrip';
 import { SplitHeroSection } from '../components/public/home/SplitHeroSection';
@@ -32,6 +33,7 @@ const HomePage: NextPageWithLayout = () => (
     <DeliveryModels />
     <B2BSection />
     <ConnectorsStrip />
+    <LatestBlogSection />
     <FaqSection />
     <FinalCTA />
   </>
