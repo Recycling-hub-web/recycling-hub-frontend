@@ -39,7 +39,7 @@ const CheckSimpleBoxGroup = ({
   };
 
   return (
-    <div className="mb-5">
+    <div className="mb-5" data-field={field}>
       <div className="w-full space-y-3 rounded-xl border border-slate-300 bg-white p-3 text-sm">
         <div className="flex items-center justify-between">
           <label className="text-sm font-semibold text-slate-900">

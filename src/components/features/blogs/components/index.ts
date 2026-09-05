@@ -1,8 +1,12 @@
 export { BlogPostDetailsView } from './BlogPostDetailsView';
 export { BlogPostsView } from './BlogPostsView';
 export { BlogPostTable, PAGE_SIZE } from './BlogPostTable';
+export { BlogTagsView } from './BlogTagsView';
+export { BlogTagTable } from './BlogTagTable';
 export { CoverImageUploader } from './CoverImageUploader';
 export { CreateBlogPostView } from './CreateBlogPostView';
 export { EditBlogPostView } from './EditBlogPostView';
+export { PostMediaManager } from './PostMediaManager';
 export { PublicBlogListView } from './PublicBlogListView';
 export { PublicBlogPostView } from './PublicBlogPostView';
+export { TagFormModal } from './TagFormModal';

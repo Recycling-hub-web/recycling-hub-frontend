@@ -6,7 +6,11 @@ import { useEffect, useState } from 'react';
 import {
   LuArrowLeft,
   LuCalendar,
+  LuEye,
+  LuMapPin,
+  LuNewspaper,
   LuPencil,
+  LuStar,
   LuTag,
   LuTrash2,
 } from 'react-icons/lu';
@@ -23,8 +27,19 @@ import { Loading } from '../../../ui/loading/Loading';
 import { ConfirmModal } from '../../../ui/modal/ConfirmModal';
 import { PageHeader } from '../../../ui/PageHeader';
 import { useToast } from '../../../ui/toast/ToastContext';
-import { STATUS_BADGE_VARIANT, STATUS_LABELS } from '../constants';
-import { useBlogPost, useDeleteBlogPost } from '../hooks';
+import {
+  CONTENT_TYPE_LABELS,
+  DIFFICULTY_LABELS,
+  STATUS_BADGE_VARIANT,
+  STATUS_LABELS,
+  VISIBILITY_LABELS,
+} from '../constants';
+import {
+  useBlogMediaList,
+  useBlogPost,
+  useBlogTags,
+  useDeleteBlogPost,
+} from '../hooks';
 import { getCategoryName } from '../services/blogService';
 
 type BlogPostDetailsViewProps = {
@@ -40,6 +55,8 @@ const BlogPostDetailsView = ({
   const toast = useToast();
   const { post, loading, error, refetch } = useBlogPost(postId);
   const { execute: deletePost, loading: deleting } = useDeleteBlogPost();
+  const { media } = useBlogMediaList(post ? postId : null);
+  const { tags: allTags } = useBlogTags();
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [categoryName, setCategoryName] = useState<string | null>(null);
 
@@ -125,10 +142,28 @@ const BlogPostDetailsView = ({
         actions={<ActionsDropdown items={actionItems} />}
       />
 
-      <div className="mb-5">
+      <div className="mb-5 flex flex-wrap items-center gap-2">
         <StatusBadge variant={STATUS_BADGE_VARIANT[post.status]}>
           {STATUS_LABELS[post.status]}
         </StatusBadge>
+        <StatusBadge
+          variant={post.visibility === 'public' ? 'info' : 'neutral'}
+        >
+          {VISIBILITY_LABELS[post.visibility]}
+        </StatusBadge>
+        <StatusBadge variant="neutral">
+          {CONTENT_TYPE_LABELS[post.content_type]}
+        </StatusBadge>
+        {post.difficulty_level && (
+          <StatusBadge variant="warning">
+            {DIFFICULTY_LABELS[post.difficulty_level]}
+          </StatusBadge>
+        )}
+        {post.is_featured && (
+          <StatusBadge variant="success">
+            <LuStar className="size-3" /> Featured
+          </StatusBadge>
+        )}
       </div>
 
       {post.cover_image?.public_url && (
@@ -158,16 +193,91 @@ const BlogPostDetailsView = ({
               )
             }
           />
+          <InfoRow
+            icon={<LuEye className="size-4" />}
+            label="Views"
+            value={post.views_count}
+          />
+          <InfoRow
+            icon={<LuMapPin className="size-4" />}
+            label="Location"
+            value={post.location || 'None'}
+          />
         </div>
+
+        {post.tags.length > 0 && (
+          <div className="mt-5 border-t border-slate-100 pt-5">
+            <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+              Tags
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {post.tags.map((tagId) => (
+                <span
+                  key={tagId}
+                  className="rounded-full border border-slate-200 px-3 py-1 text-xs font-medium text-slate-600"
+                >
+                  {allTags.find((t) => t.id === tagId)?.name ?? tagId}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="mt-5 border-t border-slate-100 pt-5">
           <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
-            Content
+            {post.excerpt ? 'Excerpt' : 'Content'}
           </p>
           <p className="whitespace-pre-wrap text-sm leading-relaxed text-slate-700">
-            {post.content}
+            {post.excerpt || post.content}
           </p>
         </div>
+
+        {media.length > 0 && (
+          <div className="mt-5 border-t border-slate-100 pt-5">
+            <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+              Media
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {media.map((item) =>
+                item.file_key?.public_url ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    key={item.id}
+                    src={item.file_key.public_url}
+                    alt={item.alt_text}
+                    className="size-16 rounded-lg object-cover"
+                  />
+                ) : (
+                  <span
+                    key={item.id}
+                    className="flex size-16 items-center justify-center rounded-lg bg-slate-100 text-slate-400"
+                  >
+                    <LuNewspaper className="size-5" />
+                  </span>
+                ),
+              )}
+            </div>
+          </div>
+        )}
+
+        {post.related_blogs.length > 0 && (
+          <div className="mt-5 border-t border-slate-100 pt-5">
+            <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+              Related posts
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {post.related_blogs.map((related) => (
+                <Link
+                  key={related.id}
+                  href={`${basePath}/${related.id}`}
+                  className="rounded-full border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:border-brand-200 hover:bg-brand-50 hover:text-brand-700"
+                >
+                  {related.title}
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
 
         {(post.title_ar || post.content_ar) && (
           <div className="mt-5 border-t border-slate-100 pt-5">
@@ -190,6 +300,26 @@ const BlogPostDetailsView = ({
           </div>
         )}
       </Card>
+
+      {(post.meta_title || post.meta_description || post.canonical_url) && (
+        <Card className="mt-4 p-5">
+          <p className="mb-3 text-sm font-semibold text-slate-900">SEO</p>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <InfoRow label="Meta title" value={post.meta_title || '—'} />
+            <InfoRow label="Canonical URL" value={post.canonical_url || '—'} />
+          </div>
+          {post.meta_description && (
+            <p className="mt-3 text-sm text-slate-600">
+              {post.meta_description}
+            </p>
+          )}
+          {post.no_index && (
+            <p className="text-amber-600 mt-3 text-xs font-medium">
+              Hidden from search engines (noindex)
+            </p>
+          )}
+        </Card>
+      )}
 
       <ConfirmModal
         open={confirmOpen}
