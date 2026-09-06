@@ -15,12 +15,10 @@ const ROLE_BADGE_VARIANT: Record<UserRole, BadgeVariant> = {
   driver: 'success',
   receiving_officer: 'warning',
   accounting: 'attention',
-  resident: 'neutral',
 };
 
-// Residents have no accounts for MVP (pickups are public/anonymous) — see
-// apps.accounts.models.user.User.Role on the backend — so they're not a
-// creatable role here.
+// The complete role set (see apps.accounts.models.user.User.Role on the
+// backend) — no resident/end-user role to exclude here anymore.
 const CREATABLE_ROLES: UserRole[] = [
   'admin',
   'staff',

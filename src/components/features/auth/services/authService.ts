@@ -6,9 +6,7 @@ import { OTP_PURPOSE } from '../constants';
 // below is a real endpoint there (see apps/authentication/views.py):
 // login/, logout/, otp/verify/, otp/resend/, password-forgot/,
 // password-reset/, password-change/, token/refresh/ (handled transparently
-// by apiFetch's own silent-retry, not called directly here). The one
-// backend route with no frontend caller yet is register/ (resident
-// self-registration — no resident accounts for MVP, pickups are public).
+// by apiFetch's own silent-retry, not called directly here).
 
 type LoginResult =
   | { requiresOtp: true; channel: string }

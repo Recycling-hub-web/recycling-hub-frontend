@@ -11,7 +11,7 @@ import {
 import type { NavItem } from '../components/layout/Sidebar';
 import type { UserRole } from '../types/auth';
 
-type OperationalRole = Exclude<UserRole, 'admin' | 'resident'>;
+type OperationalRole = Exclude<UserRole, 'admin'>;
 
 type OperationalRoleConfig = {
   route: string;

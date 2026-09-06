@@ -1,11 +1,11 @@
-// Mirrors apps.accounts.models.user.User.Role on the backend.
+// Mirrors apps.accounts.models.user.User.Role on the backend. No
+// resident/end-user role — these five are the complete set.
 type UserRole =
   | 'admin'
   | 'staff'
   | 'driver'
   | 'receiving_officer'
-  | 'accounting'
-  | 'resident';
+  | 'accounting';
 
 // Shape shared by StaffProfile/DriverProfile/ReceivingOfficerProfile/
 // AccountingProfile — see apps.accounts.serializers.staff.StaffDetailSerializer
@@ -26,7 +26,7 @@ type EmployeeProfile = {
 
 // Response shape of GET/PATCH /accounts/me/ — the `profile` key is only
 // present for roles with an extended profile (Staff/Driver/Receiving
-// Officer/Accounting); Admin and Resident have none.
+// Officer/Accounting); Admin has none.
 //
 // `profile_photo` (here and on UserListItem/UserDetail below) is
 // StorageFileField's actual read shape (apps.storage.serializers —
@@ -83,22 +83,19 @@ const ROLE_LABELS: Record<UserRole, string> = {
   driver: 'Driver',
   receiving_officer: 'Receiving Officer',
   accounting: 'Accounting',
-  resident: 'Resident',
 };
 
 // Where each role lands after login / on a role-mismatch bounce-back. Every
-// non-admin operational role gets its own dedicated layout+sidebar now
-// (src/layouts/OperationalLayout.tsx) instead of the old shared /dashboard.
-// `resident` has no real accounts for MVP — pickups are public/anonymous —
-// so it's unreachable in practice; /dashboard is kept alive as a redirect
-// stub for it and for any stale bookmark/link.
+// role gets its own dedicated layout+sidebar now
+// (src/layouts/OperationalLayout.tsx) instead of the old shared /dashboard,
+// which stays alive only as a stable fallback for stale bookmarks/links
+// (see DashboardRedirectView) — not tied to any particular role.
 const ROLE_HOME: Record<UserRole, string> = {
   admin: '/admin',
   staff: '/staff',
   driver: '/driver',
   receiving_officer: '/receiving',
   accounting: '/accounting',
-  resident: '/dashboard',
 };
 
 export { ROLE_HOME, ROLE_LABELS };
