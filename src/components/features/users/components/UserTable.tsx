@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { LuEye, LuPencil, LuTrash2 } from 'react-icons/lu';
 
 import {
@@ -52,8 +51,6 @@ const UserTable = ({
   onToggleActive,
   onDeleteRequest,
 }: UserTableProps) => {
-  const router = useRouter();
-
   const renderRows = () => {
     if (loading) return <TableLoadingRow colSpan={COLUMN_COUNT} />;
     if (error)
@@ -80,20 +77,8 @@ const UserTable = ({
       );
     }
     return users.map((u) => (
-      <tr
-        key={u.id}
-        onClick={() => router.push(`/admin/users/${u.id}`)}
-        className="cursor-pointer transition-colors hover:bg-slate-50"
-      >
-        <td className="px-6 py-4 font-medium text-slate-900">
-          <Link
-            href={`/admin/users/${u.id}`}
-            onClick={(e) => e.stopPropagation()}
-            className="hover:text-brand-600 hover:underline"
-          >
-            {u.full_name}
-          </Link>
-        </td>
+      <tr key={u.id}>
+        <td className="px-6 py-4 font-medium text-slate-900">{u.full_name}</td>
         <td className="px-6 py-4 text-slate-500">{u.email}</td>
         <td className="px-6 py-4">
           <StatusBadge variant={ROLE_BADGE_VARIANT[u.role]}>
@@ -101,13 +86,7 @@ const UserTable = ({
           </StatusBadge>
         </td>
         <td className="px-6 py-4">
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              onToggleActive(u);
-            }}
-          >
+          <button type="button" onClick={() => onToggleActive(u)}>
             <StatusBadge variant={u.is_active ? 'success' : 'neutral'}>
               {u.is_active ? 'Active' : 'Inactive'}
             </StatusBadge>
@@ -117,7 +96,6 @@ const UserTable = ({
           <div className="flex items-center justify-end gap-1">
             <Link
               href={`/admin/users/${u.id}`}
-              onClick={(e) => e.stopPropagation()}
               aria-label={`View ${u.full_name}`}
               className="inline-flex size-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
             >
@@ -125,7 +103,6 @@ const UserTable = ({
             </Link>
             <Link
               href={`/admin/users/${u.id}/edit`}
-              onClick={(e) => e.stopPropagation()}
               aria-label={`Edit ${u.full_name}`}
               className="inline-flex size-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
             >
@@ -133,10 +110,7 @@ const UserTable = ({
             </Link>
             <button
               type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                onDeleteRequest(u);
-              }}
+              onClick={() => onDeleteRequest(u)}
               aria-label={`Delete ${u.full_name}`}
               className="inline-flex size-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-red-50 hover:text-red-600"
             >

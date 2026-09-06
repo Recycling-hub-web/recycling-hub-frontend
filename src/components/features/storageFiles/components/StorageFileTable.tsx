@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import {
   LuDownload,
   LuEye,
@@ -67,7 +66,6 @@ const StorageFileTable = ({
   onDownloadRequest,
   onDeleteRequest,
 }: StorageFileTableProps) => {
-  const router = useRouter();
   const columnCount = 6;
 
   const renderRows = () => {
@@ -92,22 +90,14 @@ const StorageFileTable = ({
     return files.map((f) => {
       const Icon = FILE_TYPE_ICONS[f.file_type] ?? LuFile;
       return (
-        <tr
-          key={f.uid}
-          onClick={() => router.push(`${basePath}/${f.uid}`)}
-          className="cursor-pointer transition-colors hover:bg-slate-50"
-        >
+        <tr key={f.uid}>
           <td className="max-w-[260px] px-6 py-4 font-medium text-slate-900">
-            <Link
-              href={`${basePath}/${f.uid}`}
-              onClick={(e) => e.stopPropagation()}
-              className="flex items-center gap-2.5 truncate hover:text-brand-600 hover:underline"
-            >
+            <div className="flex items-center gap-2.5 truncate">
               <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-500">
                 <Icon className="size-4" />
               </span>
               <span className="truncate">{f.original_name}</span>
-            </Link>
+            </div>
           </td>
           <td className="px-6 py-4 text-slate-500">
             {FILE_TYPE_LABELS[f.file_type] ?? f.file_type}
@@ -125,7 +115,6 @@ const StorageFileTable = ({
             <div className="flex items-center justify-end gap-1">
               <Link
                 href={`${basePath}/${f.uid}`}
-                onClick={(e) => e.stopPropagation()}
                 aria-label={`View file ${f.original_name}`}
                 className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
               >
@@ -133,10 +122,7 @@ const StorageFileTable = ({
               </Link>
               <button
                 type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onDownloadRequest(f);
-                }}
+                onClick={() => onDownloadRequest(f)}
                 aria-label={`Download file ${f.original_name}`}
                 className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
               >
@@ -144,10 +130,7 @@ const StorageFileTable = ({
               </button>
               <button
                 type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onDeleteRequest(f);
-                }}
+                onClick={() => onDeleteRequest(f)}
                 aria-label={`Delete file ${f.original_name}`}
                 className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-red-50 hover:text-red-600"
               >

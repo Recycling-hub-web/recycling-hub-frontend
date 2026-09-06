@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { LuEye, LuPencil, LuTrash2 } from 'react-icons/lu';
 
 import { StatusBadge } from '../../../ui/badges/StatusBadge';
@@ -57,7 +56,6 @@ const CategoryTable = ({
   parentNameById,
   onDeleteRequest,
 }: CategoryTableProps) => {
-  const router = useRouter();
   const columnCount = 5;
 
   const renderRows = () => {
@@ -86,24 +84,16 @@ const CategoryTable = ({
       );
     }
     return categories.map((c) => (
-      <tr
-        key={c.id}
-        onClick={() => router.push(`${basePath}/${c.id}`)}
-        className="cursor-pointer transition-colors hover:bg-slate-50"
-      >
+      <tr key={c.id}>
         <td className="max-w-[220px] px-6 py-4 font-medium text-slate-900">
-          <Link
-            href={`${basePath}/${c.id}`}
-            onClick={(e) => e.stopPropagation()}
-            className="flex items-center gap-2 truncate hover:text-brand-600 hover:underline"
-          >
+          <div className="flex items-center gap-2 truncate">
             <span
               className="size-2.5 shrink-0 rounded-full"
               style={{ backgroundColor: c.hex_color }}
               aria-hidden
             />
             <span className="truncate">{c.name}</span>
-          </Link>
+          </div>
         </td>
         <td className="max-w-xs truncate px-6 py-4 text-slate-500">
           {c.description || '—'}
@@ -122,7 +112,6 @@ const CategoryTable = ({
           <div className="flex items-center justify-end gap-1">
             <Link
               href={`${basePath}/${c.id}`}
-              onClick={(e) => e.stopPropagation()}
               aria-label={`View category ${c.name}`}
               className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
             >
@@ -130,7 +119,6 @@ const CategoryTable = ({
             </Link>
             <Link
               href={`${basePath}/${c.id}/edit`}
-              onClick={(e) => e.stopPropagation()}
               aria-label={`Edit category ${c.name}`}
               className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
             >
@@ -138,10 +126,7 @@ const CategoryTable = ({
             </Link>
             <button
               type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                onDeleteRequest(c);
-              }}
+              onClick={() => onDeleteRequest(c)}
               aria-label={`Delete category ${c.name}`}
               className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-red-50 hover:text-red-600"
             >

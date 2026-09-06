@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { LuEye, LuPencil, LuTrash2 } from 'react-icons/lu';
 
 import {
@@ -45,7 +44,6 @@ const ClassificationTable = ({
   basePath,
   onDeleteRequest,
 }: ClassificationTableProps) => {
-  const router = useRouter();
   const columnCount = 3;
 
   const renderRows = () => {
@@ -68,19 +66,9 @@ const ClassificationTable = ({
       );
     }
     return classifications.map((c) => (
-      <tr
-        key={c.id}
-        onClick={() => router.push(`${basePath}/${c.id}`)}
-        className="cursor-pointer transition-colors hover:bg-slate-50"
-      >
-        <td className="max-w-[220px] px-6 py-4 font-medium text-slate-900">
-          <Link
-            href={`${basePath}/${c.id}`}
-            onClick={(e) => e.stopPropagation()}
-            className="block truncate hover:text-brand-600 hover:underline"
-          >
-            {c.name}
-          </Link>
+      <tr key={c.id}>
+        <td className="max-w-[220px] truncate px-6 py-4 font-medium text-slate-900">
+          {c.name}
         </td>
         <td className="max-w-md truncate px-6 py-4 text-slate-500">
           {c.description || '—'}
@@ -89,7 +77,6 @@ const ClassificationTable = ({
           <div className="flex items-center justify-end gap-1">
             <Link
               href={`${basePath}/${c.id}`}
-              onClick={(e) => e.stopPropagation()}
               aria-label={`View classification ${c.name}`}
               className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
             >
@@ -97,7 +84,6 @@ const ClassificationTable = ({
             </Link>
             <Link
               href={`${basePath}/${c.id}/edit`}
-              onClick={(e) => e.stopPropagation()}
               aria-label={`Edit classification ${c.name}`}
               className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
             >
@@ -105,10 +91,7 @@ const ClassificationTable = ({
             </Link>
             <button
               type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                onDeleteRequest(c);
-              }}
+              onClick={() => onDeleteRequest(c)}
               aria-label={`Delete classification ${c.name}`}
               className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-red-50 hover:text-red-600"
             >

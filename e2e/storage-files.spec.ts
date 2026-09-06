@@ -98,7 +98,7 @@ test.describe('Admin storage files', () => {
     // The record is still there — the backend only removes it once the
     // storage delete itself actually succeeds.
     await expect(
-      page.getByRole('link', { name: 'Manual Test Report.pdf', exact: true }),
+      page.getByRole('row', { name: /Manual Test Report\.pdf/ }),
     ).toBeVisible();
   });
 });

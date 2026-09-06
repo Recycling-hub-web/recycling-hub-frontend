@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { LuEye, LuPencil, LuTrash2, LuUser } from 'react-icons/lu';
 
 import {
@@ -40,7 +39,6 @@ const StaffTable = ({
   onRetry,
   onDeleteRequest,
 }: StaffTableProps) => {
-  const router = useRouter();
   const columnCount = 6;
 
   const renderRows = () => {
@@ -57,17 +55,9 @@ const StaffTable = ({
       return <TableEmptyRow colSpan={columnCount} title="No staff found" />;
     }
     return staff.map((member) => (
-      <tr
-        key={member.id}
-        onClick={() => router.push(`/admin/staff/${member.id}`)}
-        className="cursor-pointer transition-colors hover:bg-slate-50"
-      >
+      <tr key={member.id}>
         <td className="max-w-[240px] px-6 py-4 font-medium text-slate-900">
-          <Link
-            href={`/admin/staff/${member.id}`}
-            onClick={(e) => e.stopPropagation()}
-            className="flex items-center gap-2.5 truncate hover:text-brand-600 hover:underline"
-          >
+          <div className="flex items-center gap-2.5">
             {member.user.profile_photo?.public_url ? (
               // eslint-disable-next-line @next/next/no-img-element -- remote/presigned URL, not a static asset
               <img
@@ -81,7 +71,7 @@ const StaffTable = ({
               </span>
             )}
             <span className="truncate">{member.user.full_name}</span>
-          </Link>
+          </div>
         </td>
         <td className="px-6 py-4 text-slate-500">{member.employee_id}</td>
         <td className="max-w-[160px] truncate px-6 py-4 text-slate-500">
@@ -97,7 +87,6 @@ const StaffTable = ({
           <div className="flex items-center justify-end gap-1">
             <Link
               href={`/admin/staff/${member.id}`}
-              onClick={(e) => e.stopPropagation()}
               aria-label={`View ${member.user.full_name}`}
               className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
             >
@@ -105,7 +94,6 @@ const StaffTable = ({
             </Link>
             <Link
               href={`/admin/staff/${member.id}/edit`}
-              onClick={(e) => e.stopPropagation()}
               aria-label={`Edit ${member.user.full_name}`}
               className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
             >
@@ -113,10 +101,7 @@ const StaffTable = ({
             </Link>
             <button
               type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                onDeleteRequest(member);
-              }}
+              onClick={() => onDeleteRequest(member)}
               aria-label={`Delete ${member.user.full_name}`}
               className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-red-50 hover:text-red-600"
             >
