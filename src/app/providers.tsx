@@ -46,7 +46,7 @@ const PageTransition = ({ children }: { children: ReactNode }) => {
 /** Root provider tree for the App Router side of the app (src/app/) —
  * mirrors src/pages/_app.tsx's provider order exactly (AuthProvider >
  * AuthFlowProvider > ToastProvider > ReactLenis) so context consumers
- * shared between both routers (AuthCard, RequireAuth, ProfileOverview,
+ * shared between both routers (AuthCard, RequireAuth, ProfileSummaryCard,
  * etc.) behave identically regardless of which router served the page. */
 const Providers = ({ children }: { children: ReactNode }) => (
   <AuthProvider>

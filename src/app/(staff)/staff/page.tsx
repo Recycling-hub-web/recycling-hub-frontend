@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 
-import { ProfileOverview } from '../../../components/features/auth/components';
+import { StaffOverviewView } from '../../../components/features/overview/components';
 
 export const metadata: Metadata = {
   title: 'Staff — Recycling Hub',
@@ -8,5 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function StaffDashboardPage() {
-  return <ProfileOverview />;
+  return <StaffOverviewView />;
 }

@@ -39,4 +39,6 @@ const AdminSidebar = ({ open, onClose }: AdminSidebarProps) => (
   <Sidebar navItems={ADMIN_NAV_ITEMS} open={open} onClose={onClose} />
 );
 
-export { AdminSidebar };
+// Exported so AdminOverviewView can build its quick-links grid from the
+// same list rather than maintaining a second copy.
+export { ADMIN_NAV_ITEMS, AdminSidebar };

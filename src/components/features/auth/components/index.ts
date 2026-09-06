@@ -4,7 +4,6 @@ export { DashboardRedirectView } from './DashboardRedirectView';
 export { ForgotPasswordView } from './ForgotPasswordView';
 export { LoginView } from './LoginView';
 export { PasswordSetupForm } from './PasswordSetupForm';
-export { ProfileOverview } from './ProfileOverview';
 export { RequireAuth } from './RequireAuth';
 export { ResetPasswordView } from './ResetPasswordView';
 export { SetPasswordView } from './SetPasswordView';
