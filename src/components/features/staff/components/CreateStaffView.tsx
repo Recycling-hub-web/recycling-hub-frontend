@@ -114,6 +114,7 @@ const CreateStaffView = () => {
             <InputField
               label="Full name"
               field="full_name"
+              placeholder="e.g. Fatima Ali"
               formData={formData}
               errors={errors}
               updateFormData={updateFormData}
@@ -123,6 +124,7 @@ const CreateStaffView = () => {
               label="Email"
               field="email"
               type="email"
+              placeholder="e.g. fatima@recyclinghub.example"
               formData={formData}
               errors={errors}
               updateFormData={updateFormData}
@@ -132,6 +134,7 @@ const CreateStaffView = () => {
               label="Phone number"
               field="phone_number"
               required={false}
+              placeholder="e.g. +60123456789"
               formData={formData}
               errors={errors}
               updateFormData={updateFormData}
@@ -151,6 +154,7 @@ const CreateStaffView = () => {
               label="Department"
               field="department"
               required={false}
+              placeholder="e.g. Programs, Finance"
               formData={formData}
               errors={errors}
               updateFormData={updateFormData}
@@ -160,6 +164,7 @@ const CreateStaffView = () => {
               label="Position"
               field="position"
               required={false}
+              placeholder="e.g. Program Manager"
               formData={formData}
               errors={errors}
               updateFormData={updateFormData}
@@ -169,6 +174,7 @@ const CreateStaffView = () => {
               label="Branch"
               field="branch"
               required={false}
+              placeholder="e.g. Kuala Lumpur HQ"
               formData={formData}
               errors={errors}
               updateFormData={updateFormData}

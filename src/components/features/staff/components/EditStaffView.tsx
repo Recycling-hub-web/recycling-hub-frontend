@@ -142,6 +142,7 @@ const EditStaffView = ({ staffId }: { staffId: string }) => {
               label="Department"
               field="department"
               required={false}
+              placeholder="e.g. Programs, Finance"
               formData={formData}
               updateFormData={updateFormData}
               disabled={submitting}
@@ -150,6 +151,7 @@ const EditStaffView = ({ staffId }: { staffId: string }) => {
               label="Position"
               field="position"
               required={false}
+              placeholder="e.g. Program Manager"
               formData={formData}
               updateFormData={updateFormData}
               disabled={submitting}
@@ -158,6 +160,7 @@ const EditStaffView = ({ staffId }: { staffId: string }) => {
               label="Branch"
               field="branch"
               required={false}
+              placeholder="e.g. Kuala Lumpur HQ"
               formData={formData}
               updateFormData={updateFormData}
               disabled={submitting}
