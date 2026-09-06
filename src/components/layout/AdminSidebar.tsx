@@ -2,6 +2,7 @@
 
 import {
   LuHardDrive,
+  LuIdCard,
   LuLayers,
   LuLayoutDashboard,
   LuMail,
@@ -22,6 +23,7 @@ import { Sidebar } from './Sidebar';
 const ADMIN_NAV_ITEMS: NavItem[] = [
   { href: '/admin', label: 'Overview', icon: LuLayoutDashboard },
   { href: '/admin/users', label: 'Users', icon: LuUsers },
+  { href: '/admin/staff', label: 'Staff', icon: LuIdCard },
   { href: '/admin/pickups', label: 'Pickup Requests', icon: LuTruck },
   { href: '/admin/contact', label: 'Contact', icon: LuMail },
   { href: '/admin/categories', label: 'Categories', icon: LuTag },

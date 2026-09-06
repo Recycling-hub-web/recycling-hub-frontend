@@ -148,10 +148,10 @@ const Sidebar = ({ navItems, open, onClose }: SidebarProps) => {
             <div className="rounded-xl bg-slate-50 p-2.5">
               <div className="flex items-center gap-3 p-0.5">
                 <div className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-brand-100 text-xs font-bold text-brand-700">
-                  {user.profile_photo?.url ? (
+                  {user.profile_photo?.public_url ? (
                     // eslint-disable-next-line @next/next/no-img-element -- remote/presigned URL, not a static asset
                     <img
-                      src={user.profile_photo.url}
+                      src={user.profile_photo.public_url}
                       alt={user.full_name}
                       className="size-full object-cover"
                     />

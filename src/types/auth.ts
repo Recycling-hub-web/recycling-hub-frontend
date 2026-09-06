@@ -27,6 +27,15 @@ type EmployeeProfile = {
 // Response shape of GET/PATCH /accounts/me/ — the `profile` key is only
 // present for roles with an extended profile (Staff/Driver/Receiving
 // Officer/Accounting); Admin and Resident have none.
+//
+// `profile_photo` (here and on UserListItem/UserDetail below) is
+// StorageFileField's actual read shape (apps.storage.serializers —
+// `{"file_key": ..., "public_url": ...}`, confirmed by reading the field
+// itself) — this previously said `url`, which the backend has never
+// once returned, so Sidebar.tsx's own avatar image silently never
+// rendered a real uploaded photo. Found and fixed alongside the Staff
+// Management feature, which depends on this field round-tripping
+// correctly.
 type CurrentUser = {
   id: string;
   email: string;
@@ -36,7 +45,7 @@ type CurrentUser = {
   whatsapp_enabled: boolean;
   role: UserRole;
   is_2fa_enabled: boolean;
-  profile_photo: { file_key: string; url?: string } | null;
+  profile_photo: { file_key: string; public_url?: string } | null;
   profile?: EmployeeProfile;
 };
 
@@ -48,7 +57,7 @@ type UserListItem = {
   full_name_ar: string;
   role: UserRole;
   is_active: boolean;
-  profile_photo: { file_key: string; url?: string } | null;
+  profile_photo: { file_key: string; public_url?: string } | null;
 };
 
 // Row shape from GET/PATCH /accounts/users/<id>/ (UserDetailSerializer).
@@ -62,7 +71,7 @@ type UserDetail = {
   is_active: boolean;
   is_2fa_enabled: boolean;
   is_2fa_verified: boolean;
-  profile_photo: { file_key: string; url?: string } | null;
+  profile_photo: { file_key: string; public_url?: string } | null;
   password_reset_required: boolean;
   created_at: string;
   updated_at: string;

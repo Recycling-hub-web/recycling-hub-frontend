@@ -119,4 +119,54 @@ async function apiFetch<T>(
   return data as T;
 }
 
-export { ApiError, apiFetch };
+/**
+ * Downloads a binary response (an Excel export, say) and saves it via a
+ * throwaway `<a download>` click. `apiFetch` can't be reused here — it
+ * always reads non-JSON responses as `.text()`, which would corrupt a
+ * binary file's bytes — so this is a small, separate fetch with the
+ * same auth/credentials shape. Not staff-specific; any future export
+ * endpoint (e.g. apps.admin_panel's organization report) can reuse it.
+ */
+async function downloadFile(
+  path: string,
+  filename: string,
+  options: RequestOptions = {},
+): Promise<void> {
+  const { skipAuth, isRetry, headers, ...rest } = options;
+
+  const response = await fetch(`${API_URL}${path}`, {
+    ...rest,
+    headers,
+    credentials: 'include',
+  });
+
+  if (response.status === 401 && !skipAuth && !isRetry) {
+    const refreshed = await refreshAccessToken();
+    if (refreshed) {
+      await downloadFile(path, filename, { ...options, isRetry: true });
+      return;
+    }
+  }
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => null);
+    throw new ApiError(
+      response.status,
+      data,
+      extractErrorMessage(
+        data,
+        `Request failed with status ${response.status}`,
+      ),
+    );
+  }
+
+  const blob = await response.blob();
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+export { ApiError, apiFetch, downloadFile };
