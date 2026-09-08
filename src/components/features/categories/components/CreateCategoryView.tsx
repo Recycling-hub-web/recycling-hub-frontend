@@ -115,6 +115,7 @@ const CreateCategoryView = ({ basePath }: CreateCategoryViewProps) => {
             <InputField
               label="Name"
               field="name"
+              placeholder="e.g. Plastic Bottles"
               formData={formData}
               errors={errors}
               updateFormData={updateFormData}
@@ -135,6 +136,7 @@ const CreateCategoryView = ({ basePath }: CreateCategoryViewProps) => {
                 label="Description"
                 field="description"
                 required={false}
+                placeholder="What belongs in this category…"
                 formData={formData}
                 errors={errors}
                 updateFormData={updateFormData}

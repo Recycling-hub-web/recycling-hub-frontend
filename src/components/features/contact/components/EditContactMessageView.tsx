@@ -150,6 +150,7 @@ const EditContactMessageView = ({
             <InputField
               label="Full name"
               field="full_name"
+              placeholder="e.g. Fatima Ali"
               formData={formData}
               errors={errors}
               updateFormData={updateFormData}
@@ -159,6 +160,7 @@ const EditContactMessageView = ({
               label="Email"
               field="email"
               type="email"
+              placeholder="e.g. fatima@example.com"
               formData={formData}
               errors={errors}
               updateFormData={updateFormData}
@@ -167,6 +169,7 @@ const EditContactMessageView = ({
             <InputField
               label="Contact details"
               field="phone_number"
+              placeholder="e.g. +60123456789"
               formData={formData}
               errors={errors}
               updateFormData={updateFormData}
@@ -175,6 +178,7 @@ const EditContactMessageView = ({
             <InputField
               label="Subject"
               field="subject"
+              placeholder="e.g. Question about pickup scheduling"
               formData={formData}
               errors={errors}
               updateFormData={updateFormData}
@@ -193,6 +197,7 @@ const EditContactMessageView = ({
               <TextareaField
                 label="Message"
                 field="message"
+                placeholder="Write a reply or edit the message…"
                 formData={formData}
                 errors={errors}
                 updateFormData={updateFormData}

@@ -235,6 +235,7 @@ const EditBlogPostView = ({ postId, basePath }: EditBlogPostViewProps) => {
             <InputField
               label="Title"
               field="title"
+              placeholder="e.g. 5 Easy Ways to Sort Your Recyclables"
               formData={formData}
               errors={errors}
               updateFormData={updateFormData}
@@ -353,6 +354,7 @@ const EditBlogPostView = ({ postId, basePath }: EditBlogPostViewProps) => {
               <TextareaField
                 label="Content"
                 field="content"
+                placeholder="Write the post…"
                 formData={formData}
                 errors={errors}
                 updateFormData={updateFormData}
@@ -402,6 +404,7 @@ const EditBlogPostView = ({ postId, basePath }: EditBlogPostViewProps) => {
                 label="Canonical URL"
                 field="canonical_url"
                 required={false}
+                placeholder="https://recyclinghub.example/resources/blog/…"
                 formData={formData}
                 errors={errors}
                 updateFormData={updateFormData}
@@ -412,6 +415,7 @@ const EditBlogPostView = ({ postId, basePath }: EditBlogPostViewProps) => {
                   label="Meta description"
                   field="meta_description"
                   required={false}
+                  placeholder="Falls back to the excerpt if left blank."
                   formData={formData}
                   errors={errors}
                   updateFormData={updateFormData}
@@ -431,6 +435,7 @@ const EditBlogPostView = ({ postId, basePath }: EditBlogPostViewProps) => {
                 label="OG image URL"
                 field="og_image"
                 required={false}
+                placeholder="Falls back to the cover image."
                 formData={formData}
                 errors={errors}
                 updateFormData={updateFormData}
@@ -441,6 +446,7 @@ const EditBlogPostView = ({ postId, basePath }: EditBlogPostViewProps) => {
                   label="OG description"
                   field="og_description"
                   required={false}
+                  placeholder="Falls back to the meta description."
                   formData={formData}
                   errors={errors}
                   updateFormData={updateFormData}

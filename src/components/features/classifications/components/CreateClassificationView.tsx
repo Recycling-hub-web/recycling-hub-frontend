@@ -99,6 +99,7 @@ const CreateClassificationView = ({
           <InputField
             label="Name"
             field="name"
+            placeholder="e.g. VIP Partner"
             formData={formData}
             errors={errors}
             updateFormData={updateFormData}
@@ -108,6 +109,7 @@ const CreateClassificationView = ({
             label="Description"
             field="description"
             required={false}
+            placeholder="What this classification means…"
             formData={formData}
             errors={errors}
             updateFormData={updateFormData}

@@ -146,6 +146,7 @@ const EditCategoryView = ({ categoryId, basePath }: EditCategoryViewProps) => {
             <InputField
               label="Name"
               field="name"
+              placeholder="e.g. Plastic Bottles"
               formData={formData}
               errors={errors}
               updateFormData={updateFormData}
@@ -175,6 +176,7 @@ const EditCategoryView = ({ categoryId, basePath }: EditCategoryViewProps) => {
                 label="Description"
                 field="description"
                 required={false}
+                placeholder="What belongs in this category…"
                 formData={formData}
                 errors={errors}
                 updateFormData={updateFormData}
