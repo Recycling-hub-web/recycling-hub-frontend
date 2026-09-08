@@ -78,7 +78,7 @@ type UserDetail = {
 };
 
 const ROLE_LABELS: Record<UserRole, string> = {
-  admin: 'Super Admin',
+  admin: 'Admin',
   staff: 'Staff',
   driver: 'Driver',
   receiving_officer: 'Receiving Officer',
