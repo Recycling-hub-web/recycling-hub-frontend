@@ -11,10 +11,13 @@ import { InputField } from '../../../form/fields/InputField';
 import { SettingToggleInput } from '../../../form/toggle/SettingToggleInput';
 import { PageContainer } from '../../../layout/PageContainer';
 import { AlertBanner } from '../../../ui/AlertBanner';
+import { Button } from '../../../ui/buttons/Button';
 import { Card } from '../../../ui/card/Card';
 import { Loading } from '../../../ui/loading/Loading';
 import { PageHeader } from '../../../ui/PageHeader';
 import { useToast } from '../../../ui/toast/ToastContext';
+// Cross-feature reuse — see the same import in CreateUserView.
+import { ProfilePhotoUploader } from '../../staff/components/ProfilePhotoUploader';
 import { useUpdateUser, useUser } from '../hooks';
 
 type FormState = {
@@ -33,6 +36,7 @@ const EditUserView = ({ userId }: { userId: string }) => {
   const { user, loading: loadingUser, error: loadError } = useUser(userId);
   const { execute: updateUser, loading: submitting } = useUpdateUser();
   const [formData, setFormData] = useState<FormState | null>(null);
+  const [photoKey, setPhotoKey] = useState<string | null>(null);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -43,10 +47,20 @@ const EditUserView = ({ userId }: { userId: string }) => {
       is_active: user.is_active,
       is_2fa_enabled: user.is_2fa_enabled,
     });
+    setPhotoKey(user.profile_photo?.file_key ?? null);
   }, [user]);
 
   const updateFormData = (field: string, value: string | boolean) =>
     setFormData((prev) => (prev ? { ...prev, [field]: value } : prev));
+
+  const hasChanges =
+    Boolean(formData) &&
+    Boolean(user) &&
+    (formData!.full_name !== user!.full_name ||
+      formData!.phone_number !== (user!.phone_number ?? '') ||
+      formData!.is_active !== user!.is_active ||
+      formData!.is_2fa_enabled !== user!.is_2fa_enabled ||
+      photoKey !== (user!.profile_photo?.file_key ?? null));
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -58,6 +72,7 @@ const EditUserView = ({ userId }: { userId: string }) => {
         phone_number: formData.phone_number || undefined,
         is_active: formData.is_active,
         is_2fa_enabled: formData.is_2fa_enabled,
+        profile_photo: photoKey,
       });
       toast.success(
         'User updated',
@@ -94,57 +109,84 @@ const EditUserView = ({ userId }: { userId: string }) => {
       <PageHeader title="Edit user" subtitle={user.email} />
 
       <Card className="p-5">
-        <form className="space-y-4" onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}>
           <AlertBanner message={error} />
 
-          <InputField
-            label="Full name"
-            field="full_name"
-            formData={formData}
-            updateFormData={updateFormData}
-          />
-          <InputField
-            label="Phone number"
-            field="phone_number"
-            required={false}
-            formData={formData}
-            updateFormData={updateFormData}
-          />
-          <SettingToggleInput
-            label="Account status"
-            field="is_active"
-            formData={formData}
-            updateFormData={updateFormData}
-            enabledText="Active"
-            disabledText="Inactive"
-            enabledDescription="Can sign in"
-            disabledDescription="Cannot sign in"
-          />
-          <SettingToggleInput
-            label="Two-factor authentication"
-            field="is_2fa_enabled"
-            formData={formData}
-            updateFormData={updateFormData}
-            enabledText="Required"
-            disabledText="Not required"
-            enabledDescription="An OTP is sent on every login"
-            disabledDescription="Signs in with just a password"
-          />
+          <div className="grid gap-x-4 sm:grid-cols-2">
+            <InputField
+              label="Full name"
+              field="full_name"
+              placeholder="e.g. Fatima Ali"
+              formData={formData}
+              updateFormData={updateFormData}
+              disabled={submitting}
+            />
+            <InputField
+              label="Phone number"
+              field="phone_number"
+              required={false}
+              placeholder="e.g. +60123456789"
+              formData={formData}
+              updateFormData={updateFormData}
+              disabled={submitting}
+            />
+            <div className="sm:col-span-2">
+              <ProfilePhotoUploader
+                value={
+                  photoKey
+                    ? {
+                        file_key: photoKey,
+                        // Only the original photo (unchanged) has a known
+                        // public_url — a freshly uploaded key doesn't, same
+                        // as CreateStaffView/CreateUserView.
+                        public_url:
+                          photoKey === user.profile_photo?.file_key
+                            ? user.profile_photo?.public_url ?? null
+                            : null,
+                      }
+                    : null
+                }
+                onChange={setPhotoKey}
+                disabled={submitting}
+              />
+            </div>
+            <SettingToggleInput
+              label="Account status"
+              field="is_active"
+              formData={formData}
+              updateFormData={updateFormData}
+              enabledText="Active"
+              disabledText="Inactive"
+              enabledDescription="Can sign in"
+              disabledDescription="Cannot sign in"
+            />
+            <SettingToggleInput
+              label="Two-factor authentication"
+              field="is_2fa_enabled"
+              formData={formData}
+              updateFormData={updateFormData}
+              enabledText="Required"
+              disabledText="Not required"
+              enabledDescription="An OTP is sent on every login"
+              disabledDescription="Signs in with just a password"
+            />
+          </div>
 
-          <div className="flex gap-2 pt-2">
-            <Link
+          <div className="flex gap-5 pt-5">
+            <Button
               href={`/admin/users/${user.id}`}
-              className="flex-1 rounded-lg border border-slate-200 px-4 py-2 text-center text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+              variant="secondary"
+              className="flex-1"
             >
               Cancel
-            </Link>
-            <button
+            </Button>
+            <Button
               type="submit"
-              disabled={submitting}
-              className="flex-1 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-60"
+              disabled={submitting || !hasChanges}
+              className="flex-1"
             >
               {submitting ? 'Saving…' : 'Save changes'}
-            </button>
+            </Button>
           </div>
         </form>
       </Card>

@@ -11,9 +11,14 @@ import { InputField } from '../../../form/fields/InputField';
 import { SelectField } from '../../../form/fields/SelectField';
 import { PageContainer } from '../../../layout/PageContainer';
 import { AlertBanner } from '../../../ui/AlertBanner';
+import { Button } from '../../../ui/buttons/Button';
 import { Card } from '../../../ui/card/Card';
 import { PageHeader } from '../../../ui/PageHeader';
 import { useToast } from '../../../ui/toast/ToastContext';
+// Cross-feature reuse, same precedent as CoverImageUploader elsewhere —
+// the backend field this writes to (User.profile_photo) is shared by
+// every role, not Staff-specific, so a second uploader isn't warranted.
+import { ProfilePhotoUploader } from '../../staff/components/ProfilePhotoUploader';
 import { ROLE_OPTIONS, ROLES_WITH_PROFILE } from '../constants';
 import { useCreateUser } from '../hooks';
 
@@ -25,6 +30,7 @@ type FormState = {
   department: string;
   job_title: string;
   branch: string;
+  joining_date: string;
 };
 
 const INITIAL_STATE: FormState = {
@@ -35,6 +41,7 @@ const INITIAL_STATE: FormState = {
   department: '',
   job_title: '',
   branch: '',
+  joining_date: '',
 };
 
 // Full page, not a modal — the create flow gets the same footing as
@@ -45,25 +52,41 @@ const CreateUserView = () => {
   const toast = useToast();
   const { execute: createUser, loading: submitting, error } = useCreateUser();
   const [formData, setFormData] = useState<FormState>(INITIAL_STATE);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [photoKey, setPhotoKey] = useState<string | null>(null);
 
-  const updateFormData = (field: string, value: string) =>
+  const updateFormData = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+    setErrors((prev) => ({ ...prev, [field]: '' }));
+  };
 
   const showProfileFields = ROLES_WITH_PROFILE.includes(formData.role);
 
+  const validate = (data: FormState): boolean => {
+    const nextErrors: Record<string, string> = {};
+    if (!data.full_name.trim()) nextErrors.full_name = 'Full name is required.';
+    if (!data.email.trim()) nextErrors.email = 'Email is required.';
+    setErrors(nextErrors);
+    return Object.keys(nextErrors).length === 0;
+  };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    if (!validate(formData)) return;
+
     try {
       const user = await createUser({
         full_name: formData.full_name,
         email: formData.email,
         phone_number: formData.phone_number || undefined,
         role: formData.role,
+        profile_photo: photoKey,
         ...(showProfileFields
           ? {
               department: formData.department || undefined,
               job_title: formData.job_title || undefined,
               branch: formData.branch || undefined,
+              joining_date: formData.joining_date || undefined,
             }
           : {}),
       });
@@ -93,36 +116,62 @@ const CreateUserView = () => {
       />
 
       <Card className="p-5">
-        <form className="space-y-4" onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}>
           <AlertBanner message={error} />
 
-          <InputField
-            label="Full name"
-            field="full_name"
-            formData={formData}
-            updateFormData={updateFormData}
-          />
-          <InputField
-            label="Email"
-            field="email"
-            type="email"
-            formData={formData}
-            updateFormData={updateFormData}
-          />
-          <InputField
-            label="Phone number"
-            field="phone_number"
-            required={false}
-            formData={formData}
-            updateFormData={updateFormData}
-          />
-          <SelectField
-            label="Role"
-            field="role"
-            options={ROLE_OPTIONS}
-            formData={formData}
-            updateFormData={updateFormData}
-          />
+          <div className="grid gap-x-4 sm:grid-cols-2">
+            <InputField
+              label="Full name"
+              field="full_name"
+              placeholder="e.g. Fatima Ali"
+              formData={formData}
+              errors={errors}
+              updateFormData={updateFormData}
+              disabled={submitting}
+            />
+            <InputField
+              label="Email"
+              field="email"
+              type="email"
+              placeholder="e.g. fatima@recyclinghub.example"
+              formData={formData}
+              errors={errors}
+              updateFormData={updateFormData}
+              disabled={submitting}
+            />
+            <InputField
+              label="Phone number"
+              field="phone_number"
+              required={false}
+              placeholder="e.g. +60123456789"
+              formData={formData}
+              errors={errors}
+              updateFormData={updateFormData}
+              disabled={submitting}
+            />
+            <SelectField
+              label="Role"
+              field="role"
+              options={ROLE_OPTIONS}
+              formData={formData}
+              updateFormData={updateFormData}
+              disabled={submitting}
+            />
+
+            {/* profile_photo lives on User itself (see Topbar/Sidebar
+             * avatars), not a role-specific profile field, so — unlike
+             * department/position/branch/joining_date below — it isn't
+             * gated behind showProfileFields; every role can have one. */}
+            <div className="sm:col-span-2">
+              <ProfilePhotoUploader
+                value={
+                  photoKey ? { file_key: photoKey, public_url: null } : null
+                }
+                onChange={setPhotoKey}
+                disabled={submitting}
+              />
+            </div>
+          </div>
 
           {showProfileFields && (
             <div className="grid grid-cols-2 gap-3 rounded-xl bg-slate-50 p-3.5">
@@ -131,41 +180,53 @@ const CreateUserView = () => {
                   label="Department"
                   field="department"
                   required={false}
+                  placeholder="e.g. Programs, Finance"
                   formData={formData}
+                  errors={errors}
                   updateFormData={updateFormData}
+                  disabled={submitting}
                 />
               </div>
               <InputField
-                label="Job title"
+                label="Position"
                 field="job_title"
                 required={false}
+                placeholder="e.g. Program Manager"
                 formData={formData}
+                errors={errors}
                 updateFormData={updateFormData}
+                disabled={submitting}
               />
               <InputField
                 label="Branch"
                 field="branch"
                 required={false}
+                placeholder="e.g. Kuala Lumpur HQ"
                 formData={formData}
+                errors={errors}
                 updateFormData={updateFormData}
+                disabled={submitting}
+              />
+              <InputField
+                label="Joining date"
+                field="joining_date"
+                type="date"
+                required={false}
+                formData={formData}
+                errors={errors}
+                updateFormData={updateFormData}
+                disabled={submitting}
               />
             </div>
           )}
 
-          <div className="flex gap-2 pt-2">
-            <Link
-              href="/admin/users"
-              className="flex-1 rounded-lg border border-slate-200 px-4 py-2 text-center text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
-            >
+          <div className="flex gap-5 pt-2">
+            <Button href="/admin/users" variant="secondary" className="flex-1">
               Cancel
-            </Link>
-            <button
-              type="submit"
-              disabled={submitting}
-              className="flex-1 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-60"
-            >
+            </Button>
+            <Button type="submit" disabled={submitting} className="flex-1">
               {submitting ? 'Creating…' : 'Create user'}
-            </button>
+            </Button>
           </div>
         </form>
       </Card>

@@ -13,7 +13,7 @@ const useUpdateUser = () => {
         UserDetail,
         'full_name' | 'phone_number' | 'is_active' | 'is_2fa_enabled'
       >
-    >,
+    > & { profile_photo?: string | null },
   ) => {
     setLoading(true);
     try {

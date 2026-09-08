@@ -11,12 +11,15 @@ import {
   LuPhone,
   LuShieldCheck,
   LuTrash2,
+  LuUser,
 } from 'react-icons/lu';
 
 import { ApiError } from '../../../../lib/api';
 import { ROLE_LABELS } from '../../../../types/auth';
 import { PageContainer } from '../../../layout/PageContainer';
 import { StatusBadge } from '../../../ui/badges/StatusBadge';
+import type { DropdownItem } from '../../../ui/buttons/ActionsDropdown';
+import { ActionsDropdown } from '../../../ui/buttons/ActionsDropdown';
 import { Card } from '../../../ui/card/Card';
 import { AppDate } from '../../../ui/date/AppDate';
 import { InfoRow } from '../../../ui/InfoRow';
@@ -48,6 +51,21 @@ const UserDetailsView = ({ userId }: { userId: string }) => {
     }
   };
 
+  const actionItems: DropdownItem[] = [
+    {
+      label: 'Edit',
+      icon: LuPencil,
+      onClick: () => router.push(`/admin/users/${userId}/edit`),
+      color: 'neutral',
+    },
+    {
+      label: 'Delete',
+      icon: LuTrash2,
+      onClick: () => setConfirmOpen(true),
+      color: 'danger',
+    },
+  ];
+
   if (loading) return <Loading text="Loading user…" />;
 
   if (error || !user) {
@@ -78,26 +96,23 @@ const UserDetailsView = ({ userId }: { userId: string }) => {
       <PageHeader
         title={user.full_name}
         subtitle={user.email}
-        actions={
-          <>
-            <Link
-              href={`/admin/users/${user.id}/edit`}
-              className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
-            >
-              <LuPencil className="size-4" />
-              Edit
-            </Link>
-            <button
-              type="button"
-              onClick={() => setConfirmOpen(true)}
-              className="inline-flex items-center gap-1.5 rounded-full border border-red-200 px-4 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-50"
-            >
-              <LuTrash2 className="size-4" />
-              Delete
-            </button>
-          </>
-        }
+        actions={<ActionsDropdown items={actionItems} />}
       />
+
+      <div className="mb-5 flex items-center gap-3">
+        {user.profile_photo?.public_url ? (
+          // eslint-disable-next-line @next/next/no-img-element -- remote/presigned URL, not a static asset
+          <img
+            src={user.profile_photo.public_url}
+            alt=""
+            className="size-14 shrink-0 rounded-full object-cover"
+          />
+        ) : (
+          <span className="flex size-14 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+            <LuUser className="size-6" />
+          </span>
+        )}
+      </div>
 
       <div className="mb-5 flex flex-wrap gap-2">
         <StatusBadge variant={ROLE_BADGE_VARIANT[user.role]}>

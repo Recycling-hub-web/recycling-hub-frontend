@@ -41,6 +41,7 @@ type CreateUserPayload = {
   job_title?: string;
   branch?: string;
   joining_date?: string;
+  profile_photo?: string | null;
 };
 
 const createUser = (payload: CreateUserPayload): Promise<UserDetail> =>
@@ -65,7 +66,12 @@ const updateUser = (
       UserDetail,
       'full_name' | 'phone_number' | 'is_active' | 'is_2fa_enabled'
     >
-  >,
+  > & {
+    // Write shape is the plain storage key, unlike UserDetail's own
+    // `{file_key, public_url}` read shape — same split as
+    // CreateStaffPayload/UpdateStaffPayload.
+    profile_photo?: string | null;
+  },
 ): Promise<UserDetail> =>
   apiFetch(`/accounts/users/${id}/`, { method: 'PATCH', json: payload });
 
