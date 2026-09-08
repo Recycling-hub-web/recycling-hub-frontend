@@ -3,14 +3,21 @@ import { expect, test } from '@playwright/test';
 import { loginAs } from './helpers/auth';
 
 /**
- * Staff Management (features/staff/) — the dedicated
- * apps.accounts.StaffManagementView module, distinct from the generic
- * Users page. Admin only: create/update/delete are all IsAdminUser on
- * the backend (list is also open to staff, but only for the Pickups
- * collector picker, never a UI screen — see
- * features/pickups/services/collectorService.ts). No status field, no
- * search box (the endpoint has none), and delete is a real hard delete
- * of the StaffProfile row — the linked User account survives.
+ * Staff Management (features/staff/) — Create/Edit/Details still hit
+ * the dedicated apps.accounts.StaffManagementView module (admin-only:
+ * create/update/delete are all IsAdminUser). The list at /admin/staff
+ * itself, though, shows every account of every role — it's
+ * StaffListView reusing the Users feature's own useUsers/UserTable
+ * wholesale, per the user's explicit request to see all users there.
+ *
+ * A real consequence of that: deleting a staff *profile* here is a
+ * hard delete of the StaffProfile row only — the linked User account
+ * survives (unchanged, longstanding backend behavior) — so the row
+ * does NOT disappear from this now-all-users list the way it used to
+ * when the list only ever showed StaffProfile rows. It just loses its
+ * employment fields (which this list doesn't show anyway) and keeps
+ * showing as a plain "Staff" account. Cleaned up via the API afterward
+ * so repeated runs don't accumulate profile-less test accounts.
  */
 
 const uniqueEmail = (label: string) =>
@@ -74,17 +81,33 @@ test.describe('Admin staff management', () => {
     await expect(page.getByText('Finance')).toBeVisible();
     await expect(page.getByText('Penang Branch')).toBeVisible();
 
-    // Delete: a real hard delete, not a status change — leaves the list.
+    // Delete: a real hard delete of the StaffProfile row, not a status
+    // change — but the linked User account survives, so (unlike before
+    // this list showed every account) the row itself does NOT leave the
+    // list — it's still a real account, just without an employment
+    // profile any more.
     await page.getByRole('button', { name: 'Actions' }).click();
     await page.getByRole('menuitem', { name: 'Delete' }).click();
     await page.getByRole('button', { name: 'Delete', exact: true }).click();
     await expect(page).toHaveURL(/\/admin\/staff$/);
     await expect(page.getByText(/staff profile deleted/i)).toBeVisible();
-    // A heading-role check would prove nothing here (the table isn't a
-    // heading either way) — check the row itself is gone.
-    await expect(
-      page.getByRole('cell', { name: 'E2E Staff Member', exact: true }),
-    ).toHaveCount(0);
+    await page.getByPlaceholder(/search/i).fill('E2E Staff Member');
+    const row = page.getByRole('cell', {
+      name: 'E2E Staff Member',
+      exact: true,
+    });
+    await expect(row).toHaveCount(1);
+
+    // Cleanup — the orphaned User account (StaffProfile gone, account
+    // itself intact) isn't reachable to delete from this UI flow
+    // anymore, so remove it directly via the API it now shows through.
+    await row.click();
+    await expect(page).toHaveURL(/\/admin\/users\/[^/]+$/);
+    const userId = page.url().split('/').pop();
+    const deleteResponse = await page.request.delete(
+      `/api/v1/accounts/users/${userId}/`,
+    );
+    expect(deleteResponse.status()).toBe(204);
   });
 
   test('is not reachable by a staff-role login', async ({ page }) => {
