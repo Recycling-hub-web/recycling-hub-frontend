@@ -1,4 +1,5 @@
 import {
+  LuHandshake,
   LuHardDrive,
   LuLayers,
   LuLayoutDashboard,
@@ -20,18 +21,20 @@ type OperationalRoleConfig = {
 
 // Each role's own route + sidebar. Only "Overview" (and, for staff,
 // "Pickup Requests"/"Contact"/"Categories"/"Classifications"/"Storage
-// Files"/"Blog Posts") is wired to real pages today — the rest of each
-// role's section (assigned tasks, reports) lands here as that workflow
-// work gets built, same "roles first, then workflows" pattern the admin
-// sidebar started with. Staff sees the same pickups/contact management
-// admin does (same components, basePath="/staff/…") but without contact
-// delete — enforced on the backend too
-// (ContactMessageViewSet.get_permissions), not just a hidden button
-// here. Pickups, Categories, Classifications, Storage Files, and Blog
-// Posts have no such split: admin and staff share identical permissions
-// on all five modules (CollectionRequestViewSet / CategoryViewSet +
-// IsStaffOrReadOnly / ClassificationView / FileRecordViewSet +
-// IsAdminOrStaffUser / BlogPostViewSet + IsStaffOrReadOnly).
+// Files"/"Blog Posts"/"Partnerships") is wired to real pages today — the
+// rest of each role's section (assigned tasks, reports) lands here as
+// that workflow work gets built, same "roles first, then workflows"
+// pattern the admin sidebar started with. Staff sees the same
+// pickups/contact management admin does (same components,
+// basePath="/staff/…") but without contact delete — enforced on the
+// backend too (ContactMessageViewSet.get_permissions), not just a
+// hidden button here. Pickups, Categories, Classifications, Storage
+// Files, Blog Posts, and Partnerships have no such split: admin and
+// staff share identical permissions on all six modules
+// (CollectionRequestViewSet / CategoryViewSet + IsStaffOrReadOnly /
+// ClassificationView / FileRecordViewSet + IsAdminOrStaffUser /
+// BlogPostViewSet + IsStaffOrReadOnly / PartnerViewSet +
+// IsStaffOrReadOnly).
 const OPERATIONAL_ROLES: Record<OperationalRole, OperationalRoleConfig> = {
   staff: {
     route: '/staff',
@@ -51,6 +54,11 @@ const OPERATIONAL_ROLES: Record<OperationalRole, OperationalRoleConfig> = {
         icon: LuHardDrive,
       },
       { href: '/staff/blogs', label: 'Blog Posts', icon: LuNewspaper },
+      {
+        href: '/staff/partnerships',
+        label: 'Partnerships',
+        icon: LuHandshake,
+      },
     ],
   },
   driver: {

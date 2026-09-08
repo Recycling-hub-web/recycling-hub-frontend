@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  LuHandshake,
   LuHardDrive,
   LuIdCard,
   LuLayers,
@@ -30,6 +31,7 @@ const ADMIN_NAV_ITEMS: NavItem[] = [
   { href: '/admin/classifications', label: 'Classifications', icon: LuLayers },
   { href: '/admin/storage-files', label: 'Storage Files', icon: LuHardDrive },
   { href: '/admin/blogs', label: 'Blog Posts', icon: LuNewspaper },
+  { href: '/admin/partnerships', label: 'Partnerships', icon: LuHandshake },
 ];
 
 type AdminSidebarProps = {
