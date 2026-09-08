@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { LuEye, LuNewspaper, LuPencil, LuTrash2 } from 'react-icons/lu';
 
 import { StatusBadge } from '../../../ui/badges/StatusBadge';
@@ -51,6 +52,7 @@ const BlogPostTable = ({
   categoryNameById,
   onDeleteRequest,
 }: BlogPostTableProps) => {
+  const router = useRouter();
   const columnCount = 5;
 
   const renderRows = () => {
@@ -79,7 +81,11 @@ const BlogPostTable = ({
       );
     }
     return posts.map((p) => (
-      <tr key={p.id}>
+      <tr
+        key={p.id}
+        onClick={() => router.push(`${basePath}/${p.id}`)}
+        className="cursor-pointer transition-colors hover:bg-slate-50"
+      >
         <td className="max-w-[280px] px-6 py-4 font-medium text-slate-900">
           <div className="flex items-center gap-2.5">
             {p.cover_image?.public_url ? (
@@ -97,10 +103,13 @@ const BlogPostTable = ({
             <div className="min-w-0">
               <p className="truncate">{p.title}</p>
               {/* The post's real public URL — only live once published,
-                  same gate as BlogPostDetailsView's "View live" button. */}
+                  same gate as BlogPostDetailsView's "View live" button.
+                  Own destination from the row's (details page), so its
+                  click must not also trigger the row navigation. */}
               {p.status === 'published' ? (
                 <Link
                   href={`/resources/blog/${p.slug}`}
+                  onClick={(e) => e.stopPropagation()}
                   className="block truncate text-xs text-slate-400 hover:text-brand-600 hover:underline"
                 >
                   /{p.slug}
@@ -129,7 +138,10 @@ const BlogPostTable = ({
           )}
         </td>
         <td className="px-6 py-4">
-          <div className="flex items-center justify-end gap-1">
+          <div
+            className="flex items-center justify-end gap-1"
+            onClick={(e) => e.stopPropagation()}
+          >
             <Link
               href={`${basePath}/${p.id}`}
               aria-label={`View post ${p.title}`}

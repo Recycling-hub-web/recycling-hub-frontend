@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { LuEye, LuPencil, LuTrash2 } from 'react-icons/lu';
 
 import { StatusBadge } from '../../../ui/badges/StatusBadge';
@@ -54,6 +55,7 @@ const ContactMessageTable = ({
   canDelete,
   onDeleteRequest,
 }: ContactMessageTableProps) => {
+  const router = useRouter();
   const columnCount = canDelete ? 6 : 5;
 
   const renderRows = () => {
@@ -82,7 +84,11 @@ const ContactMessageTable = ({
       );
     }
     return messages.map((m) => (
-      <tr key={m.id}>
+      <tr
+        key={m.id}
+        onClick={() => router.push(`${basePath}/${m.id}`)}
+        className="cursor-pointer transition-colors hover:bg-slate-50"
+      >
         <td className="max-w-[180px] truncate px-6 py-4 font-medium text-slate-900">
           {m.full_name}
         </td>
@@ -101,11 +107,14 @@ const ContactMessageTable = ({
           <AppDate value={m.submitted_at} format="short" />
         </td>
         <td className="px-6 py-4">
-          <div className="flex items-center justify-end gap-1">
+          <div
+            className="flex items-center justify-end gap-1"
+            onClick={(e) => e.stopPropagation()}
+          >
             <Link
               href={`${basePath}/${m.id}`}
               aria-label={`View message from ${m.full_name}`}
-              className="inline-flex size-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+              className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
             >
               <LuEye className="size-4" />
             </Link>
@@ -113,7 +122,7 @@ const ContactMessageTable = ({
               <Link
                 href={`${basePath}/${m.id}/edit`}
                 aria-label={`Edit message from ${m.full_name}`}
-                className="inline-flex size-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+                className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
               >
                 <LuPencil className="size-4" />
               </Link>
@@ -123,7 +132,7 @@ const ContactMessageTable = ({
                 type="button"
                 onClick={() => onDeleteRequest?.(m)}
                 aria-label={`Delete message from ${m.full_name}`}
-                className="inline-flex size-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-red-50 hover:text-red-600"
+                className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-red-50 hover:text-red-600"
               >
                 <LuTrash2 className="size-4" />
               </button>

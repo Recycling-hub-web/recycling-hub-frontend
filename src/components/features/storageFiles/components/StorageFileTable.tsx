@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
   LuDownload,
   LuEye,
@@ -66,6 +67,7 @@ const StorageFileTable = ({
   onDownloadRequest,
   onDeleteRequest,
 }: StorageFileTableProps) => {
+  const router = useRouter();
   const columnCount = 6;
 
   const renderRows = () => {
@@ -90,7 +92,11 @@ const StorageFileTable = ({
     return files.map((f) => {
       const Icon = FILE_TYPE_ICONS[f.file_type] ?? LuFile;
       return (
-        <tr key={f.uid}>
+        <tr
+          key={f.uid}
+          onClick={() => router.push(`${basePath}/${f.uid}`)}
+          className="cursor-pointer transition-colors hover:bg-slate-50"
+        >
           <td className="max-w-[260px] px-6 py-4 font-medium text-slate-900">
             <div className="flex items-center gap-2.5 truncate">
               <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-500">
@@ -112,7 +118,10 @@ const StorageFileTable = ({
             <AppDate value={f.created_at} format="short" />
           </td>
           <td className="px-6 py-4">
-            <div className="flex items-center justify-end gap-1">
+            <div
+              className="flex items-center justify-end gap-1"
+              onClick={(e) => e.stopPropagation()}
+            >
               <Link
                 href={`${basePath}/${f.uid}`}
                 aria-label={`View file ${f.original_name}`}

@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { LuEye } from 'react-icons/lu';
 
 import { StatusBadge } from '../../../ui/badges/StatusBadge';
@@ -48,6 +49,8 @@ const PickupRequestTable = ({
   onRetry,
   basePath,
 }: PickupRequestTableProps) => {
+  const router = useRouter();
+
   const renderRows = () => {
     if (loading) return <TableLoadingRow colSpan={columnCount} />;
     if (error)
@@ -68,7 +71,11 @@ const PickupRequestTable = ({
       );
     }
     return requests.map((r) => (
-      <tr key={r.id}>
+      <tr
+        key={r.id}
+        onClick={() => router.push(`${basePath}/${r.id}`)}
+        className="cursor-pointer transition-colors hover:bg-slate-50"
+      >
         <td className="px-6 py-4 font-medium text-slate-900">{r.full_name}</td>
         <td className="px-6 py-4 text-slate-500">{r.email}</td>
         <td className="px-6 py-4 text-slate-700">{r.category.name}</td>
@@ -85,11 +92,14 @@ const PickupRequestTable = ({
           )}
         </td>
         <td className="px-6 py-4">
-          <div className="flex items-center justify-end">
+          <div
+            className="flex items-center justify-end"
+            onClick={(e) => e.stopPropagation()}
+          >
             <Link
               href={`${basePath}/${r.id}`}
               aria-label={`View pickup request from ${r.full_name}`}
-              className="inline-flex size-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+              className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
             >
               <LuEye className="size-4" />
             </Link>

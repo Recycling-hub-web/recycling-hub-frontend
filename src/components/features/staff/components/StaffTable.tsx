@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { LuEye, LuPencil, LuTrash2, LuUser } from 'react-icons/lu';
 
 import {
@@ -39,6 +40,7 @@ const StaffTable = ({
   onRetry,
   onDeleteRequest,
 }: StaffTableProps) => {
+  const router = useRouter();
   const columnCount = 6;
 
   const renderRows = () => {
@@ -55,7 +57,11 @@ const StaffTable = ({
       return <TableEmptyRow colSpan={columnCount} title="No staff found" />;
     }
     return staff.map((member) => (
-      <tr key={member.id}>
+      <tr
+        key={member.id}
+        onClick={() => router.push(`/admin/staff/${member.id}`)}
+        className="cursor-pointer transition-colors hover:bg-slate-50"
+      >
         <td className="max-w-[240px] px-6 py-4 font-medium text-slate-900">
           <div className="flex items-center gap-2.5">
             {member.user.profile_photo?.public_url ? (
@@ -84,7 +90,10 @@ const StaffTable = ({
           {member.branch || '—'}
         </td>
         <td className="px-6 py-4">
-          <div className="flex items-center justify-end gap-1">
+          <div
+            className="flex items-center justify-end gap-1"
+            onClick={(e) => e.stopPropagation()}
+          >
             <Link
               href={`/admin/staff/${member.id}`}
               aria-label={`View ${member.user.full_name}`}

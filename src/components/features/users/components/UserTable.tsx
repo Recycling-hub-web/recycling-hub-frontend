@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { LuEye, LuPencil, LuTrash2 } from 'react-icons/lu';
 
 import {
@@ -51,6 +52,8 @@ const UserTable = ({
   onToggleActive,
   onDeleteRequest,
 }: UserTableProps) => {
+  const router = useRouter();
+
   const renderRows = () => {
     if (loading) return <TableLoadingRow colSpan={COLUMN_COUNT} />;
     if (error)
@@ -77,7 +80,11 @@ const UserTable = ({
       );
     }
     return users.map((u) => (
-      <tr key={u.id}>
+      <tr
+        key={u.id}
+        onClick={() => router.push(`/admin/users/${u.id}`)}
+        className="cursor-pointer transition-colors hover:bg-slate-50"
+      >
         <td className="px-6 py-4 font-medium text-slate-900">{u.full_name}</td>
         <td className="px-6 py-4 text-slate-500">{u.email}</td>
         <td className="px-6 py-4">
@@ -86,25 +93,34 @@ const UserTable = ({
           </StatusBadge>
         </td>
         <td className="px-6 py-4">
-          <button type="button" onClick={() => onToggleActive(u)}>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleActive(u);
+            }}
+          >
             <StatusBadge variant={u.is_active ? 'success' : 'neutral'}>
               {u.is_active ? 'Active' : 'Inactive'}
             </StatusBadge>
           </button>
         </td>
         <td className="px-6 py-4">
-          <div className="flex items-center justify-end gap-1">
+          <div
+            className="flex items-center justify-end gap-1"
+            onClick={(e) => e.stopPropagation()}
+          >
             <Link
               href={`/admin/users/${u.id}`}
               aria-label={`View ${u.full_name}`}
-              className="inline-flex size-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+              className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
             >
               <LuEye className="size-4" />
             </Link>
             <Link
               href={`/admin/users/${u.id}/edit`}
               aria-label={`Edit ${u.full_name}`}
-              className="inline-flex size-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+              className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
             >
               <LuPencil className="size-4" />
             </Link>
@@ -112,7 +128,7 @@ const UserTable = ({
               type="button"
               onClick={() => onDeleteRequest(u)}
               aria-label={`Delete ${u.full_name}`}
-              className="inline-flex size-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-red-50 hover:text-red-600"
+              className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-red-50 hover:text-red-600"
             >
               <LuTrash2 className="size-4" />
             </button>

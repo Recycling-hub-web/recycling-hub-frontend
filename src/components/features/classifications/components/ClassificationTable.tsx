@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { LuEye, LuPencil, LuTrash2 } from 'react-icons/lu';
 
 import {
@@ -44,6 +45,7 @@ const ClassificationTable = ({
   basePath,
   onDeleteRequest,
 }: ClassificationTableProps) => {
+  const router = useRouter();
   const columnCount = 3;
 
   const renderRows = () => {
@@ -66,7 +68,11 @@ const ClassificationTable = ({
       );
     }
     return classifications.map((c) => (
-      <tr key={c.id}>
+      <tr
+        key={c.id}
+        onClick={() => router.push(`${basePath}/${c.id}`)}
+        className="cursor-pointer transition-colors hover:bg-slate-50"
+      >
         <td className="max-w-[220px] truncate px-6 py-4 font-medium text-slate-900">
           {c.name}
         </td>
@@ -74,7 +80,10 @@ const ClassificationTable = ({
           {c.description || '—'}
         </td>
         <td className="px-6 py-4">
-          <div className="flex items-center justify-end gap-1">
+          <div
+            className="flex items-center justify-end gap-1"
+            onClick={(e) => e.stopPropagation()}
+          >
             <Link
               href={`${basePath}/${c.id}`}
               aria-label={`View classification ${c.name}`}
