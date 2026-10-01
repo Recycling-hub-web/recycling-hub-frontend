@@ -1690,6 +1690,7 @@ const bm: Dictionary = {
       subtitle:
         'Masukkan e-mel anda dan kami akan menghantar pautan untuk menetapkan semula.',
       emailLabel: 'E-mel',
+      emailPlaceholder: 'anda@recyclinghub.eco',
       submit: 'Hantar Pautan Tetapan Semula',
       submitting: 'Sedang Menghantar…',
       successTitle: 'Semak E-mel Anda',

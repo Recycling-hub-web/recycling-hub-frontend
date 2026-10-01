@@ -7,6 +7,7 @@ import { LuCircleCheck, LuKeyRound } from 'react-icons/lu';
 
 import type { Dictionary } from '../../../../lib/dictionary';
 import { InputField } from '../../../form/fields/InputField';
+import { Button } from '../../../ui/buttons/Button';
 import { useForgotPassword } from '../hooks';
 import { AuthCard } from './AuthCard';
 
@@ -42,12 +43,9 @@ const ForgotPasswordView = ({
         title={t.successTitle}
         subtitle={t.successMessage}
       >
-        <Link
-          href="/login"
-          className="mt-6 block w-full rounded-full bg-brand-600 py-2.5 text-center text-sm font-semibold text-white transition hover:bg-brand-700"
-        >
+        <Button href="/login" className="mt-6 w-full">
           {t.backToLogin}
-        </Link>
+        </Button>
       </AuthCard>
     );
   }
@@ -63,17 +61,14 @@ const ForgotPasswordView = ({
           label={t.emailLabel}
           field="email"
           type="email"
+          placeholder={t.emailPlaceholder}
           formData={formData}
           updateFormData={updateFormData}
         />
 
-        <button
-          type="submit"
-          disabled={submitting}
-          className="w-full rounded-full bg-brand-600 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-60"
-        >
+        <Button type="submit" disabled={submitting} className="w-full">
           {submitting ? t.submitting : t.submit}
-        </button>
+        </Button>
 
         <Link
           href="/login"
