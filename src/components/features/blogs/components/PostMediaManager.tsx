@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { LuFileVideo, LuImage, LuTrash2, LuUpload } from 'react-icons/lu';
 
+import { SelectInput } from '../../../form/fields/SelectInput';
 import { AlertBanner } from '../../../ui/AlertBanner';
 import { useToast } from '../../../ui/toast/ToastContext';
 import { useUploadStorageFile } from '../../storageFiles/hooks';
@@ -114,18 +115,17 @@ const PostMediaManager = ({ blogId }: PostMediaManagerProps) => {
         )}
 
         <div className="flex flex-wrap items-center gap-2">
-          <select
-            value={type}
-            onChange={(e) => setType(e.target.value as BlogMediaType)}
-            disabled={uploading}
-            className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none focus:border-brand-500 disabled:opacity-60"
-          >
-            {MEDIA_TYPE_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
+          <div className="w-40">
+            <SelectInput
+              field="type"
+              options={MEDIA_TYPE_OPTIONS}
+              formData={{ type }}
+              updateFormData={(_field, value) =>
+                setType(value as BlogMediaType)
+              }
+              disabled={uploading}
+            />
+          </div>
 
           <label
             htmlFor="post-media-input"

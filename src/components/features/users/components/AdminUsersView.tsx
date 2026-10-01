@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { LuPlus } from 'react-icons/lu';
 
@@ -12,6 +11,7 @@ import type {
 } from '../../../../types/auth';
 import { SearchInput } from '../../../form/filter/SearchInput';
 import { PageContainer } from '../../../layout/PageContainer';
+import { Button } from '../../../ui/buttons/Button';
 import { FilterSelect } from '../../../ui/FilterSelect';
 import { ConfirmModal } from '../../../ui/modal/ConfirmModal';
 import { PageHeader } from '../../../ui/PageHeader';
@@ -154,13 +154,10 @@ const AdminUsersView = () => {
         title="Users"
         subtitle="Manage admin, staff, driver, receiving officer, and accounting accounts."
         actions={
-          <Link
-            href="/admin/users/create"
-            className="inline-flex items-center gap-1.5 rounded-full bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700"
-          >
-            <LuPlus className="size-4" />
+          <Button href="/admin/users/create">
+            <LuPlus className="mr-1.5 size-4" />
             New user
-          </Link>
+          </Button>
         }
       />
 

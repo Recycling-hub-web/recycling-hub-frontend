@@ -17,6 +17,7 @@ import { ROLE_HOME } from '../../../../types/auth';
 import { InputField } from '../../../form/fields/InputField';
 import { PasswordField } from '../../../form/fields/PasswordField';
 import { AlertBanner } from '../../../ui/AlertBanner';
+import { Button } from '../../../ui/buttons/Button';
 
 // Single-form redesign — login's own layout now, not the shared AuthCard
 // every other auth screen (verify-otp, forgot-password, …) still uses (a
@@ -146,13 +147,9 @@ const LoginView = ({ t }: { t: Dictionary['auth']['login'] }) => {
             </Link>
           </div>
 
-          <button
-            type="submit"
-            disabled={submitting}
-            className="w-full rounded-full bg-brand-600 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-60"
-          >
+          <Button type="submit" disabled={submitting} className="w-full">
             {submitting ? t.submitting : t.submit}
-          </button>
+          </Button>
         </form>
       </div>
     </div>

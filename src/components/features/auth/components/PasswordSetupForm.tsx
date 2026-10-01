@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import type { FormEvent, ReactNode } from 'react';
 import { useState } from 'react';
 import { LuCircleCheck } from 'react-icons/lu';
@@ -8,6 +7,7 @@ import { LuCircleCheck } from 'react-icons/lu';
 import { ApiError } from '../../../../lib/api';
 import { PasswordField } from '../../../form/fields/PasswordField';
 import { AlertBanner } from '../../../ui/AlertBanner';
+import { Button } from '../../../ui/buttons/Button';
 import { AuthCard } from './AuthCard';
 
 type PasswordSetupCopy = {
@@ -80,12 +80,9 @@ const PasswordSetupForm = ({
         title={copy.successTitle}
         subtitle={copy.successMessage}
       >
-        <Link
-          href="/login"
-          className="mt-6 block w-full rounded-full bg-brand-600 py-2.5 text-center text-sm font-semibold text-white transition hover:bg-brand-700"
-        >
+        <Button href="/login" className="mt-6 w-full">
           {copy.signInNow}
-        </Link>
+        </Button>
       </AuthCard>
     );
   }
@@ -119,13 +116,9 @@ const PasswordSetupForm = ({
           updateFormData={updateFormData}
         />
 
-        <button
-          type="submit"
-          disabled={submitting}
-          className="w-full rounded-full bg-brand-600 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-60"
-        >
+        <Button type="submit" disabled={submitting} className="w-full">
           {submitting ? copy.submitting : copy.submit}
-        </button>
+        </Button>
       </form>
     </AuthCard>
   );

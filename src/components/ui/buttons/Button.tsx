@@ -1,7 +1,12 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 
-type ButtonVariant = 'primary' | 'secondary' | 'white' | 'outline-white';
+type ButtonVariant =
+  | 'primary'
+  | 'secondary'
+  | 'white'
+  | 'outline-white'
+  | 'danger-outline';
 
 type ButtonProps = {
   children: ReactNode;
@@ -26,6 +31,8 @@ const variants: Record<ButtonVariant, string> = {
     'ring-2 ring-white ring-offset-2 ring-offset-neutral-950 bg-white text-neutral-950 hover:bg-white/90',
   'outline-white':
     'ring-2 ring-white/60 ring-offset-2 ring-offset-transparent bg-white/10 text-white hover:bg-white/20 hover:ring-white',
+  'danger-outline':
+    'ring-2 ring-red-200 ring-offset-2 bg-white text-red-600 hover:bg-red-50 hover:text-red-700 hover:ring-red-300',
 };
 
 const base =

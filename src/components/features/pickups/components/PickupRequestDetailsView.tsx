@@ -16,6 +16,7 @@ import {
 
 import { PageContainer } from '../../../layout/PageContainer';
 import { StatusBadge } from '../../../ui/badges/StatusBadge';
+import { Button } from '../../../ui/buttons/Button';
 import { Card } from '../../../ui/card/Card';
 import { AppDate } from '../../../ui/date/AppDate';
 import { InfoRow } from '../../../ui/InfoRow';
@@ -105,34 +106,25 @@ const PickupRequestDetailsView = ({
         actions={
           <>
             {canSchedule && (
-              <button
-                type="button"
-                onClick={() => setScheduleOpen(true)}
-                className="inline-flex items-center gap-1.5 rounded-full bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700"
-              >
-                <LuUserCheck className="size-4" />
+              <Button onClick={() => setScheduleOpen(true)}>
+                <LuUserCheck className="mr-1.5 size-4" />
                 Schedule pickup
-              </button>
+              </Button>
             )}
             {canCollect && (
-              <button
-                type="button"
-                onClick={() => setCollectOpen(true)}
-                className="inline-flex items-center gap-1.5 rounded-full bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700"
-              >
-                <LuPackage className="size-4" />
+              <Button onClick={() => setCollectOpen(true)}>
+                <LuPackage className="mr-1.5 size-4" />
                 Mark as collected
-              </button>
+              </Button>
             )}
             {canCancel && (
-              <button
-                type="button"
+              <Button
+                variant="danger-outline"
                 onClick={() => setCancelOpen(true)}
-                className="inline-flex items-center gap-1.5 rounded-full border border-red-200 px-4 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-50"
               >
-                <LuX className="size-4" />
+                <LuX className="mr-1.5 size-4" />
                 Cancel
-              </button>
+              </Button>
             )}
           </>
         }
