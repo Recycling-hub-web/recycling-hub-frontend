@@ -9,6 +9,7 @@ type PhoneInputFieldProps = {
   updateFormData: (field: string, value: string) => void;
   required?: boolean;
   placeholder?: string;
+  disabled?: boolean;
   onBlur?: () => void;
 };
 
@@ -21,6 +22,7 @@ const PhoneInputField = ({
   updateFormData,
   required = true,
   placeholder = '12-345 6789',
+  disabled = false,
   onBlur,
 }: PhoneInputFieldProps) => {
   const dialCode = (formData[dialCodeField] as string | undefined) ?? '+60';
@@ -37,12 +39,13 @@ const PhoneInputField = ({
         {label} {required && <span className="text-red-600">*</span>}
       </label>
       <div
-        className={`mt-2 flex h-12 overflow-hidden rounded-xl border transition ${error ? 'border-red-500' : 'border-slate-200'}`}
+        className={`mt-2 flex h-12 overflow-hidden rounded-xl border transition ${error ? 'border-red-500' : 'border-slate-200'} ${disabled ? 'bg-slate-50 opacity-60' : ''}`}
       >
         <select
           value={dialCode}
           onChange={(e) => updateFormData(dialCodeField, e.target.value)}
-          className="shrink-0 border-r border-slate-200 px-2 text-xs text-slate-700 outline-none hover:bg-slate-50"
+          disabled={disabled}
+          className="shrink-0 border-r border-slate-200 px-2 text-xs text-slate-700 outline-none hover:bg-slate-50 disabled:cursor-not-allowed"
         >
           {DIAL_CODES.map((d) => (
             <option key={d.code} value={d.code}>
@@ -56,7 +59,8 @@ const PhoneInputField = ({
           onChange={(e) => handleNumberChange(e.target.value)}
           onBlur={onBlur}
           placeholder={placeholder}
-          className="flex-1 bg-white px-3 text-sm outline-none hover:bg-slate-50"
+          disabled={disabled}
+          className="flex-1 bg-white px-3 text-sm outline-none hover:bg-slate-50 disabled:cursor-not-allowed disabled:bg-slate-50"
         />
       </div>
       {error && <p className="mt-1 text-xs text-red-600">{error}</p>}

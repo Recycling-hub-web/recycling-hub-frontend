@@ -6,8 +6,13 @@ import type { FormEvent } from 'react';
 import { useEffect, useState } from 'react';
 import { LuArrowLeft } from 'react-icons/lu';
 
+import {
+  joinPhoneNumber,
+  splitPhoneNumber,
+} from '../../../../constants/dialCodes';
 import { ApiError } from '../../../../lib/api';
 import { InputField } from '../../../form/fields/InputField';
+import { PhoneInputField } from '../../../form/fields/PhoneInputField';
 import { SelectField } from '../../../form/fields/SelectField';
 import { TextareaField } from '../../../form/fields/TextareaField';
 import { PageContainer } from '../../../layout/PageContainer';
@@ -24,7 +29,11 @@ import type { ContactMessageStatus } from '../types';
 type FormState = {
   full_name: string;
   email: string;
-  phone_number: string;
+  // Split for PhoneInputField's own dialCodeField/numberField contract —
+  // joined back into the single `phone_number` string the backend
+  // actually stores only at submit time (see joinPhoneNumber).
+  phone_dial_code: string;
+  phone_local: string;
   subject: string;
   message: string;
   status: ContactMessageStatus;
@@ -59,10 +68,12 @@ const EditContactMessageView = ({
 
   useEffect(() => {
     if (!message) return;
+    const { dialCode, number } = splitPhoneNumber(message.phone_number);
     setFormData({
       full_name: message.full_name,
       email: message.email,
-      phone_number: message.phone_number,
+      phone_dial_code: dialCode,
+      phone_local: number,
       subject: message.subject,
       message: message.message,
       status: message.status,
@@ -81,8 +92,8 @@ const EditContactMessageView = ({
     if (!data.full_name.trim()) nextErrors.full_name = 'Full name is required.';
     if (!EMAIL_PATTERN.test(data.email))
       nextErrors.email = 'Enter a valid email address.';
-    if (!data.phone_number.trim())
-      nextErrors.phone_number = 'Phone number is required.';
+    if (!data.phone_local.trim())
+      nextErrors.phone_local = 'Phone number is required.';
     if (!data.subject.trim()) nextErrors.subject = 'Subject is required.';
     if (!data.message.trim()) nextErrors.message = 'Message is required.';
     setErrors(nextErrors);
@@ -98,7 +109,17 @@ const EditContactMessageView = ({
     if (!validate(formData)) return;
 
     try {
-      await updateMessage(message.id, formData);
+      await updateMessage(message.id, {
+        full_name: formData.full_name,
+        email: formData.email,
+        phone_number: joinPhoneNumber(
+          formData.phone_dial_code,
+          formData.phone_local,
+        ),
+        subject: formData.subject,
+        message: formData.message,
+        status: formData.status,
+      });
       toast.success('Message updated');
       router.push(`${basePath}/${message.id}`);
     } catch (err) {
@@ -125,7 +146,8 @@ const EditContactMessageView = ({
   const hasChanges =
     formData.full_name !== message.full_name ||
     formData.email !== message.email ||
-    formData.phone_number !== message.phone_number ||
+    joinPhoneNumber(formData.phone_dial_code, formData.phone_local) !==
+      message.phone_number ||
     formData.subject !== message.subject ||
     formData.message !== message.message ||
     formData.status !== message.status;
@@ -166,10 +188,10 @@ const EditContactMessageView = ({
               updateFormData={updateFormData}
               disabled={submitting}
             />
-            <InputField
+            <PhoneInputField
               label="Contact details"
-              field="phone_number"
-              placeholder="e.g. +60123456789"
+              dialCodeField="phone_dial_code"
+              numberField="phone_local"
               formData={formData}
               errors={errors}
               updateFormData={updateFormData}

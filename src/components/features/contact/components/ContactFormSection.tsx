@@ -11,9 +11,11 @@ import {
 } from 'react-icons/lu';
 
 import { BRAND } from '../../../../constants/content';
+import { joinPhoneNumber } from '../../../../constants/dialCodes';
 import { useDictionary } from '../../../../hooks/useDictionary';
 import { ApiError } from '../../../../lib/api';
 import { InputField } from '../../../form/fields/InputField';
+import { PhoneInputField } from '../../../form/fields/PhoneInputField';
 import { TextareaField } from '../../../form/fields/TextareaField';
 import { Button } from '../../../ui/buttons/Button';
 import { FadeIn } from '../../../ui/FadeIn';
@@ -26,7 +28,11 @@ type FormState = {
   firstName: string;
   lastName: string;
   email: string;
-  phone: string;
+  // Split for PhoneInputField's own dialCodeField/numberField contract —
+  // joined back into the single `phone_number` string the backend
+  // actually stores only at submit time (see joinPhoneNumber).
+  phone_dial_code: string;
+  phone_local: string;
   subject: string;
   message: string;
 };
@@ -35,7 +41,8 @@ const INITIAL_STATE: FormState = {
   firstName: '',
   lastName: '',
   email: '',
-  phone: '',
+  phone_dial_code: '+60',
+  phone_local: '',
   subject: '',
   message: '',
 };
@@ -78,7 +85,8 @@ const ContactFormSection = () => {
       nextErrors.lastName = content.errorLastNameRequired;
     if (!EMAIL_PATTERN.test(formData.email))
       nextErrors.email = content.errorEmailInvalid;
-    if (!formData.phone.trim()) nextErrors.phone = content.errorPhoneRequired;
+    if (!formData.phone_local.trim())
+      nextErrors.phone_local = content.errorPhoneRequired;
     if (!formData.subject.trim())
       nextErrors.subject = content.errorSubjectRequired;
     if (!formData.message.trim())
@@ -99,7 +107,10 @@ const ContactFormSection = () => {
       await submitContactMessage({
         full_name: `${formData.firstName.trim()} ${formData.lastName.trim()}`,
         email: formData.email.trim(),
-        phone_number: formData.phone.trim(),
+        phone_number: joinPhoneNumber(
+          formData.phone_dial_code,
+          formData.phone_local.trim(),
+        ),
         subject: formData.subject.trim(),
         message: formData.message.trim(),
       });
@@ -189,10 +200,10 @@ const ContactFormSection = () => {
                     updateFormData={updateField}
                     disabled={submitting}
                   />
-                  <InputField
+                  <PhoneInputField
                     label={content.phone}
-                    field="phone"
-                    type="tel"
+                    dialCodeField="phone_dial_code"
+                    numberField="phone_local"
                     placeholder={content.phonePlaceholder}
                     formData={formData}
                     errors={errors}

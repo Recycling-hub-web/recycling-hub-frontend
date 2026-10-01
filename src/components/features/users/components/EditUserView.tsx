@@ -6,8 +6,13 @@ import type { FormEvent } from 'react';
 import { useEffect, useState } from 'react';
 import { LuArrowLeft } from 'react-icons/lu';
 
+import {
+  joinPhoneNumber,
+  splitPhoneNumber,
+} from '../../../../constants/dialCodes';
 import { ApiError } from '../../../../lib/api';
 import { InputField } from '../../../form/fields/InputField';
+import { PhoneInputField } from '../../../form/fields/PhoneInputField';
 import { SettingToggleInput } from '../../../form/toggle/SettingToggleInput';
 import { PageContainer } from '../../../layout/PageContainer';
 import { AlertBanner } from '../../../ui/AlertBanner';
@@ -22,7 +27,11 @@ import { useUpdateUser, useUser } from '../hooks';
 
 type FormState = {
   full_name: string;
-  phone_number: string;
+  // Split for PhoneInputField's own dialCodeField/numberField contract —
+  // joined back into the single `phone_number` string the backend
+  // actually stores only at submit time (see joinPhoneNumber).
+  phone_dial_code: string;
+  phone_local: string;
   is_active: boolean;
   is_2fa_enabled: boolean;
 };
@@ -41,9 +50,11 @@ const EditUserView = ({ userId }: { userId: string }) => {
 
   useEffect(() => {
     if (!user) return;
+    const { dialCode, number } = splitPhoneNumber(user.phone_number);
     setFormData({
       full_name: user.full_name,
-      phone_number: user.phone_number ?? '',
+      phone_dial_code: dialCode,
+      phone_local: number,
       is_active: user.is_active,
       is_2fa_enabled: user.is_2fa_enabled,
     });
@@ -53,11 +64,15 @@ const EditUserView = ({ userId }: { userId: string }) => {
   const updateFormData = (field: string, value: string | boolean) =>
     setFormData((prev) => (prev ? { ...prev, [field]: value } : prev));
 
+  const joinedPhone = formData
+    ? joinPhoneNumber(formData.phone_dial_code, formData.phone_local)
+    : '';
+
   const hasChanges =
     Boolean(formData) &&
     Boolean(user) &&
     (formData!.full_name !== user!.full_name ||
-      formData!.phone_number !== (user!.phone_number ?? '') ||
+      joinedPhone !== (user!.phone_number ?? '') ||
       formData!.is_active !== user!.is_active ||
       formData!.is_2fa_enabled !== user!.is_2fa_enabled ||
       photoKey !== (user!.profile_photo?.file_key ?? null));
@@ -69,7 +84,7 @@ const EditUserView = ({ userId }: { userId: string }) => {
     try {
       await updateUser(user.id, {
         full_name: formData.full_name,
-        phone_number: formData.phone_number || undefined,
+        phone_number: joinedPhone || undefined,
         is_active: formData.is_active,
         is_2fa_enabled: formData.is_2fa_enabled,
         profile_photo: photoKey,
@@ -121,11 +136,11 @@ const EditUserView = ({ userId }: { userId: string }) => {
               updateFormData={updateFormData}
               disabled={submitting}
             />
-            <InputField
+            <PhoneInputField
               label="Phone number"
-              field="phone_number"
+              dialCodeField="phone_dial_code"
+              numberField="phone_local"
               required={false}
-              placeholder="e.g. +60123456789"
               formData={formData}
               updateFormData={updateFormData}
               disabled={submitting}

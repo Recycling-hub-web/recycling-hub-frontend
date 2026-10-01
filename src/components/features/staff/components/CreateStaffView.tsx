@@ -6,7 +6,9 @@ import type { FormEvent } from 'react';
 import { useState } from 'react';
 import { LuArrowLeft } from 'react-icons/lu';
 
+import { joinPhoneNumber } from '../../../../constants/dialCodes';
 import { InputField } from '../../../form/fields/InputField';
+import { PhoneInputField } from '../../../form/fields/PhoneInputField';
 import { PageContainer } from '../../../layout/PageContainer';
 import { AlertBanner } from '../../../ui/AlertBanner';
 import { Button } from '../../../ui/buttons/Button';
@@ -19,7 +21,11 @@ import { ProfilePhotoUploader } from './ProfilePhotoUploader';
 type FormState = {
   full_name: string;
   email: string;
-  phone_number: string;
+  // Split for PhoneInputField's own dialCodeField/numberField contract —
+  // joined back into the single `phone_number` string the backend
+  // actually stores only at submit time (see joinPhoneNumber).
+  phone_dial_code: string;
+  phone_local: string;
   department: string;
   position: string;
   branch: string;
@@ -29,7 +35,8 @@ type FormState = {
 const INITIAL_STATE: FormState = {
   full_name: '',
   email: '',
-  phone_number: '',
+  phone_dial_code: '+60',
+  phone_local: '',
   department: '',
   position: '',
   branch: '',
@@ -74,7 +81,9 @@ const CreateStaffView = () => {
       const profile = await createStaffMember({
         full_name: formData.full_name,
         email: formData.email,
-        phone_number: formData.phone_number || undefined,
+        phone_number:
+          joinPhoneNumber(formData.phone_dial_code, formData.phone_local) ||
+          undefined,
         department: formData.department || undefined,
         position: formData.position || undefined,
         branch: formData.branch || undefined,
@@ -130,11 +139,11 @@ const CreateStaffView = () => {
               updateFormData={updateFormData}
               disabled={submitting}
             />
-            <InputField
+            <PhoneInputField
               label="Phone number"
-              field="phone_number"
+              dialCodeField="phone_dial_code"
+              numberField="phone_local"
               required={false}
-              placeholder="e.g. +60123456789"
               formData={formData}
               errors={errors}
               updateFormData={updateFormData}
