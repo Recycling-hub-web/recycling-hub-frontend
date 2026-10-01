@@ -1681,9 +1681,11 @@ const bm: Dictionary = {
       resend: 'Tidak Menerima Kod? Hantar Semula',
       resendSending: 'Sedang Menghantar…',
       resendSent: 'Kod baharu telah dihantar.',
+      resendIn: 'Hantar semula dalam',
       backToLogin: 'Kembali Ke Log Masuk',
       noPendingFlow: 'Sesi log masuk anda telah tamat — sila log masuk semula.',
       genericError: 'Kod tidak sah atau telah tamat tempoh.',
+      incompleteCodeError: 'Masukkan semua 6 digit.',
     },
     forgotPassword: {
       title: 'Lupa Kata Laluan Anda?',

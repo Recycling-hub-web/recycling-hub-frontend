@@ -1693,9 +1693,11 @@ const en = {
       resend: "Didn't get a code? Resend",
       resendSending: 'Sending…',
       resendSent: 'A new code has been sent.',
+      resendIn: 'Resend in',
       backToLogin: 'Back to sign in',
       noPendingFlow: 'Your sign-in session has expired — please sign in again.',
       genericError: 'Invalid or expired code.',
+      incompleteCodeError: 'Enter all 6 digits.',
     },
     forgotPassword: {
       title: 'Forgot your password?',

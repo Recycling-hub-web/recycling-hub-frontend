@@ -13,8 +13,15 @@ import { isSafeRedirectPath } from '../../../../lib/redirect';
 import { ROLE_HOME } from '../../../../types/auth';
 import { OtpInputField } from '../../../form/fields/OtpInputField';
 import { AlertBanner } from '../../../ui/AlertBanner';
+import { Button } from '../../../ui/buttons/Button';
 import { useResendOtp, useVerifyOtp } from '../hooks';
 import { AuthCard } from './AuthCard';
+
+// Mirrors the backend's own cooldown (OTPResendRateThrottle, scope
+// "otp_resend" — 1/min) so Resend is disabled client-side for the exact
+// window a click would otherwise 429 against, rather than letting the
+// user mash it into a guaranteed-to-fail request every time.
+const RESEND_COOLDOWN_SECONDS = 60;
 
 const VerifyOtpView = ({ t }: { t: Dictionary['auth']['verifyOtp'] }) => {
   const router = useRouter();
@@ -25,14 +32,30 @@ const VerifyOtpView = ({ t }: { t: Dictionary['auth']['verifyOtp'] }) => {
   const { execute: resendOtp, loading: resending } = useResendOtp();
 
   const [formData, setFormData] = useState({ code: '' });
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [error, setError] = useState('');
   const [resent, setResent] = useState(false);
+  // Starts counting down immediately on arrival — the first code was just
+  // sent by LoginView, so Resend would otherwise be clickable (and
+  // succeed, sending a near-duplicate code seconds later) before the
+  // backend's own cooldown for the *resend* endpoint has any reason to
+  // kick in yet.
+  const [cooldown, setCooldown] = useState(RESEND_COOLDOWN_SECONDS);
 
-  const updateFormData = (field: string, value: string) =>
+  const updateFormData = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+    setErrors((prev) => ({ ...prev, [field]: '' }));
+  };
+
+  useEffect(() => {
+    if (cooldown <= 0) return undefined;
+    const timer = setTimeout(() => setCooldown((s) => s - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [cooldown]);
 
   const resendLabel = () => {
     if (resending) return t.resendSending;
+    if (cooldown > 0) return `${t.resendIn} ${cooldown}s`;
     if (resent) return t.resendSent;
     return t.resend;
   };
@@ -62,6 +85,15 @@ const VerifyOtpView = ({ t }: { t: Dictionary['auth']['verifyOtp'] }) => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError('');
+    // Validation error: stay on this page, show an inline field error —
+    // never navigate away. The submit button itself is only ever
+    // disabled while the request is in flight, not pre-emptively on
+    // completeness, so an incomplete code needs its own explicit message
+    // here rather than silently doing nothing.
+    if (formData.code.length !== 6) {
+      setErrors({ code: t.incompleteCodeError });
+      return;
+    }
     try {
       await verifyOtp(pendingOtp.email, formData.code);
       await goToDestination();
@@ -77,6 +109,7 @@ const VerifyOtpView = ({ t }: { t: Dictionary['auth']['verifyOtp'] }) => {
       const result = await resendOtp(pendingOtp.email);
       setPendingOtp({ email: pendingOtp.email, channel: result.channel });
       setResent(true);
+      setCooldown(RESEND_COOLDOWN_SECONDS);
     } catch (err) {
       setError(err instanceof ApiError ? err.message : t.genericError);
     }
@@ -98,22 +131,19 @@ const VerifyOtpView = ({ t }: { t: Dictionary['auth']['verifyOtp'] }) => {
           label={t.codeLabel}
           field="code"
           formData={formData}
+          errors={errors}
           updateFormData={updateFormData}
         />
 
-        <button
-          type="submit"
-          disabled={submitting || formData.code.length !== 6}
-          className="w-full rounded-full bg-brand-600 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-60"
-        >
+        <Button type="submit" disabled={submitting} className="w-full">
           {submitting ? t.submitting : t.submit}
-        </button>
+        </Button>
 
         <button
           type="button"
           onClick={handleResend}
-          disabled={resending}
-          className="w-full text-center text-xs font-medium text-slate-500 hover:text-brand-600 disabled:opacity-60"
+          disabled={resending || cooldown > 0}
+          className="w-full text-center text-xs font-medium text-slate-500 hover:text-brand-600 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {resendLabel()}
         </button>
