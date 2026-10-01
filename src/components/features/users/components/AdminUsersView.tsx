@@ -5,24 +5,48 @@ import { useEffect, useState } from 'react';
 import { LuPlus } from 'react-icons/lu';
 
 import { ApiError } from '../../../../lib/api';
-import type { UserListItem, UserRole } from '../../../../types/auth';
+import type {
+  RegistrationStatus,
+  UserListItem,
+  UserRole,
+} from '../../../../types/auth';
 import { SearchInput } from '../../../form/filter/SearchInput';
 import { PageContainer } from '../../../layout/PageContainer';
 import { FilterSelect } from '../../../ui/FilterSelect';
 import { ConfirmModal } from '../../../ui/modal/ConfirmModal';
 import { PageHeader } from '../../../ui/PageHeader';
+import { Tabs } from '../../../ui/tabs';
 import { useToast } from '../../../ui/toast/ToastContext';
-import { ROLE_FILTER_OPTIONS } from '../constants';
-import { useDeleteUser, useUpdateUser, useUsers } from '../hooks';
+import {
+  REGISTRATION_STATUS_FILTER_OPTIONS,
+  ROLE_FILTER_OPTIONS,
+} from '../constants';
+import {
+  useDeleteUser,
+  useResendInvite,
+  useUpdateUser,
+  useUsers,
+} from '../hooks';
 import { UserTable } from './UserTable';
 
 const SEARCH_DEBOUNCE_MS = 350;
 
+type Tab = 'users' | 'pending';
+
+const TAB_ITEMS: { key: Tab; label: string }[] = [
+  { key: 'users', label: 'Users' },
+  { key: 'pending', label: 'Pending Registrations' },
+];
+
 const AdminUsersView = () => {
   const toast = useToast();
 
+  const [activeTab, setActiveTab] = useState<Tab>('users');
   const [page, setPage] = useState(1);
   const [roleFilter, setRoleFilter] = useState<UserRole | ''>('');
+  const [registrationStatusFilter, setRegistrationStatusFilter] = useState<
+    RegistrationStatus | ''
+  >('');
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [pendingDelete, setPendingDelete] = useState<UserListItem | null>(null);
@@ -37,17 +61,58 @@ const AdminUsersView = () => {
     return () => clearTimeout(timeout);
   }, [searchInput]);
 
+  const handleTabChange = (tab: Tab) => {
+    setActiveTab(tab);
+    setPage(1);
+  };
+
+  // Pending Registrations is just the Users tab's own filter, pinned to
+  // "pending" and surfaced as a dedicated queue rather than something an
+  // admin has to remember to go select — the registration-status
+  // dropdown (still useful on the Users tab for finding "expired" rows
+  // specifically) would be redundant here, so it's hidden instead of
+  // offering a filter that can only ever show this same tab's own data.
   const { users, count, loading, error, refetch } = useUsers({
     page,
     role: roleFilter || undefined,
     search: search || undefined,
+    registrationStatus:
+      activeTab === 'pending'
+        ? 'pending'
+        : registrationStatusFilter || undefined,
   });
   const { execute: updateUser } = useUpdateUser();
   const { execute: deleteUser, loading: deleting } = useDeleteUser();
+  const { execute: resendInvite, loading: resendLoading } = useResendInvite();
 
   const handleRoleFilterChange = (value: string) => {
     setRoleFilter(value as UserRole | '');
     setPage(1);
+  };
+
+  const handleRegistrationStatusFilterChange = (value: string) => {
+    setRegistrationStatusFilter(value as RegistrationStatus | '');
+    setPage(1);
+  };
+
+  const handleResendInvite = async (targetUser: UserListItem) => {
+    try {
+      await resendInvite(targetUser.id);
+      toast.success(
+        'Invite resent',
+        `A new invite has been sent to ${targetUser.email}.`,
+      );
+      refetch();
+    } catch (err) {
+      // 429 (too soon) / 409 (verification cap reached) / 503 (email
+      // service down) all arrive as a normal ApiError — the backend's
+      // own `detail` message already says exactly which, no need to
+      // branch on status here.
+      toast.error(
+        'Could not resend the invite',
+        err instanceof ApiError ? err.message : undefined,
+      );
+    }
   };
 
   const handleToggleActive = async (targetUser: UserListItem) => {
@@ -99,6 +164,13 @@ const AdminUsersView = () => {
         }
       />
 
+      <Tabs
+        tabs={TAB_ITEMS}
+        active={activeTab}
+        onChange={handleTabChange}
+        className="-mt-2 mb-4 px-0"
+      />
+
       <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <SearchInput
           value={searchInput}
@@ -106,11 +178,20 @@ const AdminUsersView = () => {
           placeholder="Search by name or email…"
           className="sm:max-w-xs"
         />
-        <FilterSelect
-          value={roleFilter}
-          onChange={handleRoleFilterChange}
-          options={ROLE_FILTER_OPTIONS}
-        />
+        <div className="flex gap-2">
+          <FilterSelect
+            value={roleFilter}
+            onChange={handleRoleFilterChange}
+            options={ROLE_FILTER_OPTIONS}
+          />
+          {activeTab === 'users' && (
+            <FilterSelect
+              value={registrationStatusFilter}
+              onChange={handleRegistrationStatusFilterChange}
+              options={REGISTRATION_STATUS_FILTER_OPTIONS}
+            />
+          )}
+        </div>
       </div>
 
       <UserTable
@@ -125,6 +206,9 @@ const AdminUsersView = () => {
         onRetry={refetch}
         onToggleActive={handleToggleActive}
         onDeleteRequest={setPendingDelete}
+        onResendInvite={handleResendInvite}
+        resendLoading={resendLoading}
+        variant={activeTab === 'pending' ? 'pending' : 'default'}
       />
 
       <ConfirmModal

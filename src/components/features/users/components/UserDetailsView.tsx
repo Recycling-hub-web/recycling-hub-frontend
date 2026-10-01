@@ -9,6 +9,7 @@ import {
   LuMail,
   LuPencil,
   LuPhone,
+  LuSend,
   LuShieldCheck,
   LuTrash2,
   LuUser,
@@ -27,14 +28,19 @@ import { Loading } from '../../../ui/loading/Loading';
 import { ConfirmModal } from '../../../ui/modal/ConfirmModal';
 import { PageHeader } from '../../../ui/PageHeader';
 import { useToast } from '../../../ui/toast/ToastContext';
-import { ROLE_BADGE_VARIANT } from '../constants';
-import { useDeleteUser, useUser } from '../hooks';
+import {
+  REGISTRATION_STATUS_BADGE_VARIANT,
+  REGISTRATION_STATUS_LABELS,
+  ROLE_BADGE_VARIANT,
+} from '../constants';
+import { useDeleteUser, useResendInvite, useUser } from '../hooks';
 
 const UserDetailsView = ({ userId }: { userId: string }) => {
   const router = useRouter();
   const toast = useToast();
   const { user, loading, error, refetch } = useUser(userId);
   const { execute: deleteUser, loading: deleting } = useDeleteUser();
+  const { execute: resendInvite, loading: resending } = useResendInvite();
   const [confirmOpen, setConfirmOpen] = useState(false);
 
   const handleConfirmDelete = async () => {
@@ -51,7 +57,38 @@ const UserDetailsView = ({ userId }: { userId: string }) => {
     }
   };
 
+  const handleResendInvite = async () => {
+    if (!user) return;
+    try {
+      await resendInvite(user.id);
+      toast.success(
+        'Invite resent',
+        `A new invite has been sent to ${user.email}.`,
+      );
+      refetch();
+    } catch (err) {
+      toast.error(
+        'Could not resend the invite',
+        err instanceof ApiError ? err.message : undefined,
+      );
+    }
+  };
+
   const actionItems: DropdownItem[] = [
+    // Resending only makes sense pre-verification — same gate as
+    // UserTable's own icon, and the backend enforces it too (400 for an
+    // already-verified account).
+    ...(user?.registration_status === 'pending'
+      ? [
+          {
+            label: resending ? 'Sending…' : 'Resend invite',
+            icon: LuSend,
+            onClick: handleResendInvite,
+            color: 'neutral' as const,
+            disabled: resending,
+          },
+        ]
+      : []),
     {
       label: 'Edit',
       icon: LuPencil,
@@ -123,6 +160,11 @@ const UserDetailsView = ({ userId }: { userId: string }) => {
         </StatusBadge>
         <StatusBadge variant={user.is_2fa_enabled ? 'info' : 'neutral'}>
           {user.is_2fa_enabled ? '2FA on' : '2FA off'}
+        </StatusBadge>
+        <StatusBadge
+          variant={REGISTRATION_STATUS_BADGE_VARIANT[user.registration_status]}
+        >
+          {REGISTRATION_STATUS_LABELS[user.registration_status]}
         </StatusBadge>
       </div>
 

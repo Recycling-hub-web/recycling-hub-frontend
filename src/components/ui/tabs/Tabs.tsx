@@ -56,7 +56,7 @@ const Tabs = <T extends string>({
       ))}
       {indicator && (
         <span
-          className="absolute bottom-0 h-0.5 rounded-full bg-brand-600 transition-all duration-300 ease-out"
+          className="absolute bottom-0 h-[3px] rounded-full bg-brand-600 transition-[left,width] duration-300 ease-in-out"
           style={{ left: indicator.left, width: indicator.width }}
         />
       )}

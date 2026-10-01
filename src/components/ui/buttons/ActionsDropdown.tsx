@@ -41,6 +41,10 @@ type DropdownItem = {
   /** Reuses the same variant vocabulary as the badge components, so the
    * whole UI kit shares one consistent color-meaning system. */
   color?: BadgeVariant;
+  /** Blocks the click and dims the row — for actions mid-flight (e.g.
+   * resend invite), so the menu can't be used to fire the same request
+   * twice while the first is still in the air. */
+  disabled?: boolean;
 };
 
 type ActionsDropdownProps = {
@@ -78,7 +82,8 @@ const ActionsDropdown = ({
     setOpen((v) => !v);
   };
 
-  const handleItemClick = (onClick: () => void) => {
+  const handleItemClick = (onClick: () => void, disabled?: boolean) => {
+    if (disabled) return;
     close();
     onClick();
   };
@@ -123,8 +128,9 @@ const ActionsDropdown = ({
                   key={item.label}
                   type="button"
                   role="menuitem"
-                  onClick={() => handleItemClick(item.onClick)}
-                  className={`group flex w-full items-center gap-3 rounded-full border border-transparent px-3 py-2.5 text-left text-sm transition-all duration-150 ${colorClasses.row}`}
+                  disabled={item.disabled}
+                  onClick={() => handleItemClick(item.onClick, item.disabled)}
+                  className={`group flex w-full items-center gap-3 rounded-full border border-transparent px-3 py-2.5 text-left text-sm transition-all duration-150 ${item.disabled ? 'cursor-not-allowed opacity-50' : colorClasses.row}`}
                   style={{ transitionDelay: open ? `${i * 30}ms` : '0ms' }}
                 >
                   <div

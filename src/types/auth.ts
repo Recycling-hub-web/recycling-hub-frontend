@@ -7,6 +7,13 @@ type UserRole =
   | 'receiving_officer'
   | 'accounting';
 
+// Mirrors User.registration_status (a derived backend property, not a
+// stored field) — whether the account has completed its set-password
+// link. "expired" means every allowed verification email has been sent
+// and the last one lapsed unused; the only way forward from there is to
+// delete and recreate the account, not another resend.
+type RegistrationStatus = 'verified' | 'pending' | 'expired';
+
 // Shape shared by StaffProfile/DriverProfile/ReceivingOfficerProfile/
 // AccountingProfile — see apps.accounts.serializers.staff.StaffDetailSerializer
 // and its siblings on the backend.
@@ -58,6 +65,8 @@ type UserListItem = {
   role: UserRole;
   is_active: boolean;
   profile_photo: { file_key: string; public_url?: string } | null;
+  registration_status: RegistrationStatus;
+  verification_emails_sent: number;
 };
 
 // Row shape from GET/PATCH /accounts/users/<id>/ (UserDetailSerializer).
@@ -73,6 +82,8 @@ type UserDetail = {
   is_2fa_verified: boolean;
   profile_photo: { file_key: string; public_url?: string } | null;
   password_reset_required: boolean;
+  registration_status: RegistrationStatus;
+  verification_emails_remaining: number;
   created_at: string;
   updated_at: string;
 };
@@ -102,6 +113,7 @@ export { ROLE_HOME, ROLE_LABELS };
 export type {
   CurrentUser,
   EmployeeProfile,
+  RegistrationStatus,
   UserDetail,
   UserListItem,
   UserRole,

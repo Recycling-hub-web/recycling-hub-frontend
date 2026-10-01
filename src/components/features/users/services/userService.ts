@@ -1,5 +1,6 @@
 import { apiFetch } from '../../../../lib/api';
 import type {
+  RegistrationStatus,
   UserDetail,
   UserListItem,
   UserRole,
@@ -20,14 +21,24 @@ type ListUsersParams = {
    * filter, since results are paginated and a client-side filter would
    * silently miss matches sitting on other pages. */
   search?: string;
+  /** Also a real backend query — see UserManagementView._registration_status_q,
+   * which translates this into the same filter the (unstored,
+   * derived-on-read) registration_status property would compute. */
+  registrationStatus?: RegistrationStatus;
 };
 
-const listUsers = ({ page = 1, role, search }: ListUsersParams = {}): Promise<
-  Paginated<UserListItem>
-> => {
+const listUsers = ({
+  page = 1,
+  role,
+  search,
+  registrationStatus,
+}: ListUsersParams = {}): Promise<Paginated<UserListItem>> => {
   const params = new URLSearchParams({ page: String(page) });
   if (role) params.set('role', role);
   if (search) params.set('search', search);
+  if (registrationStatus) {
+    params.set('registration_status', registrationStatus);
+  }
   return apiFetch(`/accounts/users/?${params.toString()}`);
 };
 
@@ -78,5 +89,15 @@ const updateUser = (
 const deleteUser = (id: string): Promise<void> =>
   apiFetch(`/accounts/users/${id}/`, { method: 'DELETE' });
 
-export { createUser, deleteUser, getUser, listUsers, updateUser };
+// Admin-only on the backend (narrower than every other action here) and
+// rate-limited per target user, independent of the 2FA OTP-resend
+// throttle — see UserManagementView.resend_invite. A 429 means "wait and
+// try again", a 409 means the verification-email cap (3) is reached and
+// the account must be re-registered instead — both surface as
+// ApiError.message like any other API error, no special handling needed
+// here.
+const resendInvite = (id: string): Promise<{ detail: string }> =>
+  apiFetch(`/accounts/users/${id}/resend-invite/`, { method: 'POST' });
+
+export { createUser, deleteUser, getUser, listUsers, resendInvite, updateUser };
 export type { CreateUserPayload, ListUsersParams, Paginated };
