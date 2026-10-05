@@ -2,6 +2,8 @@ type PickupStatus = 'pending' | 'scheduled' | 'collected' | 'cancelled';
 
 type PickupRequestType = 'individual' | 'business';
 
+type PickupEvaluationStatus = 'pending' | 'approved' | 'rejected';
+
 type PickupCategory = {
   id: string;
   name: string;
@@ -20,6 +22,8 @@ type PickupRequestListItem = {
   full_name: string;
   email: string;
   status: PickupStatus;
+  evaluation_status: PickupEvaluationStatus;
+  price: string | null;
   request_type: PickupRequestType;
   requested_date: string | null;
   scheduled_at: string | null;
@@ -37,6 +41,11 @@ type PickupRequestDetails = {
   category: PickupCategory;
   collection_point: PickupCollectionPoint;
   status: PickupStatus;
+  evaluation_status: PickupEvaluationStatus;
+  evaluated_by: string | null;
+  evaluated_at: string | null;
+  evaluation_note: string;
+  price: string | null;
   request_type: PickupRequestType;
   pickup_address: string;
   estimated_quantity: string | null;
@@ -47,6 +56,9 @@ type PickupRequestDetails = {
   collected_quantity: string | null;
   assigned_collector: string | null;
   scheduled_by: string | null;
+  assigned_driver: string | null;
+  driver_assigned_by: string | null;
+  driver_assigned_at: string | null;
   cancelled_by: string | null;
   note: string | null;
   cancellation_reason: string | null;
@@ -80,6 +92,20 @@ type Collector = {
   };
 };
 
+/** A DriverProfile, as returned by GET /accounts/drivers/ — used to
+ * populate the "assign driver" picker, same shape as Collector. */
+type Driver = {
+  id: string;
+  employee_id: string;
+  department: string;
+  position: string;
+  branch: string;
+  user: {
+    full_name: string;
+    email: string;
+  };
+};
+
 const PICKUP_STATUS_LABELS: Record<PickupStatus, string> = {
   pending: 'Pending',
   scheduled: 'Scheduled',
@@ -92,6 +118,13 @@ const PICKUP_REQUEST_TYPE_LABELS: Record<PickupRequestType, string> = {
   business: 'Business',
 };
 
+const PICKUP_EVALUATION_STATUS_LABELS: Record<PickupEvaluationStatus, string> =
+  {
+    pending: 'Pending',
+    approved: 'Approved',
+    rejected: 'Rejected',
+  };
+
 const PICKUP_QUICK_REQUEST_STATUS_LABELS: Record<
   PickupQuickRequestStatus,
   string
@@ -102,14 +135,17 @@ const PICKUP_QUICK_REQUEST_STATUS_LABELS: Record<
 };
 
 export {
+  PICKUP_EVALUATION_STATUS_LABELS,
   PICKUP_QUICK_REQUEST_STATUS_LABELS,
   PICKUP_REQUEST_TYPE_LABELS,
   PICKUP_STATUS_LABELS,
 };
 export type {
   Collector,
+  Driver,
   PickupCategory,
   PickupCollectionPoint,
+  PickupEvaluationStatus,
   PickupQuickRequestListItem,
   PickupQuickRequestStatus,
   PickupRequestDetails,

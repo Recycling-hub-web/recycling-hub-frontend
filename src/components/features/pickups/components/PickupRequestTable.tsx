@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { LuEye, LuPencil, LuTrash2 } from 'react-icons/lu';
+import { LuCheck, LuPencil, LuTrash2, LuX } from 'react-icons/lu';
 
 import { StatusBadge } from '../../../ui/badges/StatusBadge';
 import { AppDate } from '../../../ui/date/AppDate';
@@ -13,8 +13,13 @@ import {
   TablePagination,
   TableWrapper,
 } from '../../../ui/table';
-import { REQUEST_TYPE_BADGE_VARIANT, STATUS_BADGE_VARIANT } from '../constants';
 import {
+  EVALUATION_STATUS_BADGE_VARIANT,
+  REQUEST_TYPE_BADGE_VARIANT,
+  STATUS_BADGE_VARIANT,
+} from '../constants';
+import {
+  PICKUP_EVALUATION_STATUS_LABELS,
   PICKUP_REQUEST_TYPE_LABELS,
   PICKUP_STATUS_LABELS,
   type PickupRequestListItem,
@@ -39,9 +44,15 @@ type PickupRequestTableProps = {
    * CollectionRequestViewSet.get_permissions on the backend). */
   basePath: string;
   onDeleteRequest: (request: PickupRequestListItem) => void;
+  /** Quick approve/reject on a still-`pending`, unevaluated row — same
+   * decision as the Evaluate modal on the detail page, just without a
+   * note, for the common case of a one-click call. */
+  onApprove: (request: PickupRequestListItem) => void;
+  onReject: (request: PickupRequestListItem) => void;
+  evaluatingId: string | null;
 };
 
-const columnCount = 7;
+const columnCount = 9;
 
 /** Pure presentational — every value it renders is a prop. */
 const PickupRequestTable = ({
@@ -56,6 +67,9 @@ const PickupRequestTable = ({
   onRetry,
   basePath,
   onDeleteRequest,
+  onApprove,
+  onReject,
+  evaluatingId,
 }: PickupRequestTableProps) => {
   const router = useRouter();
 
@@ -103,6 +117,14 @@ const PickupRequestTable = ({
             {PICKUP_STATUS_LABELS[r.status]}
           </StatusBadge>
         </td>
+        <td className="px-6 py-4">
+          <StatusBadge
+            variant={EVALUATION_STATUS_BADGE_VARIANT[r.evaluation_status]}
+          >
+            {PICKUP_EVALUATION_STATUS_LABELS[r.evaluation_status]}
+          </StatusBadge>
+        </td>
+        <td className="px-6 py-4 text-slate-700">{r.price ?? '—'}</td>
         <td className="px-6 py-4 text-slate-500">
           {r.requested_date ? (
             <AppDate value={r.requested_date} format="short" />
@@ -115,13 +137,28 @@ const PickupRequestTable = ({
             className="flex items-center justify-end"
             onClick={(e) => e.stopPropagation()}
           >
-            <Link
-              href={`${basePath}/${r.id}`}
-              aria-label={`View pickup request from ${r.full_name}`}
-              className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
-            >
-              <LuEye className="size-4" />
-            </Link>
+            {r.status === 'pending' && r.evaluation_status === 'pending' && (
+              <>
+                <button
+                  type="button"
+                  onClick={() => onApprove(r)}
+                  disabled={evaluatingId === r.id}
+                  aria-label={`Approve pickup request from ${r.full_name}`}
+                  className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-green-50 hover:text-green-600 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <LuCheck className="size-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onReject(r)}
+                  disabled={evaluatingId === r.id}
+                  aria-label={`Reject pickup request from ${r.full_name}`}
+                  className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <LuX className="size-4" />
+                </button>
+              </>
+            )}
             <Link
               href={`${basePath}/${r.id}/edit`}
               aria-label={`Edit pickup request from ${r.full_name}`}
@@ -174,6 +211,12 @@ const PickupRequestTable = ({
             </th>
             <th className="px-6 py-3 text-left font-semibold text-slate-500">
               Status
+            </th>
+            <th className="px-6 py-3 text-left font-semibold text-slate-500">
+              Evaluation
+            </th>
+            <th className="px-6 py-3 text-left font-semibold text-slate-500">
+              Price
             </th>
             <th className="px-6 py-3 text-left font-semibold text-slate-500">
               Requested

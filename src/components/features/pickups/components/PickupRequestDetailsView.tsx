@@ -5,10 +5,12 @@ import { useState } from 'react';
 import {
   LuArrowLeft,
   LuCalendar,
+  LuClipboardCheck,
   LuMail,
   LuMapPin,
   LuPackage,
   LuPhone,
+  LuTruck,
   LuUser,
   LuUserCheck,
   LuX,
@@ -23,11 +25,22 @@ import { InfoRow } from '../../../ui/InfoRow';
 import { Loading } from '../../../ui/loading/Loading';
 import { PageHeader } from '../../../ui/PageHeader';
 import { useToast } from '../../../ui/toast/ToastContext';
-import { REQUEST_TYPE_BADGE_VARIANT, STATUS_BADGE_VARIANT } from '../constants';
+import { ActivityLog } from '../../activity/components';
+import {
+  EVALUATION_STATUS_BADGE_VARIANT,
+  REQUEST_TYPE_BADGE_VARIANT,
+  STATUS_BADGE_VARIANT,
+} from '../constants';
 import { usePickupRequest } from '../hooks';
-import { PICKUP_REQUEST_TYPE_LABELS, PICKUP_STATUS_LABELS } from '../types';
+import {
+  PICKUP_EVALUATION_STATUS_LABELS,
+  PICKUP_REQUEST_TYPE_LABELS,
+  PICKUP_STATUS_LABELS,
+} from '../types';
+import { AssignDriverModal } from './AssignDriverModal';
 import { CancelModal } from './CancelModal';
 import { CollectModal } from './CollectModal';
+import { EvaluateModal } from './EvaluateModal';
 import { ScheduleModal } from './ScheduleModal';
 
 type PickupRequestDetailsViewProps = {
@@ -38,16 +51,19 @@ type PickupRequestDetailsViewProps = {
 /** Admin and staff have identical permissions on this module — every
  * action below is available to both (see
  * CollectionRequestViewSet.get_permissions). What's actually gated is
- * status: schedule only from `pending`, collect only from `scheduled`,
- * cancel from either — see CollectionRequestDecisionService on the
- * backend, mirrored here so an invalid action never even renders. */
+ * status: evaluate only from `pending`, schedule only from `pending` +
+ * `evaluation_status=approved`, collect only from `scheduled`, cancel
+ * from either — see CollectionRequestDecisionService on the backend,
+ * mirrored here so an invalid action never even renders. */
 const PickupRequestDetailsView = ({
   requestId,
   basePath,
 }: PickupRequestDetailsViewProps) => {
   const { request, loading, error, refetch } = usePickupRequest(requestId);
   const toast = useToast();
+  const [evaluateOpen, setEvaluateOpen] = useState(false);
   const [scheduleOpen, setScheduleOpen] = useState(false);
+  const [assignDriverOpen, setAssignDriverOpen] = useState(false);
   const [collectOpen, setCollectOpen] = useState(false);
   const [cancelOpen, setCancelOpen] = useState(false);
 
@@ -55,9 +71,17 @@ const PickupRequestDetailsView = ({
   // navigation) and refresh it, but always pair that with an explicit
   // toast: landing back on the same page a modal action was triggered
   // from can't otherwise be distinguished from nothing having happened.
+  const handleEvaluated = () => {
+    refetch();
+    toast.success('Evaluation saved');
+  };
   const handleScheduled = () => {
     refetch();
     toast.success('Pickup scheduled');
+  };
+  const handleDriverAssigned = () => {
+    refetch();
+    toast.success('Driver assigned');
   };
   const handleCollected = () => {
     refetch();
@@ -85,7 +109,14 @@ const PickupRequestDetailsView = ({
     );
   }
 
-  const canSchedule = request.status === 'pending';
+  const canEvaluate = request.status === 'pending';
+  const canSchedule =
+    request.status === 'pending' && request.evaluation_status === 'approved';
+  // Two independent ways to reach `scheduled` — assigning a driver here
+  // doesn't require the collector+time Schedule flow, and vice versa;
+  // both disappear together once either succeeds (status moves off
+  // `pending`).
+  const canAssignDriver = canSchedule;
   const canCollect = request.status === 'scheduled';
   const canCancel =
     request.status === 'pending' || request.status === 'scheduled';
@@ -105,10 +136,25 @@ const PickupRequestDetailsView = ({
         subtitle={`${request.category.name} pickup request`}
         actions={
           <>
+            {canEvaluate && (
+              <Button variant="secondary" onClick={() => setEvaluateOpen(true)}>
+                <LuClipboardCheck className="mr-1.5 size-4" />
+                Evaluate
+              </Button>
+            )}
             {canSchedule && (
               <Button onClick={() => setScheduleOpen(true)}>
                 <LuUserCheck className="mr-1.5 size-4" />
                 Schedule pickup
+              </Button>
+            )}
+            {canAssignDriver && (
+              <Button
+                variant="secondary"
+                onClick={() => setAssignDriverOpen(true)}
+              >
+                <LuTruck className="mr-1.5 size-4" />
+                Assign driver
               </Button>
             )}
             {canCollect && (
@@ -136,6 +182,11 @@ const PickupRequestDetailsView = ({
         </StatusBadge>
         <StatusBadge variant={STATUS_BADGE_VARIANT[request.status]}>
           {PICKUP_STATUS_LABELS[request.status]}
+        </StatusBadge>
+        <StatusBadge
+          variant={EVALUATION_STATUS_BADGE_VARIANT[request.evaluation_status]}
+        >
+          {PICKUP_EVALUATION_STATUS_LABELS[request.evaluation_status]}
         </StatusBadge>
       </div>
 
@@ -205,6 +256,42 @@ const PickupRequestDetailsView = ({
             </p>
           </div>
         )}
+
+        {request.evaluation_status !== 'pending' && (
+          <div className="mt-5 border-t border-slate-100 pt-5">
+            <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+              Evaluation
+            </p>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {request.price && (
+                <InfoRow
+                  icon={<LuPackage className="size-4" />}
+                  label="Price"
+                  value={request.price}
+                />
+              )}
+              {request.evaluated_by && (
+                <InfoRow
+                  icon={<LuUser className="size-4" />}
+                  label="Evaluated by"
+                  value={request.evaluated_by}
+                />
+              )}
+              {request.evaluated_at && (
+                <InfoRow
+                  icon={<LuCalendar className="size-4" />}
+                  label="Evaluated at"
+                  value={<AppDate value={request.evaluated_at} format="long" />}
+                />
+              )}
+            </div>
+            {request.evaluation_note && (
+              <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-slate-700">
+                {request.evaluation_note}
+              </p>
+            )}
+          </div>
+        )}
       </Card>
 
       {(request.status === 'scheduled' ||
@@ -220,6 +307,13 @@ const PickupRequestDetailsView = ({
                 icon={<LuUserCheck className="size-4" />}
                 label="Assigned collector"
                 value={request.assigned_collector}
+              />
+            )}
+            {request.assigned_driver && (
+              <InfoRow
+                icon={<LuTruck className="size-4" />}
+                label="Assigned driver"
+                value={request.assigned_driver}
               />
             )}
             {request.scheduled_at && (
@@ -259,11 +353,28 @@ const PickupRequestDetailsView = ({
         </Card>
       )}
 
+      <Card className="mt-4 p-5">
+        <p className="mb-3 text-sm font-semibold text-slate-900">Activity</p>
+        <ActivityLog entityType="collectionrequest" entityId={request.id} />
+      </Card>
+
+      <EvaluateModal
+        requestId={request.id}
+        open={evaluateOpen}
+        onClose={() => setEvaluateOpen(false)}
+        onEvaluated={handleEvaluated}
+      />
       <ScheduleModal
         requestId={request.id}
         open={scheduleOpen}
         onClose={() => setScheduleOpen(false)}
         onScheduled={handleScheduled}
+      />
+      <AssignDriverModal
+        requestId={request.id}
+        open={assignDriverOpen}
+        onClose={() => setAssignDriverOpen(false)}
+        onAssigned={handleDriverAssigned}
       />
       <CollectModal
         requestId={request.id}

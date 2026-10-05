@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { ApiError } from '../../../../lib/api';
 import { listPickupRequests } from '../services/pickupService';
 import type {
+  PickupEvaluationStatus,
   PickupRequestListItem,
   PickupRequestType,
   PickupStatus,
@@ -13,6 +14,7 @@ type UsePickupRequestsParams = {
   status?: PickupStatus;
   search?: string;
   requestType?: PickupRequestType;
+  evaluationStatus?: PickupEvaluationStatus;
 };
 
 const usePickupRequests = ({
@@ -20,6 +22,7 @@ const usePickupRequests = ({
   status,
   search,
   requestType,
+  evaluationStatus,
 }: UsePickupRequestsParams) => {
   const [requests, setRequests] = useState<PickupRequestListItem[]>([]);
   const [count, setCount] = useState(0);
@@ -35,6 +38,7 @@ const usePickupRequests = ({
         status,
         search,
         requestType,
+        evaluationStatus,
       });
       setRequests(data.results);
       setCount(data.count);
@@ -47,7 +51,7 @@ const usePickupRequests = ({
     } finally {
       setLoading(false);
     }
-  }, [page, status, search, requestType]);
+  }, [page, status, search, requestType, evaluationStatus]);
 
   useEffect(() => {
     refetch();

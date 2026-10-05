@@ -1,7 +1,10 @@
+export { AssignDriverModal } from './AssignDriverModal';
 export { CancelModal } from './CancelModal';
 export { CollectModal } from './CollectModal';
 export { CreatePickupRequestView } from './CreatePickupRequestView';
+export { DriverPickupsView } from './DriverPickupsView';
 export { EditPickupRequestView } from './EditPickupRequestView';
+export { EvaluateModal } from './EvaluateModal';
 export { PickupRequestDetailsView } from './PickupRequestDetailsView';
 export { PickupRequestsView } from './PickupRequestsView';
 export { PAGE_SIZE, PickupRequestTable } from './PickupRequestTable';

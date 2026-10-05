@@ -1,5 +1,6 @@
 import { apiFetch } from '../../../../lib/api';
 import type {
+  PickupEvaluationStatus,
   PickupQuickRequestListItem,
   PickupQuickRequestStatus,
   PickupRequestDetails,
@@ -20,6 +21,7 @@ type ListPickupRequestsParams = {
   status?: PickupStatus;
   search?: string;
   requestType?: PickupRequestType;
+  evaluationStatus?: PickupEvaluationStatus;
 };
 
 const listPickupRequests = ({
@@ -27,6 +29,7 @@ const listPickupRequests = ({
   status,
   search,
   requestType,
+  evaluationStatus,
 }: ListPickupRequestsParams = {}): Promise<
   Paginated<PickupRequestListItem>
 > => {
@@ -34,6 +37,7 @@ const listPickupRequests = ({
   if (status) params.set('status', status);
   if (search) params.set('search', search);
   if (requestType) params.set('request_type', requestType);
+  if (evaluationStatus) params.set('evaluation_status', evaluationStatus);
   return apiFetch(`/pickups/?${params.toString()}`);
 };
 
@@ -81,18 +85,56 @@ const updatePickupRequest = (
 const deletePickupRequest = (id: string): Promise<void> =>
   apiFetch(`/pickups/${id}/`, { method: 'DELETE' });
 
+type EvaluatePickupPayload = {
+  decision: 'approved' | 'rejected';
+  /** Required when approving — creates/updates the linked finance
+   * record. Ignored when rejecting. */
+  price?: string;
+  /** Required when rejecting (the reason); optional when approving. */
+  note?: string;
+};
+
+// Only valid from `pending` — see CollectionRequestDecisionService.evaluate.
+// Not a one-shot action: can be called again while still `pending`.
+const evaluatePickupRequest = (
+  id: string,
+  payload: EvaluatePickupPayload,
+): Promise<PickupRequestDetails> =>
+  apiFetch(`/pickups/${id}/evaluate/`, { method: 'POST', json: payload });
+
 type SchedulePickupPayload = {
   collector: string;
   scheduled_at: string;
   note?: string;
 };
 
-// Only valid from `pending` — see CollectionRequestDecisionService.schedule.
+// Only valid from `pending` + `evaluation_status=approved` — see
+// CollectionRequestDecisionService.schedule.
 const schedulePickupRequest = (
   id: string,
   payload: SchedulePickupPayload,
 ): Promise<PickupRequestDetails> =>
   apiFetch(`/pickups/${id}/schedule/`, { method: 'POST', json: payload });
+
+type AssignDriverPayload = {
+  driver: string;
+};
+
+// A second, independent way to reach `scheduled` alongside
+// schedulePickupRequest above — assigns a driver instead of a staff
+// collector + exact time. Only valid from `pending` +
+// `evaluation_status=approved` — see
+// CollectionRequestDecisionService.assign_driver.
+const assignDriverToRequest = (
+  id: string,
+  payload: AssignDriverPayload,
+): Promise<PickupRequestDetails> =>
+  apiFetch(`/pickups/${id}/assign-driver/`, { method: 'POST', json: payload });
+
+// The driver's self-service counterpart to assignDriverToRequest —
+// claims using the logged-in driver's own profile, no body needed.
+const claimPickupRequest = (id: string): Promise<PickupRequestDetails> =>
+  apiFetch(`/pickups/${id}/claim/`, { method: 'POST' });
 
 type CollectPickupPayload = {
   collected_quantity?: string;
@@ -167,12 +209,15 @@ const convertQuickPickupRequest = (
   apiFetch(`/pickups/quick/${id}/convert/`, { method: 'POST', json: payload });
 
 export {
+  assignDriverToRequest,
   cancelPickupRequest,
+  claimPickupRequest,
   collectPickupRequest,
   convertQuickPickupRequest,
   createPickupRequest,
   createQuickPickupRequest,
   deletePickupRequest,
+  evaluatePickupRequest,
   getPickupRequest,
   getQuickPickupRequest,
   listPickupRequests,
@@ -182,10 +227,12 @@ export {
   updatePickupRequest,
 };
 export type {
+  AssignDriverPayload,
   CancelPickupPayload,
   CollectPickupPayload,
   CreatePickupRequestPayload,
   CreateQuickPickupRequestPayload,
+  EvaluatePickupPayload,
   ListPickupRequestsParams,
   ListQuickPickupRequestsParams,
   Paginated,

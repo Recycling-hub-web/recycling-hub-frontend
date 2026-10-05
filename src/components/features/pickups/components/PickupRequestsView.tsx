@@ -12,16 +12,19 @@ import { PageHeader } from '../../../ui/PageHeader';
 import { Tabs } from '../../../ui/tabs';
 import { useToast } from '../../../ui/toast/ToastContext';
 import {
+  EVALUATION_STATUS_FILTER_OPTIONS,
   REQUEST_TYPE_FILTER_OPTIONS,
   STATUS_FILTER_OPTIONS,
 } from '../constants';
 import {
   useDeletePickupRequest,
+  useEvaluatePickup,
   useMarkQuickPickupRequestContacted,
   usePickupRequests,
   useQuickPickupRequests,
 } from '../hooks';
 import type {
+  PickupEvaluationStatus,
   PickupQuickRequestListItem,
   PickupRequestListItem,
   PickupRequestType,
@@ -55,6 +58,9 @@ const PickupRequestsView = ({ basePath }: PickupRequestsViewProps) => {
   const [requestTypeFilter, setRequestTypeFilter] = useState<
     PickupRequestType | ''
   >('');
+  const [evaluationStatusFilter, setEvaluationStatusFilter] = useState<
+    PickupEvaluationStatus | ''
+  >('');
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
 
@@ -73,11 +79,14 @@ const PickupRequestsView = ({ basePath }: PickupRequestsViewProps) => {
     status: statusFilter || undefined,
     search: search || undefined,
     requestType: requestTypeFilter || undefined,
+    evaluationStatus: evaluationStatusFilter || undefined,
   });
   const { execute: deleteRequest, loading: deleting } =
     useDeletePickupRequest();
   const [pendingDelete, setPendingDelete] =
     useState<PickupRequestListItem | null>(null);
+  const { execute: evaluateRequest } = useEvaluatePickup();
+  const [evaluatingId, setEvaluatingId] = useState<string | null>(null);
   const {
     requests: quickLeads,
     loading: loadingQuickLeads,
@@ -118,6 +127,31 @@ const PickupRequestsView = ({ basePath }: PickupRequestsViewProps) => {
   const handleRequestTypeFilterChange = (value: string) => {
     setRequestTypeFilter(value as PickupRequestType | '');
     setPage(1);
+  };
+
+  const handleEvaluationStatusFilterChange = (value: string) => {
+    setEvaluationStatusFilter(value as PickupEvaluationStatus | '');
+    setPage(1);
+  };
+
+  const handleEvaluate = async (
+    request: PickupRequestListItem,
+    decision: 'approved' | 'rejected',
+  ) => {
+    setEvaluatingId(request.id);
+    try {
+      await evaluateRequest(request.id, { decision });
+      toast.success(
+        decision === 'approved'
+          ? 'Pickup request approved'
+          : 'Pickup request rejected',
+      );
+      refetch();
+    } catch {
+      toast.error('Could not evaluate this pickup request');
+    } finally {
+      setEvaluatingId(null);
+    }
   };
 
   const handleConfirmDelete = async () => {
@@ -171,6 +205,11 @@ const PickupRequestsView = ({ basePath }: PickupRequestsViewProps) => {
                 options={REQUEST_TYPE_FILTER_OPTIONS}
               />
               <FilterSelect
+                value={evaluationStatusFilter}
+                onChange={handleEvaluationStatusFilterChange}
+                options={EVALUATION_STATUS_FILTER_OPTIONS}
+              />
+              <FilterSelect
                 value={statusFilter}
                 onChange={handleStatusFilterChange}
                 options={STATUS_FILTER_OPTIONS}
@@ -190,6 +229,9 @@ const PickupRequestsView = ({ basePath }: PickupRequestsViewProps) => {
             onRetry={refetch}
             basePath={basePath}
             onDeleteRequest={setPendingDelete}
+            onApprove={(request) => handleEvaluate(request, 'approved')}
+            onReject={(request) => handleEvaluate(request, 'rejected')}
+            evaluatingId={evaluatingId}
           />
         </>
       ) : (

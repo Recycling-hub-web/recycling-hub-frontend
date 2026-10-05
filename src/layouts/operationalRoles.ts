@@ -7,6 +7,7 @@ import {
   LuNewspaper,
   LuTag,
   LuTruck,
+  LuWallet,
 } from 'react-icons/lu';
 
 import type { NavItem } from '../components/layout/Sidebar';
@@ -21,20 +22,27 @@ type OperationalRoleConfig = {
 
 // Each role's own route + sidebar. Only "Overview" (and, for staff,
 // "Pickup Requests"/"Contact"/"Categories"/"Classifications"/"Storage
-// Files"/"Blog Posts"/"Partnerships") is wired to real pages today — the
-// rest of each role's section (assigned tasks, reports) lands here as
-// that workflow work gets built, same "roles first, then workflows"
-// pattern the admin sidebar started with. Staff sees the same
-// pickups/contact management admin does (same components,
-// basePath="/staff/…") but without contact delete — enforced on the
-// backend too (ContactMessageViewSet.get_permissions), not just a
-// hidden button here. Pickups, Categories, Classifications, Storage
-// Files, Blog Posts, and Partnerships have no such split: admin and
-// staff share identical permissions on all six modules
+// Files"/"Blog Posts"/"Partnerships"; for driver, its own scoped
+// "Pickup Requests"; for accounting, "Finance Records") is wired to
+// real pages today — the rest of each role's section (assigned tasks,
+// reports) lands here as that workflow work gets built, same "roles
+// first, then workflows" pattern the admin sidebar started with. Staff
+// sees the same pickups/contact management admin does (same
+// components, basePath="/staff/…") but without contact delete —
+// enforced on the backend too (ContactMessageViewSet.get_permissions),
+// not just a hidden button here. Pickups, Categories, Classifications,
+// Storage Files, Blog Posts, and Partnerships have no such split: admin
+// and staff share identical permissions on all six modules
 // (CollectionRequestViewSet / CategoryViewSet + IsStaffOrReadOnly /
 // ClassificationView / FileRecordViewSet + IsAdminOrStaffUser /
 // BlogPostViewSet + IsStaffOrReadOnly / PartnerViewSet +
-// IsStaffOrReadOnly).
+// IsStaffOrReadOnly). Driver's "Pickup Requests" is a different,
+// scoped-down view (DriverPickupsView) — not PickupRequestsView reused
+// — since a driver only ever sees the open claimable pool + their own
+// (see CollectionRequestViewSet.get_queryset's driver branch), with
+// claim/collect actions instead of the full admin/staff CRUD. Finance
+// Records (FinanceRecordsView) is read-only (IsAccounting/IsAdminUser
+// on FinanceRecordViewSet).
 const OPERATIONAL_ROLES: Record<OperationalRole, OperationalRoleConfig> = {
   staff: {
     route: '/staff',
@@ -63,7 +71,10 @@ const OPERATIONAL_ROLES: Record<OperationalRole, OperationalRoleConfig> = {
   },
   driver: {
     route: '/driver',
-    navItems: [{ href: '/driver', label: 'Overview', icon: LuLayoutDashboard }],
+    navItems: [
+      { href: '/driver', label: 'Overview', icon: LuLayoutDashboard },
+      { href: '/driver/pickups', label: 'Pickup Requests', icon: LuTruck },
+    ],
   },
   receiving_officer: {
     route: '/receiving',
@@ -75,6 +86,11 @@ const OPERATIONAL_ROLES: Record<OperationalRole, OperationalRoleConfig> = {
     route: '/accounting',
     navItems: [
       { href: '/accounting', label: 'Overview', icon: LuLayoutDashboard },
+      {
+        href: '/accounting/finance',
+        label: 'Finance Records',
+        icon: LuWallet,
+      },
     ],
   },
 };
