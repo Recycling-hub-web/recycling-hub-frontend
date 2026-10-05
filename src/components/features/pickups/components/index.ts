@@ -1,6 +1,12 @@
 export { CancelModal } from './CancelModal';
 export { CollectModal } from './CollectModal';
+export { CreatePickupRequestView } from './CreatePickupRequestView';
+export { EditPickupRequestView } from './EditPickupRequestView';
 export { PickupRequestDetailsView } from './PickupRequestDetailsView';
 export { PickupRequestsView } from './PickupRequestsView';
 export { PAGE_SIZE, PickupRequestTable } from './PickupRequestTable';
+export { PickupTypeSelector } from './PickupTypeSelector';
+export { PublicPickupRequestForm } from './PublicPickupRequestForm';
+export { QuickLeadTable } from './QuickLeadTable';
+export { QuickPickupRequestForm } from './QuickPickupRequestForm';
 export { ScheduleModal } from './ScheduleModal';

@@ -109,9 +109,17 @@ const ServiceDetailTemplate = ({ slug }: ServiceDetailTemplateProps) => {
       <section className="bg-white py-16 md:py-20">
         <div className="mx-auto max-w-3xl px-5 text-center md:px-8">
           <FadeIn>
-            <Button href={`/request-quote?service=${slug}`}>
-              {nav.requestQuote}
-            </Button>
+            {slug === 'collection-pickup' ? (
+              // Individual pickup is a real, trackable request (the
+              // CollectionRequest backend model), not a sales quote —
+              // /request-quote never actually stores anything (see its
+              // own TODO), so this one service skips it entirely.
+              <Button href="/request-pickup">{nav.requestPickup}</Button>
+            ) : (
+              <Button href={`/request-quote?service=${slug}`}>
+                {nav.requestQuote}
+              </Button>
+            )}
           </FadeIn>
 
           {slug === 'collection-pickup' && (

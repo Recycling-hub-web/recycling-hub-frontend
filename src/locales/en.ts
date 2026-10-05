@@ -38,6 +38,7 @@ const en = {
     contact: 'Contact',
     whatsapp: 'WhatsApp Us',
     requestQuote: 'Request a Quote',
+    requestPickup: 'Request a Pickup',
     services: 'Services',
     solutions: 'Solutions',
     resources: 'Resources',
@@ -402,7 +403,7 @@ const en = {
           'No minimums, no paperwork',
         ],
         cta: 'Book Pickup',
-        ctaHref: '/contact',
+        ctaHref: '/request-pickup',
       },
       business: {
         badge: 'For Businesses',
@@ -1273,6 +1274,73 @@ const en = {
         "Individual pickup is always free across Klang Valley and doesn't need a quote — ",
       linkText: 'book it directly via WhatsApp',
       suffix: '.',
+    },
+  },
+
+  pickupRequest: {
+    hero: {
+      eyebrow: 'Free Doorstep Collection',
+      headline: 'Request a',
+      headlineAccent: 'Pickup.',
+      description:
+        "Tell us what you have and where to collect it — we'll schedule a free doorstep pickup and confirm by email.",
+    },
+    typeSelector: {
+      heading: 'What are you recycling?',
+      subheading: "Choose the option that fits, and we'll take it from there.",
+      individual: {
+        title: 'Individual / Household',
+        description:
+          'Free doorstep pickup for your old phones, laptops, and gadgets.',
+      },
+      business: {
+        title: 'Business / Bulk',
+        description:
+          'Get a quote for office, warehouse, or factory decommissioning.',
+      },
+      quickLinkText: 'Just want a callback? Leave your number',
+    },
+    quickForm: {
+      heading: 'Request a Callback',
+      subheading:
+        "Leave your number and we'll call you back to sort out the rest.",
+      phone: 'Phone',
+      phonePlaceholder: 'Enter your contact number',
+      errorPhoneRequired: 'Please enter your contact number.',
+      submitButton: 'Request Callback',
+      submittingButton: 'Submitting…',
+      successMessage: "Got it — we'll call you back shortly.",
+      errorMessage: 'Something went wrong. Please try again.',
+    },
+    form: {
+      heading: 'Pickup Request Details',
+      subheading:
+        "Fill in your details and we'll be in touch to confirm a collection time.",
+      fullName: 'Full name',
+      fullNamePlaceholder: 'e.g. Fatima Ali',
+      email: 'Email',
+      emailPlaceholder: 'Enter your email',
+      phone: 'Phone',
+      phonePlaceholder: 'Enter your contact number',
+      category: 'Material category',
+      pickupAddress: 'Pickup address',
+      pickupAddressPlaceholder: 'Address where materials should be collected',
+      estimatedQuantity: 'Estimated quantity',
+      estimatedQuantityPlaceholder: 'e.g. 5',
+      quantityUnit: 'Unit',
+      quantityUnitPlaceholder: 'e.g. kg',
+      requestedDate: 'Preferred date',
+      note: 'Note',
+      notePlaceholder: 'Anything else worth mentioning',
+      errorFullNameRequired: 'Please enter your full name.',
+      errorEmailInvalid: 'Enter a valid email address.',
+      errorCategoryRequired: 'Please select a material category.',
+      errorAddressRequired: 'Please enter a pickup address.',
+      submitButton: 'Submit Request',
+      submittingButton: 'Submitting…',
+      successMessage:
+        "Request received — we'll be in touch to confirm your pickup.",
+      errorMessage: 'Something went wrong. Please try again.',
     },
   },
 

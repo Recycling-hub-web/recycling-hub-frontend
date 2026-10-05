@@ -23,9 +23,9 @@ import { InfoRow } from '../../../ui/InfoRow';
 import { Loading } from '../../../ui/loading/Loading';
 import { PageHeader } from '../../../ui/PageHeader';
 import { useToast } from '../../../ui/toast/ToastContext';
-import { STATUS_BADGE_VARIANT } from '../constants';
+import { REQUEST_TYPE_BADGE_VARIANT, STATUS_BADGE_VARIANT } from '../constants';
 import { usePickupRequest } from '../hooks';
-import { PICKUP_STATUS_LABELS } from '../types';
+import { PICKUP_REQUEST_TYPE_LABELS, PICKUP_STATUS_LABELS } from '../types';
 import { CancelModal } from './CancelModal';
 import { CollectModal } from './CollectModal';
 import { ScheduleModal } from './ScheduleModal';
@@ -130,7 +130,10 @@ const PickupRequestDetailsView = ({
         }
       />
 
-      <div className="mb-5">
+      <div className="mb-5 flex flex-wrap gap-2">
+        <StatusBadge variant={REQUEST_TYPE_BADGE_VARIANT[request.request_type]}>
+          {PICKUP_REQUEST_TYPE_LABELS[request.request_type]}
+        </StatusBadge>
         <StatusBadge variant={STATUS_BADGE_VARIANT[request.status]}>
           {PICKUP_STATUS_LABELS[request.status]}
         </StatusBadge>

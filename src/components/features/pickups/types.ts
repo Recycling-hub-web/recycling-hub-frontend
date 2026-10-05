@@ -1,5 +1,7 @@
 type PickupStatus = 'pending' | 'scheduled' | 'collected' | 'cancelled';
 
+type PickupRequestType = 'individual' | 'business';
+
 type PickupCategory = {
   id: string;
   name: string;
@@ -18,6 +20,7 @@ type PickupRequestListItem = {
   full_name: string;
   email: string;
   status: PickupStatus;
+  request_type: PickupRequestType;
   requested_date: string | null;
   scheduled_at: string | null;
 };
@@ -34,6 +37,7 @@ type PickupRequestDetails = {
   category: PickupCategory;
   collection_point: PickupCollectionPoint;
   status: PickupStatus;
+  request_type: PickupRequestType;
   pickup_address: string;
   estimated_quantity: string | null;
   quantity_unit: string;
@@ -48,6 +52,18 @@ type PickupRequestDetails = {
   cancellation_reason: string | null;
   created_at: string;
   updated_at: string;
+};
+
+type PickupQuickRequestStatus = 'new' | 'contacted' | 'converted';
+
+/** Flat shape from GET /pickups/quick/ — the Quick Leads tab's list. */
+type PickupQuickRequestListItem = {
+  id: string;
+  request_type: PickupRequestType;
+  phone_number: string;
+  status: PickupQuickRequestStatus;
+  collection_request: string | null;
+  created_at: string;
 };
 
 /** A StaffProfile, as returned by GET /accounts/staff/ — used only to
@@ -71,12 +87,33 @@ const PICKUP_STATUS_LABELS: Record<PickupStatus, string> = {
   cancelled: 'Cancelled',
 };
 
-export { PICKUP_STATUS_LABELS };
+const PICKUP_REQUEST_TYPE_LABELS: Record<PickupRequestType, string> = {
+  individual: 'Individual',
+  business: 'Business',
+};
+
+const PICKUP_QUICK_REQUEST_STATUS_LABELS: Record<
+  PickupQuickRequestStatus,
+  string
+> = {
+  new: 'New',
+  contacted: 'Contacted',
+  converted: 'Converted',
+};
+
+export {
+  PICKUP_QUICK_REQUEST_STATUS_LABELS,
+  PICKUP_REQUEST_TYPE_LABELS,
+  PICKUP_STATUS_LABELS,
+};
 export type {
   Collector,
   PickupCategory,
   PickupCollectionPoint,
+  PickupQuickRequestListItem,
+  PickupQuickRequestStatus,
   PickupRequestDetails,
   PickupRequestListItem,
+  PickupRequestType,
   PickupStatus,
 };

@@ -2,14 +2,25 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { ApiError } from '../../../../lib/api';
 import { listPickupRequests } from '../services/pickupService';
-import type { PickupRequestListItem, PickupStatus } from '../types';
+import type {
+  PickupRequestListItem,
+  PickupRequestType,
+  PickupStatus,
+} from '../types';
 
 type UsePickupRequestsParams = {
   page: number;
   status?: PickupStatus;
+  search?: string;
+  requestType?: PickupRequestType;
 };
 
-const usePickupRequests = ({ page, status }: UsePickupRequestsParams) => {
+const usePickupRequests = ({
+  page,
+  status,
+  search,
+  requestType,
+}: UsePickupRequestsParams) => {
   const [requests, setRequests] = useState<PickupRequestListItem[]>([]);
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -19,7 +30,12 @@ const usePickupRequests = ({ page, status }: UsePickupRequestsParams) => {
     setLoading(true);
     setError('');
     try {
-      const data = await listPickupRequests({ page, status });
+      const data = await listPickupRequests({
+        page,
+        status,
+        search,
+        requestType,
+      });
       setRequests(data.results);
       setCount(data.count);
     } catch (err) {
@@ -31,7 +47,7 @@ const usePickupRequests = ({ page, status }: UsePickupRequestsParams) => {
     } finally {
       setLoading(false);
     }
-  }, [page, status]);
+  }, [page, status, search, requestType]);
 
   useEffect(() => {
     refetch();

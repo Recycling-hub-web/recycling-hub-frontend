@@ -204,7 +204,7 @@ const HeroBlobSection = () => {
             className="relative mt-9 inline-flex"
           >
             <Link
-              href="/contact"
+              href="/request-pickup"
               className="group inline-flex items-center gap-4 rounded-full bg-white py-2 pl-6 pr-2 shadow-[0_8px_30px_rgba(0,0,0,0.08)] ring-1 ring-slate-200 transition-shadow hover:shadow-[0_12px_36px_rgba(0,0,0,0.12)]"
             >
               <span className="text-sm font-semibold text-neutral-950 md:text-base">

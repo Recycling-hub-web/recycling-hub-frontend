@@ -1,7 +1,10 @@
 import { apiFetch } from '../../../../lib/api';
 import type {
+  PickupQuickRequestListItem,
+  PickupQuickRequestStatus,
   PickupRequestDetails,
   PickupRequestListItem,
+  PickupRequestType,
   PickupStatus,
 } from '../types';
 
@@ -15,21 +18,49 @@ type Paginated<T> = {
 type ListPickupRequestsParams = {
   page?: number;
   status?: PickupStatus;
+  search?: string;
+  requestType?: PickupRequestType;
 };
 
 const listPickupRequests = ({
   page = 1,
   status,
+  search,
+  requestType,
 }: ListPickupRequestsParams = {}): Promise<
   Paginated<PickupRequestListItem>
 > => {
   const params = new URLSearchParams({ page: String(page) });
   if (status) params.set('status', status);
+  if (search) params.set('search', search);
+  if (requestType) params.set('request_type', requestType);
   return apiFetch(`/pickups/?${params.toString()}`);
 };
 
 const getPickupRequest = (id: string): Promise<PickupRequestDetails> =>
   apiFetch(`/pickups/${id}/`);
+
+type CreatePickupRequestPayload = {
+  full_name: string;
+  email: string;
+  phone_number?: string;
+  category: string;
+  request_type?: PickupRequestType;
+  pickup_address: string;
+  estimated_quantity?: string;
+  quantity_unit?: string;
+  requested_date?: string;
+  note?: string;
+};
+
+// Public on the backend (CollectionRequestViewSet.get_permissions — no
+// resident accounts, so submission never requires auth) — used by both
+// the public request form and the admin/staff "New request" action,
+// same endpoint either way.
+const createPickupRequest = (
+  payload: CreatePickupRequestPayload,
+): Promise<PickupRequestDetails> =>
+  apiFetch('/pickups/', { method: 'POST', json: payload });
 
 type UpdatePickupRequestPayload = Partial<{
   pickup_address: string;
@@ -88,19 +119,75 @@ const cancelPickupRequest = (
 ): Promise<PickupRequestDetails> =>
   apiFetch(`/pickups/${id}/cancel/`, { method: 'POST', json: payload });
 
+type CreateQuickPickupRequestPayload = {
+  request_type?: PickupRequestType;
+  phone_number: string;
+};
+
+// Public on the backend (PickupQuickRequestViewSet.get_permissions) —
+// same reasoning as createPickupRequest above.
+const createQuickPickupRequest = (
+  payload: CreateQuickPickupRequestPayload,
+): Promise<PickupQuickRequestListItem> =>
+  apiFetch('/pickups/quick/', { method: 'POST', json: payload });
+
+type ListQuickPickupRequestsParams = {
+  status?: PickupQuickRequestStatus;
+};
+
+const listQuickPickupRequests = ({
+  status,
+}: ListQuickPickupRequestsParams = {}): Promise<
+  Paginated<PickupQuickRequestListItem>
+> => {
+  const params = new URLSearchParams();
+  if (status) params.set('status', status);
+  const query = params.toString();
+  return apiFetch(`/pickups/quick/${query ? `?${query}` : ''}`);
+};
+
+const getQuickPickupRequest = (
+  id: string,
+): Promise<PickupQuickRequestListItem> => apiFetch(`/pickups/quick/${id}/`);
+
+// Purely informational — doesn't block converting later. 400 if the
+// lead was already converted.
+const markQuickPickupRequestContacted = (
+  id: string,
+): Promise<PickupQuickRequestListItem> =>
+  apiFetch(`/pickups/quick/${id}/mark-contacted/`, { method: 'POST' });
+
+// Completes a lead into a real pickup request — same payload shape as
+// createPickupRequest, since it's the same CollectionRequestCreateSerializer
+// on the backend. Admin/staff only.
+const convertQuickPickupRequest = (
+  id: string,
+  payload: CreatePickupRequestPayload,
+): Promise<PickupRequestDetails> =>
+  apiFetch(`/pickups/quick/${id}/convert/`, { method: 'POST', json: payload });
+
 export {
   cancelPickupRequest,
   collectPickupRequest,
+  convertQuickPickupRequest,
+  createPickupRequest,
+  createQuickPickupRequest,
   deletePickupRequest,
   getPickupRequest,
+  getQuickPickupRequest,
   listPickupRequests,
+  listQuickPickupRequests,
+  markQuickPickupRequestContacted,
   schedulePickupRequest,
   updatePickupRequest,
 };
 export type {
   CancelPickupPayload,
   CollectPickupPayload,
+  CreatePickupRequestPayload,
+  CreateQuickPickupRequestPayload,
   ListPickupRequestsParams,
+  ListQuickPickupRequestsParams,
   Paginated,
   SchedulePickupPayload,
   UpdatePickupRequestPayload,

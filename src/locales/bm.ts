@@ -31,6 +31,7 @@ const bm: Dictionary = {
     contact: 'Hubungi Kami',
     whatsapp: 'WhatsApp Kami',
     requestQuote: 'Minta Sebut Harga',
+    requestPickup: 'Minta Kutipan',
     services: 'Perkhidmatan',
     solutions: 'Penyelesaian',
     resources: 'Sumber',
@@ -405,7 +406,7 @@ const bm: Dictionary = {
           'Tiada minimum, tiada dokumen',
         ],
         cta: 'Tempah Kutipan',
-        ctaHref: '/contact',
+        ctaHref: '/request-pickup',
       },
       business: {
         badge: 'Untuk Perniagaan',
@@ -1260,6 +1261,73 @@ const bm: Dictionary = {
         'Kutipan individu sentiasa percuma di seluruh Klang Valley dan tidak memerlukan sebut harga — ',
       linkText: 'tempah terus melalui WhatsApp',
       suffix: '.',
+    },
+  },
+
+  pickupRequest: {
+    hero: {
+      eyebrow: 'Kutipan Percuma Ke Rumah',
+      headline: 'Minta',
+      headlineAccent: 'Kutipan.',
+      description:
+        'Beritahu kami apa yang anda ada dan lokasi kutipan — kami akan jadualkan kutipan percuma ke rumah anda dan sahkan melalui e-mel.',
+    },
+    typeSelector: {
+      heading: 'Apa yang anda ingin kitar semula?',
+      subheading: 'Pilih opsyen yang sesuai, dan kami akan uruskan selebihnya.',
+      individual: {
+        title: 'Individu / Isi Rumah',
+        description:
+          'Kutipan percuma ke rumah untuk telefon, laptop, dan gajet lama anda.',
+      },
+      business: {
+        title: 'Perniagaan / Pukal',
+        description:
+          'Dapatkan sebut harga untuk penutupan pejabat, gudang, atau kilang.',
+      },
+      quickLinkText: 'Hanya mahu panggilan balik? Tinggalkan nombor anda',
+    },
+    quickForm: {
+      heading: 'Minta Panggilan Balik',
+      subheading:
+        'Tinggalkan nombor anda dan kami akan hubungi anda untuk uruskan selebihnya.',
+      phone: 'Telefon',
+      phonePlaceholder: 'Masukkan nombor hubungan anda',
+      errorPhoneRequired: 'Sila masukkan nombor hubungan anda.',
+      submitButton: 'Minta Panggilan Balik',
+      submittingButton: 'Menghantar…',
+      successMessage: 'Diterima — kami akan hubungi anda sebentar lagi.',
+      errorMessage: 'Sesuatu tidak kena. Sila cuba lagi.',
+    },
+    form: {
+      heading: 'Butiran Permintaan Kutipan',
+      subheading:
+        'Isikan butiran anda dan kami akan hubungi anda untuk sahkan masa kutipan.',
+      fullName: 'Nama penuh',
+      fullNamePlaceholder: 'cth. Fatima Ali',
+      email: 'E-mel',
+      emailPlaceholder: 'Masukkan e-mel anda',
+      phone: 'Telefon',
+      phonePlaceholder: 'Masukkan nombor hubungan anda',
+      category: 'Kategori bahan',
+      pickupAddress: 'Alamat kutipan',
+      pickupAddressPlaceholder: 'Alamat di mana bahan perlu dikutip',
+      estimatedQuantity: 'Anggaran kuantiti',
+      estimatedQuantityPlaceholder: 'cth. 5',
+      quantityUnit: 'Unit',
+      quantityUnitPlaceholder: 'cth. kg',
+      requestedDate: 'Tarikh pilihan',
+      note: 'Nota',
+      notePlaceholder: 'Sebarang perkara lain yang perlu disebut',
+      errorFullNameRequired: 'Sila masukkan nama penuh anda.',
+      errorEmailInvalid: 'Masukkan alamat e-mel yang sah.',
+      errorCategoryRequired: 'Sila pilih kategori bahan.',
+      errorAddressRequired: 'Sila masukkan alamat kutipan.',
+      submitButton: 'Hantar Permintaan',
+      submittingButton: 'Menghantar…',
+      successMessage:
+        'Permintaan diterima — kami akan hubungi anda untuk sahkan kutipan.',
+      errorMessage: 'Sesuatu tidak kena. Sila cuba lagi.',
     },
   },
 

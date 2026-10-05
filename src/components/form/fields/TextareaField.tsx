@@ -1,4 +1,4 @@
-import { getNestedValue } from '../utils';
+import { fieldStateClasses, getNestedValue } from '../utils';
 
 type TextareaFieldProps = {
   label: string;
@@ -9,6 +9,7 @@ type TextareaFieldProps = {
   errors?: Record<string, string>;
   updateFormData: (field: string, value: string) => void;
   onBlur?: () => void;
+  disabled?: boolean;
 };
 
 const TextareaField = ({
@@ -20,6 +21,7 @@ const TextareaField = ({
   errors,
   updateFormData,
   onBlur,
+  disabled = false,
 }: TextareaFieldProps) => {
   const value = (getNestedValue(formData, field) as string | undefined) ?? '';
 
@@ -33,12 +35,9 @@ const TextareaField = ({
         value={value}
         onChange={(e) => updateFormData(field, e.target.value)}
         onBlur={onBlur}
+        disabled={disabled}
         placeholder={placeholder}
-        className={`mt-2 min-h-[96px] w-full resize-y rounded-xl border p-3 text-sm outline-none transition-colors focus:outline-none focus:ring-1 focus:ring-brand-500 ${
-          errors?.[field]
-            ? 'border-red-500 bg-red-50'
-            : 'border-slate-200 bg-white hover:bg-slate-50'
-        }`}
+        className={`mt-2 min-h-[96px] w-full resize-y rounded-xl border p-3 text-sm outline-none transition-colors focus:outline-none focus:ring-1 focus:ring-brand-500 ${fieldStateClasses(disabled, Boolean(errors?.[field]))}`}
       />
 
       {errors?.[field] && (
