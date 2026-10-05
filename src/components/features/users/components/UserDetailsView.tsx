@@ -28,6 +28,7 @@ import { Loading } from '../../../ui/loading/Loading';
 import { ConfirmModal } from '../../../ui/modal/ConfirmModal';
 import { PageHeader } from '../../../ui/PageHeader';
 import { useToast } from '../../../ui/toast/ToastContext';
+import { ActivityLog } from '../../activity/components';
 import {
   REGISTRATION_STATUS_BADGE_VARIANT,
   REGISTRATION_STATUS_LABELS,
@@ -191,6 +192,11 @@ const UserDetailsView = ({ userId }: { userId: string }) => {
             value={<AppDate value={user.created_at} format="long" />}
           />
         </div>
+      </Card>
+
+      <Card className="mt-4 p-5">
+        <p className="mb-3 text-sm font-semibold text-slate-900">Activity</p>
+        <ActivityLog entityType="user" entityId={user.id} />
       </Card>
 
       <ConfirmModal
