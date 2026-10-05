@@ -19,11 +19,6 @@ import { CollectModal } from './CollectModal';
 
 type Tab = 'available' | 'mine';
 
-const TAB_ITEMS: { key: Tab; label: string }[] = [
-  { key: 'available', label: 'Available' },
-  { key: 'mine', label: 'My Pickups' },
-];
-
 const columnCount = 5;
 
 /** Driver's own scoped pickups view — not PickupRequestTable reused
@@ -41,6 +36,7 @@ const DriverPickupsView = () => {
   const [activeTab, setActiveTab] = useState<Tab>('available');
   const {
     requests: available,
+    count: availableCount,
     loading: loadingAvailable,
     error: availableError,
     refetch: refetchAvailable,
@@ -75,6 +71,18 @@ const DriverPickupsView = () => {
     toast.success('Marked as collected');
     refetchMine();
   };
+
+  // A passive count, not a push notification — every driver getting
+  // pinged for every newly-approved request would be noisy for no real
+  // benefit; this badge is enough to surface that there's something to
+  // claim.
+  const tabItems: { key: Tab; label: string }[] = [
+    {
+      key: 'available',
+      label: availableCount > 0 ? `Available (${availableCount})` : 'Available',
+    },
+    { key: 'mine', label: 'My Pickups' },
+  ];
 
   const requests = activeTab === 'available' ? available : mine;
   const loading = activeTab === 'available' ? loadingAvailable : loadingMine;
@@ -153,7 +161,7 @@ const DriverPickupsView = () => {
       />
 
       <Tabs
-        tabs={TAB_ITEMS}
+        tabs={tabItems}
         active={activeTab}
         onChange={setActiveTab}
         className="-mt-2 mb-4 px-0"

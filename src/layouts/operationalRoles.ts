@@ -1,4 +1,5 @@
 import {
+  LuBell,
   LuHandshake,
   LuHardDrive,
   LuLayers,
@@ -20,10 +21,12 @@ type OperationalRoleConfig = {
   navItems: NavItem[];
 };
 
-// Each role's own route + sidebar. Only "Overview" (and, for staff,
+// Each role's own route + sidebar. Only "Overview", "Notifications"
+// (every role, same shared NotificationsView — see
+// features/notifications/components), and, for staff,
 // "Pickup Requests"/"Contact"/"Categories"/"Classifications"/"Storage
 // Files"/"Blog Posts"/"Partnerships"; for driver, its own scoped
-// "Pickup Requests"; for accounting, "Finance Records") is wired to
+// "Pickup Requests"; for accounting, "Finance Records" — is wired to
 // real pages today — the rest of each role's section (assigned tasks,
 // reports) lands here as that workflow work gets built, same "roles
 // first, then workflows" pattern the admin sidebar started with. Staff
@@ -67,6 +70,7 @@ const OPERATIONAL_ROLES: Record<OperationalRole, OperationalRoleConfig> = {
         label: 'Partnerships',
         icon: LuHandshake,
       },
+      { href: '/staff/notifications', label: 'Notifications', icon: LuBell },
     ],
   },
   driver: {
@@ -74,12 +78,18 @@ const OPERATIONAL_ROLES: Record<OperationalRole, OperationalRoleConfig> = {
     navItems: [
       { href: '/driver', label: 'Overview', icon: LuLayoutDashboard },
       { href: '/driver/pickups', label: 'Pickup Requests', icon: LuTruck },
+      { href: '/driver/notifications', label: 'Notifications', icon: LuBell },
     ],
   },
   receiving_officer: {
     route: '/receiving',
     navItems: [
       { href: '/receiving', label: 'Overview', icon: LuLayoutDashboard },
+      {
+        href: '/receiving/notifications',
+        label: 'Notifications',
+        icon: LuBell,
+      },
     ],
   },
   accounting: {
@@ -90,6 +100,11 @@ const OPERATIONAL_ROLES: Record<OperationalRole, OperationalRoleConfig> = {
         href: '/accounting/finance',
         label: 'Finance Records',
         icon: LuWallet,
+      },
+      {
+        href: '/accounting/notifications',
+        label: 'Notifications',
+        icon: LuBell,
       },
     ],
   },

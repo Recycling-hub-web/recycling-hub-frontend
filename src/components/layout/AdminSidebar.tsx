@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  LuBell,
   LuHandshake,
   LuHardDrive,
   LuHistory,
@@ -34,6 +35,7 @@ const ADMIN_NAV_ITEMS: NavItem[] = [
   { href: '/admin/blogs', label: 'Blog Posts', icon: LuNewspaper },
   { href: '/admin/partnerships', label: 'Partnerships', icon: LuHandshake },
   { href: '/admin/activity', label: 'Activity Log', icon: LuHistory },
+  { href: '/admin/notifications', label: 'Notifications', icon: LuBell },
 ];
 
 type AdminSidebarProps = {
