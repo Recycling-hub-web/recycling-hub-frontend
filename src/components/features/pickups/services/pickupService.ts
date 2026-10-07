@@ -1,4 +1,5 @@
 import { apiFetch } from '../../../../lib/api';
+import type { PresignedUpload } from '../../storageFiles/types';
 import type {
   PickupEvaluationStatus,
   PickupQuickRequestListItem,
@@ -46,14 +47,17 @@ const getPickupRequest = (id: string): Promise<PickupRequestDetails> =>
 
 type CreatePickupRequestPayload = {
   full_name: string;
-  email: string;
+  /** Required for `business` requests only — optional for `individual`,
+   * see CollectionRequestCreateSerializer.validate on the backend. */
+  email?: string;
   phone_number?: string;
   category: string;
   request_type?: PickupRequestType;
   pickup_address: string;
+  /** Optional photo of the item(s) to be collected — a storage file key. */
+  photo?: string;
   estimated_quantity?: string;
   quantity_unit?: string;
-  requested_date?: string;
   note?: string;
 };
 
@@ -66,8 +70,24 @@ const createPickupRequest = (
 ): Promise<PickupRequestDetails> =>
   apiFetch('/pickups/', { method: 'POST', json: payload });
 
+// AllowAny, unlike the generic storage app's presigned-upload-urls — a
+// deliberately narrow endpoint (hard-coded folder/file_type, a small
+// image-only content-type allowlist, a 5 MB cap) specifically so the
+// public pickup form's optional photo field works for anonymous
+// visitors without exposing the full generic upload surface to them.
+// See PickupPhotoUploadUrlView on the backend.
+const requestPickupPhotoUploadUrl = (
+  fileName: string,
+  contentType: string,
+): Promise<{ uploads: PresignedUpload[] }> =>
+  apiFetch('/pickups/photo-upload-url/', {
+    method: 'POST',
+    json: { file_name: fileName, content_type: contentType },
+  });
+
 type UpdatePickupRequestPayload = Partial<{
   pickup_address: string;
+  photo: string;
   estimated_quantity: string;
   requested_date: string;
   note: string;
@@ -256,6 +276,7 @@ export {
   listPickupRequests,
   listQuickPickupRequests,
   markQuickPickupRequestContacted,
+  requestPickupPhotoUploadUrl,
   schedulePickupRequest,
   updatePickupRequest,
 };

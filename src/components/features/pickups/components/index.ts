@@ -5,6 +5,7 @@ export { CreatePickupRequestView } from './CreatePickupRequestView';
 export { DriverPickupsView } from './DriverPickupsView';
 export { EditPickupRequestView } from './EditPickupRequestView';
 export { EvaluateModal } from './EvaluateModal';
+export { PickupPhotoUploader } from './PickupPhotoUploader';
 export { PickupRequestDetailsView } from './PickupRequestDetailsView';
 export { PickupRequestsView } from './PickupRequestsView';
 export { PAGE_SIZE, PickupRequestTable } from './PickupRequestTable';

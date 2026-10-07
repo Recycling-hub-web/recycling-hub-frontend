@@ -67,6 +67,7 @@ type PickupRequestDetails = {
   price: string | null;
   request_type: PickupRequestType;
   pickup_address: string;
+  photo: { file_key: string; public_url: string | null } | null;
   estimated_quantity: string | null;
   quantity_unit: string;
   requested_date: string | null;

@@ -13,6 +13,7 @@ export { useDropOffRoute } from './useDropOffRoute';
 export { useEvaluatePickup } from './useEvaluatePickup';
 export { useMarkQuickPickupRequestContacted } from './useMarkQuickPickupRequestContacted';
 export { usePickupCategories } from './usePickupCategories';
+export { usePickupPhotoUpload } from './usePickupPhotoUpload';
 export { usePickupRequest } from './usePickupRequest';
 export { usePickupRequests } from './usePickupRequests';
 export { useQuickPickupRequest } from './useQuickPickupRequest';

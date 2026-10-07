@@ -15,6 +15,7 @@ import { FadeIn } from '../../../ui/FadeIn';
 import { useToast } from '../../../ui/toast/ToastContext';
 import { useCreatePickupRequest, usePickupCategories } from '../hooks';
 import { PICKUP_REQUEST_TYPE_LABELS, type PickupRequestType } from '../types';
+import { type Photo, PickupPhotoUploader } from './PickupPhotoUploader';
 
 const REQUEST_TYPE_ICONS = {
   individual: LuSmartphone,
@@ -35,7 +36,6 @@ type FormState = {
   pickup_address: string;
   estimated_quantity: string;
   quantity_unit: string;
-  requested_date: string;
   note: string;
 };
 
@@ -48,7 +48,6 @@ const INITIAL_STATE: FormState = {
   pickup_address: '',
   estimated_quantity: '',
   quantity_unit: '',
-  requested_date: '',
   note: '',
 };
 
@@ -82,6 +81,10 @@ const PublicPickupRequestForm = ({
   const [formData, setFormData] = useState<FormState>(INITIAL_STATE);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [apiError, setApiError] = useState('');
+  const [photoKey, setPhotoKey] = useState<string | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<Photo>(null);
+
+  const isBusiness = requestType === 'business';
 
   const updateField = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -93,8 +96,13 @@ const PublicPickupRequestForm = ({
     const nextErrors: Record<string, string> = {};
     if (!formData.full_name.trim())
       nextErrors.full_name = content.errorFullNameRequired;
-    if (!EMAIL_PATTERN.test(formData.email))
+    if (isBusiness && !formData.email.trim()) {
+      nextErrors.email = content.errorEmailRequired;
+    } else if (formData.email.trim() && !EMAIL_PATTERN.test(formData.email)) {
       nextErrors.email = content.errorEmailInvalid;
+    }
+    if (!formData.phone_local.trim())
+      nextErrors.phone_local = content.errorPhoneRequired;
     if (!formData.category) nextErrors.category = content.errorCategoryRequired;
     if (!formData.pickup_address.trim())
       nextErrors.pickup_address = content.errorAddressRequired;
@@ -110,7 +118,7 @@ const PublicPickupRequestForm = ({
     try {
       await createRequest({
         full_name: formData.full_name.trim(),
-        email: formData.email.trim(),
+        email: formData.email.trim() || undefined,
         phone_number:
           joinPhoneNumber(
             formData.phone_dial_code,
@@ -119,11 +127,13 @@ const PublicPickupRequestForm = ({
         category: formData.category,
         request_type: requestType,
         pickup_address: formData.pickup_address.trim(),
+        photo: photoKey || undefined,
         estimated_quantity: formData.estimated_quantity.trim() || undefined,
         quantity_unit: formData.quantity_unit.trim() || undefined,
-        requested_date: formData.requested_date || undefined,
         note: formData.note.trim() || undefined,
       });
+      setPhotoKey(null);
+      setPhotoPreview(null);
       // Create action a visitor could plausibly repeat (another address,
       // another batch) — stay on the page and reset in place, same as
       // ContactFormSection, rather than navigating or freezing the form.
@@ -190,6 +200,7 @@ const PublicPickupRequestForm = ({
                   label={content.email}
                   field="email"
                   type="email"
+                  required={isBusiness}
                   placeholder={content.emailPlaceholder}
                   formData={formData}
                   errors={errors}
@@ -200,7 +211,6 @@ const PublicPickupRequestForm = ({
                   label={content.phone}
                   dialCodeField="phone_dial_code"
                   numberField="phone_local"
-                  required={false}
                   placeholder={content.phonePlaceholder}
                   formData={formData}
                   errors={errors}
@@ -248,16 +258,18 @@ const PublicPickupRequestForm = ({
                   updateFormData={updateField}
                   disabled={submitting}
                 />
-                <InputField
-                  label={content.requestedDate}
-                  field="requested_date"
-                  type="date"
-                  required={false}
-                  formData={formData}
-                  errors={errors}
-                  updateFormData={updateField}
-                  disabled={submitting}
-                />
+                <div className="sm:col-span-2">
+                  <PickupPhotoUploader
+                    value={photoPreview}
+                    onChange={(key) => {
+                      setPhotoKey(key);
+                      setPhotoPreview(
+                        key ? { file_key: key, public_url: null } : null,
+                      );
+                    }}
+                    disabled={submitting}
+                  />
+                </div>
                 <div className="sm:col-span-2">
                   <TextareaField
                     label={content.note}

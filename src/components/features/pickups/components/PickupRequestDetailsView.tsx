@@ -200,7 +200,7 @@ const PickupRequestDetailsView = ({
           <InfoRow
             icon={<LuMail className="size-4" />}
             label="Email"
-            value={request.email}
+            value={request.email || '—'}
           />
           <InfoRow
             icon={<LuPhone className="size-4" />}
@@ -243,6 +243,20 @@ const PickupRequestDetailsView = ({
               {request.collection_point.name} —{' '}
               {request.collection_point.address}
             </p>
+          </div>
+        )}
+
+        {request.photo?.public_url && (
+          <div className="mt-5 border-t border-slate-100 pt-5">
+            <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+              Photo
+            </p>
+            {/* eslint-disable-next-line @next/next/no-img-element -- remote/presigned URL, not a static asset */}
+            <img
+              src={request.photo.public_url}
+              alt=""
+              className="size-32 rounded-xl border border-slate-200 object-cover"
+            />
           </div>
         )}
 

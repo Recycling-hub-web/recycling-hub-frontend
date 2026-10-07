@@ -29,6 +29,7 @@ import {
   useQuickPickupRequest,
 } from '../hooks';
 import type { PickupRequestType } from '../types';
+import { type Photo, PickupPhotoUploader } from './PickupPhotoUploader';
 
 type FormState = {
   full_name: string;
@@ -43,7 +44,6 @@ type FormState = {
   pickup_address: string;
   estimated_quantity: string;
   quantity_unit: string;
-  requested_date: string;
   note: string;
 };
 
@@ -57,7 +57,6 @@ const INITIAL_STATE: FormState = {
   pickup_address: '',
   estimated_quantity: '',
   quantity_unit: '',
-  requested_date: '',
   note: '',
 };
 
@@ -100,6 +99,8 @@ const CreatePickupRequestView = ({
     usePickupCategories();
   const [formData, setFormData] = useState<FormState>(INITIAL_STATE);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [photoKey, setPhotoKey] = useState<string | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<Photo>(null);
 
   const submitting = creating || converting;
   const error = createError || convertError;
@@ -125,7 +126,11 @@ const CreatePickupRequestView = ({
   const validate = (data: FormState): boolean => {
     const nextErrors: Record<string, string> = {};
     if (!data.full_name.trim()) nextErrors.full_name = 'Full name is required.';
-    if (!data.email.trim()) nextErrors.email = 'Email is required.';
+    if (data.request_type === 'business' && !data.email.trim()) {
+      nextErrors.email = 'Email is required for business requests.';
+    }
+    if (!data.phone_local.trim())
+      nextErrors.phone_local = 'Phone number is required.';
     if (!data.category) nextErrors.category = 'Category is required.';
     if (!data.pickup_address.trim())
       nextErrors.pickup_address = 'Pickup address is required.';
@@ -139,16 +144,16 @@ const CreatePickupRequestView = ({
 
     const payload = {
       full_name: formData.full_name,
-      email: formData.email,
+      email: formData.email || undefined,
       phone_number:
         joinPhoneNumber(formData.phone_dial_code, formData.phone_local) ||
         undefined,
       category: formData.category,
       request_type: formData.request_type,
       pickup_address: formData.pickup_address,
+      photo: photoKey || undefined,
       estimated_quantity: formData.estimated_quantity || undefined,
       quantity_unit: formData.quantity_unit || undefined,
-      requested_date: formData.requested_date || undefined,
       note: formData.note || undefined,
     };
 
@@ -206,6 +211,7 @@ const CreatePickupRequestView = ({
               label="Email"
               field="email"
               type="email"
+              required={formData.request_type === 'business'}
               placeholder="e.g. fatima@recyclinghub.example"
               formData={formData}
               errors={errors}
@@ -216,7 +222,6 @@ const CreatePickupRequestView = ({
               label="Phone number"
               dialCodeField="phone_dial_code"
               numberField="phone_local"
-              required={false}
               formData={formData}
               errors={errors}
               updateFormData={updateFormData}
@@ -241,7 +246,7 @@ const CreatePickupRequestView = ({
               disabled={submitting}
             />
             <div className="sm:col-span-2">
-              <TextareaField
+              <InputField
                 label="Pickup address"
                 field="pickup_address"
                 placeholder="Address where materials should be collected"
@@ -272,16 +277,18 @@ const CreatePickupRequestView = ({
               updateFormData={updateFormData}
               disabled={submitting}
             />
-            <InputField
-              label="Requested date"
-              field="requested_date"
-              type="date"
-              required={false}
-              formData={formData}
-              errors={errors}
-              updateFormData={updateFormData}
-              disabled={submitting}
-            />
+            <div className="sm:col-span-2">
+              <PickupPhotoUploader
+                value={photoPreview}
+                onChange={(key) => {
+                  setPhotoKey(key);
+                  setPhotoPreview(
+                    key ? { file_key: key, public_url: null } : null,
+                  );
+                }}
+                disabled={submitting}
+              />
+            </div>
             <div className="sm:col-span-2">
               <TextareaField
                 label="Note"
