@@ -13,6 +13,7 @@ import {
   LuTag,
   LuTruck,
   LuUsers,
+  LuWallet,
 } from 'react-icons/lu';
 
 import type { NavItem } from './Sidebar';
@@ -34,6 +35,7 @@ const ADMIN_NAV_ITEMS: NavItem[] = [
   { href: '/admin/storage-files', label: 'Storage Files', icon: LuHardDrive },
   { href: '/admin/blogs', label: 'Blog Posts', icon: LuNewspaper },
   { href: '/admin/partnerships', label: 'Partnerships', icon: LuHandshake },
+  { href: '/admin/finance', label: 'Finance Records', icon: LuWallet },
   { href: '/admin/activity', label: 'Activity Log', icon: LuHistory },
   { href: '/admin/notifications', label: 'Notifications', icon: LuBell },
 ];

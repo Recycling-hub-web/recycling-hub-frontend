@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { LuMapPin, LuPackage } from 'react-icons/lu';
+import { LuMapPin, LuPackage, LuWallet } from 'react-icons/lu';
 
 import { PageContainer } from '../../../layout/PageContainer';
 import { PageHeader } from '../../../ui/PageHeader';
@@ -13,6 +13,10 @@ import {
 } from '../../../ui/table';
 import { Tabs } from '../../../ui/tabs';
 import { useToast } from '../../../ui/toast/ToastContext';
+import {
+  useClaimReimbursements,
+  usePendingReimbursementSummary,
+} from '../../finance/hooks';
 import { useClaimPickupRequest, usePickupRequests } from '../hooks';
 import type { PickupRequestListItem } from '../types';
 import { CollectModal } from './CollectModal';
@@ -52,6 +56,24 @@ const DriverPickupsView = () => {
   const [claimingId, setClaimingId] = useState<string | null>(null);
   const [collectTarget, setCollectTarget] =
     useState<PickupRequestListItem | null>(null);
+
+  const {
+    count: pendingCount,
+    total: pendingTotal,
+    refetch: refetchPendingSummary,
+  } = usePendingReimbursementSummary();
+  const { execute: claimReimbursements, loading: claimingReimbursement } =
+    useClaimReimbursements();
+
+  const handleClaimReimbursements = async () => {
+    try {
+      await claimReimbursements();
+      toast.success('Reimbursement claimed');
+      refetchPendingSummary();
+    } catch {
+      toast.error('Could not claim reimbursement. Please try again.');
+    }
+  };
 
   const handleClaim = async (request: PickupRequestListItem) => {
     setClaimingId(request.id);
@@ -160,6 +182,25 @@ const DriverPickupsView = () => {
         subtitle="Claim an available pickup, or manage your own."
       />
 
+      {pendingCount > 0 && (
+        <div className="mb-4 flex flex-col items-start justify-between gap-3 rounded-xl border border-brand-200 bg-brand-50 p-4 sm:flex-row sm:items-center">
+          <span className="inline-flex items-center gap-2 text-sm font-medium text-brand-900">
+            <LuWallet className="size-4 shrink-0" />
+            You have {pendingCount} pending payment
+            {pendingCount === 1 ? '' : 's'} totaling RM
+            {pendingTotal.toFixed(2)}
+          </span>
+          <button
+            type="button"
+            onClick={handleClaimReimbursements}
+            disabled={claimingReimbursement}
+            className="inline-flex items-center justify-center rounded-full bg-brand-600 px-5 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {claimingReimbursement ? 'Claiming…' : 'Claim Reimbursement'}
+          </button>
+        </div>
+      )}
+
       <Tabs
         tabs={tabItems}
         active={activeTab}
@@ -198,6 +239,12 @@ const DriverPickupsView = () => {
         open={Boolean(collectTarget)}
         onClose={() => setCollectTarget(null)}
         onCollected={handleCollected}
+        // Every row on this driver's own "mine" tab is, by definition,
+        // one they're the assigned_driver for (server-scoped — see
+        // CollectionRequestViewSet.get_queryset) — always a driver
+        // collection, never the staff-collector path.
+        showPaymentFields
+        price={collectTarget?.price ?? null}
       />
     </PageContainer>
   );

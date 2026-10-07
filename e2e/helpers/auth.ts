@@ -3,10 +3,12 @@ import { type APIRequestContext, expect, type Page } from '@playwright/test';
 /**
  * Seeded, non-OTP test accounts (apps/core/management/commands/
  * seed_accounts.py on the backend). `qaStaff` is
- * operations@recyclinghub.example, deliberately activated for e2e use
- * — seeded staff accounts start inactive until invited/activated, so
- * this one account is kept on as the standing QA fixture. See
- * memory: recycling-hub-playwright-e2e.
+ * operations@recyclinghub.example and `qaDriver` is
+ * driver@recyclinghub.example, both deliberately activated for e2e use
+ * — seeded staff/driver accounts start inactive until invited/activated,
+ * so these are kept on as standing QA fixtures. `qaDriver` also has
+ * payout_method/payout_account_details set (see FinanceRecord's Verify
+ * & Reimburse, finance.spec.ts). See memory: recycling-hub-playwright-e2e.
  */
 const ACCOUNTS = {
   admin: {
@@ -15,6 +17,10 @@ const ACCOUNTS = {
   },
   qaStaff: {
     email: 'operations@recyclinghub.example',
+    password: 'Password123!',
+  },
+  qaDriver: {
+    email: 'driver@recyclinghub.example',
     password: 'Password123!',
   },
 } as const;

@@ -139,6 +139,11 @@ const claimPickupRequest = (id: string): Promise<PickupRequestDetails> =>
 type CollectPickupPayload = {
   collected_quantity?: string;
   note?: string;
+  /** Driver-collected only — ignored by the backend otherwise. See
+   * FinanceRecord on the backend, updated by this same collect() call. */
+  actual_amount?: string;
+  payment_method?: 'duitnow' | 'cash' | 'bank_transfer';
+  proof_of_payment?: string;
 };
 
 // Only valid from `scheduled` — see CollectionRequestDecisionService.collect.

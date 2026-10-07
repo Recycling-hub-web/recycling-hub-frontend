@@ -2,13 +2,14 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { ApiError } from '../../../../lib/api';
 import { listFinanceRecords } from '../services/financeService';
-import type { FinanceRecordListItem } from '../types';
+import type { FinanceRecordListItem, FinanceStatus } from '../types';
 
 type UseFinanceRecordsParams = {
   page: number;
+  status?: FinanceStatus | '';
 };
 
-const useFinanceRecords = ({ page }: UseFinanceRecordsParams) => {
+const useFinanceRecords = ({ page, status }: UseFinanceRecordsParams) => {
   const [records, setRecords] = useState<FinanceRecordListItem[]>([]);
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -18,7 +19,10 @@ const useFinanceRecords = ({ page }: UseFinanceRecordsParams) => {
     setLoading(true);
     setError('');
     try {
-      const data = await listFinanceRecords({ page });
+      const data = await listFinanceRecords({
+        page,
+        status: status || undefined,
+      });
       setRecords(data.results);
       setCount(data.count);
     } catch (err) {
@@ -30,7 +34,7 @@ const useFinanceRecords = ({ page }: UseFinanceRecordsParams) => {
     } finally {
       setLoading(false);
     }
-  }, [page]);
+  }, [page, status]);
 
   useEffect(() => {
     refetch();

@@ -44,8 +44,12 @@ type OperationalRoleConfig = {
 // — since a driver only ever sees the open claimable pool + their own
 // (see CollectionRequestViewSet.get_queryset's driver branch), with
 // claim/collect actions instead of the full admin/staff CRUD. Finance
-// Records (FinanceRecordsView) is read-only (IsAccounting/IsAdminUser
-// on FinanceRecordViewSet).
+// Records (FinanceRecordsView) is accounting/admin's full, writable
+// (claim/verify/reimburse) table; the driver's own route renders the
+// same component, scoped server-side to their own records and
+// read-only past submission — their one write action (the one-click
+// bulk claim) lives as a banner on their Pickup Requests page instead,
+// not on this table.
 const OPERATIONAL_ROLES: Record<OperationalRole, OperationalRoleConfig> = {
   staff: {
     route: '/staff',
@@ -78,6 +82,7 @@ const OPERATIONAL_ROLES: Record<OperationalRole, OperationalRoleConfig> = {
     navItems: [
       { href: '/driver', label: 'Overview', icon: LuLayoutDashboard },
       { href: '/driver/pickups', label: 'Pickup Requests', icon: LuTruck },
+      { href: '/driver/finance', label: 'Finance Records', icon: LuWallet },
       { href: '/driver/notifications', label: 'Notifications', icon: LuBell },
     ],
   },

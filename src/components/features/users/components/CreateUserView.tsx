@@ -37,6 +37,8 @@ type FormState = {
   job_title: string;
   branch: string;
   joining_date: string;
+  payout_method: string;
+  payout_account_details: string;
 };
 
 const INITIAL_STATE: FormState = {
@@ -49,7 +51,15 @@ const INITIAL_STATE: FormState = {
   job_title: '',
   branch: '',
   joining_date: '',
+  payout_method: '',
+  payout_account_details: '',
 };
+
+const PAYOUT_METHOD_OPTIONS = [
+  { value: 'duitnow', label: 'DuitNow' },
+  { value: 'cash', label: 'Cash' },
+  { value: 'bank_transfer', label: 'Bank transfer' },
+];
 
 // Full page, not a modal — the create flow gets the same footing as
 // view/edit (its own route, its own back link) instead of interrupting
@@ -68,6 +78,7 @@ const CreateUserView = () => {
   };
 
   const showProfileFields = ROLES_WITH_PROFILE.includes(formData.role);
+  const showPayoutFields = formData.role === 'driver';
 
   const validate = (data: FormState): boolean => {
     const nextErrors: Record<string, string> = {};
@@ -96,6 +107,18 @@ const CreateUserView = () => {
               job_title: formData.job_title || undefined,
               branch: formData.branch || undefined,
               joining_date: formData.joining_date || undefined,
+            }
+          : {}),
+        ...(showPayoutFields
+          ? {
+              payout_method:
+                (formData.payout_method as
+                  | 'duitnow'
+                  | 'cash'
+                  | 'bank_transfer'
+                  | '') || undefined,
+              payout_account_details:
+                formData.payout_account_details || undefined,
             }
           : {}),
       });
@@ -221,6 +244,35 @@ const CreateUserView = () => {
                 field="joining_date"
                 type="date"
                 required={false}
+                formData={formData}
+                errors={errors}
+                updateFormData={updateFormData}
+                disabled={submitting}
+              />
+            </div>
+          )}
+
+          {showPayoutFields && (
+            <div className="mt-3 grid grid-cols-2 gap-3 rounded-xl bg-slate-50 p-3.5">
+              <div className="col-span-2 text-xs font-medium text-slate-500">
+                Where to send reimbursement — required before Verify & Reimburse
+                can complete for this driver.
+              </div>
+              <SelectField
+                label="Payout method"
+                field="payout_method"
+                required={false}
+                options={PAYOUT_METHOD_OPTIONS}
+                formData={formData}
+                errors={errors}
+                updateFormData={updateFormData}
+                disabled={submitting}
+              />
+              <InputField
+                label="Payout account details"
+                field="payout_account_details"
+                required={false}
+                placeholder="Bank account number, DuitNow ID, etc."
                 formData={formData}
                 errors={errors}
                 updateFormData={updateFormData}

@@ -382,6 +382,8 @@ const PickupRequestDetailsView = ({
         open={collectOpen}
         onClose={() => setCollectOpen(false)}
         onCollected={handleCollected}
+        showPaymentFields={request.assigned_driver !== null}
+        price={request.price}
       />
       <CancelModal
         requestId={request.id}
