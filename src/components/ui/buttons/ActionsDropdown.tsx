@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import type { IconType } from 'react-icons';
 import { LuChevronRight } from 'react-icons/lu';
 
@@ -52,19 +53,39 @@ type ActionsDropdownProps = {
   label?: string;
 };
 
+type Position = { top: number; right: number };
+
 const ActionsDropdown = ({
   items,
   label = 'Actions',
 }: ActionsDropdownProps) => {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
+  const [position, setPosition] = useState<Position | null>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
 
   const close = () => setOpen(false);
 
+  const updatePosition = () => {
+    const rect = buttonRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    setPosition({
+      top: rect.bottom + 8,
+      right: window.innerWidth - rect.right,
+    });
+  };
+
   useEffect(() => {
     const onMouseDown = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) close();
+      const target = e.target as Node;
+      if (
+        buttonRef.current?.contains(target) ||
+        panelRef.current?.contains(target)
+      ) {
+        return;
+      }
+      close();
     };
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') close();
@@ -77,7 +98,29 @@ const ActionsDropdown = ({
     };
   }, []);
 
+  useEffect(() => {
+    if (!open) return undefined;
+    // Tracks the trigger's position every frame while open, rather than
+    // computing it once — the panel is portaled to document.body
+    // (fixed-positioned from the trigger's own bounding rect, so a short
+    // table's overflow-hidden/overflow-x-auto can't clip it), which means
+    // it no longer moves automatically with its trigger the way an
+    // absolutely-positioned-in-place panel would. In particular, this
+    // app's page-enter animation (.page-transition-enter, a `transform`
+    // that runs for ~350ms after every navigation) and ordinary scrolling
+    // both move the trigger after the panel first opens — a one-shot
+    // position computed mid-animation goes stale and the panel ends up
+    // misaligned with the real (by-then-settled) trigger, with whatever
+    // page content is actually there intercepting clicks meant for it.
+    let frame = requestAnimationFrame(function track() {
+      updatePosition();
+      frame = requestAnimationFrame(track);
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [open]);
+
   const toggle = () => {
+    if (!open) updatePosition();
     setMounted(true);
     setOpen((v) => !v);
   };
@@ -89,8 +132,9 @@ const ActionsDropdown = ({
   };
 
   return (
-    <div className="relative" ref={ref}>
+    <>
       <button
+        ref={buttonRef}
         type="button"
         onClick={toggle}
         aria-expanded={open}
@@ -107,47 +151,53 @@ const ActionsDropdown = ({
         />
       </button>
 
-      {mounted && (
-        <div
-          className={`absolute right-0 top-full z-50 mt-2 w-52 origin-top-right overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl ring-1 ring-slate-100 transition-all duration-200 ${
-            open
-              ? 'translate-y-0 scale-100 opacity-100'
-              : 'pointer-events-none -translate-y-1 scale-95 opacity-0'
-          }`}
-          onTransitionEnd={() => {
-            if (!open) setMounted(false);
-          }}
-          role="menu"
-        >
-          <div className="p-1.5">
-            {items.map((item, i) => {
-              const colorClasses = ITEM_COLOR_CLASSES[item.color ?? 'info'];
-              const Icon = item.icon;
-              return (
-                <button
-                  key={item.label}
-                  type="button"
-                  role="menuitem"
-                  disabled={item.disabled}
-                  onClick={() => handleItemClick(item.onClick, item.disabled)}
-                  className={`group flex w-full items-center gap-3 rounded-full border border-transparent px-3 py-2.5 text-left text-sm transition-all duration-150 ${item.disabled ? 'cursor-not-allowed opacity-50' : colorClasses.row}`}
-                  style={{ transitionDelay: open ? `${i * 30}ms` : '0ms' }}
-                >
-                  <div
-                    className={`flex size-8 shrink-0 items-center justify-center rounded-full transition-colors duration-150 ${colorClasses.icon}`}
+      {mounted &&
+        position &&
+        typeof document !== 'undefined' &&
+        createPortal(
+          <div
+            ref={panelRef}
+            style={{ top: position.top, right: position.right }}
+            className={`fixed z-50 w-52 origin-top-right overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl ring-1 ring-slate-100 transition-all duration-200 ${
+              open
+                ? 'translate-y-0 scale-100 opacity-100'
+                : 'pointer-events-none -translate-y-1 scale-95 opacity-0'
+            }`}
+            onTransitionEnd={() => {
+              if (!open) setMounted(false);
+            }}
+            role="menu"
+          >
+            <div className="p-1.5">
+              {items.map((item, i) => {
+                const colorClasses = ITEM_COLOR_CLASSES[item.color ?? 'info'];
+                const Icon = item.icon;
+                return (
+                  <button
+                    key={item.label}
+                    type="button"
+                    role="menuitem"
+                    disabled={item.disabled}
+                    onClick={() => handleItemClick(item.onClick, item.disabled)}
+                    className={`group flex w-full items-center gap-3 rounded-full border border-transparent px-3 py-2.5 text-left text-sm transition-all duration-150 ${item.disabled ? 'cursor-not-allowed opacity-50' : colorClasses.row}`}
+                    style={{ transitionDelay: open ? `${i * 30}ms` : '0ms' }}
                   >
-                    <Icon className="size-4" />
-                  </div>
-                  <span className="font-medium text-slate-900">
-                    {item.label}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      )}
-    </div>
+                    <div
+                      className={`flex size-8 shrink-0 items-center justify-center rounded-full transition-colors duration-150 ${colorClasses.icon}`}
+                    >
+                      <Icon className="size-4" />
+                    </div>
+                    <span className="font-medium text-slate-900">
+                      {item.label}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>,
+          document.body,
+        )}
+    </>
   );
 };
 
