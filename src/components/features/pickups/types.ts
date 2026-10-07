@@ -1,4 +1,19 @@
-type PickupStatus = 'pending' | 'scheduled' | 'collected' | 'cancelled';
+type PickupStatus =
+  | 'pending'
+  | 'scheduled'
+  | 'collected'
+  | 'delivered'
+  | 'closed'
+  | 'cancelled';
+
+/** Only ever set on the driver-collected path — see Route on the
+ * backend, created implicitly when a request is first assigned to a
+ * driver. */
+type RouteInfo = {
+  id: string;
+  status: 'open' | 'dropped_off';
+  dropped_off_at: string | null;
+};
 
 type PickupRequestType = 'individual' | 'business';
 
@@ -27,6 +42,9 @@ type PickupRequestListItem = {
   request_type: PickupRequestType;
   requested_date: string | null;
   scheduled_at: string | null;
+  collected_quantity: string | null;
+  delivered_quantity: string | null;
+  route: RouteInfo | null;
 };
 
 /** Full shape from the retrieve/schedule/collect/cancel endpoints
@@ -54,6 +72,10 @@ type PickupRequestDetails = {
   scheduled_at: string | null;
   collected_at: string | null;
   collected_quantity: string | null;
+  delivered_quantity: string | null;
+  route: RouteInfo | null;
+  closed_by: string | null;
+  closed_at: string | null;
   assigned_collector: string | null;
   scheduled_by: string | null;
   assigned_driver: string | null;
@@ -110,6 +132,8 @@ const PICKUP_STATUS_LABELS: Record<PickupStatus, string> = {
   pending: 'Pending',
   scheduled: 'Scheduled',
   collected: 'Collected',
+  delivered: 'Delivered',
+  closed: 'Closed',
   cancelled: 'Cancelled',
 };
 
@@ -152,4 +176,5 @@ export type {
   PickupRequestListItem,
   PickupRequestType,
   PickupStatus,
+  RouteInfo,
 };

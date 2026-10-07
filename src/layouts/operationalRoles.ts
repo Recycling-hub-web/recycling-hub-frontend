@@ -6,6 +6,7 @@ import {
   LuLayoutDashboard,
   LuMail,
   LuNewspaper,
+  LuPackageCheck,
   LuTag,
   LuTruck,
   LuWallet,
@@ -49,7 +50,15 @@ type OperationalRoleConfig = {
 // same component, scoped server-side to their own records and
 // read-only past submission — their one write action (the one-click
 // bulk claim) lives as a banner on their Pickup Requests page instead,
-// not on this table.
+// not on this table. The driver's "Drop Off to Store" (RouteDropOffView)
+// is its own dedicated screen, not CollectModal reused — one batch
+// action across every `collected` request on their current open Route
+// (see Route on the backend), not a per-task repeat. Receiving
+// Officer's first real page, "Deliveries" (ReceivingDeliveriesView),
+// is the other end of that same chain — verifying/closing requests a
+// driver has already dropped off; the backend already scopes its
+// queryset to delivered/closed only, so there's nothing earlier in the
+// lifecycle to accidentally expose here.
 const OPERATIONAL_ROLES: Record<OperationalRole, OperationalRoleConfig> = {
   staff: {
     route: '/staff',
@@ -82,6 +91,11 @@ const OPERATIONAL_ROLES: Record<OperationalRole, OperationalRoleConfig> = {
     navItems: [
       { href: '/driver', label: 'Overview', icon: LuLayoutDashboard },
       { href: '/driver/pickups', label: 'Pickup Requests', icon: LuTruck },
+      {
+        href: '/driver/drop-off',
+        label: 'Drop Off to Store',
+        icon: LuPackageCheck,
+      },
       { href: '/driver/finance', label: 'Finance Records', icon: LuWallet },
       { href: '/driver/notifications', label: 'Notifications', icon: LuBell },
     ],
@@ -90,6 +104,11 @@ const OPERATIONAL_ROLES: Record<OperationalRole, OperationalRoleConfig> = {
     route: '/receiving',
     navItems: [
       { href: '/receiving', label: 'Overview', icon: LuLayoutDashboard },
+      {
+        href: '/receiving/deliveries',
+        label: 'Deliveries',
+        icon: LuPackageCheck,
+      },
       {
         href: '/receiving/notifications',
         label: 'Notifications',

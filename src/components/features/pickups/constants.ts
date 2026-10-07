@@ -21,6 +21,8 @@ const STATUS_BADGE_VARIANT: Record<PickupStatus, BadgeVariant> = {
   pending: 'warning',
   scheduled: 'info',
   collected: 'success',
+  delivered: 'info',
+  closed: 'success',
   cancelled: 'danger',
 };
 

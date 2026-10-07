@@ -153,6 +153,32 @@ const collectPickupRequest = (
 ): Promise<PickupRequestDetails> =>
   apiFetch(`/pickups/${id}/collect/`, { method: 'POST', json: payload });
 
+type DropOffItem = {
+  id: string;
+  /** Optional — confirms nothing was lost/damaged in transit. */
+  delivered_quantity?: string;
+};
+
+type DropOffPayload = {
+  items: DropOffItem[];
+  /** One proof photo for the whole batch, not per item. */
+  proof?: string;
+};
+
+// The driver's batch store drop-off — every selected item on their
+// current open Route, in one write. See
+// apps.pickups.services.drop_off_route on the backend.
+const dropOffRoute = (
+  payload: DropOffPayload,
+): Promise<PickupRequestListItem[]> =>
+  apiFetch('/pickups/drop-off/', { method: 'POST', json: payload });
+
+// Receiving Officer (or admin) verifying a delivered request and
+// closing it out — only valid from `delivered`. See
+// CollectionRequestDecisionService.close_delivery.
+const closeDelivery = (id: string): Promise<PickupRequestDetails> =>
+  apiFetch(`/pickups/${id}/close/`, { method: 'POST' });
+
 type CancelPickupPayload = {
   /** Becomes `cancellation_reason` on the backend. */
   note: string;
@@ -217,11 +243,13 @@ export {
   assignDriverToRequest,
   cancelPickupRequest,
   claimPickupRequest,
+  closeDelivery,
   collectPickupRequest,
   convertQuickPickupRequest,
   createPickupRequest,
   createQuickPickupRequest,
   deletePickupRequest,
+  dropOffRoute,
   evaluatePickupRequest,
   getPickupRequest,
   getQuickPickupRequest,
@@ -237,6 +265,8 @@ export type {
   CollectPickupPayload,
   CreatePickupRequestPayload,
   CreateQuickPickupRequestPayload,
+  DropOffItem,
+  DropOffPayload,
   EvaluatePickupPayload,
   ListPickupRequestsParams,
   ListQuickPickupRequestsParams,

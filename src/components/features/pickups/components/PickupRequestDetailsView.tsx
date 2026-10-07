@@ -296,6 +296,8 @@ const PickupRequestDetailsView = ({
 
       {(request.status === 'scheduled' ||
         request.status === 'collected' ||
+        request.status === 'delivered' ||
+        request.status === 'closed' ||
         request.status === 'cancelled') && (
         <Card className="mt-4 p-5">
           <p className="mb-3 text-sm font-semibold text-slate-900">
@@ -335,6 +337,38 @@ const PickupRequestDetailsView = ({
                 icon={<LuPackage className="size-4" />}
                 label="Collected quantity"
                 value={`${request.collected_quantity} ${request.quantity_unit}`}
+              />
+            )}
+            {request.delivered_quantity && (
+              <InfoRow
+                icon={<LuPackage className="size-4" />}
+                label="Delivered quantity"
+                value={`${request.delivered_quantity} ${request.quantity_unit}`}
+              />
+            )}
+            {request.route && (
+              <InfoRow
+                icon={<LuTruck className="size-4" />}
+                label="Route"
+                value={
+                  request.route.status === 'dropped_off'
+                    ? 'Dropped off at store'
+                    : 'Still with driver'
+                }
+              />
+            )}
+            {request.closed_by && (
+              <InfoRow
+                icon={<LuUserCheck className="size-4" />}
+                label="Closed by"
+                value={request.closed_by}
+              />
+            )}
+            {request.closed_at && (
+              <InfoRow
+                icon={<LuCalendar className="size-4" />}
+                label="Closed at"
+                value={<AppDate value={request.closed_at} format="long" />}
               />
             )}
             {request.cancelled_by && (

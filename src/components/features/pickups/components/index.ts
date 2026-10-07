@@ -12,4 +12,6 @@ export { PickupTypeSelector } from './PickupTypeSelector';
 export { PublicPickupRequestForm } from './PublicPickupRequestForm';
 export { QuickLeadTable } from './QuickLeadTable';
 export { QuickPickupRequestForm } from './QuickPickupRequestForm';
+export { ReceivingDeliveriesView } from './ReceivingDeliveriesView';
+export { RouteDropOffView } from './RouteDropOffView';
 export { ScheduleModal } from './ScheduleModal';
