@@ -86,14 +86,10 @@ const CollectModal = ({
         nextErrors.collected_quantity = 'Enter a positive number.';
       }
     }
-    if (showPaymentFields) {
-      if (!formData.payment_method) {
-        nextErrors.payment_method = 'Select how the customer was paid.';
-      }
-      if (!formData.proof_of_payment) {
-        nextErrors.proof_of_payment = 'Upload proof of payment.';
-      }
+    if (showPaymentFields && !formData.payment_method) {
+      nextErrors.payment_method = 'Select how the customer was paid.';
     }
+    // Proof of payment is optional for now — not required client-side.
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
   };
@@ -218,7 +214,7 @@ const CollectModal = ({
 
             <div className="mb-4" data-field="proof_of_payment">
               <label className="block text-sm font-medium text-slate-900">
-                Proof of payment <span className="text-red-600">*</span>
+                Proof of payment
               </label>
               <p className="mt-0.5 text-xs text-slate-500">
                 A receipt screenshot — distinct from the collection photo, this

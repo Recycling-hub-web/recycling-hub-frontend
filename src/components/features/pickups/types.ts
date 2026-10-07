@@ -40,6 +40,7 @@ type PickupRequestListItem = {
   evaluation_status: PickupEvaluationStatus;
   price: string | null;
   request_type: PickupRequestType;
+  pickup_address: string;
   requested_date: string | null;
   scheduled_at: string | null;
   collected_quantity: string | null;

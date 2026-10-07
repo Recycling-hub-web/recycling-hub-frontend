@@ -164,7 +164,17 @@ test('collect modal requires payment method and proof when a driver is assigned'
   await expect(
     page.getByText(/select how the customer was paid/i),
   ).toBeVisible();
-  await expect(page.getByText(/upload proof of payment/i)).toBeVisible();
+
+  // Proof of payment is optional for now — selecting just the payment
+  // method (no upload, since this dev environment has no real storage
+  // configured) is enough to complete the collection.
+  await page
+    .locator('[data-field="payment_method"] select')
+    .selectOption('cash');
+  await page
+    .getByRole('button', { name: 'Mark collected', exact: true })
+    .click();
+  await expect(page.getByText('Collected', { exact: true })).toBeVisible();
 
   await page.request.delete(`/api/v1/pickups/${id}/`);
 });

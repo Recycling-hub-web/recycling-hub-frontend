@@ -1,9 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { LuMapPin, LuPackage, LuWallet } from 'react-icons/lu';
+import { LuMapPin, LuNavigation, LuPackage, LuWallet } from 'react-icons/lu';
 
 import { PageContainer } from '../../../layout/PageContainer';
+import { ActionsDropdown } from '../../../ui/buttons/ActionsDropdown';
 import { PageHeader } from '../../../ui/PageHeader';
 import {
   TableEmptyRow,
@@ -19,6 +20,10 @@ import {
 } from '../../finance/hooks';
 import { useClaimPickupRequest, usePickupRequests } from '../hooks';
 import type { PickupRequestListItem } from '../types';
+import {
+  googleMapsDirectionsUrl,
+  wazeNavigateUrl,
+} from '../utils/navigationLinks';
 import { CollectModal } from './CollectModal';
 
 type Tab = 'available' | 'mine';
@@ -148,7 +153,32 @@ const DriverPickupsView = () => {
         <td className="px-6 py-4 text-slate-700">{r.price ?? '—'}</td>
         <td className="px-6 py-4 text-slate-500">{r.requested_date ?? '—'}</td>
         <td className="px-6 py-4">
-          <div className="flex justify-end">
+          <div className="flex items-center justify-end gap-2">
+            <ActionsDropdown
+              label="Navigate"
+              items={[
+                {
+                  label: 'Google Maps',
+                  icon: LuNavigation,
+                  onClick: () =>
+                    window.open(
+                      googleMapsDirectionsUrl(r.pickup_address),
+                      '_blank',
+                      'noopener,noreferrer',
+                    ),
+                },
+                {
+                  label: 'Waze',
+                  icon: LuNavigation,
+                  onClick: () =>
+                    window.open(
+                      wazeNavigateUrl(r.pickup_address),
+                      '_blank',
+                      'noopener,noreferrer',
+                    ),
+                },
+              ]}
+            />
             {activeTab === 'available' ? (
               <button
                 type="button"
