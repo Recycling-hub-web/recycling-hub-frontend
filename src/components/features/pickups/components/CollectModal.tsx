@@ -3,7 +3,6 @@
 import { type FormEvent, useState } from 'react';
 import { LuReceipt, LuUpload } from 'react-icons/lu';
 
-import { InputField } from '../../../form/fields/InputField';
 import { SelectField } from '../../../form/fields/SelectField';
 import { TextareaField } from '../../../form/fields/TextareaField';
 import { AlertBanner } from '../../../ui/AlertBanner';
@@ -13,7 +12,6 @@ import { useCollectPickup } from '../hooks';
 
 type CollectModalProps = {
   requestId: string;
-  quantityUnit: string;
   open: boolean;
   onClose: () => void;
   onCollected: () => void;
@@ -22,15 +20,10 @@ type CollectModalProps = {
    * later) — a staff collector has nothing to reimburse, so these
    * fields stay hidden on that path. See FinanceRecord on the backend. */
   showPaymentFields?: boolean;
-  /** The agreed price, to prefill `actual_amount` — defaults to it
-   * server-side too if left untouched. */
-  price?: string | null;
 };
 
 type FormState = {
-  collected_quantity: string;
   note: string;
-  actual_amount: string;
   payment_method: string;
   proof_of_payment: string;
 };
@@ -48,19 +41,15 @@ const PAYMENT_METHOD_OPTIONS = [
  * them to a second screen later. */
 const CollectModal = ({
   requestId,
-  quantityUnit,
   open,
   onClose,
   onCollected,
   showPaymentFields = false,
-  price,
 }: CollectModalProps) => {
   const { execute: collect, loading: submitting } = useCollectPickup();
   const { execute: upload, loading: uploading } = useUploadStorageFile();
   const initialState: FormState = {
-    collected_quantity: '',
     note: '',
-    actual_amount: price ?? '',
     payment_method: '',
     proof_of_payment: '',
   };
@@ -80,12 +69,6 @@ const CollectModal = ({
 
   const validate = (): boolean => {
     const nextErrors: Record<string, string> = {};
-    if (formData.collected_quantity) {
-      const qty = Number(formData.collected_quantity);
-      if (Number.isNaN(qty) || qty <= 0) {
-        nextErrors.collected_quantity = 'Enter a positive number.';
-      }
-    }
     if (showPaymentFields && !formData.payment_method) {
       nextErrors.payment_method = 'Select how the customer was paid.';
     }
@@ -119,10 +102,11 @@ const CollectModal = ({
     if (!validate()) return;
     try {
       await collect(requestId, {
-        collected_quantity: formData.collected_quantity || undefined,
         note: formData.note || undefined,
         ...(showPaymentFields && {
-          actual_amount: formData.actual_amount || undefined,
+          // actual_amount deliberately omitted — defaults server-side
+          // to the agreed price (set at evaluation), which is always
+          // the right amount here.
           payment_method: formData.payment_method as
             | 'duitnow'
             | 'cash'
@@ -171,16 +155,6 @@ const CollectModal = ({
         className="space-y-1"
       >
         <AlertBanner message={apiError} />
-        <InputField
-          label={`Collected quantity (${quantityUnit})`}
-          field="collected_quantity"
-          type="number"
-          required={false}
-          placeholder="Optional — defaults to the estimated quantity."
-          formData={formData}
-          errors={errors}
-          updateFormData={updateFormData}
-        />
         <TextareaField
           label="Note"
           field="note"
@@ -192,16 +166,6 @@ const CollectModal = ({
 
         {showPaymentFields && (
           <>
-            <InputField
-              label="Amount actually paid to the customer"
-              field="actual_amount"
-              type="number"
-              required={false}
-              placeholder="Defaults to the agreed price if left blank."
-              formData={formData}
-              errors={errors}
-              updateFormData={updateFormData}
-            />
             <SelectField
               label="Payment method"
               field="payment_method"

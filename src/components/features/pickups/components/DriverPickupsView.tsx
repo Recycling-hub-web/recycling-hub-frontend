@@ -265,7 +265,6 @@ const DriverPickupsView = () => {
 
       <CollectModal
         requestId={collectTarget?.id ?? ''}
-        quantityUnit="kg"
         open={Boolean(collectTarget)}
         onClose={() => setCollectTarget(null)}
         onCollected={handleCollected}
@@ -274,7 +273,6 @@ const DriverPickupsView = () => {
         // CollectionRequestViewSet.get_queryset) — always a driver
         // collection, never the staff-collector path.
         showPaymentFields
-        price={collectTarget?.price ?? null}
       />
     </PageContainer>
   );

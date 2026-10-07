@@ -64,27 +64,38 @@ test.describe('Admin pickup requests', () => {
     await expect(page.getByText('Pending', { exact: true })).toBeVisible();
     await page.getByRole('button', { name: 'Schedule pickup' }).click();
 
-    // Schedule modal: submit is only ever disabled while in flight, not
-    // pre-emptively on validity — clicking with nothing filled in stays
-    // on the modal and shows inline errors instead.
+    // Schedule modal (AssignDriverModal, driver-only): submit is only
+    // ever disabled while in flight, not pre-emptively on validity —
+    // clicking with nothing filled in stays on the modal and shows
+    // inline errors instead.
     const scheduleSubmit = page.getByRole('button', {
       name: 'Schedule',
       exact: true,
     });
     await expect(scheduleSubmit).toBeEnabled();
     await scheduleSubmit.click();
-    await expect(page.getByText(/choose a collector/i)).toBeVisible();
+    await expect(page.getByText(/choose a driver/i)).toBeVisible();
 
     await page.locator('select').selectOption({ index: 1 });
+    // Pickup date is optional — filled in here anyway to exercise it,
+    // but the earlier "choose a driver" error above already confirms
+    // the driver, not the date, is what's actually required.
     const future = new Date(Date.now() + 24 * 60 * 60 * 1000);
-    const localValue = future.toISOString().slice(0, 16);
-    await page.locator('input[type="datetime-local"]').fill(localValue);
+    await page
+      .locator('input[type="date"]')
+      .fill(future.toISOString().slice(0, 10));
 
     await scheduleSubmit.click();
     await expect(page.getByText('Scheduled', { exact: true })).toBeVisible();
     await expect(page.getByText(/pickup scheduled/i)).toBeVisible();
 
     await page.getByRole('button', { name: 'Mark as collected' }).click();
+    // Scheduling now always assigns a driver (see AssignDriverModal), so
+    // the collect modal always shows payment fields — a staff collector
+    // with no driver, and thus no payment fields, no longer exists.
+    await page
+      .locator('[data-field="payment_method"] select')
+      .selectOption('cash');
     await page
       .getByRole('button', { name: 'Mark collected', exact: true })
       .click();
@@ -163,9 +174,7 @@ test.describe('Staff pickup requests', () => {
       page.getByRole('button', { name: 'Cancel', exact: true }),
     ).toBeVisible();
 
-    // The collector picker (GET /accounts/staff/) must work for staff
-    // too — this was a real backend gap fixed alongside this feature
-    // (StaffManagementView.get_permissions).
+    // The driver picker (GET /accounts/drivers/) must work for staff too.
     await page.getByRole('button', { name: 'Schedule pickup' }).click();
     await expect(page.locator('select option')).not.toHaveCount(1);
 

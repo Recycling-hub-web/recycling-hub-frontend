@@ -41,7 +41,6 @@ import { AssignDriverModal } from './AssignDriverModal';
 import { CancelModal } from './CancelModal';
 import { CollectModal } from './CollectModal';
 import { EvaluateModal } from './EvaluateModal';
-import { ScheduleModal } from './ScheduleModal';
 
 type PickupRequestDetailsViewProps = {
   requestId: string;
@@ -62,7 +61,6 @@ const PickupRequestDetailsView = ({
   const { request, loading, error, refetch } = usePickupRequest(requestId);
   const toast = useToast();
   const [evaluateOpen, setEvaluateOpen] = useState(false);
-  const [scheduleOpen, setScheduleOpen] = useState(false);
   const [assignDriverOpen, setAssignDriverOpen] = useState(false);
   const [collectOpen, setCollectOpen] = useState(false);
   const [cancelOpen, setCancelOpen] = useState(false);
@@ -75,13 +73,9 @@ const PickupRequestDetailsView = ({
     refetch();
     toast.success('Evaluation saved');
   };
-  const handleScheduled = () => {
-    refetch();
-    toast.success('Pickup scheduled');
-  };
   const handleDriverAssigned = () => {
     refetch();
-    toast.success('Driver assigned');
+    toast.success('Pickup scheduled');
   };
   const handleCollected = () => {
     refetch();
@@ -110,13 +104,9 @@ const PickupRequestDetailsView = ({
   }
 
   const canEvaluate = request.status === 'pending';
-  const canSchedule =
+  // Scheduling only ever assigns a driver — see AssignDriverModal.
+  const canAssignDriver =
     request.status === 'pending' && request.evaluation_status === 'approved';
-  // Two independent ways to reach `scheduled` — assigning a driver here
-  // doesn't require the collector+time Schedule flow, and vice versa;
-  // both disappear together once either succeeds (status moves off
-  // `pending`).
-  const canAssignDriver = canSchedule;
   const canCollect = request.status === 'scheduled';
   const canCancel =
     request.status === 'pending' || request.status === 'scheduled';
@@ -142,19 +132,10 @@ const PickupRequestDetailsView = ({
                 Evaluate
               </Button>
             )}
-            {canSchedule && (
-              <Button onClick={() => setScheduleOpen(true)}>
-                <LuUserCheck className="mr-1.5 size-4" />
-                Schedule pickup
-              </Button>
-            )}
             {canAssignDriver && (
-              <Button
-                variant="secondary"
-                onClick={() => setAssignDriverOpen(true)}
-              >
+              <Button onClick={() => setAssignDriverOpen(true)}>
                 <LuTruck className="mr-1.5 size-4" />
-                Assign driver
+                Schedule pickup
               </Button>
             )}
             {canCollect && (
@@ -412,12 +393,6 @@ const PickupRequestDetailsView = ({
         onClose={() => setEvaluateOpen(false)}
         onEvaluated={handleEvaluated}
       />
-      <ScheduleModal
-        requestId={request.id}
-        open={scheduleOpen}
-        onClose={() => setScheduleOpen(false)}
-        onScheduled={handleScheduled}
-      />
       <AssignDriverModal
         requestId={request.id}
         open={assignDriverOpen}
@@ -426,12 +401,10 @@ const PickupRequestDetailsView = ({
       />
       <CollectModal
         requestId={request.id}
-        quantityUnit={request.quantity_unit}
         open={collectOpen}
         onClose={() => setCollectOpen(false)}
         onCollected={handleCollected}
         showPaymentFields={request.assigned_driver !== null}
-        price={request.price}
       />
       <CancelModal
         requestId={request.id}

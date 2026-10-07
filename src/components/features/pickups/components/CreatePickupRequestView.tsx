@@ -25,6 +25,7 @@ import { REQUEST_TYPE_FILTER_OPTIONS } from '../constants';
 import {
   useConvertQuickPickupRequest,
   useCreatePickupRequest,
+  useEvaluatePickup,
   usePickupCategories,
   useQuickPickupRequest,
 } from '../hooks';
@@ -45,6 +46,16 @@ type FormState = {
   estimated_quantity: string;
   quantity_unit: string;
   note: string;
+  // Optional — evaluating right here skips the separate Evaluate step
+  // on the details page afterward. Kept as its own trio of fields
+  // rather than reusing EvaluateModal's own state, since this form has
+  // a third option (''/"not yet") that modal doesn't need.
+  // 'none' rather than '' — SelectField's own built-in disabled
+  // placeholder option also uses value="", and an empty-string real
+  // option collides with it (same gotcha found building Categories).
+  evaluation_decision: 'none' | 'approved' | 'rejected';
+  evaluation_price: string;
+  evaluation_reason: string;
 };
 
 const INITIAL_STATE: FormState = {
@@ -58,6 +69,9 @@ const INITIAL_STATE: FormState = {
   estimated_quantity: '',
   quantity_unit: '',
   note: '',
+  evaluation_decision: 'none',
+  evaluation_price: '',
+  evaluation_reason: '',
 };
 
 // REQUEST_TYPE_FILTER_OPTIONS' own leading "All types" option doesn't
@@ -65,6 +79,12 @@ const INITIAL_STATE: FormState = {
 const REQUEST_TYPE_OPTIONS = REQUEST_TYPE_FILTER_OPTIONS.filter(
   (opt) => opt.value,
 );
+
+const EVALUATE_NOW_OPTIONS = [
+  { value: 'none', label: 'Not yet — evaluate later' },
+  { value: 'approved', label: 'Approve' },
+  { value: 'rejected', label: 'Reject' },
+];
 
 type CreatePickupRequestViewProps = {
   basePath: '/admin/pickups' | '/staff/pickups';
@@ -94,6 +114,7 @@ const CreatePickupRequestView = ({
     loading: converting,
     error: convertError,
   } = useConvertQuickPickupRequest();
+  const { execute: evaluateRequest } = useEvaluatePickup();
   const { lead, loading: loadingLead } = useQuickPickupRequest(leadId);
   const { options: categoryOptions, loading: loadingCategories } =
     usePickupCategories();
@@ -134,6 +155,17 @@ const CreatePickupRequestView = ({
     if (!data.category) nextErrors.category = 'Category is required.';
     if (!data.pickup_address.trim())
       nextErrors.pickup_address = 'Pickup address is required.';
+    if (data.evaluation_decision === 'approved') {
+      const price = Number(data.evaluation_price);
+      if (!data.evaluation_price || Number.isNaN(price) || price <= 0) {
+        nextErrors.evaluation_price = 'Enter a valid price.';
+      }
+    } else if (
+      data.evaluation_decision === 'rejected' &&
+      !data.evaluation_reason.trim()
+    ) {
+      nextErrors.evaluation_reason = 'A reason is required when rejecting.';
+    }
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
   };
@@ -161,10 +193,39 @@ const CreatePickupRequestView = ({
       const request = leadId
         ? await convertLead(leadId, payload)
         : await createRequest(payload);
-      toast.success(
-        'Pickup request created',
-        `A request for ${formData.full_name} has been added.`,
-      );
+
+      if (formData.evaluation_decision !== 'none') {
+        try {
+          await evaluateRequest(request.id, {
+            decision: formData.evaluation_decision,
+            price:
+              formData.evaluation_decision === 'approved'
+                ? formData.evaluation_price
+                : undefined,
+            note:
+              formData.evaluation_decision === 'rejected'
+                ? formData.evaluation_reason
+                : undefined,
+          });
+          toast.success(
+            'Pickup request created',
+            `A request for ${formData.full_name} has been added and ${formData.evaluation_decision}.`,
+          );
+        } catch {
+          // The request itself was created fine — only the follow-up
+          // evaluate call failed — so this isn't the generic failure
+          // toast; it's created, just needs evaluating manually now.
+          toast.error(
+            'Request created, but evaluation failed',
+            'Open the request and evaluate it from there.',
+          );
+        }
+      } else {
+        toast.success(
+          'Pickup request created',
+          `A request for ${formData.full_name} has been added.`,
+        );
+      }
       router.push(`${basePath}/${request.id}`);
     } catch {
       // useCreatePickupRequest/useConvertQuickPickupRequest already
@@ -301,6 +362,50 @@ const CreatePickupRequestView = ({
                 disabled={submitting}
               />
             </div>
+          </div>
+
+          <div className="mt-3 grid grid-cols-2 gap-3 rounded-xl bg-slate-50 p-3.5">
+            <div className="col-span-2 text-xs font-medium text-slate-500">
+              Evaluate now — optional. Skips the separate Evaluate step on the
+              details page if you already know the outcome.
+            </div>
+            <div className="col-span-2">
+              <SelectField
+                label="Evaluate now"
+                field="evaluation_decision"
+                required={false}
+                options={EVALUATE_NOW_OPTIONS}
+                formData={formData}
+                errors={errors}
+                updateFormData={updateFormData}
+                disabled={submitting}
+              />
+            </div>
+            {formData.evaluation_decision === 'approved' && (
+              <InputField
+                label="Price"
+                field="evaluation_price"
+                type="number"
+                placeholder="Required to approve."
+                formData={formData}
+                errors={errors}
+                updateFormData={updateFormData}
+                disabled={submitting}
+              />
+            )}
+            {formData.evaluation_decision === 'rejected' && (
+              <div className="col-span-2">
+                <TextareaField
+                  label="Reason"
+                  field="evaluation_reason"
+                  placeholder="Required to reject."
+                  formData={formData}
+                  errors={errors}
+                  updateFormData={updateFormData}
+                  disabled={submitting}
+                />
+              </div>
+            )}
           </div>
 
           <div className="flex gap-5 pt-2">

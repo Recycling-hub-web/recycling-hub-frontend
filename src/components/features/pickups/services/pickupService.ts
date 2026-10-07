@@ -138,11 +138,13 @@ const schedulePickupRequest = (
 
 type AssignDriverPayload = {
   driver: string;
+  scheduled_at?: string;
 };
 
-// A second, independent way to reach `scheduled` alongside
-// schedulePickupRequest above — assigns a driver instead of a staff
-// collector + exact time. Only valid from `pending` +
+// The only way to schedule a pickup from the UI — assigns a driver and,
+// optionally, a pickup time. schedulePickupRequest above (a staff
+// collector, no driver) still exists on the backend but no longer has a
+// frontend caller. Only valid from `pending` +
 // `evaluation_status=approved` — see
 // CollectionRequestDecisionService.assign_driver.
 const assignDriverToRequest = (

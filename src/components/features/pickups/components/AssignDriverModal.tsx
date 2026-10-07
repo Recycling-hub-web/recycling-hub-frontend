@@ -2,6 +2,7 @@
 
 import { type FormEvent, useMemo, useState } from 'react';
 
+import { InputField } from '../../../form/fields/InputField';
 import { SelectField } from '../../../form/fields/SelectField';
 import { AlertBanner } from '../../../ui/AlertBanner';
 import { Modal } from '../../../ui/modal/Modal';
@@ -14,17 +15,16 @@ type AssignDriverModalProps = {
   onAssigned: () => void;
 };
 
-type FormState = { driver: string };
+type FormState = { driver: string; scheduled_at: string };
 
-const INITIAL_STATE: FormState = { driver: '' };
+const INITIAL_STATE: FormState = { driver: '', scheduled_at: '' };
 
-/** Assign a specific driver to a pending, approved request — a second,
- * independent way to reach `scheduled` alongside ScheduleModal (collector
- * + exact time). Only valid from `pending` + `evaluation_status=approved`
+/** Schedule a pending, approved request by assigning it to a driver —
+ * the only way to schedule a pickup from the UI (ScheduleModal's staff
+ * collector + exact time still exists on the backend, but is no longer
+ * surfaced here). Only valid from `pending` + `evaluation_status=approved`
  * — see CollectionRequestDecisionService.assign_driver on the backend;
- * the caller only ever renders this when that's the case. No time field
- * (unlike scheduling) — a driver assignment is binding immediately, no
- * accept step, so there's nothing to schedule for in advance. */
+ * the caller only ever renders this when that's the case. */
 const AssignDriverModal = ({
   requestId,
   open,
@@ -51,13 +51,21 @@ const AssignDriverModal = ({
     [drivers],
   );
 
+  // Validated on submit, not proactively — the submit button only
+  // disables while the request is actually in flight; missing/invalid
+  // fields surface as inline errors once someone tries to submit.
   const validate = (): boolean => {
-    if (!formData.driver) {
-      setErrors({ driver: 'Choose a driver.' });
-      return false;
+    const nextErrors: Record<string, string> = {};
+    if (!formData.driver) nextErrors.driver = 'Choose a driver.';
+    // Optional — a plain YYYY-MM-DD string, so a lexicographic compare
+    // against today's own YYYY-MM-DD is enough; no time component to
+    // reason about.
+    const today = new Date().toISOString().slice(0, 10);
+    if (formData.scheduled_at && formData.scheduled_at < today) {
+      nextErrors.scheduled_at = 'Pickup date must be today or later.';
     }
-    setErrors({});
-    return true;
+    setErrors(nextErrors);
+    return Object.keys(nextErrors).length === 0;
   };
 
   const handleClose = () => {
@@ -72,13 +80,16 @@ const AssignDriverModal = ({
     setApiError('');
     if (!validate()) return;
     try {
-      await assignDriver(requestId, { driver: formData.driver });
+      await assignDriver(requestId, {
+        driver: formData.driver,
+        scheduled_at: formData.scheduled_at
+          ? new Date(formData.scheduled_at).toISOString()
+          : undefined,
+      });
       onAssigned();
       handleClose();
     } catch {
-      setApiError(
-        'Could not assign a driver to this pickup. Please try again.',
-      );
+      setApiError('Could not schedule this pickup. Please try again.');
     }
   };
 
@@ -86,8 +97,8 @@ const AssignDriverModal = ({
     <Modal
       open={open}
       onClose={handleClose}
-      title="Assign driver"
-      subtitle="Assign this pickup directly to a driver."
+      title="Schedule pickup"
+      subtitle="Assign a driver, with an optional pickup date."
       footer={
         <div className="flex gap-2">
           <button
@@ -104,7 +115,7 @@ const AssignDriverModal = ({
             disabled={submitting}
             className="flex-1 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {submitting ? 'Assigning…' : 'Assign'}
+            {submitting ? 'Scheduling…' : 'Schedule'}
           </button>
         </div>
       }
@@ -124,6 +135,15 @@ const AssignDriverModal = ({
           errors={errors}
           updateFormData={updateFormData}
           disabled={loadingDrivers}
+        />
+        <InputField
+          label="Pickup date"
+          field="scheduled_at"
+          type="date"
+          required={false}
+          formData={formData}
+          errors={errors}
+          updateFormData={updateFormData}
         />
       </form>
     </Modal>
