@@ -38,6 +38,18 @@ const seedPickupRequest = async (
   return id as string;
 };
 
+// Scheduling/assigning a driver both require evaluation_status=approved
+// (see CollectionRequestDecisionService.schedule/assign_driver) —
+// PickupRequestDetailsView only even renders "Schedule pickup" once
+// approved. Called with an authenticated request context (after
+// loginAs), since evaluate is admin/staff-only.
+const approvePickupRequest = async (request: APIRequestContext, id: string) => {
+  const res = await request.post(`/api/v1/pickups/${id}/evaluate/`, {
+    data: { decision: 'approved', price: '10.00' },
+  });
+  expect(res.ok()).toBe(true);
+};
+
 test.describe('Admin pickup requests', () => {
   test('schedules a pending request, then marks it collected', async ({
     page,
@@ -46,6 +58,7 @@ test.describe('Admin pickup requests', () => {
     const id = await seedPickupRequest(page.request, fullName);
 
     await loginAs(page, 'admin');
+    await approvePickupRequest(page.request, id);
     await page.goto(`/admin/pickups/${id}`);
 
     await expect(page.getByText('Pending', { exact: true })).toBeVisible();
@@ -82,7 +95,9 @@ test.describe('Admin pickup requests', () => {
     await expect(
       page.getByRole('button', { name: 'Schedule pickup' }),
     ).toHaveCount(0);
-    await expect(page.getByRole('button', { name: 'Cancel' })).toHaveCount(0);
+    await expect(
+      page.getByRole('button', { name: 'Cancel', exact: true }),
+    ).toHaveCount(0);
 
     // There's no delete action in the UI (pickups are cancelled, not
     // deleted — a deliberate scope decision, unlike contact messages).
@@ -97,7 +112,11 @@ test.describe('Admin pickup requests', () => {
     await loginAs(page, 'admin');
     await page.goto(`/admin/pickups/${id}`);
 
-    await page.getByRole('button', { name: 'Cancel' }).click();
+    // exact: true — the notification bell (always rendered in the
+    // topbar) can contain this seeded request's own name in an unread
+    // "New pickup request submitted" item, whose accessible name would
+    // otherwise also match a loose "Cancel" substring search.
+    await page.getByRole('button', { name: 'Cancel', exact: true }).click();
     const confirmCancel = page.getByRole('button', {
       name: 'Cancel pickup',
       exact: true,
@@ -134,12 +153,15 @@ test.describe('Staff pickup requests', () => {
     const id = await seedPickupRequest(page.request, fullName);
 
     await loginAs(page, 'qaStaff');
+    await approvePickupRequest(page.request, id);
     await page.goto(`/staff/pickups/${id}`);
 
     await expect(
       page.getByRole('button', { name: 'Schedule pickup' }),
     ).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Cancel' })).toBeVisible();
+    await expect(
+      page.getByRole('button', { name: 'Cancel', exact: true }),
+    ).toBeVisible();
 
     // The collector picker (GET /accounts/staff/) must work for staff
     // too — this was a real backend gap fixed alongside this feature
