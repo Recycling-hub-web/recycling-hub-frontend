@@ -5,6 +5,7 @@ import {
   LuLayers,
   LuLayoutDashboard,
   LuMail,
+  LuMapPin,
   LuNewspaper,
   LuPackageCheck,
   LuTag,
@@ -25,20 +26,21 @@ type OperationalRoleConfig = {
 // Each role's own route + sidebar. Only "Overview", "Notifications"
 // (every role, same shared NotificationsView — see
 // features/notifications/components), and, for staff,
-// "Pickup Requests"/"Contact"/"Categories"/"Classifications"/"Storage
-// Files"/"Blog Posts"/"Partnerships"; for driver, its own scoped
-// "Pickup Requests"; for accounting, "Finance Records" — is wired to
-// real pages today — the rest of each role's section (assigned tasks,
-// reports) lands here as that workflow work gets built, same "roles
-// first, then workflows" pattern the admin sidebar started with. Staff
-// sees the same pickups/contact management admin does (same
+// "Pickup Requests"/"Contact"/"Categories"/"Classifications"/"Collection
+// Points"/"Storage Files"/"Blog Posts"/"Partnerships"; for driver, its
+// own scoped "Pickup Requests"; for accounting, "Finance Records" — is
+// wired to real pages today — the rest of each role's section (assigned
+// tasks, reports) lands here as that workflow work gets built, same
+// "roles first, then workflows" pattern the admin sidebar started with.
+// Staff sees the same pickups/contact management admin does (same
 // components, basePath="/staff/…") but without contact delete —
 // enforced on the backend too (ContactMessageViewSet.get_permissions),
 // not just a hidden button here. Pickups, Categories, Classifications,
-// Storage Files, Blog Posts, and Partnerships have no such split: admin
-// and staff share identical permissions on all six modules
-// (CollectionRequestViewSet / CategoryViewSet + IsStaffOrReadOnly /
-// ClassificationView / FileRecordViewSet + IsAdminOrStaffUser /
+// Collection Points, Storage Files, Blog Posts, and Partnerships have no
+// such split: admin and staff share identical permissions on all seven
+// modules (CollectionRequestViewSet / CategoryViewSet +
+// IsStaffOrReadOnly / ClassificationView / CollectionPointViewSet +
+// IsAdminOrStaffUser / FileRecordViewSet + IsAdminOrStaffUser /
 // BlogPostViewSet + IsStaffOrReadOnly / PartnerViewSet +
 // IsStaffOrReadOnly). Driver's "Pickup Requests" is a different,
 // scoped-down view (DriverPickupsView) — not PickupRequestsView reused
@@ -71,6 +73,11 @@ const OPERATIONAL_ROLES: Record<OperationalRole, OperationalRoleConfig> = {
         href: '/staff/classifications',
         label: 'Classifications',
         icon: LuLayers,
+      },
+      {
+        href: '/staff/collection-points',
+        label: 'Collection Points',
+        icon: LuMapPin,
       },
       {
         href: '/staff/storage-files',
