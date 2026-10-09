@@ -3,10 +3,11 @@ import { expect, test } from '@playwright/test';
 import { loginAs } from './helpers/auth';
 
 /**
- * Driver navigation links — per-stop "Navigate" deep links to Google
- * Maps or Waze (no multi-stop route generation, no in-app map; Waze's
+ * Driver navigation links — per-stop, icon-only Google Maps/Waze deep
+ * links (no multi-stop route generation here, no in-app map; Waze's
  * URL scheme has no multi-destination support, so this stays per-stop
- * for both apps). See features/pickups/utils/navigationLinks.ts.
+ * for both apps — see OptimizeRouteModal for the actual multi-stop
+ * flow). See features/pickups/utils/navigationLinks.ts.
  */
 
 const E_WASTE_CATEGORY_ID = '89067cc7-38ef-4752-9cd4-3ea29975abcb';
@@ -46,20 +47,22 @@ test('driver can open Google Maps or Waze directions to an assigned pickup', asy
 
   const row = page.locator('tr', { hasText: fullName });
   await expect(row).toBeVisible();
-  await row.getByRole('button', { name: 'Navigate' }).click();
 
   const [googleMapsPopup] = await Promise.all([
     page.waitForEvent('popup'),
-    page.getByRole('menuitem', { name: 'Google Maps' }).click(),
+    row
+      .getByRole('button', { name: `Navigate to ${fullName} with Google Maps` })
+      .click(),
   ]);
   expect(googleMapsPopup.url()).toContain('google.com/maps/dir');
   expect(googleMapsPopup.url()).toContain(encodeURIComponent(address));
   await googleMapsPopup.close();
 
-  await row.getByRole('button', { name: 'Navigate' }).click();
   const [wazePopup] = await Promise.all([
     page.waitForEvent('popup'),
-    page.getByRole('menuitem', { name: 'Waze' }).click(),
+    row
+      .getByRole('button', { name: `Navigate to ${fullName} with Waze` })
+      .click(),
   ]);
   expect(wazePopup.url()).toContain('waze.com/ul');
   expect(wazePopup.url()).toContain(encodeURIComponent(address));

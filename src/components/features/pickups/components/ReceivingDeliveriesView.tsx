@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { LuCheckCheck } from 'react-icons/lu';
 
 import { PageContainer } from '../../../layout/PageContainer';
 import { StatusBadge } from '../../../ui/badges/StatusBadge';
@@ -92,9 +93,10 @@ const ReceivingDeliveriesView = () => {
               type="button"
               disabled={closing && closingId === r.id}
               onClick={() => handleClose(r.id)}
-              className="rounded-full border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
+              aria-label={`Verify and close delivery from ${r.full_name}`}
+              className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              Verify & Close
+              <LuCheckCheck className="size-4" />
             </button>
           )}
         </td>

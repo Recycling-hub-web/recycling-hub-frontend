@@ -13,6 +13,10 @@ type RouteInfo = {
   id: string;
   status: 'open' | 'dropped_off';
   dropped_off_at: string | null;
+  // This route's fixed drop-off destination, resolved the first time
+  // any of its stops is optimized (see useOptimizeRoute) — null before
+  // then.
+  collection_point: PickupCollectionPoint;
 };
 
 type PickupRequestType = 'individual' | 'business';
@@ -29,6 +33,29 @@ type PickupCollectionPoint = {
   name: string;
   address: string;
 } | null;
+
+type LatLng = { lat: number; lng: number };
+
+/** One option for the Optimize Route modal's collection-point picker —
+ * GET /collection-points/ (public, already existed for the public
+ * "find a drop-off point" flow). Only the fields this feature needs. */
+type CollectionPointOption = {
+  id: string;
+  name: string;
+  address: string;
+};
+
+type OptimizeRouteStop = LatLng & { request_id: string };
+
+/** Response shape from POST /pickups/optimize-route/ — `stops` is
+ * already in the optimized visiting order. Nothing here is persisted
+ * beyond the route's own `collection_point` (see RouteInfo) — this is
+ * consumed once by the caller. */
+type OptimizeRouteResult = {
+  collection_point: CollectionPointOption;
+  destination: LatLng;
+  stops: OptimizeRouteStop[];
+};
 
 /** Flat shape from the list endpoint (CollectionRequestListSerializer). */
 type PickupRequestListItem = {
@@ -167,8 +194,12 @@ export {
   PICKUP_STATUS_LABELS,
 };
 export type {
+  CollectionPointOption,
   Collector,
   Driver,
+  LatLng,
+  OptimizeRouteResult,
+  OptimizeRouteStop,
   PickupCategory,
   PickupCollectionPoint,
   PickupEvaluationStatus,

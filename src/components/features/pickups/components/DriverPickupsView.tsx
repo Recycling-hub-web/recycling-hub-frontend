@@ -1,10 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import { LuMapPin, LuNavigation, LuPackage, LuWallet } from 'react-icons/lu';
+import {
+  LuMapPin,
+  LuNavigation,
+  LuPackage,
+  LuRoute,
+  LuWallet,
+} from 'react-icons/lu';
 
 import { PageContainer } from '../../../layout/PageContainer';
-import { ActionsDropdown } from '../../../ui/buttons/ActionsDropdown';
 import { PageHeader } from '../../../ui/PageHeader';
 import {
   TableEmptyRow,
@@ -25,10 +30,15 @@ import {
   wazeNavigateUrl,
 } from '../utils/navigationLinks';
 import { CollectModal } from './CollectModal';
+import { OptimizeRouteModal } from './OptimizeRouteModal';
 
 type Tab = 'available' | 'mine';
 
-const columnCount = 5;
+// A larger batch stops being "a driver's one trip" and starts being a
+// planning problem of its own — kept small and frontend-only since
+// nothing about the backend's optimize-route call actually requires a
+// cap (see apps.pickups.services.optimize_route).
+const MAX_OPTIMIZE_STOPS = 10;
 
 /** Driver's own scoped pickups view — not PickupRequestTable reused
  * (that's the full admin/staff CRUD view). A driver only ever sees two
@@ -56,11 +66,28 @@ const DriverPickupsView = () => {
     error: mineError,
     refetch: refetchMine,
   } = usePickupRequests({ page: 1, status: 'scheduled' });
+  // A scheduled request's route can end up closed (dropped_off) or
+  // unset without the request itself having moved off `scheduled` —
+  // drop_off_route only transitions the specific items it was handed,
+  // so a sibling stop that wasn't part of that batch is left stranded
+  // on the now-closed route. Optimizing only ever makes sense for
+  // stops still on the driver's current *open* route — a stranded one
+  // has nowhere to attach a resolved destination to, and isn't part of
+  // the trip actually being planned.
+  const optimizableMine = mine.filter((r) => r.route?.status === 'open');
 
   const { execute: claim } = useClaimPickupRequest();
   const [claimingId, setClaimingId] = useState<string | null>(null);
   const [collectTarget, setCollectTarget] =
     useState<PickupRequestListItem | null>(null);
+
+  // Route optimization — only meaningful on the "mine" tab, where every
+  // row is already this driver's own claimed, scheduled stop.
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [optimizeModalOpen, setOptimizeModalOpen] = useState(false);
+  const [optimizedOrder, setOptimizedOrder] = useState<Record<string, number>>(
+    {},
+  );
 
   const {
     count: pendingCount,
@@ -99,6 +126,48 @@ const DriverPickupsView = () => {
     refetchMine();
   };
 
+  const handleTabChange = (tab: Tab) => {
+    setActiveTab(tab);
+    setSelectedIds(new Set());
+    setOptimizedOrder({});
+  };
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds((prev) => {
+      if (prev.has(id)) {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      }
+      if (prev.size >= MAX_OPTIMIZE_STOPS) {
+        toast.error(
+          `You can optimize at most ${MAX_OPTIMIZE_STOPS} stops at once.`,
+        );
+        return prev;
+      }
+      return new Set(prev).add(id);
+    });
+  };
+
+  const maxSelectable = Math.min(optimizableMine.length, MAX_OPTIMIZE_STOPS);
+
+  const toggleSelectAll = () => {
+    setSelectedIds((prev) =>
+      prev.size > 0
+        ? new Set()
+        : new Set(
+            optimizableMine.slice(0, MAX_OPTIMIZE_STOPS).map((r) => r.id),
+          ),
+    );
+  };
+
+  const handleWazeOrderChosen = (orderedRequestIds: string[]) => {
+    setOptimizedOrder(
+      Object.fromEntries(orderedRequestIds.map((id, i) => [id, i + 1])),
+    );
+    setSelectedIds(new Set());
+  };
+
   // A passive count, not a push notification — every driver getting
   // pinged for every newly-approved request would be noisy for no real
   // benefit; this badge is enough to surface that there's something to
@@ -115,6 +184,10 @@ const DriverPickupsView = () => {
   const loading = activeTab === 'available' ? loadingAvailable : loadingMine;
   const error = activeTab === 'available' ? availableError : mineError;
   const onRetry = activeTab === 'available' ? refetchAvailable : refetchMine;
+  // One extra leading column for the selection checkbox — only on
+  // "mine," where route optimization is meaningful.
+  const columnCount = activeTab === 'mine' ? 6 : 5;
+  const selectedRequests = mine.filter((r) => selectedIds.has(r.id));
 
   const renderRows = () => {
     if (loading) return <TableLoadingRow colSpan={columnCount} />;
@@ -139,70 +212,107 @@ const DriverPickupsView = () => {
         />
       );
     }
-    return requests.map((r) => (
-      <tr key={r.id} className="transition-colors hover:bg-slate-50">
-        <td className="px-6 py-4 font-medium text-slate-900">
-          {r.category.name}
-        </td>
-        <td className="px-6 py-4 text-slate-500">
-          <span className="inline-flex items-center gap-1.5">
-            <LuMapPin className="size-4 shrink-0" />
-            {r.full_name}
-          </span>
-        </td>
-        <td className="px-6 py-4 text-slate-700">{r.price ?? '—'}</td>
-        <td className="px-6 py-4 text-slate-500">{r.requested_date ?? '—'}</td>
-        <td className="px-6 py-4">
-          <div className="flex items-center justify-end gap-2">
-            <ActionsDropdown
-              label="Navigate"
-              items={[
-                {
-                  label: 'Google Maps',
-                  icon: LuNavigation,
-                  onClick: () =>
-                    window.open(
-                      googleMapsDirectionsUrl(r.pickup_address),
-                      '_blank',
-                      'noopener,noreferrer',
-                    ),
-                },
-                {
-                  label: 'Waze',
-                  icon: LuNavigation,
-                  onClick: () =>
-                    window.open(
-                      wazeNavigateUrl(r.pickup_address),
-                      '_blank',
-                      'noopener,noreferrer',
-                    ),
-                },
-              ]}
-            />
-            {activeTab === 'available' ? (
+    return requests.map((r) => {
+      const offRoute = r.route?.status !== 'open';
+      const atCap =
+        !selectedIds.has(r.id) && selectedIds.size >= MAX_OPTIMIZE_STOPS;
+      let checkboxTitle: string | undefined;
+      if (offRoute) {
+        checkboxTitle =
+          "Not on your current route — can't be included in route optimization.";
+      } else if (atCap) {
+        checkboxTitle = `You can optimize at most ${MAX_OPTIMIZE_STOPS} stops at once.`;
+      }
+
+      return (
+        <tr key={r.id} className="transition-colors hover:bg-slate-50">
+          {activeTab === 'mine' && (
+            <td className="p-4">
+              <input
+                type="checkbox"
+                checked={selectedIds.has(r.id)}
+                onChange={() => toggleSelect(r.id)}
+                disabled={offRoute || atCap}
+                title={checkboxTitle}
+                className="size-4 rounded border-slate-300 disabled:cursor-not-allowed disabled:opacity-40"
+                aria-label={`Select pickup for ${r.full_name}`}
+              />
+            </td>
+          )}
+          <td className="px-6 py-4 font-medium text-slate-900">
+            {r.category.name}
+          </td>
+          <td className="px-6 py-4 text-slate-500">
+            <span className="inline-flex items-center gap-1.5">
+              {optimizedOrder[r.id] ? (
+                <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-brand-100 text-[11px] font-semibold text-brand-700">
+                  {optimizedOrder[r.id]}
+                </span>
+              ) : (
+                <LuMapPin className="size-4 shrink-0" />
+              )}
+              {r.full_name}
+            </span>
+          </td>
+          <td className="px-6 py-4 text-slate-700">{r.price ?? '—'}</td>
+          <td className="px-6 py-4 text-slate-500">
+            {r.requested_date ?? '—'}
+          </td>
+          <td className="px-6 py-4">
+            <div className="flex items-center justify-end gap-2">
               <button
                 type="button"
-                onClick={() => handleClaim(r)}
-                disabled={claimingId === r.id}
-                className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium text-brand-600 transition hover:bg-brand-50 disabled:cursor-not-allowed disabled:opacity-50"
+                onClick={() =>
+                  window.open(
+                    googleMapsDirectionsUrl(r.pickup_address),
+                    '_blank',
+                    'noopener,noreferrer',
+                  )
+                }
+                aria-label={`Navigate to ${r.full_name} with Google Maps`}
+                className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-brand-50 hover:text-brand-600"
               >
-                <LuPackage className="size-4" />
-                Claim
+                <LuMapPin className="size-4" />
               </button>
-            ) : (
               <button
                 type="button"
-                onClick={() => setCollectTarget(r)}
-                className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium text-brand-600 transition hover:bg-brand-50"
+                onClick={() =>
+                  window.open(
+                    wazeNavigateUrl(r.pickup_address),
+                    '_blank',
+                    'noopener,noreferrer',
+                  )
+                }
+                aria-label={`Navigate to ${r.full_name} with Waze`}
+                className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-brand-50 hover:text-brand-600"
               >
-                <LuPackage className="size-4" />
-                Mark collected
+                <LuNavigation className="size-4" />
               </button>
-            )}
-          </div>
-        </td>
-      </tr>
-    ));
+              {activeTab === 'available' ? (
+                <button
+                  type="button"
+                  onClick={() => handleClaim(r)}
+                  disabled={claimingId === r.id}
+                  aria-label={`Claim pickup for ${r.full_name}`}
+                  className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-brand-50 hover:text-brand-600 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <LuPackage className="size-4" />
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setCollectTarget(r)}
+                  aria-label={`Mark pickup for ${r.full_name} as collected`}
+                  className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-brand-50 hover:text-brand-600"
+                >
+                  <LuPackage className="size-4" />
+                </button>
+              )}
+            </div>
+          </td>
+        </tr>
+      );
+    });
   };
 
   return (
@@ -234,14 +344,48 @@ const DriverPickupsView = () => {
       <Tabs
         tabs={tabItems}
         active={activeTab}
-        onChange={setActiveTab}
+        onChange={handleTabChange}
         className="-mt-2 mb-4 px-0"
       />
+
+      {activeTab === 'mine' && selectedIds.size > 0 && (
+        <div className="mb-4 flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
+          <span className="text-sm font-medium text-slate-700">
+            {selectedIds.size}/{MAX_OPTIMIZE_STOPS} selected
+          </span>
+          <button
+            type="button"
+            onClick={() => setOptimizeModalOpen(true)}
+            className="inline-flex items-center gap-1.5 rounded-full bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700"
+          >
+            <LuRoute className="size-4" />
+            Optimize Route
+          </button>
+        </div>
+      )}
 
       <TableWrapper>
         <table className="min-w-full divide-y divide-slate-200 text-sm">
           <thead className="bg-slate-50">
             <tr>
+              {activeTab === 'mine' && (
+                <th className="w-10 p-4">
+                  {optimizableMine.length > 0 && (
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.size === maxSelectable}
+                      onChange={toggleSelectAll}
+                      title={
+                        optimizableMine.length > MAX_OPTIMIZE_STOPS
+                          ? `Selects the first ${MAX_OPTIMIZE_STOPS} — the most you can optimize at once.`
+                          : undefined
+                      }
+                      className="size-4 rounded border-slate-300"
+                      aria-label="Select all"
+                    />
+                  )}
+                </th>
+              )}
               <th className="px-6 py-3 text-left font-semibold text-slate-500">
                 Category
               </th>
@@ -273,6 +417,13 @@ const DriverPickupsView = () => {
         // CollectionRequestViewSet.get_queryset) — always a driver
         // collection, never the staff-collector path.
         showPaymentFields
+      />
+
+      <OptimizeRouteModal
+        open={optimizeModalOpen}
+        onClose={() => setOptimizeModalOpen(false)}
+        selectedRequests={selectedRequests}
+        onWazeOrderChosen={handleWazeOrderChosen}
       />
     </PageContainer>
   );

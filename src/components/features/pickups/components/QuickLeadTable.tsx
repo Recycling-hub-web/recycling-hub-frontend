@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { LuCheck, LuMessageCircle, LuPhoneCall } from 'react-icons/lu';
+import { LuCheck, LuEye, LuMessageCircle, LuPhoneCall } from 'react-icons/lu';
 
 import { StatusBadge } from '../../../ui/badges/StatusBadge';
 import { AppDate } from '../../../ui/date/AppDate';
@@ -103,9 +103,10 @@ const QuickLeadTable = ({
               lead.collection_request && (
                 <Link
                   href={`${basePath}/${lead.collection_request}`}
-                  className="text-sm font-medium text-slate-500 underline underline-offset-2 hover:text-slate-700"
+                  aria-label="View request"
+                  className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
                 >
-                  View request
+                  <LuEye className="size-4" />
                 </Link>
               )
             ) : (
@@ -116,19 +117,17 @@ const QuickLeadTable = ({
                     onClick={() => onMarkContacted(lead)}
                     disabled={markingContactedId === lead.id}
                     aria-label={`Mark lead from ${lead.phone_number} as contacted`}
-                    className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium text-slate-500 transition hover:bg-slate-100 hover:text-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     <LuCheck className="size-4" />
-                    Mark contacted
                   </button>
                 )}
                 <Link
                   href={`${basePath}/create?leadId=${lead.id}`}
                   aria-label={`Follow up on lead from ${lead.phone_number}`}
-                  className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium text-brand-600 transition hover:bg-brand-50"
+                  className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-brand-50 hover:text-brand-600"
                 >
                   <LuPhoneCall className="size-4" />
-                  Follow up
                 </Link>
               </>
             )}

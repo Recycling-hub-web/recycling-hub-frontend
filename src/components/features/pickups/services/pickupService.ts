@@ -1,6 +1,8 @@
 import { apiFetch } from '../../../../lib/api';
 import type { PresignedUpload } from '../../storageFiles/types';
 import type {
+  LatLng,
+  OptimizeRouteResult,
   PickupEvaluationStatus,
   PickupQuickRequestListItem,
   PickupQuickRequestStatus,
@@ -195,6 +197,24 @@ const dropOffRoute = (
 ): Promise<PickupRequestListItem[]> =>
   apiFetch('/pickups/drop-off/', { method: 'POST', json: payload });
 
+type OptimizeRoutePayload = {
+  request_ids: string[];
+  /** Omit once the route already has one — the backend ignores a
+   * conflicting value after the first call, a route doesn't change
+   * destination mid-way. */
+  collection_point?: string | null;
+  origin: LatLng;
+};
+
+// Driver only, only for their own current open Route's `scheduled`
+// stops — see apps.pickups.services.optimize_route on the backend.
+// Nothing here is persisted beyond the route's own collection_point;
+// re-optimizing is just calling this again.
+const optimizeRoute = (
+  payload: OptimizeRoutePayload,
+): Promise<OptimizeRouteResult> =>
+  apiFetch('/pickups/optimize-route/', { method: 'POST', json: payload });
+
 // Receiving Officer (or admin) verifying a delivered request and
 // closing it out — only valid from `delivered`. See
 // CollectionRequestDecisionService.close_delivery.
@@ -278,6 +298,7 @@ export {
   listPickupRequests,
   listQuickPickupRequests,
   markQuickPickupRequestContacted,
+  optimizeRoute,
   requestPickupPhotoUploadUrl,
   schedulePickupRequest,
   updatePickupRequest,
@@ -293,6 +314,7 @@ export type {
   EvaluatePickupPayload,
   ListPickupRequestsParams,
   ListQuickPickupRequestsParams,
+  OptimizeRoutePayload,
   Paginated,
   SchedulePickupPayload,
   UpdatePickupRequestPayload,

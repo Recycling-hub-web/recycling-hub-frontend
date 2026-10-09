@@ -82,7 +82,8 @@ test('driver drops off a route, receiving officer verifies and closes it', async
   await page.goto('/receiving/deliveries');
   const deliveredRow = page.locator('tr', { hasText: fullName });
   await expect(deliveredRow).toContainText('Delivered');
-  await deliveredRow.getByRole('button', { name: 'Verify & Close' }).click();
+  // Icon-only row action — matched by its aria-label, not visible text.
+  await deliveredRow.getByRole('button', { name: /verify and close/i }).click();
   await expect(page.getByText(/verified and closed/i)).toBeVisible();
 
   // Default filter is "delivered" — once closed, it drops off this view.
