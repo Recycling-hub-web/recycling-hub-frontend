@@ -144,7 +144,7 @@ const CreateUserView = () => {
 
       <PageHeader
         title="Create user"
-        subtitle="Add an admin, staff, driver, receiving officer, or accounting account."
+        subtitle="Add an admin, staff, driver, or receiving officer account."
       />
 
       <Card className="p-5">

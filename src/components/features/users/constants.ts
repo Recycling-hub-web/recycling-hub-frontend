@@ -21,14 +21,20 @@ const ROLE_BADGE_VARIANT: Record<UserRole, BadgeVariant> = {
   accounting: 'attention',
 };
 
-// The complete role set (see apps.accounts.models.user.User.Role on the
-// backend) — no resident/end-user role to exclude here anymore.
+// The role set offered when creating a new user (see
+// apps.accounts.models.user.User.Role on the backend for the complete
+// set) — not every backend role is creatable here. `accounting` is
+// deliberately left out: deprioritized for now, since Staff already
+// has full Finance Records access (IsAccountingOrAdminOrStaff) and can
+// cover those duties without a dedicated account. The role itself,
+// the existing seeded accounting user, and every accounting-specific
+// page/permission are untouched — this only stops new ones being
+// created through this picker.
 const CREATABLE_ROLES: UserRole[] = [
   'admin',
   'staff',
   'driver',
   'receiving_officer',
-  'accounting',
 ];
 
 const ROLE_OPTIONS = CREATABLE_ROLES.map((r) => ({
