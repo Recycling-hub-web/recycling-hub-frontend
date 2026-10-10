@@ -5,12 +5,18 @@ import {
 } from '../../../types/auth';
 import type { BadgeVariant } from '../../ui/badges/variants';
 
+// `accounting` is left out — deprioritized for now, same as
+// CREATABLE_ROLES below. The existing seeded accounting user still
+// shows up fine under "All roles"; this only removes it as its own
+// filterable category.
 const ROLE_FILTER_OPTIONS = [
   { value: '', label: 'All roles' },
-  ...(Object.keys(ROLE_LABELS) as UserRole[]).map((role) => ({
-    value: role,
-    label: ROLE_LABELS[role],
-  })),
+  ...(Object.keys(ROLE_LABELS) as UserRole[])
+    .filter((role) => role !== 'accounting')
+    .map((role) => ({
+      value: role,
+      label: ROLE_LABELS[role],
+    })),
 ];
 
 const ROLE_BADGE_VARIANT: Record<UserRole, BadgeVariant> = {
