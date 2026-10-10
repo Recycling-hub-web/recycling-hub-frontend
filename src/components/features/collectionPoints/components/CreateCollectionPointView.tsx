@@ -6,16 +6,14 @@ import type { FormEvent } from 'react';
 import { useState } from 'react';
 import { LuArrowLeft } from 'react-icons/lu';
 
-import { CheckSimpleBoxGroup } from '../../../form/fields/CheckSimpleBoxGroup';
 import { InputField } from '../../../form/fields/InputField';
-import { TextareaField } from '../../../form/fields/TextareaField';
 import { PageContainer } from '../../../layout/PageContainer';
 import { AlertBanner } from '../../../ui/AlertBanner';
 import { Button } from '../../../ui/buttons/Button';
 import { Card } from '../../../ui/card/Card';
 import { PageHeader } from '../../../ui/PageHeader';
 import { useToast } from '../../../ui/toast/ToastContext';
-import { useCreateCollectionPoint, useMaterialCategories } from '../hooks';
+import { useCreateCollectionPoint } from '../hooks';
 
 type FormState = {
   name: string;
@@ -23,9 +21,6 @@ type FormState = {
   address: string;
   city: string;
   postcode: string;
-  latitude: string;
-  longitude: string;
-  operating_hours: string;
 };
 
 const INITIAL_STATE: FormState = {
@@ -34,9 +29,6 @@ const INITIAL_STATE: FormState = {
   address: '',
   city: '',
   postcode: '',
-  latitude: '',
-  longitude: '',
-  operating_hours: '',
 };
 
 type CreateCollectionPointViewProps = {
@@ -55,9 +47,7 @@ const CreateCollectionPointView = ({
     loading: submitting,
     error,
   } = useCreateCollectionPoint();
-  const { categories, loading: loadingCategories } = useMaterialCategories();
   const [formData, setFormData] = useState<FormState>(INITIAL_STATE);
-  const [acceptedCategories, setAcceptedCategories] = useState<string[]>([]);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const updateFormData = (field: string, value: string) => {
@@ -87,10 +77,6 @@ const CreateCollectionPointView = ({
         address: formData.address,
         city: formData.city,
         postcode: formData.postcode || undefined,
-        latitude: formData.latitude || null,
-        longitude: formData.longitude || null,
-        operating_hours: formData.operating_hours || undefined,
-        accepted_categories: acceptedCategories,
       });
       toast.success(
         'Collection point created',
@@ -172,57 +158,7 @@ const CreateCollectionPointView = ({
               updateFormData={updateFormData}
               disabled={submitting}
             />
-            <InputField
-              label="Latitude"
-              field="latitude"
-              type="number"
-              required={false}
-              placeholder="e.g. 6.1335"
-              formData={formData}
-              errors={errors}
-              updateFormData={updateFormData}
-              disabled={submitting}
-            />
-            <InputField
-              label="Longitude"
-              field="longitude"
-              type="number"
-              required={false}
-              placeholder="e.g. 100.3839"
-              formData={formData}
-              errors={errors}
-              updateFormData={updateFormData}
-              disabled={submitting}
-            />
-            <div className="sm:col-span-2">
-              <TextareaField
-                label="Operating hours"
-                field="operating_hours"
-                required={false}
-                placeholder="e.g. Mon–Fri 9am–5pm"
-                formData={formData}
-                errors={errors}
-                updateFormData={updateFormData}
-                disabled={submitting}
-              />
-            </div>
           </div>
-
-          <CheckSimpleBoxGroup
-            label="Accepted categories"
-            field="accepted_categories"
-            options={categories}
-            formData={{ accepted_categories: acceptedCategories }}
-            updateFormData={(_field, value) =>
-              setAcceptedCategories(value as string[])
-            }
-            required={false}
-          />
-          {loadingCategories && (
-            <p className="-mt-3 mb-4 text-xs text-slate-400">
-              Loading categories…
-            </p>
-          )}
 
           <div className="flex gap-5 pt-2">
             <Button href={basePath} variant="secondary" className="flex-1">

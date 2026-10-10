@@ -3,14 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import {
-  LuArrowLeft,
-  LuClock,
-  LuMapPin,
-  LuPencil,
-  LuTag,
-  LuTrash2,
-} from 'react-icons/lu';
+import { LuArrowLeft, LuMapPin, LuPencil, LuTrash2 } from 'react-icons/lu';
 
 import { ApiError } from '../../../../lib/api';
 import { PageContainer } from '../../../layout/PageContainer';
@@ -23,11 +16,7 @@ import { Loading } from '../../../ui/loading/Loading';
 import { ConfirmModal } from '../../../ui/modal/ConfirmModal';
 import { PageHeader } from '../../../ui/PageHeader';
 import { useToast } from '../../../ui/toast/ToastContext';
-import {
-  useCollectionPoint,
-  useDeleteCollectionPoint,
-  useMaterialCategories,
-} from '../hooks';
+import { useCollectionPoint, useDeleteCollectionPoint } from '../hooks';
 
 type CollectionPointDetailsViewProps = {
   collectionPointId: string;
@@ -44,7 +33,6 @@ const CollectionPointDetailsView = ({
     useCollectionPoint(collectionPointId);
   const { execute: deleteCollectionPoint, loading: deleting } =
     useDeleteCollectionPoint();
-  const { categories } = useMaterialCategories();
   const [confirmOpen, setConfirmOpen] = useState(false);
 
   const handleConfirmDelete = async () => {
@@ -96,13 +84,6 @@ const CollectionPointDetailsView = ({
     },
   ];
 
-  // accepted_categories is an array of plain ids on this serializer, not
-  // nested objects — map back to names for display using the same
-  // materials-categories list the form's picker uses.
-  const acceptedCategoryNames = collectionPoint.accepted_categories
-    .map((id) => categories.find((c) => c.id === id)?.name)
-    .filter((name): name is string => Boolean(name));
-
   return (
     <PageContainer variant="form">
       <Link
@@ -134,44 +115,7 @@ const CollectionPointDetailsView = ({
             label="Address"
             value={`${collectionPoint.address}, ${collectionPoint.city}${collectionPoint.postcode ? ` ${collectionPoint.postcode}` : ''}`}
           />
-          {collectionPoint.operating_hours && (
-            <InfoRow
-              icon={<LuClock className="size-4" />}
-              label="Operating hours"
-              value={collectionPoint.operating_hours}
-            />
-          )}
         </div>
-
-        {(collectionPoint.latitude || collectionPoint.longitude) && (
-          <div className="mt-5 border-t border-slate-100 pt-5">
-            <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
-              Coordinates
-            </p>
-            <p className="text-sm text-slate-700">
-              {collectionPoint.latitude}, {collectionPoint.longitude}
-            </p>
-          </div>
-        )}
-
-        {acceptedCategoryNames.length > 0 && (
-          <div className="mt-5 border-t border-slate-100 pt-5">
-            <p className="mb-2 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
-              <LuTag className="size-3.5" />
-              Accepted categories
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {acceptedCategoryNames.map((name) => (
-                <span
-                  key={name}
-                  className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700"
-                >
-                  {name}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
 
         {collectionPoint.name_ar && (
           <div className="mt-5 border-t border-slate-100 pt-5">

@@ -140,11 +140,11 @@ test.describe('Staff collection points', () => {
     // module, unlike contact messages.
     const patchResponse = await page.request.patch(
       `/api/v1/collection-points/${collectionPointId}/`,
-      { data: { operating_hours: 'Edited by staff via API.' } },
+      { data: { postcode: '99999' } },
     );
     expect(patchResponse.ok()).toBe(true);
     const patched = await patchResponse.json();
-    expect(patched.operating_hours).toBe('Edited by staff via API.');
+    expect(patched.postcode).toBe('99999');
 
     // And can delete it — a real hard delete, same as admin.
     const deleteResponse = await page.request.delete(

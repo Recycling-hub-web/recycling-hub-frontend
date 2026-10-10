@@ -36,10 +36,6 @@ type CollectionPointPayload = Partial<{
   address: string;
   city: string;
   postcode: string;
-  latitude: string | null;
-  longitude: string | null;
-  operating_hours: string;
-  accepted_categories: string[];
   is_active: boolean;
 }>;
 

@@ -7,9 +7,7 @@ import { useEffect, useState } from 'react';
 import { LuArrowLeft } from 'react-icons/lu';
 
 import { ApiError } from '../../../../lib/api';
-import { CheckSimpleBoxGroup } from '../../../form/fields/CheckSimpleBoxGroup';
 import { InputField } from '../../../form/fields/InputField';
-import { TextareaField } from '../../../form/fields/TextareaField';
 import { ToggleInput } from '../../../form/toggle/ToggleInput';
 import { PageContainer } from '../../../layout/PageContainer';
 import { AlertBanner } from '../../../ui/AlertBanner';
@@ -18,11 +16,7 @@ import { Card } from '../../../ui/card/Card';
 import { Loading } from '../../../ui/loading/Loading';
 import { PageHeader } from '../../../ui/PageHeader';
 import { useToast } from '../../../ui/toast/ToastContext';
-import {
-  useCollectionPoint,
-  useMaterialCategories,
-  useUpdateCollectionPoint,
-} from '../hooks';
+import { useCollectionPoint, useUpdateCollectionPoint } from '../hooks';
 
 type FormState = {
   name: string;
@@ -30,10 +24,6 @@ type FormState = {
   address: string;
   city: string;
   postcode: string;
-  latitude: string;
-  longitude: string;
-  operating_hours: string;
-  accepted_categories: string[];
   is_active: boolean;
 };
 
@@ -55,7 +45,6 @@ const EditCollectionPointView = ({
   } = useCollectionPoint(collectionPointId);
   const { execute: updateCollectionPoint, loading: submitting } =
     useUpdateCollectionPoint();
-  const { categories, loading: loadingCategories } = useMaterialCategories();
   const [formData, setFormData] = useState<FormState | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [apiError, setApiError] = useState('');
@@ -68,10 +57,6 @@ const EditCollectionPointView = ({
       address: collectionPoint.address,
       city: collectionPoint.city,
       postcode: collectionPoint.postcode,
-      latitude: collectionPoint.latitude ?? '',
-      longitude: collectionPoint.longitude ?? '',
-      operating_hours: collectionPoint.operating_hours,
-      accepted_categories: collectionPoint.accepted_categories,
       is_active: collectionPoint.is_active,
     });
   }, [collectionPoint]);
@@ -109,10 +94,6 @@ const EditCollectionPointView = ({
         address: formData.address,
         city: formData.city,
         postcode: formData.postcode,
-        latitude: formData.latitude || null,
-        longitude: formData.longitude || null,
-        operating_hours: formData.operating_hours,
-        accepted_categories: formData.accepted_categories,
         is_active: formData.is_active,
       });
       toast.success('Collection point updated');
@@ -147,15 +128,7 @@ const EditCollectionPointView = ({
     formData.address !== collectionPoint.address ||
     formData.city !== collectionPoint.city ||
     formData.postcode !== collectionPoint.postcode ||
-    formData.latitude !== (collectionPoint.latitude ?? '') ||
-    formData.longitude !== (collectionPoint.longitude ?? '') ||
-    formData.operating_hours !== collectionPoint.operating_hours ||
-    formData.is_active !== collectionPoint.is_active ||
-    formData.accepted_categories.length !==
-      collectionPoint.accepted_categories.length ||
-    formData.accepted_categories.some(
-      (id) => !collectionPoint.accepted_categories.includes(id),
-    );
+    formData.is_active !== collectionPoint.is_active;
 
   return (
     <PageContainer variant="form">
@@ -221,58 +194,7 @@ const EditCollectionPointView = ({
               updateFormData={updateFormData}
               disabled={submitting}
             />
-            <InputField
-              label="Latitude"
-              field="latitude"
-              type="number"
-              required={false}
-              formData={formData}
-              errors={errors}
-              updateFormData={updateFormData}
-              disabled={submitting}
-            />
-            <InputField
-              label="Longitude"
-              field="longitude"
-              type="number"
-              required={false}
-              formData={formData}
-              errors={errors}
-              updateFormData={updateFormData}
-              disabled={submitting}
-            />
-            <div className="sm:col-span-2">
-              <TextareaField
-                label="Operating hours"
-                field="operating_hours"
-                required={false}
-                formData={formData}
-                errors={errors}
-                updateFormData={updateFormData}
-                disabled={submitting}
-              />
-            </div>
           </div>
-
-          <CheckSimpleBoxGroup
-            label="Accepted categories"
-            field="accepted_categories"
-            options={categories}
-            formData={{ accepted_categories: formData.accepted_categories }}
-            updateFormData={(_field, value) =>
-              setFormData((prev) =>
-                prev
-                  ? { ...prev, accepted_categories: value as string[] }
-                  : prev,
-              )
-            }
-            required={false}
-          />
-          {loadingCategories && (
-            <p className="-mt-3 mb-4 text-xs text-slate-400">
-              Loading categories…
-            </p>
-          )}
 
           <ToggleInput
             label="Active"
