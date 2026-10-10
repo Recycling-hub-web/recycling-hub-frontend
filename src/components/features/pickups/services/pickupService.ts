@@ -281,6 +281,16 @@ const convertQuickPickupRequest = (
 ): Promise<PickupRequestDetails> =>
   apiFetch(`/pickups/quick/${id}/convert/`, { method: 'POST', json: payload });
 
+type DailyVolumePoint = {
+  date: string;
+  count: number;
+};
+
+// Admin/staff only — powers Admin's Overview dashboard trend chart. See
+// CollectionRequestViewSet.daily_volume on the backend.
+const getDailyPickupVolume = (days = 30): Promise<DailyVolumePoint[]> =>
+  apiFetch(`/pickups/daily-volume/?days=${days}`);
+
 export {
   assignDriverToRequest,
   cancelPickupRequest,
@@ -293,6 +303,7 @@ export {
   deletePickupRequest,
   dropOffRoute,
   evaluatePickupRequest,
+  getDailyPickupVolume,
   getPickupRequest,
   getQuickPickupRequest,
   listPickupRequests,
@@ -309,6 +320,7 @@ export type {
   CollectPickupPayload,
   CreatePickupRequestPayload,
   CreateQuickPickupRequestPayload,
+  DailyVolumePoint,
   DropOffItem,
   DropOffPayload,
   EvaluatePickupPayload,

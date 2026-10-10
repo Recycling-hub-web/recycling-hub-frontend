@@ -16,6 +16,10 @@ type RoleOverviewLayoutProps = {
   /** Admin/Staff pass their OverviewStatGrid here; the three roles with
    * no workflow data yet omit it. */
   statGrid?: ReactNode;
+  /** Anything bigger than a stat row — a chart (Admin only) or a short
+   * table (Staff/Receiving Officer) — rendered between the stats and
+   * the quick links. */
+  extra?: ReactNode;
 };
 
 /** The page shell every role's Overview composes: welcome header,
@@ -28,6 +32,7 @@ const RoleOverviewLayout = ({
   navItems,
   ownHref,
   statGrid,
+  extra,
 }: RoleOverviewLayoutProps) => {
   const { user } = useAuth();
 
@@ -43,6 +48,8 @@ const RoleOverviewLayout = ({
       />
 
       {statGrid}
+
+      {extra}
 
       <OverviewQuickLinks navItems={navItems} ownHref={ownHref} />
 

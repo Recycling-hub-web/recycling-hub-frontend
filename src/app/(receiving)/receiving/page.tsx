@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 
-import { SimpleOverviewView } from '../../../components/features/overview/components';
+import { ReceivingOverviewView } from '../../../components/features/overview/components';
 
 export const metadata: Metadata = {
   title: 'Receiving — Recycling Hub',
@@ -8,5 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function ReceivingDashboardPage() {
-  return <SimpleOverviewView role="receiving_officer" />;
+  return <ReceivingOverviewView />;
 }

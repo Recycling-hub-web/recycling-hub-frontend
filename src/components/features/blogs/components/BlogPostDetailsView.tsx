@@ -326,7 +326,7 @@ const BlogPostDetailsView = ({
             </p>
           )}
           {post.no_index && (
-            <p className="text-amber-600 mt-3 text-xs font-medium">
+            <p className="mt-3 text-xs font-medium text-amber-600">
               Hidden from search engines (noindex)
             </p>
           )}

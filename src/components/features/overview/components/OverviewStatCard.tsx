@@ -4,9 +4,11 @@ import type { IconType } from 'react-icons';
 type OverviewStatCardProps = {
   icon: IconType;
   label: string;
-  /** `null` renders a loading skeleton in place of the number — the
-   * hook hasn't resolved yet, not a real zero. */
-  value: number | null;
+  /** `null` renders a loading skeleton in place of the value — the
+   * hook hasn't resolved yet, not a real zero. A string is for a
+   * pre-formatted value (currency, a route's status text) that isn't a
+   * plain count. */
+  value: number | string | null;
   /** Optional — when set, the whole tile is a link to that module. */
   href?: string;
 };
@@ -33,7 +35,7 @@ const OverviewStatCard = ({
         {value === null ? (
           <div className="mt-1 h-6 w-10 animate-pulse rounded bg-slate-100" />
         ) : (
-          <p className="text-xl font-bold text-neutral-950">{value}</p>
+          <p className="truncate text-xl font-bold text-neutral-950">{value}</p>
         )}
       </div>
     </>

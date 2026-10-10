@@ -30,7 +30,7 @@ const StarRating = ({
             onClick={() => onChange?.(n)}
             aria-label={`${n} star${n === 1 ? '' : 's'}`}
             aria-pressed={filled}
-            className={`${size} text-amber-400 flex items-center justify-center disabled:cursor-default ${
+            className={`${size} flex items-center justify-center text-amber-400 disabled:cursor-default ${
               readOnly
                 ? ''
                 : 'transition-transform duration-150 ease-in-out hover:scale-110'
