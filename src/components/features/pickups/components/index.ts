@@ -2,6 +2,7 @@ export { AssignDriverModal } from './AssignDriverModal';
 export { CancelModal } from './CancelModal';
 export { CollectModal } from './CollectModal';
 export { CreatePickupRequestView } from './CreatePickupRequestView';
+export { DriverPickupDetailsView } from './DriverPickupDetailsView';
 export { DriverPickupsView } from './DriverPickupsView';
 export { EditPickupRequestView } from './EditPickupRequestView';
 export { EvaluateModal } from './EvaluateModal';

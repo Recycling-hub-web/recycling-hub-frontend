@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import {
   LuMapPin,
@@ -40,6 +41,11 @@ type Tab = 'available' | 'mine';
 // cap (see apps.pickups.services.optimize_route).
 const MAX_OPTIMIZE_STOPS = 10;
 
+// Once a pickup is collected (or further along: delivered/closed)
+// there's nowhere left to navigate to — matches
+// DriverPickupDetailsView's own NAVIGABLE_STATUSES.
+const NAVIGABLE_STATUSES = ['pending', 'scheduled'];
+
 /** Driver's own scoped pickups view — not PickupRequestTable reused
  * (that's the full admin/staff CRUD view). A driver only ever sees two
  * slices of the same GET /pickups/ endpoint (server-scoped — see
@@ -51,6 +57,7 @@ const MAX_OPTIMIZE_STOPS = 10;
  * volume) — same choice QuickLeadTable already made for the Quick
  * Leads queue. */
 const DriverPickupsView = () => {
+  const router = useRouter();
   const toast = useToast();
   const [activeTab, setActiveTab] = useState<Tab>('available');
   const {
@@ -224,10 +231,16 @@ const DriverPickupsView = () => {
         checkboxTitle = `You can optimize at most ${MAX_OPTIMIZE_STOPS} stops at once.`;
       }
 
+      const canNavigate = NAVIGABLE_STATUSES.includes(r.status);
+
       return (
-        <tr key={r.id} className="transition-colors hover:bg-slate-50">
+        <tr
+          key={r.id}
+          onClick={() => router.push(`/driver/pickups/${r.id}`)}
+          className="cursor-pointer transition-colors hover:bg-slate-50"
+        >
           {activeTab === 'mine' && (
-            <td className="p-4">
+            <td className="p-4" onClick={(e) => e.stopPropagation()}>
               <input
                 type="checkbox"
                 checked={selectedIds.has(r.id)}
@@ -258,36 +271,40 @@ const DriverPickupsView = () => {
           <td className="px-6 py-4 text-slate-500">
             {r.requested_date ?? '—'}
           </td>
-          <td className="px-6 py-4">
+          <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-end gap-2">
-              <button
-                type="button"
-                onClick={() =>
-                  window.open(
-                    googleMapsDirectionsUrl(r.pickup_address),
-                    '_blank',
-                    'noopener,noreferrer',
-                  )
-                }
-                aria-label={`Navigate to ${r.full_name} with Google Maps`}
-                className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-brand-50 hover:text-brand-600"
-              >
-                <LuMapPin className="size-4" />
-              </button>
-              <button
-                type="button"
-                onClick={() =>
-                  window.open(
-                    wazeNavigateUrl(r.pickup_address),
-                    '_blank',
-                    'noopener,noreferrer',
-                  )
-                }
-                aria-label={`Navigate to ${r.full_name} with Waze`}
-                className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-brand-50 hover:text-brand-600"
-              >
-                <LuNavigation className="size-4" />
-              </button>
+              {canNavigate && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      window.open(
+                        googleMapsDirectionsUrl(r.pickup_address),
+                        '_blank',
+                        'noopener,noreferrer',
+                      )
+                    }
+                    aria-label={`Navigate to ${r.full_name} with Google Maps`}
+                    className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-brand-50 hover:text-brand-600"
+                  >
+                    <LuMapPin className="size-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      window.open(
+                        wazeNavigateUrl(r.pickup_address),
+                        '_blank',
+                        'noopener,noreferrer',
+                      )
+                    }
+                    aria-label={`Navigate to ${r.full_name} with Waze`}
+                    className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-brand-50 hover:text-brand-600"
+                  >
+                    <LuNavigation className="size-4" />
+                  </button>
+                </>
+              )}
               {activeTab === 'available' ? (
                 <button
                   type="button"
