@@ -31,6 +31,7 @@ type FinanceRecordListItem = {
   actual_amount: string | null;
   payment_method: FinancePaymentMethod | '';
   proof_of_payment: ProofOfPayment;
+  reimbursement_proof: ProofOfPayment;
   status: FinanceStatus;
   claimed_at: string | null;
   verified_at: string | null;

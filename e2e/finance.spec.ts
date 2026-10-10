@@ -9,7 +9,13 @@ import { loginAs } from './helpers/auth';
  * APPROVED branch and updated by collect() when an assigned driver
  * pays the customer out of pocket. Covers the full chain: collect()
  * capturing payment details -> driver's one-click bulk claim ->
- * accounting/admin's Verify & Reimburse (single or bulk).
+ * accounting/admin/staff's Verify & Reimburse (single or bulk), each
+ * via ReimburseModal rather than a direct API call, since the modal
+ * also collects an optional reimbursement proof (one file for the
+ * whole batch, not per record — see FinanceRecordViewSet.verify_reimburse).
+ * The per-row table action is icon-only with a tooltip (standing
+ * convention — no text buttons inside tables), and each row links to
+ * its own FinanceRecordDetailsView page.
  */
 
 const E_WASTE_CATEGORY_ID = '89067cc7-38ef-4752-9cd4-3ea29975abcb';
@@ -85,12 +91,18 @@ test('driver claims reimbursement, accounting verifies and reimburses', async ({
     page.locator('main', { hasText: fullName }).first(),
   ).toContainText('Claimed');
 
-  // Admin verifies and reimburses — single-row action.
+  // Admin verifies and reimburses — single-row action. Icon-only with
+  // a tooltip, not a text button in the table; opens a modal (where
+  // an optional reimbursement proof can be attached) rather than
+  // calling the API directly.
   await loginAs(page, 'admin');
   await page.goto('/admin/finance');
   const row = page.locator('tr', { hasText: fullName });
   await expect(row).toContainText('Claimed');
-  await row.getByRole('button', { name: 'Verify & Reimburse' }).click();
+  await row
+    .getByRole('button', { name: `Verify and reimburse ${fullName}` })
+    .click();
+  await page.locator('button[form="reimburse-form"]').click();
 
   await expect(page.locator('tr', { hasText: fullName })).toContainText(
     'Reimbursed',
@@ -116,6 +128,7 @@ test('bulk Verify & Reimburse pays back several claimed records at once', async 
   await page
     .getByRole('button', { name: /verify & reimburse selected \(2\)/i })
     .click();
+  await page.locator('button[form="reimburse-form"]').click();
 
   await expect(page.locator('tr', { hasText: nameA })).toContainText(
     'Reimbursed',
@@ -177,4 +190,67 @@ test('collect modal requires payment method and proof when a driver is assigned'
   await expect(page.getByText('Collected', { exact: true })).toBeVisible();
 
   await page.request.delete(`/api/v1/pickups/${id}/`);
+});
+
+test('staff can reach Finance Records and verify & reimburse a claimed record', async ({
+  page,
+}) => {
+  await loginAs(page, 'admin');
+  const fullName = uniqueName('StaffAccess');
+  await seedDriverCollectedRecord(page.request, fullName, '28.00');
+
+  await loginAs(page, 'qaDriver');
+  await page.request.post('/api/v1/finance/claim-mine/');
+
+  // Staff shares accounting/admin's full, writable Finance Records
+  // table (IsAccountingOrAdminOrStaff on the backend) — not the
+  // read-only view a driver gets.
+  await loginAs(page, 'qaStaff');
+  await page.goto('/staff/finance');
+  const row = page.locator('tr', { hasText: fullName });
+  await expect(row).toContainText('Claimed');
+  await row
+    .getByRole('button', { name: `Verify and reimburse ${fullName}` })
+    .click();
+  await page.locator('button[form="reimburse-form"]').click();
+  await expect(page.locator('tr', { hasText: fullName })).toContainText(
+    'Reimbursed',
+  );
+});
+
+test('clicking a row opens its details page, which can also Verify & Reimburse', async ({
+  page,
+}) => {
+  await loginAs(page, 'admin');
+  const fullName = uniqueName('Details');
+  const pickupId = await seedDriverCollectedRecord(
+    page.request,
+    fullName,
+    '40.00',
+  );
+
+  await loginAs(page, 'qaDriver');
+  await page.request.post('/api/v1/finance/claim-mine/');
+  const financeRes = await page.request.get('/api/v1/finance/?status=claimed');
+  const financeRecord = (await financeRes.json()).results.find(
+    (r: { collection_request: { id: string } }) =>
+      r.collection_request.id === pickupId,
+  );
+
+  await loginAs(page, 'admin');
+  await page.goto('/admin/finance');
+  await page.locator('tr', { hasText: fullName }).click();
+  await expect(page).toHaveURL(
+    new RegExp(`/admin/finance/${financeRecord.id}`),
+  );
+  await expect(page.getByRole('heading', { name: fullName })).toBeVisible();
+  await expect(page.getByText('Claimed', { exact: true })).toBeVisible();
+
+  // Proof stays optional — same as collect()'s own proof_of_payment —
+  // so confirming with none attached still succeeds.
+  await page.getByRole('button', { name: 'Verify & Reimburse' }).click();
+  await page.locator('button[form="reimburse-form"]').click();
+  await expect(page.getByText('Reimbursed', { exact: true })).toBeVisible();
+
+  await page.request.delete(`/api/v1/pickups/${pickupId}/`);
 });

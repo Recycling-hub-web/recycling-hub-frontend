@@ -7,27 +7,35 @@ import { PageContainer } from '../../../layout/PageContainer';
 import { FilterSelect } from '../../../ui/FilterSelect';
 import { PageHeader } from '../../../ui/PageHeader';
 import { STATUS_FILTER_OPTIONS } from '../constants';
-import { useFinanceRecords, useVerifyReimburse } from '../hooks';
+import { useFinanceRecords } from '../hooks';
 import type { FinanceStatus } from '../types';
 import { FinanceRecordTable } from './FinanceRecordTable';
+import { ReimburseModal } from './ReimburseModal';
 
-/** Accounting/admin's full table (every driver, filterable); the same
- * component also renders on the driver's own route, where the backend
- * already scopes the queryset to that driver's own records — only the
- * bulk Verify & Reimburse affordance is hidden there, since a driver
- * can't act on it anyway (403 on the backend). */
+/** Accounting/admin/staff's full table (every driver, filterable); the
+ * same component also renders on the driver's own route, where the
+ * backend already scopes the queryset to that driver's own records —
+ * only the bulk Verify & Reimburse affordance is hidden there, since a
+ * driver can't act on it anyway (403 on the backend). */
 const FinanceRecordsView = () => {
   const { user } = useAuth();
-  const canManage = user?.role === 'accounting' || user?.role === 'admin';
+  const canManage =
+    user?.role === 'accounting' ||
+    user?.role === 'admin' ||
+    user?.role === 'staff';
+  // Every role's finance route is `/${role}/finance` — see the app's
+  // four identical (admin/staff/accounting/driver) finance/page.tsx
+  // files, each rendering this same component with no props.
+  const basePath = `/${user?.role}/finance`;
 
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<FinanceStatus | ''>('');
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [reimburseIds, setReimburseIds] = useState<string[] | null>(null);
   const { records, count, loading, error, refetch } = useFinanceRecords({
     page,
     status: statusFilter,
   });
-  const { execute: verifyReimburse, loading: verifying } = useVerifyReimburse();
 
   const handleStatusFilterChange = (value: string) => {
     setStatusFilter(value as FinanceStatus | '');
@@ -54,8 +62,7 @@ const FinanceRecordsView = () => {
     });
   };
 
-  const handleVerifyReimburse = async (ids: string[]) => {
-    await verifyReimburse(ids);
+  const handleReimbursed = () => {
     setSelectedIds(new Set());
     refetch();
   };
@@ -69,13 +76,10 @@ const FinanceRecordsView = () => {
           canManage && selectedIds.size > 0 ? (
             <button
               type="button"
-              disabled={verifying}
-              onClick={() => handleVerifyReimburse(Array.from(selectedIds))}
-              className="inline-flex items-center justify-center rounded-full bg-brand-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-50"
+              onClick={() => setReimburseIds(Array.from(selectedIds))}
+              className="inline-flex items-center justify-center rounded-full bg-brand-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-brand-700"
             >
-              {verifying
-                ? 'Saving…'
-                : `Verify & Reimburse selected (${selectedIds.size})`}
+              {`Verify & Reimburse selected (${selectedIds.size})`}
             </button>
           ) : undefined
         }
@@ -92,6 +96,7 @@ const FinanceRecordsView = () => {
       )}
 
       <FinanceRecordTable
+        basePath={basePath}
         records={records}
         count={count}
         page={page}
@@ -102,9 +107,15 @@ const FinanceRecordsView = () => {
         selectedIds={canManage ? selectedIds : new Set()}
         onToggleSelect={toggleSelect}
         onToggleSelectAll={toggleSelectAll}
-        onVerifyReimburse={handleVerifyReimburse}
-        verifying={verifying}
+        onRequestReimburse={setReimburseIds}
         canManage={canManage}
+      />
+
+      <ReimburseModal
+        ids={reimburseIds ?? []}
+        open={reimburseIds !== null}
+        onClose={() => setReimburseIds(null)}
+        onReimbursed={handleReimbursed}
       />
     </PageContainer>
   );

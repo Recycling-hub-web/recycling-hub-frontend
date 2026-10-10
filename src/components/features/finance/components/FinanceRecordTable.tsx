@@ -1,5 +1,8 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
+import { LuWalletCards } from 'react-icons/lu';
+
 import { StatusBadge } from '../../../ui/badges/StatusBadge';
 import { AppDate } from '../../../ui/date/AppDate';
 import {
@@ -16,6 +19,10 @@ import { FINANCE_PAYMENT_METHOD_LABELS, FINANCE_STATUS_LABELS } from '../types';
 const PAGE_SIZE = 12;
 
 type FinanceRecordTableProps = {
+  /** Role-scoped base route (`/admin/finance`, `/staff/finance`,
+   * `/accounting/finance`, `/driver/finance`) — rows link into
+   * `${basePath}/${id}`. */
+  basePath: string;
   records: FinanceRecordListItem[];
   count: number;
   page: number;
@@ -31,8 +38,10 @@ type FinanceRecordTableProps = {
   selectedIds: Set<string>;
   onToggleSelect: (id: string) => void;
   onToggleSelectAll: () => void;
-  onVerifyReimburse: (ids: string[]) => void;
-  verifying: boolean;
+  /** Opens the Verify & Reimburse modal for these ids — the table
+   * never calls the API directly, since the modal also collects an
+   * optional reimbursement proof. */
+  onRequestReimburse: (ids: string[]) => void;
   /** False on the driver's own read-only view — no checkboxes or
    * per-row action, since a driver can't Verify & Reimburse anyway
    * (403 on the backend). */
@@ -42,8 +51,12 @@ type FinanceRecordTableProps = {
 /** One row per approved, priced pickup request (see FinanceRecord on
  * the backend). Driver-collected rows carry payout info; staff-collected
  * ones never move past `pending` (see collect() — nothing to claim or
- * reimburse there). */
+ * reimburse there). Icon-only row action with a tooltip, never a text
+ * button inside the table (standing convention) — clicking the row
+ * itself opens the details page; the checkbox and action icon stop
+ * that from firing. */
 const FinanceRecordTable = ({
+  basePath,
   records,
   count,
   page,
@@ -54,10 +67,10 @@ const FinanceRecordTable = ({
   selectedIds,
   onToggleSelect,
   onToggleSelectAll,
-  onVerifyReimburse,
-  verifying,
+  onRequestReimburse,
   canManage,
 }: FinanceRecordTableProps) => {
+  const router = useRouter();
   const columnCount = canManage ? 9 : 7;
   const claimedRecords = records.filter((r) => r.status === 'claimed');
   const allClaimedSelected =
@@ -85,9 +98,13 @@ const FinanceRecordTable = ({
       );
     }
     return records.map((r) => (
-      <tr key={r.id} className="transition-colors hover:bg-slate-50">
+      <tr
+        key={r.id}
+        onClick={() => router.push(`${basePath}/${r.id}`)}
+        className="cursor-pointer transition-colors hover:bg-slate-50"
+      >
         {canManage && (
-          <td className="p-4">
+          <td className="p-4" onClick={(e) => e.stopPropagation()}>
             {r.status === 'claimed' && (
               <input
                 type="checkbox"
@@ -121,15 +138,16 @@ const FinanceRecordTable = ({
           <AppDate value={r.created_at} format="short" />
         </td>
         {canManage && (
-          <td className="px-6 py-4">
+          <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
             {r.status === 'claimed' && (
               <button
                 type="button"
-                disabled={verifying}
-                onClick={() => onVerifyReimburse([r.id])}
-                className="rounded-full border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
+                title="Verify & Reimburse"
+                aria-label={`Verify and reimburse ${r.collection_request.full_name}`}
+                onClick={() => onRequestReimburse([r.id])}
+                className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-brand-50 hover:text-brand-600"
               >
-                Verify & Reimburse
+                <LuWalletCards className="size-4" />
               </button>
             )}
           </td>

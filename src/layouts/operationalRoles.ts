@@ -27,14 +27,14 @@ type OperationalRoleConfig = {
 // (every role, same shared NotificationsView — see
 // features/notifications/components), and, for staff,
 // "Pickup Requests"/"Contact"/"Categories"/"Classifications"/"Collection
-// Points"/"Storage Files"/"Blog Posts"/"Partnerships"; for driver, its
-// own scoped "Pickup Requests"; for accounting, "Finance Records" — is
-// wired to real pages today — the rest of each role's section (assigned
-// tasks, reports) lands here as that workflow work gets built, same
-// "roles first, then workflows" pattern the admin sidebar started with.
-// Staff sees the same pickups/contact management admin does (same
-// components, basePath="/staff/…") but without contact delete —
-// enforced on the backend too (ContactMessageViewSet.get_permissions),
+// Points"/"Storage Files"/"Blog Posts"/"Partnerships"/"Finance Records";
+// for driver, its own scoped "Pickup Requests"; for accounting, "Finance
+// Records" — is wired to real pages today — the rest of each role's
+// section (assigned tasks, reports) lands here as that workflow work
+// gets built, same "roles first, then workflows" pattern the admin
+// sidebar started with. Staff sees the same pickups/contact management
+// admin does (same components, basePath="/staff/…") but without contact
+// delete — enforced on the backend too (ContactMessageViewSet.get_permissions),
 // not just a hidden button here. Pickups, Categories, Classifications,
 // Collection Points, Storage Files, Blog Posts, and Partnerships have no
 // such split: admin and staff share identical permissions on all seven
@@ -47,20 +47,23 @@ type OperationalRoleConfig = {
 // — since a driver only ever sees the open claimable pool + their own
 // (see CollectionRequestViewSet.get_queryset's driver branch), with
 // claim/collect actions instead of the full admin/staff CRUD. Finance
-// Records (FinanceRecordsView) is accounting/admin's full, writable
-// (claim/verify/reimburse) table; the driver's own route renders the
-// same component, scoped server-side to their own records and
-// read-only past submission — their one write action (the one-click
-// bulk claim) lives as a banner on their Pickup Requests page instead,
-// not on this table. The driver's "Drop Off to Store" (RouteDropOffView)
-// is its own dedicated screen, not CollectModal reused — one batch
-// action across every `collected` request on their current open Route
-// (see Route on the backend), not a per-task repeat. Receiving
-// Officer's first real page, "Deliveries" (ReceivingDeliveriesView),
-// is the other end of that same chain — verifying/closing requests a
-// driver has already dropped off; the backend already scopes its
-// queryset to delivered/closed only, so there's nothing earlier in the
-// lifecycle to accidentally expose here.
+// Records (FinanceRecordsView) is accounting/admin/staff's full,
+// writable (claim/verify/reimburse) table — staff gained this access
+// alongside accounting/admin (IsAccountingOrAdminOrStaff on the
+// backend), unlike every other role-split module in this app where
+// staff's extra reach stops short of something admin can do; the
+// driver's own route renders the same component, scoped server-side to
+// their own records and read-only past submission — their one write
+// action (the one-click bulk claim) lives as a banner on their Pickup
+// Requests page instead, not on this table. The driver's "Drop Off to
+// Store" (RouteDropOffView) is its own dedicated screen, not
+// CollectModal reused — one batch action across every `collected`
+// request on their current open Route (see Route on the backend), not a
+// per-task repeat. Receiving Officer's first real page, "Deliveries"
+// (ReceivingDeliveriesView), is the other end of that same chain —
+// verifying/closing requests a driver has already dropped off; the
+// backend already scopes its queryset to delivered/closed only, so
+// there's nothing earlier in the lifecycle to accidentally expose here.
 const OPERATIONAL_ROLES: Record<OperationalRole, OperationalRoleConfig> = {
   staff: {
     route: '/staff',
@@ -90,6 +93,7 @@ const OPERATIONAL_ROLES: Record<OperationalRole, OperationalRoleConfig> = {
         label: 'Partnerships',
         icon: LuHandshake,
       },
+      { href: '/staff/finance', label: 'Finance Records', icon: LuWallet },
       { href: '/staff/notifications', label: 'Notifications', icon: LuBell },
     ],
   },
