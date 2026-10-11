@@ -3,7 +3,6 @@ type ActivityModule =
   | 'pickups'
   | 'finance'
   | 'categories'
-  | 'classifications'
   | 'storage'
   | 'contact'
   | 'opportunities'
@@ -51,7 +50,6 @@ const MODULE_LABELS: Record<ActivityModule, string> = {
   pickups: 'Pickups',
   finance: 'Finance',
   categories: 'Categories',
-  classifications: 'Classifications',
   storage: 'Storage',
   contact: 'Contact',
   opportunities: 'Opportunities',

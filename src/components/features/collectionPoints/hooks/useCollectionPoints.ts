@@ -9,8 +9,7 @@ type UseCollectionPointsParams = {
   search?: string;
 };
 
-/** Fetches one page of collection points — mirrors useClassifications'
- * shape. */
+/** Fetches one page of collection points. */
 const useCollectionPoints = ({ page, search }: UseCollectionPointsParams) => {
   const [collectionPoints, setCollectionPoints] = useState<CollectionPoint[]>(
     [],

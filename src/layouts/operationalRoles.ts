@@ -2,7 +2,6 @@ import {
   LuBell,
   LuHandshake,
   LuHardDrive,
-  LuLayers,
   LuLayoutDashboard,
   LuMail,
   LuMapPin,
@@ -31,7 +30,7 @@ type OperationalRoleConfig = {
 // Each role's own route + sidebar. Only "Overview", "Notifications"
 // (every role, same shared NotificationsView — see
 // features/notifications/components), and, for staff,
-// "Pickup Requests"/"Contact"/"Categories"/"Classifications"/"Collection
+// "Pickup Requests"/"Contact"/"Categories"/"Collection
 // Points"/"Storage Files"/"Blog Posts"/"Partnerships"/"Finance Records";
 // for driver, its own scoped "Pickup Requests"; for accounting, "Finance
 // Records" — is wired to real pages today — the rest of each role's
@@ -40,11 +39,11 @@ type OperationalRoleConfig = {
 // sidebar started with. Staff sees the same pickups/contact management
 // admin does (same components, basePath="/staff/…") but without contact
 // delete — enforced on the backend too (ContactMessageViewSet.get_permissions),
-// not just a hidden button here. Pickups, Categories, Classifications,
+// not just a hidden button here. Pickups, Categories,
 // Collection Points, Storage Files, Blog Posts, and Partnerships have no
-// such split: admin and staff share identical permissions on all seven
+// such split: admin and staff share identical permissions on all six
 // modules (CollectionRequestViewSet / CategoryViewSet +
-// IsStaffOrReadOnly / ClassificationView / CollectionPointViewSet +
+// IsStaffOrReadOnly / CollectionPointViewSet +
 // IsAdminOrStaffUser / FileRecordViewSet + IsAdminOrStaffUser /
 // BlogPostViewSet + IsStaffOrReadOnly / PartnerViewSet +
 // IsStaffOrReadOnly). Driver's "Pickup Requests" is a different,
@@ -77,11 +76,6 @@ const OPERATIONAL_ROLES: Record<OperationalRole, OperationalRoleConfig> = {
       { href: '/staff/pickups', label: 'Pickup Requests', icon: LuTruck },
       { href: '/staff/contact', label: 'Contact', icon: LuMail },
       { href: '/staff/categories', label: 'Categories', icon: LuTag },
-      {
-        href: '/staff/classifications',
-        label: 'Classifications',
-        icon: LuLayers,
-      },
       {
         href: '/staff/collection-points',
         label: 'Collection Points',

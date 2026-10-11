@@ -26,14 +26,14 @@ type CollectionPointTableProps = {
   error: string;
   onRetry: () => void;
   /** /super-admin/collection-points or /staff/collection-points — one
-   * component serves both role areas, same as ClassificationTable. */
+   * component serves both role areas. */
   basePath: string;
   onDeleteRequest: (collectionPoint: CollectionPoint) => void;
 };
 
 /** Pure presentational — every value it renders is a prop. Admin and
  * staff have identical permissions here (IsAdminOrStaffUser on every
- * write action), so no canDelete gate, same as Classifications. */
+ * write action), so no canDelete gate. */
 const CollectionPointTable = ({
   collectionPoints,
   count,

@@ -19,8 +19,7 @@ type TagFormModalProps = {
 };
 
 /** A tag is just a name — a modal is proportionate here, not a full
- * create/edit page pair like Categories/Classifications get for their
- * richer forms. */
+ * create/edit page pair like Categories gets for its richer form. */
 const TagFormModal = ({ open, onClose, onSaved, tag }: TagFormModalProps) => {
   const { execute: createTag, loading: creating } = useCreateBlogTag();
   const { execute: updateTag, loading: updating } = useUpdateBlogTag();

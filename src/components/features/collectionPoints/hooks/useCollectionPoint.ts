@@ -4,8 +4,7 @@ import { ApiError } from '../../../../lib/api';
 import { getCollectionPoint } from '../services/collectionPointService';
 import type { CollectionPoint } from '../types';
 
-/** Fetches a single collection point's full detail — mirrors
- * useClassification's shape. */
+/** Fetches a single collection point's full detail. */
 const useCollectionPoint = (id: string) => {
   const [collectionPoint, setCollectionPoint] =
     useState<CollectionPoint | null>(null);

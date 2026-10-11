@@ -38,8 +38,7 @@ type CreateCollectionPointViewProps = {
     | '/super-admin/collection-points';
 };
 
-// Full page, not a modal — same footing as CreateClassificationView/
-// CreateCategoryView.
+// Full page, not a modal — same footing as CreateCategoryView.
 const CreateCollectionPointView = ({
   basePath,
 }: CreateCollectionPointViewProps) => {

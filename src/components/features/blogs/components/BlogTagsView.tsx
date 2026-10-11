@@ -24,9 +24,9 @@ type BlogTagsViewProps = {
 
 /** Reached from BlogPostsView's header, not its own sidebar entry — a
  * tag is just a name, this is a supplementary management screen nested
- * under Blogs, not a cross-cutting entity like Categories/
- * Classifications. Admin and staff have identical permissions here
- * (BlogTagViewSet + IsStaffOrReadOnly), so no canDelete prop. */
+ * under Blogs, not a cross-cutting entity like Categories. Admin and
+ * staff have identical permissions here (BlogTagViewSet +
+ * IsStaffOrReadOnly), so no canDelete prop. */
 const BlogTagsView = ({ basePath }: BlogTagsViewProps) => {
   const toast = useToast();
   const [searchInput, setSearchInput] = useState('');

@@ -60,7 +60,7 @@ type BlogPostSummary = {
 // `category` and `author` are both plain ids (not nested) —
 // BlogPostSerializer uses a bare FK for `category` and an explicit
 // read-only PrimaryKeyRelatedField for `author`, unlike Categories'
-// nested `children` or Classifications' nested `assigned_by`.
+// nested `children`.
 // `related_blog_ids` (write-only on the backend, used to set
 // `related_blogs`) is deliberately omitted here — no admin UI writes it
 // yet, see recycling-hub-blogs-module memory's "follow-up work" note.

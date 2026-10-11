@@ -4,13 +4,12 @@ import { loginAs } from './helpers/auth';
 
 /**
  * Collection Points — covers the admin/staff CRUD built for this module
- * (components/features/collectionPoints/). Shaped like
- * classifications.spec.ts (one shared-access model, real hard delete —
- * CollectionPointViewSet.perform_destroy is a plain instance.delete(),
- * no soft-delete like Categories), not contact.spec.ts, since admin and
- * staff have identical permissions here (CollectionPointViewSet +
- * IsAdminOrStaffUser on every write action) — no permission split to
- * prove.
+ * (components/features/collectionPoints/). One shared-access model,
+ * real hard delete — CollectionPointViewSet.perform_destroy is a plain
+ * instance.delete(), no soft-delete like Categories — not shaped like
+ * contact.spec.ts, since admin and staff have identical permissions
+ * here (CollectionPointViewSet + IsAdminOrStaffUser on every write
+ * action) — no permission split to prove.
  */
 
 const uniqueName = (label: string) =>
@@ -25,8 +24,8 @@ test.describe('Admin collection points', () => {
     await page.goto('/admin/collection-points');
 
     // Create: validation errors stay on the page and show inline —
-    // never navigate away. Unlike Classifications, three fields are
-    // required here (name, address, city).
+    // never navigate away. Three fields are required here (name,
+    // address, city).
     await page.getByRole('link', { name: /new collection point/i }).click();
     await page.getByRole('button', { name: 'Create collection point' }).click();
     await expect(page.getByText('Name is required.')).toBeVisible();

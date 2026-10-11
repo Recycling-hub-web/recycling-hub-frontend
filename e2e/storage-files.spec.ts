@@ -17,7 +17,7 @@ import { loginAs } from './helpers/auth';
  * fully (against two FileRecord rows seeded once via Django shell,
  * `documents/seed/manual-test-report.pdf` and
  * `images/seed/dashboard-preview.png`, kept as semi-permanent fixtures
- * the same way Categories/Classifications have their own seed data),
+ * the same way Categories has its own seed data),
  * while upload/download/delete surface the backend's own graceful
  * "storage not configured" error rather than silently succeeding or
  * crashing. These assertions should keep passing unchanged once real

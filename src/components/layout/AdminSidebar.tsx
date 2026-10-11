@@ -6,7 +6,6 @@ import {
   LuHandshake,
   LuHardDrive,
   LuIdCard,
-  LuLayers,
   LuLayoutDashboard,
   LuMail,
   LuMapPin,
@@ -44,7 +43,6 @@ const adminNavItemsFor = (role: UserRole | undefined): NavItem[] => [
   { href: '/admin/pickups', label: 'Pickup Requests', icon: LuTruck },
   { href: '/admin/contact', label: 'Contact', icon: LuMail },
   { href: '/admin/categories', label: 'Categories', icon: LuTag },
-  { href: '/admin/classifications', label: 'Classifications', icon: LuLayers },
   {
     href: '/admin/collection-points',
     label: 'Collection Points',

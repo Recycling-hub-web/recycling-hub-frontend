@@ -5,7 +5,6 @@ import {
   LuHandshake,
   LuHardDrive,
   LuHistory,
-  LuLayers,
   LuLayoutDashboard,
   LuMail,
   LuMapPin,
@@ -41,11 +40,6 @@ const SUPER_ADMIN_NAV_ITEMS: NavItem[] = [
   { href: '/super-admin/pickups', label: 'Pickup Requests', icon: LuTruck },
   { href: '/super-admin/contact', label: 'Contact', icon: LuMail },
   { href: '/super-admin/categories', label: 'Categories', icon: LuTag },
-  {
-    href: '/super-admin/classifications',
-    label: 'Classifications',
-    icon: LuLayers,
-  },
   {
     href: '/super-admin/collection-points',
     label: 'Collection Points',
