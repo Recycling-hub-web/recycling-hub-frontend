@@ -1,23 +1,9 @@
 import { apiFetch, downloadFile } from '../../../../lib/api';
 import type {
   CreateStaffPayload,
-  StaffListItem,
   StaffProfileDetail,
   UpdateStaffPayload,
 } from '../types';
-
-type Paginated<T> = {
-  count: number;
-  next: string | null;
-  previous: string | null;
-  results: T[];
-};
-
-// No `?search=`/`?page_size=` support on this endpoint — confirmed by
-// reading StaffManagementView directly, no filter_backends/search_fields
-// at all, unlike userService's listUsers.
-const listStaff = (page = 1): Promise<Paginated<StaffListItem>> =>
-  apiFetch(`/accounts/staff/?page=${page}`);
 
 const getStaff = (id: string): Promise<StaffProfileDetail> =>
   apiFetch(`/accounts/staff/${id}/`);
@@ -42,12 +28,4 @@ const deleteStaff = (id: string): Promise<void> =>
 const exportStaffReport = (): Promise<void> =>
   downloadFile('/accounts/staff/export/', 'staff_report.xlsx');
 
-export {
-  createStaff,
-  deleteStaff,
-  exportStaffReport,
-  getStaff,
-  listStaff,
-  updateStaff,
-};
-export type { Paginated };
+export { createStaff, deleteStaff, exportStaffReport, getStaff, updateStaff };

@@ -1,15 +1,5 @@
 import type { EmployeeProfile, UserDetail } from '../../../types/auth';
 
-// GET /accounts/staff/ (StaffListSerializer) — a subset of
-// EmployeeProfile; the list endpoint doesn't return joining_date/
-// created_at/updated_at, only the detail endpoint does.
-type StaffListItem = Omit<
-  EmployeeProfile,
-  'joining_date' | 'created_at' | 'updated_at'
-> & {
-  user: UserDetail;
-};
-
 // GET/PATCH /accounts/staff/<id>/ (StaffDetailSerializer) — the full
 // EmployeeProfile shape, same one CurrentUser.profile already uses.
 type StaffProfileDetail = EmployeeProfile & {
@@ -45,9 +35,4 @@ type UpdateStaffPayload = Partial<{
   profile_photo: string | null;
 }>;
 
-export type {
-  CreateStaffPayload,
-  StaffListItem,
-  StaffProfileDetail,
-  UpdateStaffPayload,
-};
+export type { CreateStaffPayload, StaffProfileDetail, UpdateStaffPayload };
