@@ -6,6 +6,7 @@ import {
   type PickupEvaluationStatus,
   type PickupQuickRequestStatus,
   type PickupRequestType,
+  type PickupStage,
   type PickupStatus,
 } from './types';
 
@@ -60,6 +61,17 @@ const EVALUATION_STATUS_BADGE_VARIANT: Record<
   rejected: 'danger',
 };
 
+// Table-column variant for the merged status+evaluation badge (see
+// derivePickupStage) — 'pending' is unreachable (derivePickupStage never
+// returns it) but TypeScript's Record<PickupStage, ...> still requires an
+// entry for every PickupStatus it's a superset of.
+const PICKUP_STAGE_BADGE_VARIANT: Record<PickupStage, BadgeVariant> = {
+  ...STATUS_BADGE_VARIANT,
+  awaiting_review: 'attention',
+  rejected: 'danger',
+  approved: 'info',
+};
+
 const QUICK_REQUEST_STATUS_BADGE_VARIANT: Record<
   PickupQuickRequestStatus,
   BadgeVariant
@@ -72,6 +84,7 @@ const QUICK_REQUEST_STATUS_BADGE_VARIANT: Record<
 export {
   EVALUATION_STATUS_BADGE_VARIANT,
   EVALUATION_STATUS_FILTER_OPTIONS,
+  PICKUP_STAGE_BADGE_VARIANT,
   QUICK_REQUEST_STATUS_BADGE_VARIANT,
   REQUEST_TYPE_BADGE_VARIANT,
   REQUEST_TYPE_FILTER_OPTIONS,

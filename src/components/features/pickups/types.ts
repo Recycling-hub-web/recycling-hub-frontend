@@ -187,10 +187,44 @@ const PICKUP_QUICK_REQUEST_STATUS_LABELS: Record<
   converted: 'Converted',
 };
 
+/** The single, glanceable "what's happening" value a table/badge should
+ * show — collapses `status` + `evaluation_status` into one state rather
+ * than two separately-badged columns that often just repeat each other
+ * ("Status: Pending" + "Evaluation: Pending"). Safe to collapse without
+ * losing information: `evaluate()` on the backend only ever runs while
+ * `status === 'pending'`, and `status` can only leave `pending` once
+ * `evaluation_status === 'approved'` (see CollectionRequestDecisionService
+ * .assign_driver/.schedule) — so `evaluation_status` only ever carries
+ * real, distinct meaning (pending/rejected) during the `pending` stage;
+ * every later stage implies "approved" on its own. */
+type PickupStage = 'awaiting_review' | 'rejected' | 'approved' | PickupStatus;
+
+const derivePickupStage = (
+  status: PickupStatus,
+  evaluationStatus: PickupEvaluationStatus,
+): PickupStage => {
+  if (status !== 'pending') return status;
+  if (evaluationStatus === 'pending') return 'awaiting_review';
+  if (evaluationStatus === 'rejected') return 'rejected';
+  return 'approved';
+};
+
+const PICKUP_STAGE_LABELS: Record<PickupStage, string> = {
+  ...PICKUP_STATUS_LABELS,
+  awaiting_review: 'Awaiting review',
+  rejected: 'Rejected',
+  // Approved but not yet assigned to a driver — distinct from the plain
+  // "Pending" status label, which would otherwise still show for a
+  // request that's actually already past the decision that mattered.
+  approved: 'Approved',
+};
+
 export {
+  derivePickupStage,
   PICKUP_EVALUATION_STATUS_LABELS,
   PICKUP_QUICK_REQUEST_STATUS_LABELS,
   PICKUP_REQUEST_TYPE_LABELS,
+  PICKUP_STAGE_LABELS,
   PICKUP_STATUS_LABELS,
 };
 export type {
@@ -208,6 +242,7 @@ export type {
   PickupRequestDetails,
   PickupRequestListItem,
   PickupRequestType,
+  PickupStage,
   PickupStatus,
   RouteInfo,
 };

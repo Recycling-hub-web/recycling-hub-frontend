@@ -21,8 +21,7 @@ type BlogTagTableProps = {
 };
 
 /** Pure presentational — no pagination (BlogTagViewSet isn't expected
- * to ever need it at this scale, unlike the post/category/classification
- * lists). */
+ * to ever need it at this scale, unlike the post/category lists). */
 const BlogTagTable = ({
   tags,
   search,
@@ -55,13 +54,15 @@ const BlogTagTable = ({
     }
     return tags.map((tag) => (
       <tr key={tag.id} className="transition-colors hover:bg-slate-50">
-        <td className="px-6 py-4 font-medium text-slate-900">
+        <td className="max-w-[220px] px-6 py-4 font-medium text-slate-900">
           <span className="flex items-center gap-2">
-            <LuTags className="size-4 text-slate-400" />
-            {tag.name}
+            <LuTags className="size-4 shrink-0 text-slate-400" />
+            <span className="min-w-0 truncate">{tag.name}</span>
           </span>
         </td>
-        <td className="px-6 py-4 text-slate-500">/{tag.slug}</td>
+        <td className="max-w-[180px] truncate px-6 py-4 text-slate-500">
+          /{tag.slug}
+        </td>
         <td className="px-6 py-4">
           <div className="flex items-center justify-end gap-1">
             <button

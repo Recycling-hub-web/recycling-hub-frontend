@@ -92,13 +92,13 @@ const CategoryTable = ({
         className="cursor-pointer transition-colors hover:bg-slate-50"
       >
         <td className="max-w-[220px] px-6 py-4 font-medium text-slate-900">
-          <div className="flex items-center gap-2 truncate">
+          <div className="flex items-center gap-2">
             <span
               className="size-2.5 shrink-0 rounded-full"
               style={{ backgroundColor: c.hex_color }}
               aria-hidden
             />
-            <span className="truncate">{c.name}</span>
+            <span className="min-w-0 truncate">{c.name}</span>
           </div>
         </td>
         <td className="max-w-xs truncate px-6 py-4 text-slate-500">

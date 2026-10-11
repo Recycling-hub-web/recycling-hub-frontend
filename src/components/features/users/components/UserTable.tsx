@@ -114,8 +114,12 @@ const UserTable = ({
         onClick={() => router.push(`/admin/users/${u.id}`)}
         className="cursor-pointer transition-colors hover:bg-slate-50"
       >
-        <td className="px-6 py-4 font-medium text-slate-900">{u.full_name}</td>
-        <td className="px-6 py-4 text-slate-500">{u.email}</td>
+        <td className="max-w-[180px] truncate px-6 py-4 font-medium text-slate-900">
+          {u.full_name}
+        </td>
+        <td className="max-w-[200px] truncate px-6 py-4 text-slate-500">
+          {u.email}
+        </td>
         <td className="px-6 py-4">
           <StatusBadge
             variant={ROLE_BADGE_VARIANT[u.role]}

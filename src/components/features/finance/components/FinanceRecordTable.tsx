@@ -116,10 +116,10 @@ const FinanceRecordTable = ({
             )}
           </td>
         )}
-        <td className="px-6 py-4 font-medium text-slate-900">
+        <td className="max-w-[180px] truncate px-6 py-4 font-medium text-slate-900">
           {r.collection_request.full_name}
         </td>
-        <td className="px-6 py-4 text-slate-700">
+        <td className="max-w-[160px] truncate px-6 py-4 text-slate-700">
           {r.driver ? r.driver.full_name : '—'}
         </td>
         <td className="px-6 py-4 font-medium text-slate-900">{r.price}</td>

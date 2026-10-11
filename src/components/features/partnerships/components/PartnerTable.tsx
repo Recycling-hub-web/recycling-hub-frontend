@@ -100,7 +100,7 @@ const PartnerTable = ({
                 <LuBuilding2 className="size-4" />
               </span>
             )}
-            <span className="truncate">{p.name}</span>
+            <span className="min-w-0 truncate">{p.name}</span>
           </div>
         </td>
         <td className="px-6 py-4 text-slate-500">
