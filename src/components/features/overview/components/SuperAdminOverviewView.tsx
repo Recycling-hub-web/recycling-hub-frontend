@@ -11,8 +11,8 @@ import { RoleOverviewLayout } from './RoleOverviewLayout';
 /** Super Admin's own landing page (/super-admin) — separate from
  * AdminOverviewView, which Super Admin no longer lands on by default
  * (see ROLE_HOME). Quick links reuse SUPER_ADMIN_NAV_ITEMS (the same
- * list SuperAdminSidebar renders, "Admin Workspace" included) rather
- * than a second, separately-maintained list. */
+ * list SuperAdminSidebar renders) rather than a second, separately-
+ * maintained list. */
 const SuperAdminOverviewView = () => {
   const { limits, loading } = useRoleLimits();
 

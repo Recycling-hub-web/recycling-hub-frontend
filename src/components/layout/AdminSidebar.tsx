@@ -32,9 +32,10 @@ import { Sidebar } from './Sidebar';
 // `basePath` union, not a move/removal. Activity Log is Super Admin
 // only (no /admin/activity route — removed from this side on purpose).
 // A Super Admin viewer still reaches this section too (middleware.ts's
-// ROUTE_ROLES['/admin'] allows both roles) — the "Super Admin" link
-// here is just a quick way back to their own section, the other half
-// of SuperAdminSidebar's own "Admin Workspace" link.
+// ROUTE_ROLES['/admin'] allows both roles), by direct URL only —
+// SuperAdminSidebar has no link into /admin/* anymore. The "Super
+// Admin" link here is still their quick way back to their own section
+// once they're here.
 const adminNavItemsFor = (role: UserRole | undefined): NavItem[] => [
   { href: '/admin', label: 'Overview', icon: LuLayoutDashboard },
   { href: '/admin/users', label: 'Users', icon: LuUsers },

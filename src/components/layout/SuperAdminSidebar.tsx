@@ -1,7 +1,6 @@
 'use client';
 
 import {
-  LuExternalLink,
   LuHandshake,
   LuHardDrive,
   LuHistory,
@@ -28,8 +27,9 @@ import { Sidebar } from './Sidebar';
 // each page.tsx under src/app/(super-admin)/super-admin/). Users, Staff,
 // and Notifications deliberately stayed on the Admin side instead (Admin
 // still manages Staff/Driver/Receiving Officer/Accounting accounts, and
-// still has its own notifications feed) — reached via "Admin Workspace"
-// below rather than duplicated here.
+// still has its own notifications feed) — no "Admin Workspace" link
+// here anymore, so a Super Admin reaches /admin/* only by direct URL,
+// not from this sidebar.
 const SUPER_ADMIN_NAV_ITEMS: NavItem[] = [
   { href: '/super-admin', label: 'Overview', icon: LuLayoutDashboard },
   {
@@ -59,7 +59,6 @@ const SUPER_ADMIN_NAV_ITEMS: NavItem[] = [
   { href: '/super-admin/finance', label: 'Finance Records', icon: LuWallet },
   { href: '/super-admin/activity', label: 'Activity Log', icon: LuHistory },
   { href: '/super-admin/system', label: 'System Settings', icon: LuSettings },
-  { href: '/admin', label: 'Admin Workspace', icon: LuExternalLink },
 ];
 
 type SuperAdminSidebarProps = {
