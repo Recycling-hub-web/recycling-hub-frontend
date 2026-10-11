@@ -32,7 +32,8 @@ const secretKey = process.env.JWT_VERIFY_SECRET
 // authenticated role, same as RequireAuth's client-side rule; it forwards
 // each user to the routes below.
 const ROUTE_ROLES: Record<string, string[]> = {
-  '/admin': ['admin'],
+  '/admin': ['admin', 'super_admin'],
+  '/super-admin': ['super_admin'],
   '/staff': ['staff'],
   '/driver': ['driver'],
   '/receiving': ['receiving_officer'],
@@ -50,16 +51,15 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const token = request.cookies.get(ACCESS_COOKIE)?.value;
 
-  const redirectTo = (path: string, search = '') => {
+  const redirectTo = (path: string) => {
     const url = request.nextUrl.clone();
     url.pathname = path;
-    url.search = search;
+    url.search = '';
     return NextResponse.redirect(url);
   };
 
   if (!token) {
-    const next = request.nextUrl.pathname + request.nextUrl.search;
-    return redirectTo('/login', `?next=${encodeURIComponent(next)}`);
+    return redirectTo('/login');
   }
 
   if (!secretKey) {
@@ -77,8 +77,7 @@ export async function middleware(request: NextRequest) {
       algorithms: ['HS256'],
     });
     if (payload.token_type !== 'access') {
-      const next = request.nextUrl.pathname + request.nextUrl.search;
-      return redirectTo('/login', `?next=${encodeURIComponent(next)}`);
+      return redirectTo('/login');
     }
 
     const role = typeof payload.role === 'string' ? payload.role : null;
@@ -92,8 +91,7 @@ export async function middleware(request: NextRequest) {
     // Missing, malformed, or expired — apiFetch's silent refresh-and-retry
     // handles a still-fresh session on the client; here it just means
     // this particular request can't be gated as authenticated.
-    const next = request.nextUrl.pathname + request.nextUrl.search;
-    return redirectTo('/login', `?next=${encodeURIComponent(next)}`);
+    return redirectTo('/login');
   }
 }
 
@@ -103,6 +101,7 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     '/admin/:path*',
+    '/super-admin/:path*',
     '/staff/:path*',
     '/driver/:path*',
     '/receiving/:path*',

@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import type { FormEvent } from 'react';
 import { useEffect, useState } from 'react';
 import { LuShieldCheck } from 'react-icons/lu';
@@ -9,7 +9,6 @@ import { useAuth } from '../../../../contexts/AuthContext';
 import { useAuthFlow } from '../../../../contexts/AuthFlowContext';
 import { ApiError } from '../../../../lib/api';
 import type { Dictionary } from '../../../../lib/dictionary';
-import { isSafeRedirectPath } from '../../../../lib/redirect';
 import { ROLE_HOME } from '../../../../types/auth';
 import { OtpInputField } from '../../../form/fields/OtpInputField';
 import { AlertBanner } from '../../../ui/AlertBanner';
@@ -25,7 +24,6 @@ const RESEND_COOLDOWN_SECONDS = 60;
 
 const VerifyOtpView = ({ t }: { t: Dictionary['auth']['verifyOtp'] }) => {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const { user, refreshUser } = useAuth();
   const { pendingOtp, setPendingOtp } = useAuthFlow();
   const { execute: verifyOtp, loading: submitting } = useVerifyOtp();
@@ -60,8 +58,6 @@ const VerifyOtpView = ({ t }: { t: Dictionary['auth']['verifyOtp'] }) => {
     return t.resend;
   };
 
-  const nextParam = searchParams?.get('next') ?? null;
-
   // Reached directly (page refresh, bookmark, back button) without having
   // just submitted credentials — there's no email/channel to verify
   // against, so bounce back to the start of the flow rather than show a
@@ -79,7 +75,7 @@ const VerifyOtpView = ({ t }: { t: Dictionary['auth']['verifyOtp'] }) => {
   const goToDestination = async () => {
     await refreshUser();
     setPendingOtp(null);
-    router.replace(isSafeRedirectPath(nextParam) ? nextParam : '/dashboard');
+    router.replace('/dashboard');
   };
 
   const handleSubmit = async (e: FormEvent) => {

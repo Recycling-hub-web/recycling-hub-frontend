@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import type { FormEvent } from 'react';
 import { useEffect, useState } from 'react';
 import { LuKeyRound } from 'react-icons/lu';
@@ -12,7 +12,6 @@ import { useAuth } from '../../../../contexts/AuthContext';
 import { useAuthFlow } from '../../../../contexts/AuthFlowContext';
 import { ApiError } from '../../../../lib/api';
 import type { Dictionary } from '../../../../lib/dictionary';
-import { isSafeRedirectPath } from '../../../../lib/redirect';
 import { ROLE_HOME } from '../../../../types/auth';
 import { InputField } from '../../../form/fields/InputField';
 import { PasswordField } from '../../../form/fields/PasswordField';
@@ -28,7 +27,6 @@ import { Button } from '../../../ui/buttons/Button';
 // `t` prop supplied by the Server Component page.tsx.
 const LoginView = ({ t }: { t: Dictionary['auth']['login'] }) => {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const { user, login, refreshUser } = useAuth();
   const { setPendingOtp } = useAuthFlow();
 
@@ -39,18 +37,14 @@ const LoginView = ({ t }: { t: Dictionary['auth']['login'] }) => {
   const updateFormData = (field: string, value: string) =>
     setFormData((prev) => ({ ...prev, [field]: value }));
 
-  const nextParam = searchParams?.get('next') ?? null;
-
-  // Already signed in — send them straight to where they were headed (or
-  // their role's default landing page) instead of showing the form again.
+  // Already signed in — send them straight to their role's overview page
+  // instead of showing the form again. Every post-login path always lands
+  // on the overview page, deliberately, not wherever they were headed
+  // before being bounced to /login.
   useEffect(() => {
     if (!user) return;
-    if (isSafeRedirectPath(nextParam)) {
-      router.replace(nextParam);
-      return;
-    }
     router.replace(ROLE_HOME[user.role]);
-  }, [user, nextParam, router]);
+  }, [user, router]);
 
   if (user) return null;
 
@@ -62,10 +56,7 @@ const LoginView = ({ t }: { t: Dictionary['auth']['login'] }) => {
       const result = await login(formData.email, formData.password);
       if (result.requiresOtp) {
         setPendingOtp({ email: formData.email, channel: result.channel });
-        const query = isSafeRedirectPath(nextParam)
-          ? `?next=${encodeURIComponent(nextParam)}`
-          : '';
-        router.push(`/verify-otp${query}`);
+        router.push('/verify-otp');
       } else {
         // AuthContext doesn't auto-refetch after login() — without this,
         // `user` stays null and RequireAuth on the destination page would
@@ -73,9 +64,7 @@ const LoginView = ({ t }: { t: Dictionary['auth']['login'] }) => {
         // specific route here) resolves to the right one once `user` is
         // populated, same as the OTP path below.
         await refreshUser();
-        router.replace(
-          isSafeRedirectPath(nextParam) ? nextParam : '/dashboard',
-        );
+        router.replace('/dashboard');
       }
     } catch (err) {
       setError(err instanceof ApiError ? err.message : t.genericError);
