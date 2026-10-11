@@ -43,7 +43,7 @@ type StorageFileTableProps = {
   loading: boolean;
   error: string;
   onRetry: () => void;
-  /** /admin/storage-files or /staff/storage-files — one component
+  /** /super-admin/storage-files or /staff/storage-files — one component
    * serves both role areas, same as every other table this session. */
   basePath: string;
   onDownloadRequest: (file: StorageFile) => void;

@@ -30,7 +30,10 @@ type FormState = {
 
 type EditPartnerViewProps = {
   partnerId: string;
-  basePath: '/admin/partnerships' | '/staff/partnerships';
+  basePath:
+    | '/admin/partnerships'
+    | '/staff/partnerships'
+    | '/super-admin/partnerships';
 };
 
 const EditPartnerView = ({ partnerId, basePath }: EditPartnerViewProps) => {

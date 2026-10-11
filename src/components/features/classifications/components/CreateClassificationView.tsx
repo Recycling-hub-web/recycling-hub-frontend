@@ -24,7 +24,10 @@ type FormState = {
 const INITIAL_STATE: FormState = { name: '', description: '' };
 
 type CreateClassificationViewProps = {
-  basePath: '/admin/classifications' | '/staff/classifications';
+  basePath:
+    | '/admin/classifications'
+    | '/staff/classifications'
+    | '/super-admin/classifications';
 };
 
 // Full page, not a modal — same footing as CreateCategoryView/

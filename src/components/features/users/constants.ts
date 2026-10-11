@@ -5,21 +5,37 @@ import {
 } from '../../../types/auth';
 import type { BadgeVariant } from '../../ui/badges/variants';
 
-// `accounting` is left out — deprioritized for now, same as
-// CREATABLE_ROLES below. The existing seeded accounting user still
-// shows up fine under "All roles"; this only removes it as its own
-// filterable category.
-const ROLE_FILTER_OPTIONS = [
-  { value: '', label: 'All roles' },
-  ...(Object.keys(ROLE_LABELS) as UserRole[])
-    .filter((role) => role !== 'accounting')
-    .map((role) => ({
-      value: role,
-      label: ROLE_LABELS[role],
-    })),
+const ALL_ROLES: UserRole[] = [
+  'super_admin',
+  'admin',
+  'staff',
+  'driver',
+  'receiving_officer',
+  'accounting',
 ];
 
+// Roles below Admin that stay deprioritized for everyone — `accounting`
+// (Staff already covers those duties, see the Create User/role-filter
+// history) stays out of both browsing and creation regardless of who's
+// looking, Super Admin included; Super Admin can still see Super
+// Admin/Admin accounts a plain Admin can't (the backend's own
+// visible_to() already enforces the real boundary — this only keeps
+// the UI from offering an option that would just come back empty or
+// 404).
+const roleFilterOptionsFor = (actorRole: UserRole | undefined) => {
+  const roles = ALL_ROLES.filter((role) => {
+    if (role === 'accounting') return false;
+    if (role === 'super_admin') return actorRole === 'super_admin';
+    return true;
+  });
+  return [
+    { value: '', label: 'All roles' },
+    ...roles.map((role) => ({ value: role, label: ROLE_LABELS[role] })),
+  ];
+};
+
 const ROLE_BADGE_VARIANT: Record<UserRole, BadgeVariant> = {
+  super_admin: 'danger',
   admin: 'danger',
   staff: 'info',
   driver: 'success',
@@ -27,30 +43,44 @@ const ROLE_BADGE_VARIANT: Record<UserRole, BadgeVariant> = {
   accounting: 'attention',
 };
 
-// The role set offered when creating a new user (see
-// apps.accounts.models.user.User.Role on the backend for the complete
-// set) — not every backend role is creatable here. `accounting` is
-// deliberately left out: deprioritized for now, since Staff already
-// has full Finance Records access (IsAccountingOrAdminOrStaff) and can
-// cover those duties without a dedicated account. The role itself,
-// the existing seeded accounting user, and every accounting-specific
-// page/permission are untouched — this only stops new ones being
-// created through this picker.
-const CREATABLE_ROLES: UserRole[] = [
-  'admin',
-  'staff',
-  'driver',
-  'receiving_officer',
-];
+// The role set offered when creating a new user — a function of who's
+// creating it, not a flat list (see apps.accounts.services.
+// assert_can_assign_role on the backend, the real enforcement this
+// mirrors). Super Admin can create any of the six; everyone else who
+// can reach this screen at all (Admin/Staff) is limited to the four
+// roles below Admin — an Admin can no longer create another Admin,
+// and `accounting` stays deprioritized the same as the role filter
+// above.
+const creatableRolesFor = (actorRole: UserRole | undefined): UserRole[] =>
+  actorRole === 'super_admin'
+    ? ALL_ROLES
+    : ['staff', 'driver', 'receiving_officer'];
 
-const ROLE_OPTIONS = CREATABLE_ROLES.map((r) => ({
-  value: r,
-  label: ROLE_LABELS[r],
-}));
+// `roleLimits` is `{ role: { used, limit } }` for just the two limited
+// roles (admin, super_admin) — pass it to grey out + explain an option
+// whose limit is already full, instead of letting the submit fail (see
+// useRoleLimits). Omit it (or a role's entry) when limits don't apply
+// or haven't loaded yet.
+const roleOptionsFor = (
+  actorRole: UserRole | undefined,
+  roleLimits?: Partial<Record<UserRole, { used: number; limit: number }>>,
+) =>
+  creatableRolesFor(actorRole).map((role) => {
+    const usage = roleLimits?.[role];
+    const full = usage !== undefined && usage.used >= usage.limit;
+    return {
+      value: role,
+      label: ROLE_LABELS[role],
+      disabled: full,
+      title: full
+        ? `${ROLE_LABELS[role]} limit reached — ${usage!.used} of ${usage!.limit} in use.`
+        : undefined,
+    };
+  });
 
 // These roles get a Staff/Driver/Receiving-Officer/Accounting-style
 // employment profile (department/position/branch/joining date); Admin
-// does not.
+// and Super Admin do not.
 const ROLES_WITH_PROFILE: UserRole[] = [
   'staff',
   'driver',
@@ -88,13 +118,14 @@ const REGISTRATION_STATUS_FILTER_OPTIONS = [
 ];
 
 export {
-  CREATABLE_ROLES,
+  ALL_ROLES,
+  creatableRolesFor,
   MAX_VERIFICATION_EMAILS,
   REGISTRATION_STATUS_BADGE_VARIANT,
   REGISTRATION_STATUS_FILTER_OPTIONS,
   REGISTRATION_STATUS_LABELS,
   ROLE_BADGE_VARIANT,
-  ROLE_FILTER_OPTIONS,
-  ROLE_OPTIONS,
+  roleFilterOptionsFor,
+  roleOptionsFor,
   ROLES_WITH_PROFILE,
 };

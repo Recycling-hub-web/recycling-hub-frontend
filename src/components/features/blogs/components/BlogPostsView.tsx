@@ -19,10 +19,10 @@ import { BlogPostTable } from './BlogPostTable';
 const SEARCH_DEBOUNCE_MS = 350;
 
 type BlogPostsViewProps = {
-  basePath: '/admin/blogs' | '/staff/blogs';
+  basePath: '/admin/blogs' | '/staff/blogs' | '/super-admin/blogs';
 };
 
-/** One list view shared by /admin/blogs and /staff/blogs — same data,
+/** One list view shared by /super-admin/blogs and /staff/blogs — same data,
  * same table. Admin and staff have identical permissions here
  * (BlogPostViewSet + IsStaffOrReadOnly), so no canDelete prop. */
 const BlogPostsView = ({ basePath }: BlogPostsViewProps) => {

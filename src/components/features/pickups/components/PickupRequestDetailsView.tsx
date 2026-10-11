@@ -44,7 +44,7 @@ import { EvaluateModal } from './EvaluateModal';
 
 type PickupRequestDetailsViewProps = {
   requestId: string;
-  basePath: '/admin/pickups' | '/staff/pickups';
+  basePath: '/admin/pickups' | '/staff/pickups' | '/super-admin/pickups';
 };
 
 /** Admin and staff have identical permissions on this module — every

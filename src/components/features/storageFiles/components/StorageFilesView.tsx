@@ -22,10 +22,13 @@ import { UploadFileModal } from './UploadFileModal';
 const SEARCH_DEBOUNCE_MS = 350;
 
 type StorageFilesViewProps = {
-  basePath: '/admin/storage-files' | '/staff/storage-files';
+  basePath:
+    | '/admin/storage-files'
+    | '/staff/storage-files'
+    | '/super-admin/storage-files';
 };
 
-/** One list view shared by /admin/storage-files and /staff/storage-files
+/** One list view shared by /super-admin/storage-files and /staff/storage-files
  * — same data, same table. Admin and staff have identical permissions
  * here (FileRecordViewSet + IsAdminOrStaffUser), so no canDelete prop. */
 const StorageFilesView = ({ basePath }: StorageFilesViewProps) => {

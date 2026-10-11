@@ -37,7 +37,7 @@ type PickupRequestTableProps = {
   loading: boolean;
   error: string;
   onRetry: () => void;
-  /** Base route this table's links point into — /admin/pickups or
+  /** Base route this table's links point into — /super-admin/pickups or
    * /staff/pickups — so one component serves both role areas. Unlike
    * the contact table, there's no canDelete split here: admin and
    * staff have identical permissions on this module (see

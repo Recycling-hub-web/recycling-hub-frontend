@@ -28,7 +28,7 @@ type PartnerTableProps = {
   loading: boolean;
   error: string;
   onRetry: () => void;
-  /** /admin/partnerships or /staff/partnerships — one component serves
+  /** /super-admin/partnerships or /staff/partnerships — one component serves
    * both role areas, same as every other table this session. */
   basePath: string;
   onDeleteRequest: (partner: Partner) => void;

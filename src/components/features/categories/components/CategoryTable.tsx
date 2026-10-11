@@ -27,7 +27,7 @@ type CategoryTableProps = {
   loading: boolean;
   error: string;
   onRetry: () => void;
-  /** /admin/categories or /staff/categories — one component serves both
+  /** /super-admin/categories or /staff/categories — one component serves both
    * role areas, same as ContactMessageTable. */
   basePath: string;
   /** Name lookup for the Parent column — built from the currently loaded

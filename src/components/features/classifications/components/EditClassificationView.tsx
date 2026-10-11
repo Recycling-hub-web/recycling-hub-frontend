@@ -25,7 +25,10 @@ type FormState = {
 
 type EditClassificationViewProps = {
   classificationId: string;
-  basePath: '/admin/classifications' | '/staff/classifications';
+  basePath:
+    | '/admin/classifications'
+    | '/staff/classifications'
+    | '/super-admin/classifications';
 };
 
 const EditClassificationView = ({

@@ -17,10 +17,13 @@ import { CollectionPointTable } from './CollectionPointTable';
 const SEARCH_DEBOUNCE_MS = 350;
 
 type CollectionPointsViewProps = {
-  basePath: '/admin/collection-points' | '/staff/collection-points';
+  basePath:
+    | '/admin/collection-points'
+    | '/staff/collection-points'
+    | '/super-admin/collection-points';
 };
 
-/** One list view shared by /admin/collection-points and
+/** One list view shared by /super-admin/collection-points and
  * /staff/collection-points — same data, same table. Admin and staff
  * have identical permissions here (IsAdminOrStaffUser on every write
  * action), so no canDelete prop to thread through. */

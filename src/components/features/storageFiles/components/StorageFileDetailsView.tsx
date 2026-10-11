@@ -47,7 +47,10 @@ const FILE_TYPE_ICONS: Record<string, typeof LuFile> = {
 
 type StorageFileDetailsViewProps = {
   fileId: string;
-  basePath: '/admin/storage-files' | '/staff/storage-files';
+  basePath:
+    | '/admin/storage-files'
+    | '/staff/storage-files'
+    | '/super-admin/storage-files';
 };
 
 const StorageFileDetailsView = ({

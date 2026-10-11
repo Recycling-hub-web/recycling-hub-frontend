@@ -19,7 +19,7 @@ import { TagFormModal } from './TagFormModal';
 const SEARCH_DEBOUNCE_MS = 350;
 
 type BlogTagsViewProps = {
-  basePath: '/admin/blogs' | '/staff/blogs';
+  basePath: '/admin/blogs' | '/staff/blogs' | '/super-admin/blogs';
 };
 
 /** Reached from BlogPostsView's header, not its own sidebar entry — a

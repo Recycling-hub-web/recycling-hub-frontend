@@ -67,7 +67,7 @@ type FormState = {
 
 type EditBlogPostViewProps = {
   postId: string;
-  basePath: '/admin/blogs' | '/staff/blogs';
+  basePath: '/admin/blogs' | '/staff/blogs' | '/super-admin/blogs';
 };
 
 const EditBlogPostView = ({ postId, basePath }: EditBlogPostViewProps) => {

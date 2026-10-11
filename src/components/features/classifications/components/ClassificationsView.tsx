@@ -17,10 +17,13 @@ import { ClassificationTable } from './ClassificationTable';
 const SEARCH_DEBOUNCE_MS = 350;
 
 type ClassificationsViewProps = {
-  basePath: '/admin/classifications' | '/staff/classifications';
+  basePath:
+    | '/admin/classifications'
+    | '/staff/classifications'
+    | '/super-admin/classifications';
 };
 
-/** One list view shared by /admin/classifications and
+/** One list view shared by /super-admin/classifications and
  * /staff/classifications — same data, same table. Admin and staff have
  * identical permissions here (verified against ClassificationView /
  * IsAdminOrStaffUser), so no canDelete prop to thread through. */

@@ -74,7 +74,7 @@ const INITIAL_STATE: FormState = {
 };
 
 type CreateBlogPostViewProps = {
-  basePath: '/admin/blogs' | '/staff/blogs';
+  basePath: '/admin/blogs' | '/staff/blogs' | '/super-admin/blogs';
 };
 
 // Full page, not a modal — same footing as CreateCategoryView. New posts

@@ -19,10 +19,13 @@ import { PartnerTable } from './PartnerTable';
 const SEARCH_DEBOUNCE_MS = 350;
 
 type PartnersViewProps = {
-  basePath: '/admin/partnerships' | '/staff/partnerships';
+  basePath:
+    | '/admin/partnerships'
+    | '/staff/partnerships'
+    | '/super-admin/partnerships';
 };
 
-/** One list view shared by /admin/partnerships and /staff/partnerships —
+/** One list view shared by /super-admin/partnerships and /staff/partnerships —
  * same data, same table. Admin and staff have identical permissions here
  * (verified against PartnerViewSet/IsStaffOrReadOnly, both is_staff=True),
  * same as Categories, so no canDelete prop to thread through. */

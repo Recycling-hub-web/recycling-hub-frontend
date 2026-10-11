@@ -29,7 +29,10 @@ type FormState = {
 
 type EditCollectionPointViewProps = {
   collectionPointId: string;
-  basePath: '/admin/collection-points' | '/staff/collection-points';
+  basePath:
+    | '/admin/collection-points'
+    | '/staff/collection-points'
+    | '/super-admin/collection-points';
 };
 
 const EditCollectionPointView = ({

@@ -14,6 +14,7 @@ import {
 } from 'react-icons/lu';
 
 import { useAuth } from '../../../../contexts/AuthContext';
+import { isAdminRole } from '../../../../types/auth';
 import { PageContainer } from '../../../layout/PageContainer';
 import { StatusBadge } from '../../../ui/badges/StatusBadge';
 import { Button } from '../../../ui/buttons/Button';
@@ -42,9 +43,15 @@ const FinanceRecordDetailsView = ({
   const { user } = useAuth();
   const canManage =
     user?.role === 'accounting' ||
-    user?.role === 'admin' ||
+    isAdminRole(user?.role) ||
     user?.role === 'staff';
-  const basePath = `/${user?.role}/finance`;
+  // Admin no longer has a Finance Records route of its own (moved to
+  // Super Admin's own section) — see FinanceRecordsView's matching
+  // basePath for the full explanation.
+  const basePath =
+    user?.role === 'super_admin'
+      ? '/super-admin/finance'
+      : `/${user?.role}/finance`;
 
   const { record, loading, error, refetch } = useFinanceRecord(recordId);
   const [reimburseOpen, setReimburseOpen] = useState(false);

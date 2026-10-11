@@ -3,6 +3,7 @@
 import { useState } from 'react';
 
 import { useAuth } from '../../../../contexts/AuthContext';
+import { isAdminRole } from '../../../../types/auth';
 import { PageContainer } from '../../../layout/PageContainer';
 import { FilterSelect } from '../../../ui/FilterSelect';
 import { PageHeader } from '../../../ui/PageHeader';
@@ -12,21 +13,30 @@ import type { FinanceStatus } from '../types';
 import { FinanceRecordTable } from './FinanceRecordTable';
 import { ReimburseModal } from './ReimburseModal';
 
-/** Accounting/admin/staff's full table (every driver, filterable); the
- * same component also renders on the driver's own route, where the
- * backend already scopes the queryset to that driver's own records —
- * only the bulk Verify & Reimburse affordance is hidden there, since a
- * driver can't act on it anyway (403 on the backend). */
+/** Accounting/admin/staff/super admin's full table (every driver,
+ * filterable); the same component also renders on the driver's own
+ * route, where the backend already scopes the queryset to that
+ * driver's own records — only the bulk Verify & Reimburse affordance
+ * is hidden there, since a driver can't act on it anyway (403 on the
+ * backend). */
 const FinanceRecordsView = () => {
   const { user } = useAuth();
   const canManage =
     user?.role === 'accounting' ||
-    user?.role === 'admin' ||
+    isAdminRole(user?.role) ||
     user?.role === 'staff';
-  // Every role's finance route is `/${role}/finance` — see the app's
-  // four identical (admin/staff/accounting/driver) finance/page.tsx
-  // files, each rendering this same component with no props.
-  const basePath = `/${user?.role}/finance`;
+  // Every other role's finance route is `/${role}/finance` — see the
+  // app's three identical (staff/accounting/driver) finance/page.tsx
+  // files, each rendering this same component with no props. Admin no
+  // longer has a Finance Records route of its own (moved to Super
+  // Admin's own section); Super Admin's literal role value also can't
+  // feed the `/${role}/finance` pattern directly (`/super_admin/finance`
+  // isn't a real route — the underscore, and no such role-named segment
+  // exists), so it's special-cased to its real route instead.
+  const basePath =
+    user?.role === 'super_admin'
+      ? '/super-admin/finance'
+      : `/${user?.role}/finance`;
 
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<FinanceStatus | ''>('');

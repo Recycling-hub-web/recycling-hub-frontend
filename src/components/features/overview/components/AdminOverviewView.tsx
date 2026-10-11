@@ -2,7 +2,8 @@
 
 import { LuMail, LuNewspaper, LuTruck, LuUsers } from 'react-icons/lu';
 
-import { ADMIN_NAV_ITEMS } from '../../../layout/AdminSidebar';
+import { useAuth } from '../../../../contexts/AuthContext';
+import { adminNavItemsFor } from '../../../layout/AdminSidebar';
 import { BarChart, DonutChart, LineChart } from '../../../ui/charts';
 import { STATUS_BADGE_VARIANT as FINANCE_STATUS_BADGE_VARIANT } from '../../finance/constants';
 import { FINANCE_STATUS_LABELS } from '../../finance/types';
@@ -18,8 +19,8 @@ const dayLabel = (isoDate: string) =>
   );
 
 /** Replaces the old `redirect('/admin/users')` — /admin is now a real
- * dashboard. Quick links reuse ADMIN_NAV_ITEMS (the same list
- * AdminSidebar renders) rather than a second, separately-maintained
+ * dashboard. Quick links reuse adminNavItemsFor (the same role-aware
+ * list AdminSidebar renders) rather than a second, separately-maintained
  * list of admin modules. The daily-volume trend chart is the one place
  * in the app a LineChart backed by a genuinely new endpoint
  * (CollectionRequestViewSet.daily_volume) lives — it's a real
@@ -28,6 +29,7 @@ const dayLabel = (isoDate: string) =>
  * are the same pattern DriverOverviewView reuses for its own
  * (already-scoped) pickup/finance data. */
 const AdminOverviewView = () => {
+  const { user } = useAuth();
   const stats = useAdminOverviewStats();
 
   const pickupStatusData = stats.pickupStatusCounts
@@ -62,7 +64,7 @@ const AdminOverviewView = () => {
 
   return (
     <RoleOverviewLayout
-      navItems={ADMIN_NAV_ITEMS}
+      navItems={adminNavItemsFor(user?.role)}
       ownHref="/admin"
       statGrid={
         <OverviewStatGrid>

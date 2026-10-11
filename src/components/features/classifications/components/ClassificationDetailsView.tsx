@@ -26,7 +26,10 @@ import { useClassification, useDeleteClassification } from '../hooks';
 
 type ClassificationDetailsViewProps = {
   classificationId: string;
-  basePath: '/admin/classifications' | '/staff/classifications';
+  basePath:
+    | '/admin/classifications'
+    | '/staff/classifications'
+    | '/super-admin/classifications';
 };
 
 const ClassificationDetailsView = ({

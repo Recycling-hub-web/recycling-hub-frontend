@@ -12,6 +12,15 @@ import { type APIRequestContext, expect, type Page } from '@playwright/test';
  * on as standing QA fixtures. `qaDriver` also has payout_method/
  * payout_account_details set (see FinanceRecord's Verify & Reimburse,
  * finance.spec.ts). See memory: recycling-hub-playwright-e2e.
+ *
+ * `qaSuperAdmin` (superadmin@recyclinghub.example, created via the
+ * `create_super_admin` management command, not seed_accounts.py) is
+ * NOT usable with plain `loginAs` — OTP is mandatory for Super Admin
+ * regardless of the per-user 2FA flag (see authentication.views), so
+ * logging in as this account needs the OTP step driven too. Use it
+ * for API-level setup (apiLoginAs won't complete a full session either
+ * — same OTP gate) or a dedicated OTP-aware helper, not the plain UI
+ * login flow every other fixture here uses.
  */
 const ACCOUNTS = {
   admin: {
@@ -32,6 +41,10 @@ const ACCOUNTS = {
   },
   qaAccounting: {
     email: 'accounting@recyclinghub.example',
+    password: 'Password123!',
+  },
+  qaSuperAdmin: {
+    email: 'superadmin@recyclinghub.example',
     password: 'Password123!',
   },
 } as const;

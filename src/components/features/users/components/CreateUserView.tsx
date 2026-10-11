@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { LuArrowLeft } from 'react-icons/lu';
 
 import { joinPhoneNumber } from '../../../../constants/dialCodes';
+import { useAuth } from '../../../../contexts/AuthContext';
 import { ROLE_LABELS, type UserRole } from '../../../../types/auth';
 import { InputField } from '../../../form/fields/InputField';
 import { PhoneInputField } from '../../../form/fields/PhoneInputField';
@@ -21,8 +22,8 @@ import { useToast } from '../../../ui/toast/ToastContext';
 // the backend field this writes to (User.profile_photo) is shared by
 // every role, not Staff-specific, so a second uploader isn't warranted.
 import { ProfilePhotoUploader } from '../../staff/components/ProfilePhotoUploader';
-import { ROLE_OPTIONS, ROLES_WITH_PROFILE } from '../constants';
-import { useCreateUser } from '../hooks';
+import { roleOptionsFor, ROLES_WITH_PROFILE } from '../constants';
+import { useCreateUser, useRoleLimits } from '../hooks';
 
 type FormState = {
   full_name: string;
@@ -67,10 +68,25 @@ const PAYOUT_METHOD_OPTIONS = [
 const CreateUserView = () => {
   const router = useRouter();
   const toast = useToast();
+  const { user: actor } = useAuth();
   const { execute: createUser, loading: submitting, error } = useCreateUser();
+  const { limits } = useRoleLimits(actor?.role === 'super_admin');
   const [formData, setFormData] = useState<FormState>(INITIAL_STATE);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [photoKey, setPhotoKey] = useState<string | null>(null);
+
+  const roleOptions = roleOptionsFor(
+    actor?.role,
+    limits
+      ? {
+          admin: { used: limits.admin_used, limit: limits.admin_limit },
+          super_admin: {
+            used: limits.super_admin_used,
+            limit: limits.super_admin_limit,
+          },
+        }
+      : undefined,
+  );
 
   const updateFormData = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -144,7 +160,11 @@ const CreateUserView = () => {
 
       <PageHeader
         title="Create user"
-        subtitle="Add an admin, staff, driver, or receiving officer account."
+        subtitle={
+          actor?.role === 'super_admin'
+            ? 'Add any account, including another Admin or Super Admin.'
+            : 'Add a staff, driver, or receiving officer account.'
+        }
       />
 
       <Card className="p-5">
@@ -184,7 +204,7 @@ const CreateUserView = () => {
             <SelectField
               label="Role"
               field="role"
-              options={ROLE_OPTIONS}
+              options={roleOptions}
               formData={formData}
               updateFormData={updateFormData}
               disabled={submitting}

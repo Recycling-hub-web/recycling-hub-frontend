@@ -8,3 +8,4 @@ export { ProfileSummaryCard } from './ProfileSummaryCard';
 export { ReceivingOverviewView } from './ReceivingOverviewView';
 export { RoleOverviewLayout } from './RoleOverviewLayout';
 export { StaffOverviewView } from './StaffOverviewView';
+export { SuperAdminOverviewView } from './SuperAdminOverviewView';

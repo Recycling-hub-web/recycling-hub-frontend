@@ -27,7 +27,7 @@ type QuickLeadTableProps = {
   error: string;
   onRetry: () => void;
   /** Base route this table's "Follow up" links point into —
-   * /admin/pickups or /staff/pickups, same as PickupRequestTable. */
+   * /super-admin/pickups or /staff/pickups, same as PickupRequestTable. */
   basePath: string;
   onMarkContacted: (lead: PickupQuickRequestListItem) => void;
   markingContactedId: string | null;

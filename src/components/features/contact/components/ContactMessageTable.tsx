@@ -28,7 +28,7 @@ type ContactMessageTableProps = {
   loading: boolean;
   error: string;
   onRetry: () => void;
-  /** Base route this table's links point into — /admin/contact or
+  /** Base route this table's links point into — /super-admin/contact or
    * /staff/contact — so one component serves both role areas. */
   basePath: string;
   /** Admin only, per ContactMessageViewSet.get_permissions on the

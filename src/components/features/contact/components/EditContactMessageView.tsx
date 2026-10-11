@@ -41,7 +41,7 @@ type FormState = {
 
 type EditContactMessageViewProps = {
   messageId: string;
-  basePath: '/admin/contact';
+  basePath: '/admin/contact' | '/super-admin/contact';
 };
 
 // Admin only — see ContactMessageViewSet.get_serializer_class, which

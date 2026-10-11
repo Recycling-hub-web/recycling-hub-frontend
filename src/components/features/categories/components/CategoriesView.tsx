@@ -19,10 +19,13 @@ import { CategoryTable } from './CategoryTable';
 const SEARCH_DEBOUNCE_MS = 350;
 
 type CategoriesViewProps = {
-  basePath: '/admin/categories' | '/staff/categories';
+  basePath:
+    | '/admin/categories'
+    | '/staff/categories'
+    | '/super-admin/categories';
 };
 
-/** One list view shared by /admin/categories and /staff/categories — same
+/** One list view shared by /super-admin/categories and /staff/categories — same
  * data, same table. Unlike Contact, admin and staff have identical
  * permissions here (verified against CategoryViewSet/IsStaffOrReadOnly),
  * so there's no canDelete prop to thread through. */

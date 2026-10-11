@@ -36,7 +36,7 @@ import type { ContactMessageStatus } from '../types';
 
 type ContactMessageDetailsViewProps = {
   messageId: string;
-  basePath: '/admin/contact' | '/staff/contact';
+  basePath: '/admin/contact' | '/staff/contact' | '/super-admin/contact';
   /** Admin only, per ContactMessageViewSet.get_permissions on the
    * backend — same real gate as the table's delete column. */
   canDelete: boolean;

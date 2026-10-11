@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { LuPlus } from 'react-icons/lu';
 
+import { useAuth } from '../../../../contexts/AuthContext';
 import { ApiError } from '../../../../lib/api';
 import type {
   RegistrationStatus,
@@ -19,7 +20,7 @@ import { Tabs } from '../../../ui/tabs';
 import { useToast } from '../../../ui/toast/ToastContext';
 import {
   REGISTRATION_STATUS_FILTER_OPTIONS,
-  ROLE_FILTER_OPTIONS,
+  roleFilterOptionsFor,
 } from '../constants';
 import {
   useDeleteUser,
@@ -33,6 +34,12 @@ const SEARCH_DEBOUNCE_MS = 350;
 
 type Tab = 'users' | 'pending';
 
+// Administrators (Admin/Super Admin accounts + role-limit usage) is its
+// own dedicated page now, under Super Admin's own section
+// (/super-admin/administrators, see SuperAdminAdministratorsView) — not
+// a tab here. This page stays plain-Admin-shaped; Super Admin reaches
+// it too (same permissions), but has no reason to see a third tab for a
+// screen that now lives one section over.
 const TAB_ITEMS: { key: Tab; label: string }[] = [
   { key: 'users', label: 'Users' },
   { key: 'pending', label: 'Pending Registrations' },
@@ -40,6 +47,7 @@ const TAB_ITEMS: { key: Tab; label: string }[] = [
 
 const AdminUsersView = () => {
   const toast = useToast();
+  const { user: actor } = useAuth();
 
   const [activeTab, setActiveTab] = useState<Tab>('users');
   const [page, setPage] = useState(1);
@@ -179,7 +187,7 @@ const AdminUsersView = () => {
           <FilterSelect
             value={roleFilter}
             onChange={handleRoleFilterChange}
-            options={ROLE_FILTER_OPTIONS}
+            options={roleFilterOptionsFor(actor?.role)}
           />
           {activeTab === 'users' && (
             <FilterSelect

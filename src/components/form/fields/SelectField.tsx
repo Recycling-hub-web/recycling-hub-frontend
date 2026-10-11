@@ -1,6 +1,16 @@
 import { getNestedValue } from '../utils';
 
-type SelectOption = string | { value: string | number; label: string };
+type SelectOption =
+  | string
+  | {
+      value: string | number;
+      label: string;
+      /** Shown but unselectable — e.g. a role whose limit is full.
+       * Pair with `title` so there's a visible reason, not just a
+       * greyed-out option with no explanation. */
+      disabled?: boolean;
+      title?: string;
+    };
 
 type SelectFieldProps = {
   label: string;
@@ -49,7 +59,12 @@ const SelectField = ({
         </option>
         {options.map((opt, index) =>
           typeof opt === 'object' && opt !== null ? (
-            <option key={opt.value ?? index} value={opt.value ?? ''}>
+            <option
+              key={opt.value ?? index}
+              value={opt.value ?? ''}
+              disabled={opt.disabled}
+              title={opt.title}
+            >
               {opt.label ?? opt.value ?? ''}
             </option>
           ) : (

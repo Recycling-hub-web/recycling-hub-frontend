@@ -16,11 +16,11 @@ import { ContactMessageTable } from './ContactMessageTable';
 const SEARCH_DEBOUNCE_MS = 350;
 
 type ContactMessagesViewProps = {
-  basePath: '/admin/contact' | '/staff/contact';
+  basePath: '/admin/contact' | '/staff/contact' | '/super-admin/contact';
   canDelete: boolean;
 };
 
-/** One list view shared by /admin/contact and /staff/contact — same data,
+/** One list view shared by /super-admin/contact and /staff/contact — same data,
  * same table, the only difference between the two role areas is whether
  * canDelete is true (enforced for real on the backend too, not just here
  * — see ContactMessageViewSet.get_permissions). */

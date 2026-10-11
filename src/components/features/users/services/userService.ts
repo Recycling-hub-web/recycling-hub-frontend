@@ -105,5 +105,40 @@ const deleteUser = (id: string): Promise<void> =>
 const resendInvite = (id: string): Promise<{ detail: string }> =>
   apiFetch(`/accounts/users/${id}/resend-invite/`, { method: 'POST' });
 
-export { createUser, deleteUser, getUser, listUsers, resendInvite, updateUser };
-export type { CreateUserPayload, ListUsersParams, Paginated };
+// Super Admin only — see SystemSettingsView on the backend. `*_used` is
+// computed server-side from the exact same query reserve_role_slot/
+// assert_super_admin_floor enforce against, so this always matches
+// what the backend will actually allow.
+type RoleLimitSettings = {
+  admin_limit: number;
+  admin_used: number;
+  super_admin_limit: number;
+  super_admin_used: number;
+};
+
+const getRoleLimits = (): Promise<RoleLimitSettings> =>
+  apiFetch('/accounts/system-settings/');
+
+const updateRoleLimits = (
+  payload: Partial<
+    Pick<RoleLimitSettings, 'admin_limit' | 'super_admin_limit'>
+  >,
+): Promise<RoleLimitSettings> =>
+  apiFetch('/accounts/system-settings/', { method: 'PATCH', json: payload });
+
+export {
+  createUser,
+  deleteUser,
+  getRoleLimits,
+  getUser,
+  listUsers,
+  resendInvite,
+  updateRoleLimits,
+  updateUser,
+};
+export type {
+  CreateUserPayload,
+  ListUsersParams,
+  Paginated,
+  RoleLimitSettings,
+};

@@ -36,7 +36,7 @@ import { QuickLeadTable } from './QuickLeadTable';
 const SEARCH_DEBOUNCE_MS = 350;
 
 type PickupRequestsViewProps = {
-  basePath: '/admin/pickups' | '/staff/pickups';
+  basePath: '/admin/pickups' | '/staff/pickups' | '/super-admin/pickups';
 };
 
 type Tab = 'requests' | 'quick';
@@ -46,7 +46,7 @@ const TAB_ITEMS: { key: Tab; label: string }[] = [
   { key: 'quick', label: 'Quick Leads' },
 ];
 
-/** One list view shared by /admin/pickups and /staff/pickups — admin and
+/** One list view shared by /super-admin/pickups and /staff/pickups — admin and
  * staff have identical permissions on this module (see
  * CollectionRequestViewSet.get_permissions on the backend), so unlike
  * the contact feature there's no canDelete split to parametrize. */

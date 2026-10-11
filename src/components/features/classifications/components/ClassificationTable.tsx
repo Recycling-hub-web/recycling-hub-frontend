@@ -24,7 +24,7 @@ type ClassificationTableProps = {
   loading: boolean;
   error: string;
   onRetry: () => void;
-  /** /admin/classifications or /staff/classifications — one component
+  /** /super-admin/classifications or /staff/classifications — one component
    * serves both role areas, same as CategoryTable. */
   basePath: string;
   onDeleteRequest: (classification: ClassificationListItem) => void;

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { LuEye, LuPencil, LuSend, LuTrash2 } from 'react-icons/lu';
+import { LuCrown, LuEye, LuPencil, LuSend, LuTrash2 } from 'react-icons/lu';
 
 import {
   ROLE_LABELS,
@@ -117,7 +117,14 @@ const UserTable = ({
         <td className="px-6 py-4 font-medium text-slate-900">{u.full_name}</td>
         <td className="px-6 py-4 text-slate-500">{u.email}</td>
         <td className="px-6 py-4">
-          <StatusBadge variant={ROLE_BADGE_VARIANT[u.role]}>
+          <StatusBadge
+            variant={ROLE_BADGE_VARIANT[u.role]}
+            icon={
+              u.role === 'super_admin' ? (
+                <LuCrown className="size-3" />
+              ) : undefined
+            }
+          >
             {ROLE_LABELS[u.role]}
           </StatusBadge>
         </td>

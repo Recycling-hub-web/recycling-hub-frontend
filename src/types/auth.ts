@@ -1,11 +1,23 @@
 // Mirrors apps.accounts.models.user.User.Role on the backend. No
-// resident/end-user role — these five are the complete set.
+// resident/end-user role — these six are the complete set. Super Admin
+// is deliberately separate from Django's own is_superuser/is_staff
+// flags on the backend; nothing on the frontend should ever infer
+// "super admin" from anything but this literal role value.
 type UserRole =
+  | 'super_admin'
   | 'admin'
   | 'staff'
   | 'driver'
   | 'receiving_officer'
   | 'accounting';
+
+// The Admin permission bundle — every check that passes for Admin must
+// also pass for Super Admin (see User.is_admin on the backend, the ONE
+// place this is granted there). Use this instead of comparing `role`
+// to the literal string 'admin' anywhere a Super Admin should also
+// pass — a check written that way silently excludes Super Admins.
+const isAdminRole = (role: UserRole | undefined): boolean =>
+  role === 'admin' || role === 'super_admin';
 
 // Mirrors User.registration_status (a derived backend property, not a
 // stored field) — whether the account has completed its set-password
@@ -89,6 +101,7 @@ type UserDetail = {
 };
 
 const ROLE_LABELS: Record<UserRole, string> = {
+  super_admin: 'Super Admin',
   admin: 'Admin',
   staff: 'Staff',
   driver: 'Driver',
@@ -101,7 +114,14 @@ const ROLE_LABELS: Record<UserRole, string> = {
 // (src/layouts/OperationalLayout.tsx) instead of the old shared /dashboard,
 // which stays alive only as a stable fallback for stale bookmarks/links
 // (see DashboardRedirectView) — not tied to any particular role.
+//
+// Super Admin has its OWN section (/super-admin, SuperAdminLayout) —
+// separate from Admin's /admin, not a shared landing page. Super Admin
+// still reaches every /admin/* page too (middleware.ts's
+// ROUTE_ROLES['/admin'] allows both roles), via a link out from its own
+// sidebar, same as any other cross-section navigation.
 const ROLE_HOME: Record<UserRole, string> = {
+  super_admin: '/super-admin',
   admin: '/admin',
   staff: '/staff',
   driver: '/driver',
@@ -109,7 +129,7 @@ const ROLE_HOME: Record<UserRole, string> = {
   accounting: '/accounting',
 };
 
-export { ROLE_HOME, ROLE_LABELS };
+export { isAdminRole, ROLE_HOME, ROLE_LABELS };
 export type {
   CurrentUser,
   EmployeeProfile,

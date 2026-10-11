@@ -16,7 +16,12 @@ import {
 import type { NavItem } from '../components/layout/Sidebar';
 import type { UserRole } from '../types/auth';
 
-type OperationalRole = Exclude<UserRole, 'admin'>;
+// Admin and Super Admin each have their own dedicated layout+sidebar
+// (AdminLayout/SuperAdminLayout) outside this operational-role bundle,
+// same as before — excluded here same as always, just no longer for
+// the same reason (Super Admin used to share Admin's own layout; now
+// it has its own separate /super-admin section instead).
+type OperationalRole = Exclude<UserRole, 'admin' | 'super_admin'>;
 
 type OperationalRoleConfig = {
   route: string;

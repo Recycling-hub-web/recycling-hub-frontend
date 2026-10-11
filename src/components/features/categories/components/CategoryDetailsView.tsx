@@ -22,7 +22,10 @@ import { getCategory } from '../services/categoryService';
 
 type CategoryDetailsViewProps = {
   categoryId: string;
-  basePath: '/admin/categories' | '/staff/categories';
+  basePath:
+    | '/admin/categories'
+    | '/staff/categories'
+    | '/super-admin/categories';
 };
 
 const CategoryDetailsView = ({

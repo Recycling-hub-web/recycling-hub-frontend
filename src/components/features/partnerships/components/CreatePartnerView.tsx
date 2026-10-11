@@ -32,7 +32,10 @@ const INITIAL_STATE: FormState = {
 };
 
 type CreatePartnerViewProps = {
-  basePath: '/admin/partnerships' | '/staff/partnerships';
+  basePath:
+    | '/admin/partnerships'
+    | '/staff/partnerships'
+    | '/super-admin/partnerships';
 };
 
 // Full page, not a modal — same footing as CreateCategoryView, since a

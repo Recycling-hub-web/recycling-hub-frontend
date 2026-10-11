@@ -28,7 +28,10 @@ import { useDeletePartner, usePartner } from '../hooks';
 
 type PartnerDetailsViewProps = {
   partnerId: string;
-  basePath: '/admin/partnerships' | '/staff/partnerships';
+  basePath:
+    | '/admin/partnerships'
+    | '/staff/partnerships'
+    | '/super-admin/partnerships';
 };
 
 const PartnerDetailsView = ({

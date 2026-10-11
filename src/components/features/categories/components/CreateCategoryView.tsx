@@ -32,7 +32,10 @@ const INITIAL_STATE: FormState = {
 };
 
 type CreateCategoryViewProps = {
-  basePath: '/admin/categories' | '/staff/categories';
+  basePath:
+    | '/admin/categories'
+    | '/staff/categories'
+    | '/super-admin/categories';
 };
 
 // Full page, not a modal — same footing as CreateUserView, since a

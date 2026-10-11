@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { LuDownload, LuPlus } from 'react-icons/lu';
 
+import { useAuth } from '../../../../contexts/AuthContext';
 import { ApiError } from '../../../../lib/api';
 import type { UserListItem, UserRole } from '../../../../types/auth';
 import { SearchInput } from '../../../form/filter/SearchInput';
@@ -13,7 +14,7 @@ import { ConfirmModal } from '../../../ui/modal/ConfirmModal';
 import { PageHeader } from '../../../ui/PageHeader';
 import { useToast } from '../../../ui/toast/ToastContext';
 import { UserTable } from '../../users/components/UserTable';
-import { ROLE_FILTER_OPTIONS } from '../../users/constants';
+import { roleFilterOptionsFor } from '../../users/constants';
 import { useDeleteUser, useUpdateUser, useUsers } from '../../users/hooks';
 import { useExportStaffReport } from '../hooks';
 
@@ -30,6 +31,7 @@ const SEARCH_DEBOUNCE_MS = 350;
  * onboarding + Excel export), unrelated to what this list shows. */
 const StaffListView = () => {
   const toast = useToast();
+  const { user: actor } = useAuth();
 
   const [page, setPage] = useState(1);
   const [roleFilter, setRoleFilter] = useState<UserRole | ''>('');
@@ -136,7 +138,7 @@ const StaffListView = () => {
         <FilterSelect
           value={roleFilter}
           onChange={handleRoleFilterChange}
-          options={ROLE_FILTER_OPTIONS}
+          options={roleFilterOptionsFor(actor?.role)}
         />
       </div>
 

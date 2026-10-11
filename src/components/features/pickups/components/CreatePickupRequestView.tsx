@@ -87,7 +87,7 @@ const EVALUATE_NOW_OPTIONS = [
 ];
 
 type CreatePickupRequestViewProps = {
-  basePath: '/admin/pickups' | '/staff/pickups';
+  basePath: '/admin/pickups' | '/staff/pickups' | '/super-admin/pickups';
 };
 
 // Same public POST /pickups/ the real public request form uses (see

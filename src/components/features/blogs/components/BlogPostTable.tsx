@@ -28,7 +28,7 @@ type BlogPostTableProps = {
   loading: boolean;
   error: string;
   onRetry: () => void;
-  /** /admin/blogs or /staff/blogs — one component serves both role
+  /** /super-admin/blogs or /staff/blogs — one component serves both role
    * areas, same as every other table this session. */
   basePath: string;
   categoryNameById: Record<string, string>;

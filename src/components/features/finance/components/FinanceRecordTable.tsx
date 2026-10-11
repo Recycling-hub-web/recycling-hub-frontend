@@ -19,7 +19,7 @@ import { FINANCE_PAYMENT_METHOD_LABELS, FINANCE_STATUS_LABELS } from '../types';
 const PAGE_SIZE = 12;
 
 type FinanceRecordTableProps = {
-  /** Role-scoped base route (`/admin/finance`, `/staff/finance`,
+  /** Role-scoped base route (`/super-admin/finance`, `/staff/finance`,
    * `/accounting/finance`, `/driver/finance`) — rows link into
    * `${basePath}/${id}`. */
   basePath: string;

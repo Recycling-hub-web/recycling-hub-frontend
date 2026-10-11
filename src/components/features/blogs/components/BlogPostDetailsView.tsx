@@ -46,7 +46,7 @@ import { getCategoryName } from '../services/blogService';
 
 type BlogPostDetailsViewProps = {
   postId: string;
-  basePath: '/admin/blogs' | '/staff/blogs';
+  basePath: '/admin/blogs' | '/staff/blogs' | '/super-admin/blogs';
 };
 
 const BlogPostDetailsView = ({

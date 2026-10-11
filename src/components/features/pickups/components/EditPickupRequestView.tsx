@@ -27,7 +27,7 @@ type FormState = {
 
 type EditPickupRequestViewProps = {
   requestId: string;
-  basePath: '/admin/pickups' | '/staff/pickups';
+  basePath: '/admin/pickups' | '/staff/pickups' | '/super-admin/pickups';
 };
 
 // Only pickup_address/estimated_quantity/requested_date/note are

@@ -25,7 +25,7 @@ type CollectionPointTableProps = {
   loading: boolean;
   error: string;
   onRetry: () => void;
-  /** /admin/collection-points or /staff/collection-points — one
+  /** /super-admin/collection-points or /staff/collection-points — one
    * component serves both role areas, same as ClassificationTable. */
   basePath: string;
   onDeleteRequest: (collectionPoint: CollectionPoint) => void;

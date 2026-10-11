@@ -6,6 +6,7 @@ import { useState } from 'react';
 import {
   LuArrowLeft,
   LuCalendar,
+  LuCrown,
   LuMail,
   LuPencil,
   LuPhone,
@@ -153,7 +154,14 @@ const UserDetailsView = ({ userId }: { userId: string }) => {
       </div>
 
       <div className="mb-5 flex flex-wrap gap-2">
-        <StatusBadge variant={ROLE_BADGE_VARIANT[user.role]}>
+        <StatusBadge
+          variant={ROLE_BADGE_VARIANT[user.role]}
+          icon={
+            user.role === 'super_admin' ? (
+              <LuCrown className="size-3" />
+            ) : undefined
+          }
+        >
           {ROLE_LABELS[user.role]}
         </StatusBadge>
         <StatusBadge variant={user.is_active ? 'success' : 'neutral'}>

@@ -32,7 +32,10 @@ const INITIAL_STATE: FormState = {
 };
 
 type CreateCollectionPointViewProps = {
-  basePath: '/admin/collection-points' | '/staff/collection-points';
+  basePath:
+    | '/admin/collection-points'
+    | '/staff/collection-points'
+    | '/super-admin/collection-points';
 };
 
 // Full page, not a modal — same footing as CreateClassificationView/

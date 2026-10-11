@@ -30,7 +30,10 @@ type FormState = {
 
 type EditCategoryViewProps = {
   categoryId: string;
-  basePath: '/admin/categories' | '/staff/categories';
+  basePath:
+    | '/admin/categories'
+    | '/staff/categories'
+    | '/super-admin/categories';
 };
 
 const EditCategoryView = ({ categoryId, basePath }: EditCategoryViewProps) => {
