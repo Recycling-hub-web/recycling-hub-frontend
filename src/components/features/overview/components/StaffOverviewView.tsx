@@ -10,7 +10,7 @@ import {
 } from 'react-icons/lu';
 
 import { OPERATIONAL_ROLES } from '../../../../layouts/operationalRoles';
-import { QuickLeadTable } from '../../pickups/components/QuickLeadTable';
+import { QuickLeadTable } from '../../pickups/components/admin/QuickLeadTable';
 import {
   useMarkQuickPickupRequestContacted,
   useQuickPickupRequests,

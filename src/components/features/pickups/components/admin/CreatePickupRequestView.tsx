@@ -9,28 +9,36 @@ import { LuArrowLeft } from 'react-icons/lu';
 import {
   joinPhoneNumber,
   splitPhoneNumber,
-} from '../../../../constants/dialCodes';
-import { InputField } from '../../../form/fields/InputField';
-import { PhoneInputField } from '../../../form/fields/PhoneInputField';
-import { SelectField } from '../../../form/fields/SelectField';
-import { TextareaField } from '../../../form/fields/TextareaField';
-import { PageContainer } from '../../../layout/PageContainer';
-import { AlertBanner } from '../../../ui/AlertBanner';
-import { Button } from '../../../ui/buttons/Button';
-import { Card } from '../../../ui/card/Card';
-import { Loading } from '../../../ui/loading/Loading';
-import { PageHeader } from '../../../ui/PageHeader';
-import { useToast } from '../../../ui/toast/ToastContext';
-import { REQUEST_TYPE_FILTER_OPTIONS } from '../constants';
+} from '../../../../../constants/dialCodes';
+import { InputField } from '../../../../form/fields/InputField';
+import { PhoneInputField } from '../../../../form/fields/PhoneInputField';
+import { SelectField } from '../../../../form/fields/SelectField';
+import { TextareaField } from '../../../../form/fields/TextareaField';
+import { PageContainer } from '../../../../layout/PageContainer';
+import { AlertBanner } from '../../../../ui/AlertBanner';
+import { Button } from '../../../../ui/buttons/Button';
+import { Card } from '../../../../ui/card/Card';
+import { Loading } from '../../../../ui/loading/Loading';
+import { PageHeader } from '../../../../ui/PageHeader';
+import { useToast } from '../../../../ui/toast/ToastContext';
+import { REQUEST_TYPE_FILTER_OPTIONS } from '../../constants';
 import {
   useConvertQuickPickupRequest,
   useCreatePickupRequest,
   useEvaluatePickup,
   usePickupCategories,
   useQuickPickupRequest,
-} from '../hooks';
-import type { PickupRequestType } from '../types';
-import { type Photo, PickupPhotoUploader } from './PickupPhotoUploader';
+} from '../../hooks';
+import type { PickupRequestItemInput } from '../../services/pickupService';
+import type { PickupRequestType } from '../../types';
+import { PickupItemsFieldArray } from '../shared/PickupItemsFieldArray';
+import { type Photo, PickupPhotoUploader } from '../shared/PickupPhotoUploader';
+
+const EMPTY_ITEM: PickupRequestItemInput = {
+  category: '',
+  estimated_quantity: '',
+  quantity_unit: '',
+};
 
 type FormState = {
   full_name: string;
@@ -40,16 +48,15 @@ type FormState = {
   // actually stores only at submit time (see joinPhoneNumber).
   phone_dial_code: string;
   phone_local: string;
-  category: string;
   request_type: PickupRequestType;
   pickup_address: string;
-  estimated_quantity: string;
-  quantity_unit: string;
   note: string;
   // Optional — evaluating right here skips the separate Evaluate step
   // on the details page afterward. Kept as its own trio of fields
   // rather than reusing EvaluateModal's own state, since this form has
-  // a third option (''/"not yet") that modal doesn't need.
+  // a third option (''/"not yet") that modal doesn't need. Lump-sum
+  // only, unlike EvaluateModal's lump-vs-itemized toggle — the
+  // just-created items have no ids yet to price individually here.
   // 'none' rather than '' — SelectField's own built-in disabled
   // placeholder option also uses value="", and an empty-string real
   // option collides with it (same gotcha found building Categories).
@@ -63,11 +70,8 @@ const INITIAL_STATE: FormState = {
   email: '',
   phone_dial_code: '+60',
   phone_local: '',
-  category: '',
   request_type: 'individual',
   pickup_address: '',
-  estimated_quantity: '',
-  quantity_unit: '',
   note: '',
   evaluation_decision: 'none',
   evaluation_price: '',
@@ -119,7 +123,11 @@ const CreatePickupRequestView = ({
   const { options: categoryOptions, loading: loadingCategories } =
     usePickupCategories();
   const [formData, setFormData] = useState<FormState>(INITIAL_STATE);
+  const [items, setItems] = useState<PickupRequestItemInput[]>([
+    { ...EMPTY_ITEM },
+  ]);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [itemErrors, setItemErrors] = useState<Record<string, string>[]>([]);
   const [photoKey, setPhotoKey] = useState<string | null>(null);
   const [photoPreview, setPhotoPreview] = useState<Photo>(null);
 
@@ -152,7 +160,6 @@ const CreatePickupRequestView = ({
     }
     if (!data.phone_local.trim())
       nextErrors.phone_local = 'Phone number is required.';
-    if (!data.category) nextErrors.category = 'Category is required.';
     if (!data.pickup_address.trim())
       nextErrors.pickup_address = 'Pickup address is required.';
     if (data.evaluation_decision === 'approved') {
@@ -167,7 +174,17 @@ const CreatePickupRequestView = ({
       nextErrors.evaluation_reason = 'A reason is required when rejecting.';
     }
     setErrors(nextErrors);
-    return Object.keys(nextErrors).length === 0;
+
+    const nextItemErrors: Record<string, string>[] = items.map(
+      (item): Record<string, string> =>
+        item.category ? {} : { category: 'Category is required.' },
+    );
+    setItemErrors(nextItemErrors);
+
+    return (
+      Object.keys(nextErrors).length === 0 &&
+      nextItemErrors.every((e) => Object.keys(e).length === 0)
+    );
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -180,12 +197,14 @@ const CreatePickupRequestView = ({
       phone_number:
         joinPhoneNumber(formData.phone_dial_code, formData.phone_local) ||
         undefined,
-      category: formData.category,
+      items: items.map((item) => ({
+        category: item.category,
+        estimated_quantity: item.estimated_quantity?.trim() || undefined,
+        quantity_unit: item.quantity_unit?.trim() || undefined,
+      })),
       request_type: formData.request_type,
       pickup_address: formData.pickup_address,
       photo: photoKey || undefined,
-      estimated_quantity: formData.estimated_quantity || undefined,
-      quantity_unit: formData.quantity_unit || undefined,
       note: formData.note || undefined,
     };
 
@@ -289,15 +308,6 @@ const CreatePickupRequestView = ({
               disabled={submitting}
             />
             <SelectField
-              label="Material category"
-              field="category"
-              options={categoryOptions}
-              formData={formData}
-              errors={errors}
-              updateFormData={updateFormData}
-              disabled={submitting || loadingCategories}
-            />
-            <SelectField
               label="Request type"
               field="request_type"
               options={REQUEST_TYPE_OPTIONS}
@@ -317,26 +327,23 @@ const CreatePickupRequestView = ({
                 disabled={submitting}
               />
             </div>
-            <InputField
-              label="Estimated quantity"
-              field="estimated_quantity"
-              type="number"
-              required={false}
-              placeholder="e.g. 5"
-              formData={formData}
-              errors={errors}
-              updateFormData={updateFormData}
+            <PickupItemsFieldArray
+              items={items}
+              onChange={setItems}
+              categoryOptions={categoryOptions}
+              loadingCategories={loadingCategories}
               disabled={submitting}
-            />
-            <InputField
-              label="Quantity unit"
-              field="quantity_unit"
-              required={false}
-              placeholder="e.g. kg"
-              formData={formData}
-              errors={errors}
-              updateFormData={updateFormData}
-              disabled={submitting}
+              errors={itemErrors}
+              labels={{
+                itemsSection: 'Materials',
+                category: 'Material category',
+                estimatedQuantity: 'Estimated quantity',
+                estimatedQuantityPlaceholder: 'e.g. 5',
+                quantityUnit: 'Quantity unit',
+                quantityUnitPlaceholder: 'e.g. kg',
+                addItem: 'Add another item',
+                removeItem: 'Remove',
+              }}
             />
             <div className="sm:col-span-2">
               <PickupPhotoUploader

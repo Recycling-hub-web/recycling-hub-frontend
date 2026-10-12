@@ -3,23 +3,23 @@
 import Link from 'next/link';
 import { LuCheck, LuEye, LuMessageCircle, LuPhoneCall } from 'react-icons/lu';
 
-import { StatusBadge } from '../../../ui/badges/StatusBadge';
-import { AppDate } from '../../../ui/date/AppDate';
+import { StatusBadge } from '../../../../ui/badges/StatusBadge';
+import { AppDate } from '../../../../ui/date/AppDate';
 import {
   TableEmptyRow,
   TableErrorRow,
   TableLoadingRow,
   TableWrapper,
-} from '../../../ui/table';
+} from '../../../../ui/table';
 import {
   QUICK_REQUEST_STATUS_BADGE_VARIANT,
   REQUEST_TYPE_BADGE_VARIANT,
-} from '../constants';
+} from '../../constants';
 import {
   PICKUP_QUICK_REQUEST_STATUS_LABELS,
   PICKUP_REQUEST_TYPE_LABELS,
   type PickupQuickRequestListItem,
-} from '../types';
+} from '../../types';
 
 type QuickLeadTableProps = {
   leads: PickupQuickRequestListItem[];

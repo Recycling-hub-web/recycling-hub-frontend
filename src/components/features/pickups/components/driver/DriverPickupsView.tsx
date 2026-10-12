@@ -10,27 +10,27 @@ import {
   LuWallet,
 } from 'react-icons/lu';
 
-import { PageContainer } from '../../../layout/PageContainer';
-import { PageHeader } from '../../../ui/PageHeader';
+import { PageContainer } from '../../../../layout/PageContainer';
+import { PageHeader } from '../../../../ui/PageHeader';
 import {
   TableEmptyRow,
   TableErrorRow,
   TableLoadingRow,
   TableWrapper,
-} from '../../../ui/table';
-import { Tabs } from '../../../ui/tabs';
-import { useToast } from '../../../ui/toast/ToastContext';
+} from '../../../../ui/table';
+import { Tabs } from '../../../../ui/tabs';
+import { useToast } from '../../../../ui/toast/ToastContext';
 import {
   useClaimReimbursements,
   usePendingReimbursementSummary,
-} from '../../finance/hooks';
-import { useClaimPickupRequest, usePickupRequests } from '../hooks';
-import type { PickupRequestListItem } from '../types';
+} from '../../../finance/hooks';
+import { useClaimPickupRequest, usePickupRequests } from '../../hooks';
+import { itemsSummary, type PickupRequestListItem } from '../../types';
 import {
   googleMapsDirectionsUrl,
   wazeNavigateUrl,
-} from '../utils/navigationLinks';
-import { CollectModal } from './CollectModal';
+} from '../../utils/navigationLinks';
+import { CollectModal } from '../shared/CollectModal';
 import { OptimizeRouteModal } from './OptimizeRouteModal';
 
 type Tab = 'available' | 'mine';
@@ -253,7 +253,7 @@ const DriverPickupsView = () => {
             </td>
           )}
           <td className="px-6 py-4 font-medium text-slate-900">
-            {r.category.name}
+            {itemsSummary(r.items)}
           </td>
           <td className="px-6 py-4 text-slate-500">
             <span className="inline-flex items-center gap-1.5">
@@ -434,6 +434,7 @@ const DriverPickupsView = () => {
         // CollectionRequestViewSet.get_queryset) — always a driver
         // collection, never the staff-collector path.
         showPaymentFields
+        items={collectTarget?.items ?? []}
       />
 
       <OptimizeRouteModal

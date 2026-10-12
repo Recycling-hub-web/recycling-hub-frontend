@@ -2,9 +2,9 @@
 
 import { LuBuilding2, LuChevronRight, LuSmartphone } from 'react-icons/lu';
 
-import { useDictionary } from '../../../../hooks/useDictionary';
-import { FadeIn } from '../../../ui/FadeIn';
-import type { PickupRequestType } from '../types';
+import { useDictionary } from '../../../../../hooks/useDictionary';
+import { FadeIn } from '../../../../ui/FadeIn';
+import type { PickupRequestType } from '../../types';
 
 type PickupTypeSelectorProps = {
   onSelect: (type: PickupRequestType) => void;

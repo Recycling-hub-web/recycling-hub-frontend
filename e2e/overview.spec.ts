@@ -44,7 +44,7 @@ const seedCollectedOnRoute = async (
       full_name: fullName,
       email: 'e2e-overview@example.com',
       phone_number: '+60123456789',
-      category: E_WASTE_CATEGORY_ID,
+      items: [{ category: E_WASTE_CATEGORY_ID }],
       pickup_address: '1 Jalan Test, 50000 Kuala Lumpur',
     },
   });
@@ -175,7 +175,7 @@ test.describe('Driver overview', () => {
         full_name: fullName,
         email: 'e2e-overview@example.com',
         phone_number: '+60123456789',
-        category: E_WASTE_CATEGORY_ID,
+        items: [{ category: E_WASTE_CATEGORY_ID }],
         pickup_address: '1 Jalan Test, 50000 Kuala Lumpur',
       },
     });

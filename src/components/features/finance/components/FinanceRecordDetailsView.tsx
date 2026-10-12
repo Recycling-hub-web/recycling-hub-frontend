@@ -87,7 +87,7 @@ const FinanceRecordDetailsView = ({
 
       <PageHeader
         title={record.collection_request.full_name}
-        subtitle={`${record.collection_request.category} — finance record`}
+        subtitle={`${record.collection_request.items_summary} — finance record`}
         actions={
           canReimburse ? (
             <Button onClick={() => setReimburseOpen(true)}>
@@ -141,6 +141,22 @@ const FinanceRecordDetailsView = ({
             }
           />
         </div>
+
+        {record.items.length > 0 && (
+          <div className="mt-5 border-t border-slate-100 pt-5">
+            <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+              Itemized price breakdown
+            </p>
+            <ul className="space-y-0.5 text-sm text-slate-700">
+              {record.items.map((item) => (
+                <li key={item.id} className="flex justify-between gap-4">
+                  <span>{item.category}</span>
+                  <span>{item.price}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         {record.proof_of_payment?.public_url && (
           <div className="mt-5 border-t border-slate-100 pt-5">

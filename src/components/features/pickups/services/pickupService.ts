@@ -12,6 +12,14 @@ import type {
   PickupStatus,
 } from '../types';
 
+/** One material line as submitted on create/update — a request always
+ * has at least one, for either request_type. */
+type PickupRequestItemInput = {
+  category: string;
+  estimated_quantity?: string;
+  quantity_unit?: string;
+};
+
 type Paginated<T> = {
   count: number;
   next: string | null;
@@ -53,13 +61,14 @@ type CreatePickupRequestPayload = {
    * see CollectionRequestCreateSerializer.validate on the backend. */
   email?: string;
   phone_number?: string;
-  category: string;
+  /** One or more materials — individual and business requests are both
+   * free to submit several in one visit; item count is never gated by
+   * request_type. */
+  items: PickupRequestItemInput[];
   request_type?: PickupRequestType;
   pickup_address: string;
   /** Optional photo of the item(s) to be collected — a storage file key. */
   photo?: string;
-  estimated_quantity?: string;
-  quantity_unit?: string;
   note?: string;
 };
 
@@ -90,9 +99,13 @@ const requestPickupPhotoUploadUrl = (
 type UpdatePickupRequestPayload = Partial<{
   pickup_address: string;
   photo: string;
-  estimated_quantity: string;
   requested_date: string;
   note: string;
+  /** Whole-list replace — every existing item is deleted and recreated
+   * from this payload. Only accepted by the backend while
+   * evaluation_status is still `pending` (see
+   * CollectionRequestUpdateSerializer.validate_items). */
+  items: PickupRequestItemInput[];
 }>;
 
 // `status` is deliberately not editable here — see
@@ -107,11 +120,20 @@ const updatePickupRequest = (
 const deletePickupRequest = (id: string): Promise<void> =>
   apiFetch(`/pickups/${id}/`, { method: 'DELETE' });
 
+/** One item's price, for the itemized-pricing path. */
+type EvaluateItemInput = {
+  item_id: string;
+  price: string;
+};
+
 type EvaluatePickupPayload = {
   decision: 'approved' | 'rejected';
-  /** Required when approving — creates/updates the linked finance
-   * record. Ignored when rejecting. */
+  /** One lump total — required when approving, unless `items` is given
+   * instead. The evaluator's choice, for either request_type. */
   price?: string;
+  /** A price per item, summed into the total — required when
+   * approving, unless `price` is given instead. */
+  items?: EvaluateItemInput[];
   /** Required when rejecting (the reason); optional when approving. */
   note?: string;
 };
@@ -160,8 +182,18 @@ const assignDriverToRequest = (
 const claimPickupRequest = (id: string): Promise<PickupRequestDetails> =>
   apiFetch(`/pickups/${id}/claim/`, { method: 'POST' });
 
-type CollectPickupPayload = {
+/** One item's actual collected quantity. */
+type CollectItemInput = {
+  id: string;
   collected_quantity?: string;
+};
+
+type CollectPickupPayload = {
+  /** Single-item convenience path — only valid when the request has
+   * exactly one item. Use `items` instead for a multi-item request. */
+  collected_quantity?: string;
+  /** Per-item collected quantities for a multi-item request. */
+  items?: CollectItemInput[];
   note?: string;
   /** Driver-collected only — ignored by the backend otherwise. See
    * FinanceRecord on the backend, updated by this same collect() call. */
@@ -317,17 +349,20 @@ export {
 export type {
   AssignDriverPayload,
   CancelPickupPayload,
+  CollectItemInput,
   CollectPickupPayload,
   CreatePickupRequestPayload,
   CreateQuickPickupRequestPayload,
   DailyVolumePoint,
   DropOffItem,
   DropOffPayload,
+  EvaluateItemInput,
   EvaluatePickupPayload,
   ListPickupRequestsParams,
   ListQuickPickupRequestsParams,
   OptimizeRoutePayload,
   Paginated,
+  PickupRequestItemInput,
   SchedulePickupPayload,
   UpdatePickupRequestPayload,
 };

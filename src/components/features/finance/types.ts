@@ -1,8 +1,19 @@
 type FinanceCollectionRequest = {
   id: string;
   full_name: string;
-  category: string;
+  /** "First item's category + N more" — a summary, not the full items
+   * list (see FinanceRecordItem for the itemized price breakdown). */
+  items_summary: string;
   pickup_address: string;
+};
+
+/** One priced line, only present when the evaluator chose itemized
+ * pricing for this record (see CollectionRequestDecisionService
+ * .evaluate on the backend) — empty for a lump-sum FinanceRecord. */
+type FinanceRecordItem = {
+  id: string;
+  category: string;
+  price: string;
 };
 
 type FinanceStatus = 'pending' | 'claimed' | 'verified' | 'reimbursed';
@@ -27,6 +38,8 @@ type FinanceRecordListItem = {
   id: string;
   collection_request: FinanceCollectionRequest;
   price: string;
+  /** Only populated when the evaluator chose itemized pricing. */
+  items: FinanceRecordItem[];
   driver: FinanceDriver | null;
   actual_amount: string | null;
   payment_method: FinancePaymentMethod | '';
@@ -59,6 +72,7 @@ export type {
   FinanceCollectionRequest,
   FinanceDriver,
   FinancePaymentMethod,
+  FinanceRecordItem,
   FinanceRecordListItem,
   FinanceStatus,
   ProofOfPayment,

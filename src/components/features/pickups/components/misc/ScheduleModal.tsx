@@ -2,12 +2,12 @@
 
 import { type FormEvent, useMemo, useState } from 'react';
 
-import { InputField } from '../../../form/fields/InputField';
-import { SelectField } from '../../../form/fields/SelectField';
-import { TextareaField } from '../../../form/fields/TextareaField';
-import { AlertBanner } from '../../../ui/AlertBanner';
-import { Modal } from '../../../ui/modal/Modal';
-import { useCollectors, useSchedulePickup } from '../hooks';
+import { InputField } from '../../../../form/fields/InputField';
+import { SelectField } from '../../../../form/fields/SelectField';
+import { TextareaField } from '../../../../form/fields/TextareaField';
+import { AlertBanner } from '../../../../ui/AlertBanner';
+import { Modal } from '../../../../ui/modal/Modal';
+import { useCollectors, useSchedulePickup } from '../../hooks';
 
 type ScheduleModalProps = {
   requestId: string;

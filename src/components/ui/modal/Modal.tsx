@@ -81,6 +81,9 @@ const Modal = ({
       onClick={closeOnBackdrop ? onClose : undefined}
     >
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={title}
         className={`relative w-full ${SIZE_CLASSES[size]} rounded-2xl bg-white shadow-2xl transition-all duration-300 ${
           shown
             ? 'translate-y-0 scale-100 opacity-100'

@@ -3,19 +3,29 @@
 import { type FormEvent, useState } from 'react';
 import { LuBuilding2, LuSmartphone } from 'react-icons/lu';
 
-import { joinPhoneNumber } from '../../../../constants/dialCodes';
-import { useDictionary } from '../../../../hooks/useDictionary';
-import { ApiError } from '../../../../lib/api';
-import { InputField } from '../../../form/fields/InputField';
-import { PhoneInputField } from '../../../form/fields/PhoneInputField';
-import { SelectField } from '../../../form/fields/SelectField';
-import { TextareaField } from '../../../form/fields/TextareaField';
-import { Button } from '../../../ui/buttons/Button';
-import { FadeIn } from '../../../ui/FadeIn';
-import { useToast } from '../../../ui/toast/ToastContext';
-import { useCreatePickupRequest, usePickupCategories } from '../hooks';
-import { PICKUP_REQUEST_TYPE_LABELS, type PickupRequestType } from '../types';
-import { type Photo, PickupPhotoUploader } from './PickupPhotoUploader';
+import { joinPhoneNumber } from '../../../../../constants/dialCodes';
+import { useDictionary } from '../../../../../hooks/useDictionary';
+import { ApiError } from '../../../../../lib/api';
+import { InputField } from '../../../../form/fields/InputField';
+import { PhoneInputField } from '../../../../form/fields/PhoneInputField';
+import { TextareaField } from '../../../../form/fields/TextareaField';
+import { PublicButton } from '../../../../ui/buttons/PublicButton';
+import { FadeIn } from '../../../../ui/FadeIn';
+import { useToast } from '../../../../ui/toast/ToastContext';
+import { useCreatePickupRequest, usePickupCategories } from '../../hooks';
+import type { PickupRequestItemInput } from '../../services/pickupService';
+import {
+  PICKUP_REQUEST_TYPE_LABELS,
+  type PickupRequestType,
+} from '../../types';
+import { PickupItemsFieldArray } from '../shared/PickupItemsFieldArray';
+import { type Photo, PickupPhotoUploader } from '../shared/PickupPhotoUploader';
+
+const EMPTY_ITEM: PickupRequestItemInput = {
+  category: '',
+  estimated_quantity: '',
+  quantity_unit: '',
+};
 
 const REQUEST_TYPE_ICONS = {
   individual: LuSmartphone,
@@ -32,10 +42,7 @@ type FormState = {
   // actually stores only at submit time (see joinPhoneNumber).
   phone_dial_code: string;
   phone_local: string;
-  category: string;
   pickup_address: string;
-  estimated_quantity: string;
-  quantity_unit: string;
   note: string;
 };
 
@@ -44,10 +51,7 @@ const INITIAL_STATE: FormState = {
   email: '',
   phone_dial_code: '+60',
   phone_local: '',
-  category: '',
   pickup_address: '',
-  estimated_quantity: '',
-  quantity_unit: '',
   note: '',
 };
 
@@ -79,7 +83,11 @@ const PublicPickupRequestForm = ({
     usePickupCategories();
 
   const [formData, setFormData] = useState<FormState>(INITIAL_STATE);
+  const [items, setItems] = useState<PickupRequestItemInput[]>([
+    { ...EMPTY_ITEM },
+  ]);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [itemErrors, setItemErrors] = useState<Record<string, string>[]>([]);
   const [apiError, setApiError] = useState('');
   const [photoKey, setPhotoKey] = useState<string | null>(null);
   const [photoPreview, setPhotoPreview] = useState<Photo>(null);
@@ -103,11 +111,20 @@ const PublicPickupRequestForm = ({
     }
     if (!formData.phone_local.trim())
       nextErrors.phone_local = content.errorPhoneRequired;
-    if (!formData.category) nextErrors.category = content.errorCategoryRequired;
     if (!formData.pickup_address.trim())
       nextErrors.pickup_address = content.errorAddressRequired;
     setErrors(nextErrors);
-    return Object.keys(nextErrors).length === 0;
+
+    const nextItemErrors: Record<string, string>[] = items.map(
+      (item): Record<string, string> =>
+        item.category ? {} : { category: content.errorCategoryRequired },
+    );
+    setItemErrors(nextItemErrors);
+
+    return (
+      Object.keys(nextErrors).length === 0 &&
+      nextItemErrors.every((e) => Object.keys(e).length === 0)
+    );
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -124,12 +141,14 @@ const PublicPickupRequestForm = ({
             formData.phone_dial_code,
             formData.phone_local.trim(),
           ) || undefined,
-        category: formData.category,
+        items: items.map((item) => ({
+          category: item.category,
+          estimated_quantity: item.estimated_quantity?.trim() || undefined,
+          quantity_unit: item.quantity_unit?.trim() || undefined,
+        })),
         request_type: requestType,
         pickup_address: formData.pickup_address.trim(),
         photo: photoKey || undefined,
-        estimated_quantity: formData.estimated_quantity.trim() || undefined,
-        quantity_unit: formData.quantity_unit.trim() || undefined,
         note: formData.note.trim() || undefined,
       });
       setPhotoKey(null);
@@ -138,7 +157,9 @@ const PublicPickupRequestForm = ({
       // another batch) — stay on the page and reset in place, same as
       // ContactFormSection, rather than navigating or freezing the form.
       setFormData(INITIAL_STATE);
+      setItems([{ ...EMPTY_ITEM }]);
       setErrors({});
+      setItemErrors([]);
       toast.success(content.successMessage);
     } catch (err) {
       setApiError(err instanceof ApiError ? err.message : content.errorMessage);
@@ -217,15 +238,6 @@ const PublicPickupRequestForm = ({
                   updateFormData={updateField}
                   disabled={submitting}
                 />
-                <SelectField
-                  label={content.category}
-                  field="category"
-                  options={categoryOptions}
-                  formData={formData}
-                  errors={errors}
-                  updateFormData={updateField}
-                  disabled={submitting || loadingCategories}
-                />
                 <div className="sm:col-span-2">
                   <InputField
                     label={content.pickupAddress}
@@ -237,26 +249,24 @@ const PublicPickupRequestForm = ({
                     disabled={submitting}
                   />
                 </div>
-                <InputField
-                  label={content.estimatedQuantity}
-                  field="estimated_quantity"
-                  type="number"
-                  required={false}
-                  placeholder={content.estimatedQuantityPlaceholder}
-                  formData={formData}
-                  errors={errors}
-                  updateFormData={updateField}
+                <PickupItemsFieldArray
+                  items={items}
+                  onChange={setItems}
+                  categoryOptions={categoryOptions}
+                  loadingCategories={loadingCategories}
                   disabled={submitting}
-                />
-                <InputField
-                  label={content.quantityUnit}
-                  field="quantity_unit"
-                  required={false}
-                  placeholder={content.quantityUnitPlaceholder}
-                  formData={formData}
-                  errors={errors}
-                  updateFormData={updateField}
-                  disabled={submitting}
+                  errors={itemErrors}
+                  labels={{
+                    itemsSection: content.itemsSectionLabel,
+                    category: content.category,
+                    estimatedQuantity: content.estimatedQuantity,
+                    estimatedQuantityPlaceholder:
+                      content.estimatedQuantityPlaceholder,
+                    quantityUnit: content.quantityUnit,
+                    quantityUnitPlaceholder: content.quantityUnitPlaceholder,
+                    addItem: content.addItemButton,
+                    removeItem: content.removeItemLabel,
+                  }}
                 />
                 <div className="sm:col-span-2">
                   <PickupPhotoUploader
@@ -289,13 +299,13 @@ const PublicPickupRequestForm = ({
               )}
 
               <div className="mt-6 flex justify-end">
-                <Button
+                <PublicButton
                   type="submit"
                   disabled={submitting}
                   className="w-full sm:w-auto"
                 >
                   {submitting ? content.submittingButton : content.submitButton}
-                </Button>
+                </PublicButton>
               </div>
             </form>
           </div>

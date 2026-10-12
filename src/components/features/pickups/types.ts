@@ -45,6 +45,17 @@ type CollectionPointOption = {
   address: string;
 };
 
+/** One material line on a request — a request always has at least one,
+ * for either request_type (individual and business can both hold
+ * several, e.g. "10 computers, 3 phones, 3 AirPods" in one visit). */
+type PickupRequestItem = {
+  id: string;
+  category: PickupCategory;
+  estimated_quantity: string | null;
+  quantity_unit: string;
+  collected_quantity: string | null;
+};
+
 type OptimizeRouteStop = LatLng & { request_id: string };
 
 /** Response shape from POST /pickups/optimize-route/ — `stops` is
@@ -60,7 +71,7 @@ type OptimizeRouteResult = {
 /** Flat shape from the list endpoint (CollectionRequestListSerializer). */
 type PickupRequestListItem = {
   id: string;
-  category: PickupCategory;
+  items: PickupRequestItem[];
   full_name: string;
   email: string;
   status: PickupStatus;
@@ -70,7 +81,6 @@ type PickupRequestListItem = {
   pickup_address: string;
   requested_date: string | null;
   scheduled_at: string | null;
-  collected_quantity: string | null;
   delivered_quantity: string | null;
   route: RouteInfo | null;
 };
@@ -84,7 +94,7 @@ type PickupRequestDetails = {
   full_name: string;
   email: string;
   phone_number: string;
-  category: PickupCategory;
+  items: PickupRequestItem[];
   collection_point: PickupCollectionPoint;
   status: PickupStatus;
   evaluation_status: PickupEvaluationStatus;
@@ -95,12 +105,9 @@ type PickupRequestDetails = {
   request_type: PickupRequestType;
   pickup_address: string;
   photo: { file_key: string; public_url: string | null } | null;
-  estimated_quantity: string | null;
-  quantity_unit: string;
   requested_date: string | null;
   scheduled_at: string | null;
   collected_at: string | null;
-  collected_quantity: string | null;
   delivered_quantity: string | null;
   route: RouteInfo | null;
   closed_by: string | null;
@@ -209,6 +216,22 @@ const derivePickupStage = (
   return 'approved';
 };
 
+/** "First item's category + N more" — the shared display convention
+ * for anywhere a request's items need to fit in a single line (table
+ * rows, compact previews). Not a comma list (unbounded width, hides
+ * the count) and not a bare count badge (hides which material is
+ * actually in it). First-by-submission-order is used as the anchor
+ * since "largest quantity" has no defined meaning across mixed units
+ * (10 computers vs. 3 kg of cable). */
+const itemsSummary = (items: PickupRequestItem[]): string => {
+  const first = items[0];
+  if (!first) return '—';
+  const extra = items.length - 1;
+  return extra > 0
+    ? `${first.category.name} +${extra} more`
+    : first.category.name;
+};
+
 const PICKUP_STAGE_LABELS: Record<PickupStage, string> = {
   ...PICKUP_STATUS_LABELS,
   awaiting_review: 'Awaiting review',
@@ -221,6 +244,7 @@ const PICKUP_STAGE_LABELS: Record<PickupStage, string> = {
 
 export {
   derivePickupStage,
+  itemsSummary,
   PICKUP_EVALUATION_STATUS_LABELS,
   PICKUP_QUICK_REQUEST_STATUS_LABELS,
   PICKUP_REQUEST_TYPE_LABELS,
@@ -240,6 +264,7 @@ export type {
   PickupQuickRequestListItem,
   PickupQuickRequestStatus,
   PickupRequestDetails,
+  PickupRequestItem,
   PickupRequestListItem,
   PickupRequestType,
   PickupStage,

@@ -16,30 +16,31 @@ import {
   LuX,
 } from 'react-icons/lu';
 
-import { PageContainer } from '../../../layout/PageContainer';
-import { StatusBadge } from '../../../ui/badges/StatusBadge';
-import { Button } from '../../../ui/buttons/Button';
-import { Card } from '../../../ui/card/Card';
-import { AppDate } from '../../../ui/date/AppDate';
-import { InfoRow } from '../../../ui/InfoRow';
-import { Loading } from '../../../ui/loading/Loading';
-import { PageHeader } from '../../../ui/PageHeader';
-import { useToast } from '../../../ui/toast/ToastContext';
-import { ActivityLog } from '../../activity/components';
+import { PageContainer } from '../../../../layout/PageContainer';
+import { StatusBadge } from '../../../../ui/badges/StatusBadge';
+import { Button } from '../../../../ui/buttons/Button';
+import { Card } from '../../../../ui/card/Card';
+import { AppDate } from '../../../../ui/date/AppDate';
+import { InfoRow } from '../../../../ui/InfoRow';
+import { Loading } from '../../../../ui/loading/Loading';
+import { PageHeader } from '../../../../ui/PageHeader';
+import { useToast } from '../../../../ui/toast/ToastContext';
+import { ActivityLog } from '../../../activity/components';
 import {
   EVALUATION_STATUS_BADGE_VARIANT,
   REQUEST_TYPE_BADGE_VARIANT,
   STATUS_BADGE_VARIANT,
-} from '../constants';
-import { usePickupRequest } from '../hooks';
+} from '../../constants';
+import { usePickupRequest } from '../../hooks';
 import {
+  itemsSummary,
   PICKUP_EVALUATION_STATUS_LABELS,
   PICKUP_REQUEST_TYPE_LABELS,
   PICKUP_STATUS_LABELS,
-} from '../types';
+} from '../../types';
+import { CollectModal } from '../shared/CollectModal';
 import { AssignDriverModal } from './AssignDriverModal';
 import { CancelModal } from './CancelModal';
-import { CollectModal } from './CollectModal';
 import { EvaluateModal } from './EvaluateModal';
 
 type PickupRequestDetailsViewProps = {
@@ -123,7 +124,7 @@ const PickupRequestDetailsView = ({
 
       <PageHeader
         title={request.full_name}
-        subtitle={`${request.category.name} pickup request`}
+        subtitle={`${itemsSummary(request.items)} pickup request`}
         actions={
           <>
             {canEvaluate && (
@@ -204,15 +205,24 @@ const PickupRequestDetailsView = ({
             label="Pickup address"
             value={request.pickup_address}
           />
-          <InfoRow
-            icon={<LuPackage className="size-4" />}
-            label="Estimated quantity"
-            value={
-              request.estimated_quantity
-                ? `${request.estimated_quantity} ${request.quantity_unit}`
-                : '—'
-            }
-          />
+          <div className="sm:col-span-2">
+            <InfoRow
+              icon={<LuPackage className="size-4" />}
+              label="Materials"
+              value={
+                <ul className="space-y-0.5">
+                  {request.items.map((item) => (
+                    <li key={item.id}>
+                      {item.category.name}
+                      {item.estimated_quantity
+                        ? ` — ${item.estimated_quantity} ${item.quantity_unit}`
+                        : ''}
+                    </li>
+                  ))}
+                </ul>
+              }
+            />
+          </div>
         </div>
 
         {request.collection_point && (
@@ -327,18 +337,31 @@ const PickupRequestDetailsView = ({
                 value={<AppDate value={request.collected_at} format="long" />}
               />
             )}
-            {request.collected_quantity && (
-              <InfoRow
-                icon={<LuPackage className="size-4" />}
-                label="Collected quantity"
-                value={`${request.collected_quantity} ${request.quantity_unit}`}
-              />
+            {request.items.some((item) => item.collected_quantity) && (
+              <div className="sm:col-span-2">
+                <InfoRow
+                  icon={<LuPackage className="size-4" />}
+                  label="Collected quantity"
+                  value={
+                    <ul className="space-y-0.5">
+                      {request.items.map((item) => (
+                        <li key={item.id}>
+                          {item.category.name}
+                          {item.collected_quantity
+                            ? ` — ${item.collected_quantity} ${item.quantity_unit}`
+                            : ''}
+                        </li>
+                      ))}
+                    </ul>
+                  }
+                />
+              </div>
             )}
             {request.delivered_quantity && (
               <InfoRow
                 icon={<LuPackage className="size-4" />}
                 label="Delivered quantity"
-                value={`${request.delivered_quantity} ${request.quantity_unit}`}
+                value={request.delivered_quantity}
               />
             )}
             {request.route && (
@@ -392,6 +415,7 @@ const PickupRequestDetailsView = ({
         open={evaluateOpen}
         onClose={() => setEvaluateOpen(false)}
         onEvaluated={handleEvaluated}
+        items={request.items}
       />
       <AssignDriverModal
         requestId={request.id}
@@ -405,6 +429,7 @@ const PickupRequestDetailsView = ({
         onClose={() => setCollectOpen(false)}
         onCollected={handleCollected}
         showPaymentFields={request.assigned_driver !== null}
+        items={request.items}
       />
       <CancelModal
         requestId={request.id}

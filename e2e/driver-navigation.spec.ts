@@ -24,7 +24,7 @@ test('driver can open Google Maps or Waze directions to an assigned pickup', asy
       full_name: fullName,
       email: 'e2e-nav@example.com',
       phone_number: '+60123456789',
-      category: E_WASTE_CATEGORY_ID,
+      items: [{ category: E_WASTE_CATEGORY_ID }],
       pickup_address: address,
     },
   });

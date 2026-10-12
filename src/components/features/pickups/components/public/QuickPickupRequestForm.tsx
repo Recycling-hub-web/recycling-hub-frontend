@@ -3,15 +3,18 @@
 import { type FormEvent, useState } from 'react';
 import { LuBuilding2, LuSmartphone } from 'react-icons/lu';
 
-import { joinPhoneNumber } from '../../../../constants/dialCodes';
-import { useDictionary } from '../../../../hooks/useDictionary';
-import { ApiError } from '../../../../lib/api';
-import { PhoneInputField } from '../../../form/fields/PhoneInputField';
-import { Button } from '../../../ui/buttons/Button';
-import { FadeIn } from '../../../ui/FadeIn';
-import { useToast } from '../../../ui/toast/ToastContext';
-import { useCreateQuickPickupRequest } from '../hooks';
-import { PICKUP_REQUEST_TYPE_LABELS, type PickupRequestType } from '../types';
+import { joinPhoneNumber } from '../../../../../constants/dialCodes';
+import { useDictionary } from '../../../../../hooks/useDictionary';
+import { ApiError } from '../../../../../lib/api';
+import { PhoneInputField } from '../../../../form/fields/PhoneInputField';
+import { PublicButton } from '../../../../ui/buttons/PublicButton';
+import { FadeIn } from '../../../../ui/FadeIn';
+import { useToast } from '../../../../ui/toast/ToastContext';
+import { useCreateQuickPickupRequest } from '../../hooks';
+import {
+  PICKUP_REQUEST_TYPE_LABELS,
+  type PickupRequestType,
+} from '../../types';
 
 const REQUEST_TYPE_ICONS = {
   individual: LuSmartphone,
@@ -132,9 +135,13 @@ const QuickPickupRequestForm = () => {
               )}
 
               <div className="mt-6">
-                <Button type="submit" disabled={submitting} className="w-full">
+                <PublicButton
+                  type="submit"
+                  disabled={submitting}
+                  className="w-full"
+                >
                   {submitting ? content.submittingButton : content.submitButton}
-                </Button>
+                </PublicButton>
               </div>
             </form>
           </div>

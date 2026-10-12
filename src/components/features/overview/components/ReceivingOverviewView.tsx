@@ -12,7 +12,7 @@ import {
   TableWrapper,
 } from '../../../ui/table';
 import { STATUS_BADGE_VARIANT } from '../../pickups/constants';
-import { PICKUP_STATUS_LABELS } from '../../pickups/types';
+import { itemsSummary, PICKUP_STATUS_LABELS } from '../../pickups/types';
 import { useReceivingOverviewStats } from '../hooks';
 import { OverviewStatCard } from './OverviewStatCard';
 import { OverviewStatGrid } from './OverviewStatGrid';
@@ -52,7 +52,7 @@ const ReceivingOverviewView = () => {
     return deliveries.slice(0, PREVIEW_SIZE).map((d) => (
       <tr key={d.id} className="transition-colors hover:bg-slate-50">
         <td className="px-6 py-4 font-medium text-slate-900">{d.full_name}</td>
-        <td className="px-6 py-4 text-slate-500">{d.category.name}</td>
+        <td className="px-6 py-4 text-slate-500">{itemsSummary(d.items)}</td>
         <td className="px-6 py-4">
           <StatusBadge variant={STATUS_BADGE_VARIANT[d.status]}>
             {PICKUP_STATUS_LABELS[d.status]}

@@ -3,20 +3,24 @@
 import { useState } from 'react';
 import { LuCheckCheck } from 'react-icons/lu';
 
-import { PageContainer } from '../../../layout/PageContainer';
-import { StatusBadge } from '../../../ui/badges/StatusBadge';
-import { FilterSelect } from '../../../ui/FilterSelect';
-import { PageHeader } from '../../../ui/PageHeader';
+import { PageContainer } from '../../../../layout/PageContainer';
+import { StatusBadge } from '../../../../ui/badges/StatusBadge';
+import { FilterSelect } from '../../../../ui/FilterSelect';
+import { PageHeader } from '../../../../ui/PageHeader';
 import {
   TableEmptyRow,
   TableErrorRow,
   TableLoadingRow,
   TableWrapper,
-} from '../../../ui/table';
-import { useToast } from '../../../ui/toast/ToastContext';
-import { STATUS_BADGE_VARIANT } from '../constants';
-import { useCloseDelivery, usePickupRequests } from '../hooks';
-import { PICKUP_STATUS_LABELS, type PickupStatus } from '../types';
+} from '../../../../ui/table';
+import { useToast } from '../../../../ui/toast/ToastContext';
+import { STATUS_BADGE_VARIANT } from '../../constants';
+import { useCloseDelivery, usePickupRequests } from '../../hooks';
+import {
+  itemsSummary,
+  PICKUP_STATUS_LABELS,
+  type PickupStatus,
+} from '../../types';
 
 const STATUS_FILTER_OPTIONS = [
   { value: '', label: 'All' },
@@ -79,8 +83,8 @@ const ReceivingDeliveriesView = () => {
       <tr key={r.id} className="transition-colors hover:bg-slate-50">
         <td className="px-6 py-4 font-medium text-slate-900">{r.full_name}</td>
         <td className="px-6 py-4 text-slate-700">
-          {r.category.name} —{' '}
-          {r.delivered_quantity ?? r.collected_quantity ?? '—'}
+          {itemsSummary(r.items)} —{' '}
+          {r.delivered_quantity ?? r.items[0]?.collected_quantity ?? '—'}
         </td>
         <td className="px-6 py-4">
           <StatusBadge variant={STATUS_BADGE_VARIANT[r.status]}>

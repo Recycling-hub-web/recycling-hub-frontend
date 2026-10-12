@@ -27,9 +27,8 @@ const seedPickupRequest = async (
       full_name: fullName,
       email: 'e2e-pickup@example.com',
       phone_number: '+60123456789',
-      category: E_WASTE_CATEGORY_ID,
+      items: [{ category: E_WASTE_CATEGORY_ID, estimated_quantity: '5.5' }],
       pickup_address: '1 Jalan Test, 50000 Kuala Lumpur',
-      estimated_quantity: '5.5',
       requested_date: '2026-12-01',
     },
   });

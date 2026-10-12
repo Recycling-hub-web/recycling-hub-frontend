@@ -2,8 +2,8 @@
 
 import { LuImage, LuUpload, LuX } from 'react-icons/lu';
 
-import { AlertBanner } from '../../../ui/AlertBanner';
-import { usePickupPhotoUpload } from '../hooks';
+import { AlertBanner } from '../../../../ui/AlertBanner';
+import { usePickupPhotoUpload } from '../../hooks';
 
 type Photo = { file_key: string; public_url: string | null } | null;
 

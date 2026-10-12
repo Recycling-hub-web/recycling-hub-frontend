@@ -30,7 +30,7 @@ const seedCollectedOnRoute = async (
       full_name: fullName,
       email: 'e2e-route@example.com',
       phone_number: '+60123456789',
-      category: E_WASTE_CATEGORY_ID,
+      items: [{ category: E_WASTE_CATEGORY_ID }],
       pickup_address: '1 Jalan Test, 50000 Kuala Lumpur',
     },
   });
@@ -100,7 +100,7 @@ test('receiving officer never sees requests earlier in the lifecycle', async ({
       full_name: fullName,
       email: 'e2e-route@example.com',
       phone_number: '+60123456789',
-      category: E_WASTE_CATEGORY_ID,
+      items: [{ category: E_WASTE_CATEGORY_ID }],
       pickup_address: '1 Jalan Test, 50000 Kuala Lumpur',
     },
   });

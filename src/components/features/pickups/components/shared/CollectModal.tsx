@@ -1,14 +1,16 @@
 'use client';
 
-import { type FormEvent, useState } from 'react';
+import { type FormEvent, useEffect, useState } from 'react';
 import { LuReceipt, LuUpload } from 'react-icons/lu';
 
-import { SelectField } from '../../../form/fields/SelectField';
-import { TextareaField } from '../../../form/fields/TextareaField';
-import { AlertBanner } from '../../../ui/AlertBanner';
-import { Modal } from '../../../ui/modal/Modal';
-import { useUploadStorageFile } from '../../storageFiles/hooks';
-import { useCollectPickup } from '../hooks';
+import { InputField } from '../../../../form/fields/InputField';
+import { SelectField } from '../../../../form/fields/SelectField';
+import { TextareaField } from '../../../../form/fields/TextareaField';
+import { AlertBanner } from '../../../../ui/AlertBanner';
+import { Modal } from '../../../../ui/modal/Modal';
+import { useUploadStorageFile } from '../../../storageFiles/hooks';
+import { useCollectPickup } from '../../hooks';
+import type { PickupRequestItem } from '../../types';
 
 type CollectModalProps = {
   requestId: string;
@@ -20,6 +22,11 @@ type CollectModalProps = {
    * later) — a staff collector has nothing to reimburse, so these
    * fields stay hidden on that path. See FinanceRecord on the backend. */
   showPaymentFields?: boolean;
+  /** The request's materials — a single-item request still collects via
+   * the scalar convenience path (no quantity UI at all, same as before
+   * this field existed); a multi-item one gets one quantity input per
+   * item here, defaulting to its estimated_quantity. */
+  items?: PickupRequestItem[];
 };
 
 type FormState = {
@@ -45,6 +52,7 @@ const CollectModal = ({
   onClose,
   onCollected,
   showPaymentFields = false,
+  items = [],
 }: CollectModalProps) => {
   const { execute: collect, loading: submitting } = useCollectPickup();
   const { execute: upload, loading: uploading } = useUploadStorageFile();
@@ -57,6 +65,22 @@ const CollectModal = ({
   const [proofPreview, setProofPreview] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [apiError, setApiError] = useState('');
+  const [itemQuantities, setItemQuantities] = useState<Record<string, string>>(
+    {},
+  );
+
+  const isMultiItem = items.length > 1;
+
+  // Re-seed the per-item quantities (defaulting to each item's estimated
+  // quantity) every time the modal is opened for a request.
+  useEffect(() => {
+    if (!open) return;
+    setItemQuantities(
+      Object.fromEntries(
+        items.map((item) => [item.id, item.estimated_quantity ?? '']),
+      ),
+    );
+  }, [open, items]);
 
   let uploadLabel = 'Upload';
   if (uploading) uploadLabel = 'Uploading…';
@@ -82,6 +106,7 @@ const CollectModal = ({
     setProofPreview(null);
     setErrors({});
     setApiError('');
+    setItemQuantities({});
     onClose();
   };
 
@@ -103,6 +128,12 @@ const CollectModal = ({
     try {
       await collect(requestId, {
         note: formData.note || undefined,
+        ...(isMultiItem && {
+          items: items.map((item) => ({
+            id: item.id,
+            collected_quantity: itemQuantities[item.id] || undefined,
+          })),
+        }),
         ...(showPaymentFields && {
           // actual_amount deliberately omitted — defaults server-side
           // to the agreed price (set at evaluation), which is always
@@ -155,6 +186,32 @@ const CollectModal = ({
         className="space-y-1"
       >
         <AlertBanner message={apiError} />
+
+        {isMultiItem && (
+          <div className="mb-4">
+            <p className="mb-2 text-sm font-medium text-slate-900">
+              Collected quantity per item
+            </p>
+            <div className="space-y-3">
+              {items.map((item) => (
+                <InputField
+                  key={item.id}
+                  label={`${item.category.name} (${item.quantity_unit})`}
+                  field={item.id}
+                  dataField={`item-quantity-${item.category.name}`}
+                  type="number"
+                  required={false}
+                  placeholder="e.g. 5"
+                  formData={itemQuantities}
+                  updateFormData={(field, value) =>
+                    setItemQuantities((prev) => ({ ...prev, [field]: value }))
+                  }
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
         <TextareaField
           label="Note"
           field="note"

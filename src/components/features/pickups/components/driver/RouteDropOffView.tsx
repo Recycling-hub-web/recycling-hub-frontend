@@ -3,18 +3,19 @@
 import { useState } from 'react';
 import { LuPackageCheck, LuUpload } from 'react-icons/lu';
 
-import { PageContainer } from '../../../layout/PageContainer';
-import { AlertBanner } from '../../../ui/AlertBanner';
-import { PageHeader } from '../../../ui/PageHeader';
+import { PageContainer } from '../../../../layout/PageContainer';
+import { AlertBanner } from '../../../../ui/AlertBanner';
+import { PageHeader } from '../../../../ui/PageHeader';
 import {
   TableEmptyRow,
   TableErrorRow,
   TableLoadingRow,
   TableWrapper,
-} from '../../../ui/table';
-import { useToast } from '../../../ui/toast/ToastContext';
-import { useUploadStorageFile } from '../../storageFiles/hooks';
-import { useDropOffRoute, usePickupRequests } from '../hooks';
+} from '../../../../ui/table';
+import { useToast } from '../../../../ui/toast/ToastContext';
+import { useUploadStorageFile } from '../../../storageFiles/hooks';
+import { useDropOffRoute, usePickupRequests } from '../../hooks';
+import { itemsSummary } from '../../types';
 
 /** The driver's own batch store drop-off — its own screen, not
  * CollectionTaskDetailsPage/CollectModal reused, since this covers
@@ -130,7 +131,8 @@ const RouteDropOffView = () => {
         </td>
         <td className="px-6 py-4 font-medium text-slate-900">{r.full_name}</td>
         <td className="px-6 py-4 text-slate-700">
-          {r.category.name} — {r.collected_quantity ?? '—'} collected
+          {itemsSummary(r.items)} — {r.items[0]?.collected_quantity ?? '—'}{' '}
+          collected
         </td>
         <td className="px-6 py-4">
           <input

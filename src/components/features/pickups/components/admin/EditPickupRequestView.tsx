@@ -6,24 +6,48 @@ import type { FormEvent } from 'react';
 import { useEffect, useState } from 'react';
 import { LuArrowLeft } from 'react-icons/lu';
 
-import { ApiError } from '../../../../lib/api';
-import { InputField } from '../../../form/fields/InputField';
-import { TextareaField } from '../../../form/fields/TextareaField';
-import { PageContainer } from '../../../layout/PageContainer';
-import { AlertBanner } from '../../../ui/AlertBanner';
-import { Button } from '../../../ui/buttons/Button';
-import { Card } from '../../../ui/card/Card';
-import { Loading } from '../../../ui/loading/Loading';
-import { PageHeader } from '../../../ui/PageHeader';
-import { useToast } from '../../../ui/toast/ToastContext';
-import { usePickupRequest, useUpdatePickupRequest } from '../hooks';
+import { ApiError } from '../../../../../lib/api';
+import { InputField } from '../../../../form/fields/InputField';
+import { TextareaField } from '../../../../form/fields/TextareaField';
+import { PageContainer } from '../../../../layout/PageContainer';
+import { AlertBanner } from '../../../../ui/AlertBanner';
+import { Button } from '../../../../ui/buttons/Button';
+import { Card } from '../../../../ui/card/Card';
+import { Loading } from '../../../../ui/loading/Loading';
+import { PageHeader } from '../../../../ui/PageHeader';
+import { useToast } from '../../../../ui/toast/ToastContext';
+import {
+  usePickupCategories,
+  usePickupRequest,
+  useUpdatePickupRequest,
+} from '../../hooks';
+import type { PickupRequestItemInput } from '../../services/pickupService';
+import { itemsSummary } from '../../types';
+import { PickupItemsFieldArray } from '../shared/PickupItemsFieldArray';
 
 type FormState = {
   pickup_address: string;
-  estimated_quantity: string;
   requested_date: string;
   note: string;
 };
+
+const toItemInputs = (
+  items: {
+    category: { id: string };
+    estimated_quantity: string | null;
+    quantity_unit: string;
+  }[],
+): PickupRequestItemInput[] =>
+  items.map((item) => ({
+    category: item.category.id,
+    estimated_quantity: item.estimated_quantity ?? '',
+    quantity_unit: item.quantity_unit,
+  }));
+
+const itemInputsEqual = (
+  a: PickupRequestItemInput[],
+  b: PickupRequestItemInput[],
+): boolean => JSON.stringify(a) === JSON.stringify(b);
 
 type EditPickupRequestViewProps = {
   requestId: string;
@@ -47,17 +71,25 @@ const EditPickupRequestView = ({
   } = usePickupRequest(requestId);
   const { execute: updateRequest, loading: submitting } =
     useUpdatePickupRequest();
+  const { options: categoryOptions, loading: loadingCategories } =
+    usePickupCategories();
   const [formData, setFormData] = useState<FormState | null>(null);
+  const [items, setItems] = useState<PickupRequestItemInput[]>([]);
+  const [itemErrors, setItemErrors] = useState<Record<string, string>[]>([]);
   const [error, setError] = useState('');
+
+  // Items are only editable while evaluation_status is still `pending` —
+  // same gate the backend's own validate_items() enforces.
+  const itemsEditable = request?.evaluation_status === 'pending';
 
   useEffect(() => {
     if (!request) return;
     setFormData({
       pickup_address: request.pickup_address,
-      estimated_quantity: request.estimated_quantity ?? '',
       requested_date: request.requested_date ?? '',
       note: request.note ?? '',
     });
+    setItems(toItemInputs(request.items));
   }, [request]);
 
   const updateFormData = (field: string, value: string) =>
@@ -67,20 +99,31 @@ const EditPickupRequestView = ({
     Boolean(formData) &&
     Boolean(request) &&
     (formData!.pickup_address !== request!.pickup_address ||
-      formData!.estimated_quantity !== (request!.estimated_quantity ?? '') ||
       formData!.requested_date !== (request!.requested_date ?? '') ||
-      formData!.note !== (request!.note ?? ''));
+      formData!.note !== (request!.note ?? '') ||
+      (itemsEditable && !itemInputsEqual(items, toItemInputs(request!.items))));
+
+  const validate = (): boolean => {
+    if (!itemsEditable) return true;
+    const nextItemErrors: Record<string, string>[] = items.map(
+      (item): Record<string, string> =>
+        item.category ? {} : { category: 'Category is required.' },
+    );
+    setItemErrors(nextItemErrors);
+    return nextItemErrors.every((e) => Object.keys(e).length === 0);
+  };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!formData || !request) return;
+    if (!validate()) return;
     setError('');
     try {
       await updateRequest(request.id, {
         pickup_address: formData.pickup_address,
-        estimated_quantity: formData.estimated_quantity || undefined,
         requested_date: formData.requested_date || undefined,
         note: formData.note || undefined,
+        items: itemsEditable ? items : undefined,
       });
       toast.success('Pickup request updated');
       router.push(`${basePath}/${request.id}`);
@@ -115,7 +158,7 @@ const EditPickupRequestView = ({
 
       <PageHeader
         title="Edit pickup request"
-        subtitle={`${request.full_name} — ${request.category.name}`}
+        subtitle={`${request.full_name} — ${itemsSummary(request.items)}`}
       />
 
       <Card className="p-5">
@@ -132,16 +175,46 @@ const EditPickupRequestView = ({
                 disabled={submitting}
               />
             </div>
-            <InputField
-              label="Estimated quantity"
-              field="estimated_quantity"
-              type="number"
-              required={false}
-              placeholder="e.g. 5"
-              formData={formData}
-              updateFormData={updateFormData}
-              disabled={submitting}
-            />
+            {itemsEditable ? (
+              <PickupItemsFieldArray
+                items={items}
+                onChange={setItems}
+                categoryOptions={categoryOptions}
+                loadingCategories={loadingCategories}
+                disabled={submitting}
+                errors={itemErrors}
+                labels={{
+                  itemsSection: 'Materials',
+                  category: 'Material category',
+                  estimatedQuantity: 'Estimated quantity',
+                  estimatedQuantityPlaceholder: 'e.g. 5',
+                  quantityUnit: 'Quantity unit',
+                  quantityUnitPlaceholder: 'e.g. kg',
+                  addItem: 'Add another item',
+                  removeItem: 'Remove',
+                }}
+              />
+            ) : (
+              <div className="sm:col-span-2">
+                <p className="mb-2 text-sm font-medium text-slate-900">
+                  Materials
+                </p>
+                <p className="text-xs text-slate-500">
+                  Items can only be edited while this request is still awaiting
+                  review.
+                </p>
+                <ul className="mt-2 space-y-1 text-sm text-slate-700">
+                  {request.items.map((item) => (
+                    <li key={item.id}>
+                      {item.category.name}
+                      {item.estimated_quantity
+                        ? ` — ${item.estimated_quantity} ${item.quantity_unit}`
+                        : ''}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
             <InputField
               label="Requested date"
               field="requested_date"

@@ -4,25 +4,26 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { LuCheck, LuPencil, LuTrash2, LuX } from 'react-icons/lu';
 
-import { StatusBadge } from '../../../ui/badges/StatusBadge';
-import { AppDate } from '../../../ui/date/AppDate';
+import { StatusBadge } from '../../../../ui/badges/StatusBadge';
+import { AppDate } from '../../../../ui/date/AppDate';
 import {
   TableEmptyRow,
   TableErrorRow,
   TableLoadingRow,
   TablePagination,
   TableWrapper,
-} from '../../../ui/table';
+} from '../../../../ui/table';
 import {
   PICKUP_STAGE_BADGE_VARIANT,
   REQUEST_TYPE_BADGE_VARIANT,
-} from '../constants';
+} from '../../constants';
 import {
   derivePickupStage,
+  itemsSummary,
   PICKUP_REQUEST_TYPE_LABELS,
   PICKUP_STAGE_LABELS,
   type PickupRequestListItem,
-} from '../types';
+} from '../../types';
 
 const PAGE_SIZE = 12;
 
@@ -112,7 +113,7 @@ const PickupRequestTable = ({
             {r.email}
           </td>
           <td className="max-w-[160px] truncate px-6 py-4 text-slate-700">
-            {r.category.name}
+            {itemsSummary(r.items)}
           </td>
           <td className="px-6 py-4">
             <StatusBadge variant={REQUEST_TYPE_BADGE_VARIANT[r.request_type]}>
@@ -205,7 +206,7 @@ const PickupRequestTable = ({
               Email
             </th>
             <th className="px-6 py-3 text-left font-semibold text-slate-500">
-              Category
+              Items
             </th>
             <th className="px-6 py-3 text-left font-semibold text-slate-500">
               Type

@@ -3,19 +3,19 @@
 import { useEffect, useState } from 'react';
 import { LuMapPin, LuNavigation } from 'react-icons/lu';
 
-import { SelectField } from '../../../form/fields/SelectField';
-import { AlertBanner } from '../../../ui/AlertBanner';
-import { Modal } from '../../../ui/modal/Modal';
-import { useCollectionPoints, useOptimizeRoute } from '../hooks';
+import { SelectField } from '../../../../form/fields/SelectField';
+import { AlertBanner } from '../../../../ui/AlertBanner';
+import { Modal } from '../../../../ui/modal/Modal';
+import { useCollectionPoints, useOptimizeRoute } from '../../hooks';
 import type {
   LatLng,
   OptimizeRouteResult,
   PickupRequestListItem,
-} from '../types';
+} from '../../types';
 import {
   googleMapsMultiStopUrl,
   wazeNavigateUrl,
-} from '../utils/navigationLinks';
+} from '../../utils/navigationLinks';
 
 type OptimizeRouteModalProps = {
   open: boolean;

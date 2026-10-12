@@ -15,7 +15,7 @@ import {
 import { STATUS_BADGE_VARIANT as FINANCE_STATUS_BADGE_VARIANT } from '../../finance/constants';
 import { FINANCE_STATUS_LABELS } from '../../finance/types';
 import { STATUS_BADGE_VARIANT } from '../../pickups/constants';
-import { PICKUP_STATUS_LABELS } from '../../pickups/types';
+import { itemsSummary, PICKUP_STATUS_LABELS } from '../../pickups/types';
 import { useDriverOverviewStats } from '../hooks';
 import { OverviewStatCard } from './OverviewStatCard';
 import { OverviewStatGrid } from './OverviewStatGrid';
@@ -97,7 +97,7 @@ const DriverOverviewView = () => {
     return stats.assigned.slice(0, PREVIEW_SIZE).map((r) => (
       <tr key={r.id} className="transition-colors hover:bg-slate-50">
         <td className="px-6 py-4 font-medium text-slate-900">{r.full_name}</td>
-        <td className="px-6 py-4 text-slate-500">{r.category.name}</td>
+        <td className="px-6 py-4 text-slate-500">{itemsSummary(r.items)}</td>
         <td className="px-6 py-4">
           <StatusBadge variant={STATUS_BADGE_VARIANT[r.status]}>
             {PICKUP_STATUS_LABELS[r.status]}

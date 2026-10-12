@@ -12,26 +12,27 @@ import {
   LuUser,
 } from 'react-icons/lu';
 
-import { PageContainer } from '../../../layout/PageContainer';
-import { StatusBadge } from '../../../ui/badges/StatusBadge';
-import { Card } from '../../../ui/card/Card';
-import { AppDate } from '../../../ui/date/AppDate';
-import { InfoRow } from '../../../ui/InfoRow';
-import { Loading } from '../../../ui/loading/Loading';
-import { PageHeader } from '../../../ui/PageHeader';
+import { PageContainer } from '../../../../layout/PageContainer';
+import { StatusBadge } from '../../../../ui/badges/StatusBadge';
+import { Card } from '../../../../ui/card/Card';
+import { AppDate } from '../../../../ui/date/AppDate';
+import { InfoRow } from '../../../../ui/InfoRow';
+import { Loading } from '../../../../ui/loading/Loading';
+import { PageHeader } from '../../../../ui/PageHeader';
 import {
   EVALUATION_STATUS_BADGE_VARIANT,
   STATUS_BADGE_VARIANT,
-} from '../constants';
-import { usePickupRequest } from '../hooks';
+} from '../../constants';
+import { usePickupRequest } from '../../hooks';
 import {
+  itemsSummary,
   PICKUP_EVALUATION_STATUS_LABELS,
   PICKUP_STATUS_LABELS,
-} from '../types';
+} from '../../types';
 import {
   googleMapsDirectionsUrl,
   wazeNavigateUrl,
-} from '../utils/navigationLinks';
+} from '../../utils/navigationLinks';
 
 type DriverPickupDetailsViewProps = {
   requestId: string;
@@ -82,7 +83,7 @@ const DriverPickupDetailsView = ({
 
       <PageHeader
         title={request.full_name}
-        subtitle={`${request.category.name} pickup request`}
+        subtitle={`${itemsSummary(request.items)} pickup request`}
       />
 
       <div className="mb-4 flex flex-wrap gap-2">
@@ -131,15 +132,24 @@ const DriverPickupDetailsView = ({
               value={request.pickup_address}
             />
           </div>
-          <InfoRow
-            icon={<LuPackage className="size-4" />}
-            label="Estimated quantity"
-            value={
-              request.estimated_quantity
-                ? `${request.estimated_quantity} ${request.quantity_unit}`
-                : '—'
-            }
-          />
+          <div className="sm:col-span-2">
+            <InfoRow
+              icon={<LuPackage className="size-4" />}
+              label="Materials"
+              value={
+                <ul className="space-y-0.5">
+                  {request.items.map((item) => (
+                    <li key={item.id}>
+                      {item.category.name}
+                      {item.estimated_quantity
+                        ? ` — ${item.estimated_quantity} ${item.quantity_unit}`
+                        : ''}
+                    </li>
+                  ))}
+                </ul>
+              }
+            />
+          </div>
           {request.price && (
             <InfoRow
               icon={<LuPackage className="size-4" />}
