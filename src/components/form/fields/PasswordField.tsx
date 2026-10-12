@@ -50,7 +50,7 @@ const PasswordField = ({
         <button
           type="button"
           onClick={() => setShow((prev) => !prev)}
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none"
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 transition-colors hover:text-slate-600 focus:outline-none"
           aria-label={show ? 'Hide password' : 'Show password'}
         >
           {show ? <EyeOff className="size-4" /> : <Eye className="size-4" />}

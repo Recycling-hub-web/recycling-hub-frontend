@@ -105,7 +105,7 @@ const Sidebar = ({ navItems, open, onClose }: SidebarProps) => {
             type="button"
             onClick={onClose}
             aria-label="Close menu"
-            className="flex size-8 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600 lg:hidden"
+            className="flex size-8 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 lg:hidden"
           >
             <LuX className="size-4" />
           </button>

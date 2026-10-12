@@ -29,7 +29,7 @@ const NotificationsButton = () => {
         <button
           type="button"
           aria-label="Notifications"
-          className="relative flex size-9 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-900"
+          className="relative flex size-9 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
         >
           <LuBell className="size-5" />
           {count > 0 && (
@@ -44,7 +44,7 @@ const NotificationsButton = () => {
           <button
             type="button"
             onClick={markAllRead}
-            className="inline-flex items-center gap-1 text-xs font-medium text-slate-500 hover:text-brand-600"
+            className="inline-flex items-center gap-1 text-xs font-medium text-slate-500 transition-colors hover:text-brand-600"
           >
             <LuCheckCheck className="size-3.5" />
             Mark all read

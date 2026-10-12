@@ -69,7 +69,7 @@ const CheckSimpleBoxGroup = ({
             type="button"
             onClick={() => setSearch('')}
             disabled={!search}
-            className="text-xs text-slate-500 hover:text-slate-700 disabled:opacity-40"
+            className="text-xs text-slate-500 transition-colors hover:text-slate-700 disabled:opacity-40"
           >
             Clear search
           </button>

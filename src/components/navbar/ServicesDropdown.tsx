@@ -235,7 +235,7 @@ const ServicesMobileAccordion = () => {
               })}
               <Link
                 href="/services"
-                className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-semibold text-brand-600 hover:bg-neutral-100"
+                className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-semibold text-brand-600 transition-colors hover:bg-neutral-100"
               >
                 {dict.nav.viewAllServices}
               </Link>
