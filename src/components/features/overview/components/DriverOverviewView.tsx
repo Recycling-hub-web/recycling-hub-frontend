@@ -5,6 +5,7 @@ import { LuPackage, LuPackageCheck, LuRoute } from 'react-icons/lu';
 
 import { OPERATIONAL_ROLES } from '../../../../layouts/operationalRoles';
 import { StatusBadge } from '../../../ui/badges/StatusBadge';
+import { SectionContainer } from '../../../ui/card/SectionContainer';
 import { BarChart, DonutChart } from '../../../ui/charts';
 import {
   TableEmptyRow,
@@ -136,7 +137,7 @@ const DriverOverviewView = () => {
       extra={
         <>
           <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
-            <div className="rounded-2xl border border-slate-100 bg-white p-5">
+            <SectionContainer>
               <h2 className="mb-4 text-sm font-semibold text-slate-900">
                 My pickups by status
               </h2>
@@ -152,8 +153,8 @@ const DriverOverviewView = () => {
                 ]}
                 loading={!stats.pickupStatusCounts}
               />
-            </div>
-            <div className="rounded-2xl border border-slate-100 bg-white p-5">
+            </SectionContainer>
+            <SectionContainer>
               <h2 className="mb-4 text-sm font-semibold text-slate-900">
                 My money by status
               </h2>
@@ -161,7 +162,7 @@ const DriverOverviewView = () => {
                 data={financeStatusData}
                 loading={!stats.financeStatusCounts}
               />
-            </div>
+            </SectionContainer>
           </div>
 
           {(stats.assignedLoading || stats.assigned.length > 0) && (

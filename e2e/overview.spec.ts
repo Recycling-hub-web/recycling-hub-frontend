@@ -4,25 +4,24 @@ import { expect, test } from '@playwright/test';
 import { loginAs } from './helpers/auth';
 
 /**
- * Overview dashboards for all five roles, built from the reusable
+ * Overview dashboards for all six roles, built from the reusable
  * components in components/features/overview/ and the shared charts
- * in ui/charts/{LineChart,BarChart,DonutChart}. Admin and Driver both
- * get Bar/DonutChart status breakdowns — Admin's own pickup/finance
- * breakdown and Driver's own pickup/money breakdown use the identical
- * pattern, just against each role's already-scoped list endpoints, so
- * neither needed new backend work; only Admin's daily-volume
- * LineChart is backed by a genuinely new endpoint
- * (CollectionRequestViewSet.daily_volume), since that's a real
- * cross-driver aggregate no single role's own data could produce.
- * Staff/Driver/Receiving Officer also get a short preview table
- * (uncontacted leads / assigned pickups / awaiting-close deliveries).
- * Accounting stays stat-only (no natural list to preview, and no
- * chart — "my money" is already on Driver's dashboard, not repeated
- * here). Every number comes from an existing, already-scoped
- * hook/endpoint.
+ * in ui/charts/{LineChart,BarChart,DonutChart}. Every role's numbers
+ * now come from a real server-side aggregate (apps/dashboard on the
+ * backend — one endpoint per role) instead of client-side
+ * paginated-list `count` reuse: Admin/Staff share one endpoint (Staff
+ * just never gets `total_users` back), Driver/Receiving/Accounting/
+ * Super Admin each have their own. Staff, Receiving, and Super Admin
+ * all gained charts/tiles they didn't have before this; Accounting's
+ * "amount pending" is a real Sum now, not a client-side sum capped at
+ * 200 fetched rows. Staff/Driver/Receiving Officer also get a short
+ * preview table (uncontacted leads / assigned pickups / awaiting-close
+ * deliveries), still built from the same list fetch as their stat tile
+ * — no second request for that part.
  *
  * Login already lands on the role's home route (ROLE_HOME in
- * types/auth.ts) — /admin, /staff, /driver, /receiving, /accounting.
+ * types/auth.ts) — /admin, /staff, /driver, /receiving, /accounting,
+ * /super-admin.
  */
 
 const E_WASTE_CATEGORY_ID = '89067cc7-38ef-4752-9cd4-3ea29975abcb';
@@ -112,6 +111,14 @@ test.describe('Staff overview', () => {
     await expect(page.getByText('Pending pickups')).toBeVisible();
     await expect(page.getByText('Pending messages')).toBeVisible();
     await expect(page.getByText('Published posts')).toBeVisible();
+
+    // Same charts Admin's dashboard has — Staff now gets them too (same
+    // shared AdminOverviewStatsView endpoint, see useStaffOverviewStats).
+    await expect(
+      page.getByText('Daily pickup volume — last 30 days'),
+    ).toBeVisible();
+    await expect(page.getByText('Pickup requests by status')).toBeVisible();
+    await expect(page.getByText('Finance records by status')).toBeVisible();
 
     const quickLinks = page.getByTestId('overview-quick-links');
     await expect(quickLinks).toBeVisible();
@@ -226,6 +233,14 @@ test.describe('Receiving Officer overview', () => {
 
     const statGrid = page.getByTestId('overview-stat-grid');
     await expect(statGrid.getByText('Awaiting close')).toBeVisible();
+    // New: a real aggregate this role didn't have before
+    // (ReceivingOverviewStatsView).
+    await expect(statGrid.getByText('Closed this month')).toBeVisible();
+    await expect(
+      page.getByText('Daily closed deliveries — last 30 days'),
+    ).toBeVisible();
+    await expect(page.getByText('Deliveries by status')).toBeVisible();
+
     const row = page.locator('tr', { hasText: fullName });
     await expect(row).toBeVisible();
     await expect(row.getByText('Delivered')).toBeVisible();
@@ -236,6 +251,35 @@ test.describe('Receiving Officer overview', () => {
 
     await loginAs(page, 'admin');
     await page.request.delete(`/api/v1/pickups/${id}/`);
+  });
+});
+
+test.describe('Super Admin overview', () => {
+  test('shows org-wide stats, users-by-role chart, and existing seat limits', async ({
+    page,
+  }) => {
+    await loginAs(page, 'qaSuperAdmin');
+    await expect(page).toHaveURL(/\/super-admin$/);
+
+    // Seat limits, unchanged — still from useRoleLimits, not the new
+    // endpoint. Scoped through the stat grid — the sidebar's own
+    // profile footer also renders "Super Admin" text.
+    const statGrid = page.getByTestId('overview-stat-grid');
+    await expect(statGrid.getByText('Admins', { exact: true })).toBeVisible();
+    await expect(statGrid.getByText('Super Admins')).toBeVisible();
+
+    // New: organization-wide stats this page didn't have before
+    // (SuperAdminOverviewStatsView).
+    await expect(statGrid.getByText('Pickups this month')).toBeVisible();
+    await expect(statGrid.getByText('Reimbursed this month')).toBeVisible();
+    await expect(statGrid.getByText('Active collection points')).toBeVisible();
+    await expect(statGrid.getByText('Active service areas')).toBeVisible();
+    await expect(page.getByText('Users by role')).toBeVisible();
+
+    const quickLinks = page.getByTestId('overview-quick-links');
+    await expect(quickLinks).toBeVisible();
+    await quickLinks.getByRole('link', { name: 'Pickup Requests' }).click();
+    await expect(page).toHaveURL(/\/super-admin\/pickups$/);
   });
 });
 
@@ -256,6 +300,12 @@ test.describe('Accounting overview', () => {
 
     await expect(page.getByText('Unverified records')).toBeVisible();
     await expect(page.getByText('Amount pending')).toBeVisible();
+    // New: a real aggregate this role didn't have before
+    // (AccountingOverviewStatsView) — "amount pending" itself is also
+    // now a real server-side Sum, no longer capped at 200 fetched rows
+    // (see apps/dashboard/tests.py's own test of that specifically).
+    await expect(page.getByText('Reimbursed this month')).toBeVisible();
+    await expect(page.getByText('Finance records by status')).toBeVisible();
 
     await page.getByRole('link', { name: /unverified records/i }).click();
     await expect(page).toHaveURL(/\/accounting\/finance$/);

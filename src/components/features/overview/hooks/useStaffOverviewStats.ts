@@ -1,45 +1,52 @@
 import { useEffect, useState } from 'react';
 
-import { listBlogPosts } from '../../blogs/services/blogService';
-import { listContactMessages } from '../../contact/services/contactService';
-import { listPickupRequests } from '../../pickups/services/pickupService';
+import type { FinanceStatus } from '../../finance/types';
+import type { DailyVolumePoint } from '../../pickups/services/pickupService';
+import type { PickupStatus } from '../../pickups/types';
+import { getAdminOverviewStats } from '../services/overviewService';
 
 type StaffOverviewStats = {
   pendingPickups: number | null;
   pendingMessages: number | null;
   publishedPosts: number | null;
+  /** Same chart data Admin's dashboard shows — Staff is permitted to
+   * call the same endpoint (IsAdminOrStaffUser), it just never
+   * receives `total_users` back. */
+  pickupStatusCounts: Record<PickupStatus, number> | null;
+  financeStatusCounts: Record<FinanceStatus, number> | null;
+  dailyVolume: DailyVolumePoint[] | null;
 };
 
 const INITIAL: StaffOverviewStats = {
   pendingPickups: null,
   pendingMessages: null,
   publishedPosts: null,
+  pickupStatusCounts: null,
+  financeStatusCounts: null,
+  dailyVolume: null,
 };
 
-/** Same shape as useAdminOverviewStats, minus totalUsers — Staff has no
- * Users module/access (IsAdminOrStaffUser vs. admin-only endpoints). */
+/** Same endpoint as useAdminOverviewStats (AdminOverviewStatsView is
+ * shared by Admin and Staff) — Staff now gets the same charts Admin
+ * has, just never a `totalUsers` value (the backend omits that field
+ * for a non-admin caller; Staff has no Users module access). */
 const useStaffOverviewStats = () => {
   const [stats, setStats] = useState<StaffOverviewStats>(INITIAL);
 
   useEffect(() => {
     let cancelled = false;
 
-    listPickupRequests({ status: 'pending' })
+    getAdminOverviewStats()
       .then((data) => {
-        if (!cancelled)
-          setStats((prev) => ({ ...prev, pendingPickups: data.count }));
-      })
-      .catch(() => {});
-    listContactMessages({ status: 'pending' })
-      .then((data) => {
-        if (!cancelled)
-          setStats((prev) => ({ ...prev, pendingMessages: data.count }));
-      })
-      .catch(() => {});
-    listBlogPosts({ status: 'published', page_size: 1 })
-      .then((data) => {
-        if (!cancelled)
-          setStats((prev) => ({ ...prev, publishedPosts: data.count }));
+        if (cancelled) return;
+        setStats({
+          pendingPickups: data.pending_pickups,
+          pendingMessages: data.pending_messages,
+          publishedPosts: data.published_posts,
+          pickupStatusCounts: data.pickup_status_counts,
+          financeStatusCounts: data.finance_status_counts,
+          dailyVolume: data.daily_pickup_volume,
+        });
       })
       .catch(() => {});
 

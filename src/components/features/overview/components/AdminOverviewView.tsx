@@ -4,6 +4,7 @@ import { LuMail, LuNewspaper, LuTruck, LuUsers } from 'react-icons/lu';
 
 import { useAuth } from '../../../../contexts/AuthContext';
 import { adminNavItemsFor } from '../../../layout/AdminSidebar';
+import { SectionContainer } from '../../../ui/card/SectionContainer';
 import { BarChart, DonutChart, LineChart } from '../../../ui/charts';
 import { STATUS_BADGE_VARIANT as FINANCE_STATUS_BADGE_VARIANT } from '../../finance/constants';
 import { FINANCE_STATUS_LABELS } from '../../finance/types';
@@ -96,7 +97,7 @@ const AdminOverviewView = () => {
       }
       extra={
         <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
-          <div className="rounded-2xl border border-slate-100 bg-white p-5 lg:col-span-2">
+          <SectionContainer className="lg:col-span-2">
             <h2 className="mb-4 text-sm font-semibold text-slate-900">
               Daily pickup volume — last 30 days
             </h2>
@@ -106,8 +107,8 @@ const AdminOverviewView = () => {
               series={[{ key: 'count', label: 'Pickup requests' }]}
               loading={!stats.dailyVolume}
             />
-          </div>
-          <div className="rounded-2xl border border-slate-100 bg-white p-5">
+          </SectionContainer>
+          <SectionContainer>
             <h2 className="mb-4 text-sm font-semibold text-slate-900">
               Pickup requests by status
             </h2>
@@ -123,8 +124,8 @@ const AdminOverviewView = () => {
               ]}
               loading={!stats.pickupStatusCounts}
             />
-          </div>
-          <div className="rounded-2xl border border-slate-100 bg-white p-5">
+          </SectionContainer>
+          <SectionContainer>
             <h2 className="mb-4 text-sm font-semibold text-slate-900">
               Finance records by status
             </h2>
@@ -132,7 +133,7 @@ const AdminOverviewView = () => {
               data={financeStatusData}
               loading={!stats.financeStatusCounts}
             />
-          </div>
+          </SectionContainer>
         </div>
       }
     />

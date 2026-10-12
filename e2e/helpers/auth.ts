@@ -14,13 +14,14 @@ import { type APIRequestContext, expect, type Page } from '@playwright/test';
  * finance.spec.ts). See memory: recycling-hub-playwright-e2e.
  *
  * `qaSuperAdmin` (superadmin@recyclinghub.example, created via the
- * `create_super_admin` management command, not seed_accounts.py) is
- * NOT usable with plain `loginAs` — OTP is mandatory for Super Admin
- * regardless of the per-user 2FA flag (see authentication.views), so
- * logging in as this account needs the OTP step driven too. Use it
- * for API-level setup (apiLoginAs won't complete a full session either
- * — same OTP gate) or a dedicated OTP-aware helper, not the plain UI
- * login flow every other fixture here uses.
+ * `create_super_admin` management command, not seed_accounts.py) —
+ * despite an earlier note here claiming OTP is mandatory for Super
+ * Admin regardless of the per-user 2FA flag, this seeded account logs
+ * in through plain `loginAs` with no OTP step in practice (verified
+ * directly: a fresh, cookie-cleared context lands straight on
+ * /super-admin). If a real OTP gate shows up for this account later,
+ * revisit this note and `loginAs` together rather than trusting this
+ * comment over what actually happens.
  */
 const ACCOUNTS = {
   admin: {

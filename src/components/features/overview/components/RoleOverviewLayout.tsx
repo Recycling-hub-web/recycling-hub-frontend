@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 
 import { useAuth } from '../../../../contexts/AuthContext';
 import { ROLE_LABELS } from '../../../../types/auth';
+import { PageContainer } from '../../../layout/PageContainer';
 import type { NavItem } from '../../../layout/Sidebar';
 import { PageHeader } from '../../../ui/PageHeader';
 import { OverviewQuickLinks } from './OverviewQuickLinks';
@@ -41,7 +42,7 @@ const RoleOverviewLayout = ({
   const hasQuickLinks = navItems.some((item) => item.href !== ownHref);
 
   return (
-    <>
+    <PageContainer variant="table">
       <PageHeader
         title={`Welcome, ${user.full_name.split(' ')[0]}`}
         subtitle={ROLE_LABELS[user.role]}
@@ -61,7 +62,7 @@ const RoleOverviewLayout = ({
           the way.
         </p>
       )}
-    </>
+    </PageContainer>
   );
 };
 

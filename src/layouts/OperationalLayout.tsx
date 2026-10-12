@@ -33,9 +33,7 @@ const OperationalLayout = ({ role, children }: OperationalLayoutProps) => {
         />
         <div className="flex min-w-0 flex-1 flex-col">
           <Topbar onMenuClick={() => setSidebarOpen(true)} />
-          <main className="mx-auto w-full max-w-5xl flex-1 overflow-x-hidden px-6 py-8">
-            {children}
-          </main>
+          <main className="flex-1 overflow-x-hidden py-8">{children}</main>
           <AppFooter />
         </div>
       </div>

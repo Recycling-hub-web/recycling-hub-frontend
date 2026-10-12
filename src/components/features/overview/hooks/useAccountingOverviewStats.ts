@@ -1,21 +1,26 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { listFinanceRecords } from '../../finance/services/financeService';
+import type { FinanceStatus } from '../../finance/types';
+import { getAccountingOverviewStats } from '../services/overviewService';
 
 type Stats = {
   count: number;
   amountPending: number;
+  amountReimbursedThisMonth: number;
+  financeStatusCounts: Record<FinanceStatus, number> | null;
 };
 
-const INITIAL: Stats = { count: 0, amountPending: 0 };
+const INITIAL: Stats = {
+  count: 0,
+  amountPending: 0,
+  amountReimbursedThisMonth: 0,
+  financeStatusCounts: null,
+};
 
 /** Unverified (`claimed` — a driver has submitted it, accounting hasn't
- * verified/reimbursed it yet) finance records + their total amount.
- * Same bounded-sum pattern finance/hooks/usePendingReimbursementSummary
- * already uses for the driver's own banner: capped at 200
- * (DefaultPagination's max_page_size) since there's no real
- * server-side sum endpoint, just a per-record amount field — see that
- * hook's own docstring and financeService.listFinanceRecords. */
+ * verified/reimbursed it yet) finance records + their total amount, now
+ * a real server-side Sum (AccountingOverviewStatsView) rather than a
+ * client-side sum capped at 200 fetched rows. */
 const useAccountingOverviewStats = () => {
   const [stats, setStats] = useState<Stats>(INITIAL);
   const [loading, setLoading] = useState(true);
@@ -23,15 +28,13 @@ const useAccountingOverviewStats = () => {
   const refetch = useCallback(async () => {
     setLoading(true);
     try {
-      const data = await listFinanceRecords({
-        status: 'claimed',
-        pageSize: 200,
+      const data = await getAccountingOverviewStats();
+      setStats({
+        count: data.unverified_records,
+        amountPending: Number(data.amount_pending),
+        amountReimbursedThisMonth: Number(data.amount_reimbursed_this_month),
+        financeStatusCounts: data.finance_status_counts,
       });
-      const amountPending = data.results.reduce(
-        (sum, r) => sum + Number(r.actual_amount ?? r.price),
-        0,
-      );
-      setStats({ count: data.count, amountPending });
     } catch {
       setStats(INITIAL);
     } finally {
