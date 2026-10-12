@@ -82,7 +82,7 @@ const QuickPickupRequestForm = () => {
   };
 
   return (
-    <section className="bg-white pb-16 md:pb-20">
+    <section className="bg-white py-16 md:py-20">
       <div className="mx-auto max-w-md px-5 md:px-8">
         <FadeIn>
           <div className="rounded-3xl border border-slate-200 p-6 shadow-sm md:p-8">

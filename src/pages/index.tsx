@@ -1,5 +1,6 @@
 import type { ReactElement } from 'react';
 
+import { QuickPickupRequestForm } from '../components/features/pickups/components';
 import { Meta } from '../components/layout/Meta';
 import { B2BSection } from '../components/public/home/B2BSection';
 import { ComparisonSection } from '../components/public/home/ComparisonSection';
@@ -22,6 +23,7 @@ const HomePage: NextPageWithLayout = () => (
     <HeroBlobSection />
     <SplitHeroSection />
     <TrustStrip />
+    <QuickPickupRequestForm />
     <ProblemIllustration />
     <WhyRecyclingHub />
     <ComparisonSection />
