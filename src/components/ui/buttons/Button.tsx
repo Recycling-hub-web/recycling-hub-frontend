@@ -8,9 +8,12 @@ type ButtonVariant =
   | 'outline-white'
   | 'danger-outline';
 
+type ButtonSize = 'sm' | 'md' | 'lg';
+
 type ButtonProps = {
   children: ReactNode;
   variant?: ButtonVariant;
+  size?: ButtonSize;
   href?: string;
   onClick?: () => void;
   className?: string;
@@ -22,21 +25,30 @@ type ButtonProps = {
   disabled?: boolean;
 };
 
+// Flat colors only — no ring/ring-offset halo. Variants that need to
+// read as "outlined" use a plain 1px border instead.
 const variants: Record<ButtonVariant, string> = {
-  primary:
-    'ring-2 ring-brand-600 ring-offset-2 bg-brand-600 text-white hover:bg-brand-700 hover:ring-brand-700',
+  primary: 'bg-brand-600 text-white hover:bg-brand-700',
   secondary:
-    'ring-2 ring-slate-200 ring-offset-2 bg-white text-neutral-950 hover:bg-brand-600 hover:text-white hover:ring-brand-600',
-  white:
-    'ring-2 ring-white ring-offset-2 ring-offset-neutral-950 bg-white text-neutral-950 hover:bg-white/90',
+    'border border-slate-200 bg-white text-neutral-950 hover:border-brand-600 hover:bg-brand-600 hover:text-white',
+  white: 'bg-white text-neutral-950 hover:bg-white/90',
   'outline-white':
-    'ring-2 ring-white/60 ring-offset-2 ring-offset-transparent bg-white/10 text-white hover:bg-white/20 hover:ring-white',
+    'border border-white/60 bg-white/10 text-white hover:border-white hover:bg-white/20',
   'danger-outline':
-    'ring-2 ring-red-200 ring-offset-2 bg-white text-red-600 hover:bg-red-50 hover:text-red-700 hover:ring-red-300',
+    'border border-red-200 bg-white text-red-600 hover:border-red-300 hover:bg-red-50 hover:text-red-700',
 };
 
+const sizes: Record<ButtonSize, string> = {
+  sm: 'px-4 py-2 text-xs',
+  md: 'px-6 py-3 text-sm',
+  lg: 'px-8 py-4 text-base',
+};
+
+// transition-all so background-color, border-color, transform, and
+// box-shadow (whichever a variant/hover state actually changes) all
+// animate smoothly together rather than snapping.
 const base =
-  'inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-semibold transition-all duration-300 ease-out cursor-pointer';
+  'inline-flex items-center justify-center rounded-full font-semibold transition-all duration-300 ease-out cursor-pointer hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 active:shadow-none';
 
 const isExternal = (href: string) =>
   href.startsWith('http') ||
@@ -48,13 +60,14 @@ const isExternal = (href: string) =>
 const Button = ({
   children,
   variant = 'primary',
+  size = 'md',
   href,
   onClick,
   className = '',
   type = 'button',
   disabled = false,
 }: ButtonProps) => {
-  const cls = `${base} ${variants[variant]} ${className} ${disabled ? 'pointer-events-none opacity-50' : ''}`;
+  const cls = `${base} ${sizes[size]} ${variants[variant]} ${className} ${disabled ? 'pointer-events-none opacity-50' : ''}`;
 
   if (href) {
     if (isExternal(href)) {
