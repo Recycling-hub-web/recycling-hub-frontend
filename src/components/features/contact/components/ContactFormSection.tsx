@@ -17,7 +17,7 @@ import { ApiError } from '../../../../lib/api';
 import { InputField } from '../../../form/fields/InputField';
 import { PhoneInputField } from '../../../form/fields/PhoneInputField';
 import { TextareaField } from '../../../form/fields/TextareaField';
-import { Button } from '../../../ui/buttons/Button';
+import { PublicButton } from '../../../ui/buttons/PublicButton';
 import { FadeIn } from '../../../ui/FadeIn';
 import { useToast } from '../../../ui/toast/ToastContext';
 import { submitContactMessage } from '../services/contactService';
@@ -238,7 +238,7 @@ const ContactFormSection = () => {
                 )}
 
                 <div className="mt-6 flex justify-end">
-                  <Button
+                  <PublicButton
                     type="submit"
                     disabled={submitting}
                     className="w-full sm:w-auto"
@@ -246,7 +246,7 @@ const ContactFormSection = () => {
                     {submitting
                       ? content.submittingButton
                       : content.submitButton}
-                  </Button>
+                  </PublicButton>
                 </div>
               </form>
             </div>

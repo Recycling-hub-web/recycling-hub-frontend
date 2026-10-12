@@ -3,7 +3,7 @@ import { LuCheck } from 'react-icons/lu';
 
 import type { ResourceSlug } from '../../../constants/content';
 import { useDictionary } from '../../../hooks/useDictionary';
-import { Button } from '../../ui/buttons/Button';
+import { PublicButton } from '../../ui/buttons/PublicButton';
 import { FadeIn } from '../../ui/FadeIn';
 import { ReusableHero } from '../../ui/hero';
 import { ResourcesGrid } from './ResourcesGrid';
@@ -66,7 +66,7 @@ const ResourceDetailTemplate = ({ slug }: ResourceDetailTemplateProps) => {
       {/* CTA */}
       <section className="bg-white py-16 text-center md:py-20">
         <FadeIn>
-          <Button href="/contact">{dictResources.ctaLabel}</Button>
+          <PublicButton href="/contact">{dictResources.ctaLabel}</PublicButton>
         </FadeIn>
       </section>
 

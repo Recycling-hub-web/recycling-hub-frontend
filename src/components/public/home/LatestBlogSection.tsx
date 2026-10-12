@@ -4,7 +4,7 @@ import { LuArrowRight, LuNewspaper } from 'react-icons/lu';
 
 import { listBlogPosts } from '../../features/blogs/services/blogService';
 import type { BlogPost } from '../../features/blogs/types';
-import { Button } from '../../ui/buttons/Button';
+import { PublicButton } from '../../ui/buttons/PublicButton';
 import { AppDate } from '../../ui/date/AppDate';
 import { FadeIn } from '../../ui/FadeIn';
 
@@ -44,9 +44,9 @@ const LatestBlogSection = () => {
                 Recycling news, guides & updates
               </h2>
             </div>
-            <Button href="/resources/blog" variant="secondary">
+            <PublicButton href="/resources/blog" variant="secondary">
               Visit the blog <LuArrowRight className="ml-1.5 size-4" />
-            </Button>
+            </PublicButton>
           </div>
         </FadeIn>
 

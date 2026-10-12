@@ -8,7 +8,7 @@ import {
   type ServiceSlug,
 } from '../../../constants/content';
 import { useDictionary } from '../../../hooks/useDictionary';
-import { Button } from '../../ui/buttons/Button';
+import { PublicButton } from '../../ui/buttons/PublicButton';
 import { FadeIn } from '../../ui/FadeIn';
 import { ReusableHero } from '../../ui/hero';
 import { SERVICE_ICONS, ServicesGrid } from './ServicesGrid';
@@ -114,11 +114,13 @@ const ServiceDetailTemplate = ({ slug }: ServiceDetailTemplateProps) => {
               // CollectionRequest backend model), not a sales quote —
               // /request-quote never actually stores anything (see its
               // own TODO), so this one service skips it entirely.
-              <Button href="/request-pickup">{nav.requestPickup}</Button>
+              <PublicButton href="/request-pickup">
+                {nav.requestPickup}
+              </PublicButton>
             ) : (
-              <Button href={`/request-quote?service=${slug}`}>
+              <PublicButton href={`/request-quote?service=${slug}`}>
                 {nav.requestQuote}
-              </Button>
+              </PublicButton>
             )}
           </FadeIn>
 

@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 
 import { BRAND } from '../../../constants/content';
 import { useDictionary } from '../../../hooks/useDictionary';
-import { Button } from '../../ui/buttons/Button';
+import { PublicButton } from '../../ui/buttons/PublicButton';
 import { FadeIn } from '../../ui/FadeIn';
 import { SectionHeading } from '../../ui/SectionHeading';
 
@@ -160,15 +160,15 @@ const ComparisonSection = () => {
       {/* CTA — slides over both cards */}
       <div className="relative z-[20] bg-neutral-50 py-16 md:py-20">
         <FadeIn className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-          <Button
+          <PublicButton
             href="/request-quote?service=bulk-industrial-collection"
             variant="primary"
           >
             {comparison.ctaPrimary}
-          </Button>
-          <Button href={BRAND.whatsapp} variant="secondary">
+          </PublicButton>
+          <PublicButton href={BRAND.whatsapp} variant="secondary">
             {comparison.ctaSecondary}
-          </Button>
+          </PublicButton>
         </FadeIn>
       </div>
     </section>

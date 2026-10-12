@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 
 import { useDictionary } from '../../../hooks/useDictionary';
-import { Button } from '../../ui/buttons/Button';
+import { PublicButton } from '../../ui/buttons/PublicButton';
 import { SectionHeading } from '../../ui/SectionHeading';
 
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
@@ -99,13 +99,13 @@ const DeliveryModels = () => {
               </motion.ul>
 
               <div className="mt-auto pt-8">
-                <Button
+                <PublicButton
                   href={model.ctaHref}
                   variant={model.highlight ? 'primary' : 'secondary'}
                   className="w-full"
                 >
                   {model.cta}
-                </Button>
+                </PublicButton>
               </div>
             </motion.div>
           ))}

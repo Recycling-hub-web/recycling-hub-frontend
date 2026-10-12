@@ -6,7 +6,7 @@ import {
   type SolutionSlug,
 } from '../../../constants/content';
 import { useDictionary } from '../../../hooks/useDictionary';
-import { Button } from '../../ui/buttons/Button';
+import { PublicButton } from '../../ui/buttons/PublicButton';
 import { FadeIn } from '../../ui/FadeIn';
 import { ReusableHero } from '../../ui/hero';
 import { SolutionsGrid } from './SolutionsGrid';
@@ -80,7 +80,9 @@ const SolutionDetailTemplate = ({ slug }: SolutionDetailTemplateProps) => {
       {/* CTA */}
       <section className="bg-white py-16 text-center md:py-20">
         <FadeIn>
-          <Button href={structural.cta.href}>{details.ctaLabel}</Button>
+          <PublicButton href={structural.cta.href}>
+            {details.ctaLabel}
+          </PublicButton>
         </FadeIn>
       </section>
 

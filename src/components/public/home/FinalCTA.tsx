@@ -1,6 +1,6 @@
 import { BRAND } from '../../../constants/content';
 import { useDictionary } from '../../../hooks/useDictionary';
-import { Button } from '../../ui/buttons/Button';
+import { PublicButton } from '../../ui/buttons/PublicButton';
 import { FadeIn } from '../../ui/FadeIn';
 import { SectionHeading } from '../../ui/SectionHeading';
 
@@ -19,12 +19,12 @@ const FinalCTA = () => {
 
         <FadeIn delay={0.5}>
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Button href={content.ctaHref} variant="primary">
+            <PublicButton href={content.ctaHref} variant="primary">
               {content.cta}
-            </Button>
-            <Button href={BRAND.whatsapp} variant="secondary">
+            </PublicButton>
+            <PublicButton href={BRAND.whatsapp} variant="secondary">
               {content.whatsapp}
-            </Button>
+            </PublicButton>
           </div>
         </FadeIn>
 

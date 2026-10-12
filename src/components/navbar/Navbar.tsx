@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 
 import { ASSETS, BRAND } from '../../constants/content';
 import { useDictionary } from '../../hooks/useDictionary';
-import { Button } from '../ui/buttons/Button';
+import { PublicButton } from '../ui/buttons/PublicButton';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { ServicesDropdown, ServicesMobileAccordion } from './ServicesDropdown';
 import {
@@ -237,13 +237,13 @@ const Navbar = ({ variant = 'dark' }: NavbarProps) => {
         {/* CTA — desktop only */}
         <div className="hidden shrink-0 items-center gap-3 md:flex">
           <LanguageSwitcher light={light} />
-          <Button
+          <PublicButton
             href={BRAND.whatsapp}
             variant={getWhatsappVariant()}
             className="hidden lg:inline-flex"
           >
             {dict.nav.whatsapp}
-          </Button>
+          </PublicButton>
         </div>
 
         {/* Mobile toggle */}
@@ -327,20 +327,20 @@ const Navbar = ({ variant = 'dark' }: NavbarProps) => {
 
               <div className="mt-3 flex flex-col gap-3 border-t border-slate-100 pt-3">
                 <LanguageSwitcher light className="self-center" />
-                <Button
+                <PublicButton
                   href={BRAND.whatsapp}
                   variant="secondary"
                   className="w-full"
                 >
                   {dict.nav.whatsapp}
-                </Button>
-                <Button
+                </PublicButton>
+                <PublicButton
                   href="/request-quote"
                   variant="primary"
                   className="w-full"
                 >
                   {dict.nav.requestQuote}
-                </Button>
+                </PublicButton>
               </div>
             </div>
           </motion.div>
