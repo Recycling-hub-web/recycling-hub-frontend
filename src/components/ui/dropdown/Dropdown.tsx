@@ -7,7 +7,12 @@ type DropdownProps = {
   button: ReactNode;
   children: ReactNode;
   className?: string;
-  /** Positioning/animation classes for the panel, e.g. "top-11 right-0 w-max". */
+  /** Positioning/animation classes for the panel — must include its own
+   * position utility (usually "absolute ..."), since a fixed-width panel
+   * anchored to a button that isn't flush against the viewport edge can
+   * overflow off-screen on a narrow viewport; a caller needing to avoid
+   * that can pass "fixed" instead, scoped to a breakpoint (e.g.
+   * "fixed inset-x-4 top-16 sm:absolute sm:inset-x-auto sm:end-0 sm:w-80"). */
   panelClassName?: string;
   /** Close the panel when anything inside it is clicked — for menus whose
    * items navigate or act, as opposed to panels you interact with. */
@@ -54,7 +59,7 @@ const Dropdown = ({
         {button}
       </div>
       <div
-        className={`absolute z-10 origin-top-right transition-all duration-300 ease-in-out ${
+        className={`z-10 origin-top-right transition-all duration-300 ease-in-out ${
           open ? 'scale-100' : 'pointer-events-none scale-0'
         } ${panelClassName}`}
         onClick={closeOnSelect ? () => setOpen(false) : undefined}

@@ -43,7 +43,7 @@ const Topbar = ({ onMenuClick }: TopbarProps) => {
         {user && (
           <Dropdown
             closeOnSelect
-            panelClassName="end-0 top-12 w-48"
+            panelClassName="absolute end-0 top-12 w-48"
             button={
               <button
                 type="button"

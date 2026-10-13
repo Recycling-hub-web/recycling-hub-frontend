@@ -24,7 +24,13 @@ const NotificationsButton = () => {
 
   return (
     <Dropdown
-      panelClassName="top-12 end-0 w-80 rounded-2xl border border-slate-200 bg-white shadow-lg"
+      // The bell isn't the rightmost header item (the account menu sits
+      // to its right — see Topbar), so a fixed-width panel anchored to
+      // it with `end-0` can run off the left edge of a narrow viewport
+      // (see Dropdown's own panelClassName doc). Fixed to the viewport
+      // with equal side margins below `sm`; the normal button-anchored
+      // popover from `sm` up, where there's enough room.
+      panelClassName="fixed inset-x-4 top-16 sm:absolute sm:inset-x-auto sm:end-0 sm:top-12 sm:w-80 rounded-2xl border border-slate-200 bg-white shadow-lg"
       button={
         <button
           type="button"
@@ -38,49 +44,51 @@ const NotificationsButton = () => {
         </button>
       }
     >
-      <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
-        <p className="text-sm font-semibold text-slate-900">Notifications</p>
-        {count > 0 && (
-          <button
-            type="button"
-            onClick={markAllRead}
-            className="inline-flex items-center gap-1 text-xs font-medium text-slate-500 transition-colors hover:text-brand-600"
-          >
-            <LuCheckCheck className="size-3.5" />
-            Mark all read
-          </button>
+      <div data-testid="notifications-panel">
+        <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
+          <p className="text-sm font-semibold text-slate-900">Notifications</p>
+          {count > 0 && (
+            <button
+              type="button"
+              onClick={markAllRead}
+              className="inline-flex items-center gap-1 text-xs font-medium text-slate-500 transition-colors hover:text-brand-600"
+            >
+              <LuCheckCheck className="size-3.5" />
+              Mark all read
+            </button>
+          )}
+        </div>
+        {notifications.length === 0 ? (
+          <EmptyState
+            icon={<LuBell className="size-6" />}
+            title="No notifications yet"
+            description="You're all caught up — new activity will show up here."
+          />
+        ) : (
+          <div className="max-h-96 divide-y divide-slate-100 overflow-y-auto">
+            {notifications.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => handleClick(item)}
+                className={`block w-full px-4 py-3 text-left transition hover:bg-slate-50 ${
+                  item.is_read ? '' : 'bg-brand-50/50'
+                }`}
+              >
+                <p className="text-sm font-semibold text-slate-900">
+                  {item.title}
+                </p>
+                {item.body && (
+                  <p className="mt-0.5 text-xs text-slate-500">{item.body}</p>
+                )}
+                <p className="mt-1 text-xs text-slate-400">
+                  <AppDate value={item.created_at} format="relative" />
+                </p>
+              </button>
+            ))}
+          </div>
         )}
       </div>
-      {notifications.length === 0 ? (
-        <EmptyState
-          icon={<LuBell className="size-6" />}
-          title="No notifications yet"
-          description="You're all caught up — new activity will show up here."
-        />
-      ) : (
-        <div className="max-h-96 divide-y divide-slate-100 overflow-y-auto">
-          {notifications.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              onClick={() => handleClick(item)}
-              className={`block w-full px-4 py-3 text-left transition hover:bg-slate-50 ${
-                item.is_read ? '' : 'bg-brand-50/50'
-              }`}
-            >
-              <p className="text-sm font-semibold text-slate-900">
-                {item.title}
-              </p>
-              {item.body && (
-                <p className="mt-0.5 text-xs text-slate-500">{item.body}</p>
-              )}
-              <p className="mt-1 text-xs text-slate-400">
-                <AppDate value={item.created_at} format="relative" />
-              </p>
-            </button>
-          ))}
-        </div>
-      )}
     </Dropdown>
   );
 };

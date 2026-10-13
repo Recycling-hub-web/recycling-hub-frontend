@@ -86,3 +86,21 @@ test('submitting the full pickup request form notifies staff', async ({
   await row.click();
   await expect(page).toHaveURL(new RegExp(`/staff/pickups/${id}$`));
 });
+
+test('the notifications dropdown stays within a narrow viewport', async ({
+  page,
+}) => {
+  // The bell isn't the rightmost header item (the account menu sits to
+  // its right — see Topbar) — a fixed-width panel anchored to it with
+  // `end-0` used to run off the left edge of the screen below `sm`.
+  await page.setViewportSize({ width: 375, height: 667 });
+  await loginAs(page, 'admin');
+  await page.getByRole('button', { name: 'Notifications' }).click();
+
+  const panel = page.getByTestId('notifications-panel');
+  await expect(panel).toBeVisible();
+  const box = await panel.boundingBox();
+  expect(box).not.toBeNull();
+  expect(box!.x).toBeGreaterThanOrEqual(0);
+  expect(box!.x + box!.width).toBeLessThanOrEqual(375);
+});
