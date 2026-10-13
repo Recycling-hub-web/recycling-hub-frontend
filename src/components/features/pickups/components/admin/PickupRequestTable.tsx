@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { LuCheck, LuPencil, LuTrash2, LuX } from 'react-icons/lu';
+import { LuCheck, LuPencil, LuTrash2, LuTruck, LuX } from 'react-icons/lu';
 
 import { StatusBadge } from '../../../../ui/badges/StatusBadge';
 import { AppDate } from '../../../../ui/date/AppDate';
@@ -86,7 +86,8 @@ const PickupRequestTable = ({
         />
       );
     if (requests.length === 0) {
-      let emptySubtitle: string | undefined;
+      let emptySubtitle =
+        'Pickup requests from the website or added by staff will show up here.';
       if (search) {
         emptySubtitle = `No matches for "${search}".`;
       } else if (statusFilter) {
@@ -95,6 +96,7 @@ const PickupRequestTable = ({
       return (
         <TableEmptyRow
           colSpan={columnCount}
+          icon={<LuTruck className="size-6" />}
           title="No pickup requests found"
           subtitle={emptySubtitle}
         />

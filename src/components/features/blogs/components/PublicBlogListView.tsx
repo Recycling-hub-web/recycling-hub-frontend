@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { LuArrowRight, LuNewspaper } from 'react-icons/lu';
 
 import { AppDate } from '../../../ui/date/AppDate';
+import { EmptyState } from '../../../ui/empty/EmptyState';
 import { FadeIn } from '../../../ui/FadeIn';
 import { Loading } from '../../../ui/loading/Loading';
 import { useBlogPosts } from '../hooks';
@@ -41,11 +42,12 @@ const PublicBlogListView = () => {
 
   if (posts.length === 0) {
     return (
-      <div className="mx-auto max-w-3xl px-5 py-16 text-center md:px-8">
-        <LuNewspaper className="mx-auto size-8 text-slate-300" />
-        <p className="mt-3 text-sm text-slate-500">
-          No posts published yet — check back soon.
-        </p>
+      <div className="mx-auto max-w-3xl px-5 md:px-8">
+        <EmptyState
+          icon={<LuNewspaper className="size-6" />}
+          title="No posts published yet"
+          description="Check back soon for news and recycling tips."
+        />
       </div>
     );
   }

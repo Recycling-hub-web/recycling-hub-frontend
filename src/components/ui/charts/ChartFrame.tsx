@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react';
-import { LuRefreshCw, LuTriangleAlert } from 'react-icons/lu';
+import { LuChartColumn, LuRefreshCw, LuTriangleAlert } from 'react-icons/lu';
+
+import { EmptyState } from '../empty/EmptyState';
 
 type ChartFrameProps = {
   height: number;
@@ -62,11 +64,13 @@ const ChartFrame = ({
 
   if (isEmpty) {
     return (
-      <div
-        style={{ height }}
-        className="flex items-center justify-center text-sm text-slate-400"
-      >
-        {emptyMessage}
+      <div style={{ height }} className="flex items-center justify-center">
+        <EmptyState
+          size="compact"
+          icon={<LuChartColumn className="size-5" />}
+          title={emptyMessage}
+          description="Try a different range, or check back once there's activity."
+        />
       </div>
     );
   }

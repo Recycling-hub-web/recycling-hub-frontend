@@ -64,7 +64,9 @@ const ReceivingOverviewView = () => {
       return (
         <TableEmptyRow
           colSpan={columnCount}
+          icon={<LuPackageCheck className="size-6" />}
           title="Nothing awaiting close right now"
+          subtitle="Routes drivers drop off will show up here for verification."
         />
       );
     }

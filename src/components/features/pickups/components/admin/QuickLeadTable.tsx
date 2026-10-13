@@ -1,7 +1,13 @@
 'use client';
 
 import Link from 'next/link';
-import { LuCheck, LuEye, LuMessageCircle, LuPhoneCall } from 'react-icons/lu';
+import {
+  LuCheck,
+  LuEye,
+  LuMessageCircle,
+  LuPhoneCall,
+  LuUserRoundSearch,
+} from 'react-icons/lu';
 
 import { StatusBadge } from '../../../../ui/badges/StatusBadge';
 import { AppDate } from '../../../../ui/date/AppDate';
@@ -65,7 +71,14 @@ const QuickLeadTable = ({
         />
       );
     if (leads.length === 0) {
-      return <TableEmptyRow colSpan={columnCount} title="No quick leads yet" />;
+      return (
+        <TableEmptyRow
+          colSpan={columnCount}
+          icon={<LuUserRoundSearch className="size-6" />}
+          title="No quick leads yet"
+          subtitle="Quick callback requests from the website will show up here."
+        />
+      );
     }
     return leads.map((lead) => (
       <tr key={lead.id} className="transition-colors hover:bg-slate-50">

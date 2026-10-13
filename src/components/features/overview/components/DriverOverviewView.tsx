@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { LuPackage, LuPackageCheck, LuRoute } from 'react-icons/lu';
+import { LuPackage, LuPackageCheck, LuRoute, LuTruck } from 'react-icons/lu';
 
 import { OPERATIONAL_ROLES } from '../../../../layouts/operationalRoles';
 import { StatusBadge } from '../../../ui/badges/StatusBadge';
@@ -92,7 +92,9 @@ const DriverOverviewView = () => {
       return (
         <TableEmptyRow
           colSpan={columnCount}
+          icon={<LuTruck className="size-6" />}
           title="No assigned pickups right now"
+          subtitle="Pickups assigned to you will show up here."
         />
       );
     }

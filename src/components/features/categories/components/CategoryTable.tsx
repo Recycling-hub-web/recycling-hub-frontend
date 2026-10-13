@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { LuEye, LuPencil, LuTrash2 } from 'react-icons/lu';
+import { LuEye, LuPencil, LuShapes, LuTrash2 } from 'react-icons/lu';
 
 import { StatusBadge } from '../../../ui/badges/StatusBadge';
 import {
@@ -71,7 +71,7 @@ const CategoryTable = ({
         />
       );
     if (categories.length === 0) {
-      let emptySubtitle: string | undefined;
+      let emptySubtitle = 'Material categories you add will show up here.';
       if (search) {
         emptySubtitle = `No matches for "${search}".`;
       } else if (statusFilter) {
@@ -80,6 +80,7 @@ const CategoryTable = ({
       return (
         <TableEmptyRow
           colSpan={columnCount}
+          icon={<LuShapes className="size-6" />}
           title="No categories found"
           subtitle={emptySubtitle}
         />

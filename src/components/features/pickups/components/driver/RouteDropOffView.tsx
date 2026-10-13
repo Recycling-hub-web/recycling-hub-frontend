@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import {
   LuMapPin,
   LuNavigation,
+  LuPackage,
   LuPackageCheck,
   LuUpload,
 } from 'react-icons/lu';
@@ -154,6 +155,7 @@ const RouteDropOffView = () => {
       return (
         <TableEmptyRow
           colSpan={columnCount}
+          icon={<LuPackage className="size-6" />}
           title="Nothing to drop off"
           subtitle="Requests you've collected will show up here until dropped off at the store."
         />

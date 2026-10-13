@@ -47,8 +47,13 @@ const BlogTagTable = ({
       return (
         <TableEmptyRow
           colSpan={columnCount}
+          icon={<LuTags className="size-6" />}
           title="No tags found"
-          subtitle={search ? `No matches for "${search}".` : undefined}
+          subtitle={
+            search
+              ? `No matches for "${search}".`
+              : 'Tags you create will show up here.'
+          }
         />
       );
     }

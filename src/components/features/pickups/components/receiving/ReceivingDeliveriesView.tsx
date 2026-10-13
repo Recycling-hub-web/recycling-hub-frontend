@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { LuCheckCheck } from 'react-icons/lu';
+import { LuCheckCheck, LuPackageCheck } from 'react-icons/lu';
 
 import { PageContainer } from '../../../../layout/PageContainer';
 import { StatusBadge } from '../../../../ui/badges/StatusBadge';
@@ -85,6 +85,7 @@ const ReceivingDeliveriesView = () => {
       return (
         <TableEmptyRow
           colSpan={columnCount}
+          icon={<LuPackageCheck className="size-6" />}
           title="Nothing to verify yet"
           subtitle="Delivered requests will show up here once a driver drops off their route."
         />

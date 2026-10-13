@@ -7,6 +7,7 @@ import {
   LuNavigation,
   LuPackage,
   LuRoute,
+  LuTruck,
   LuWallet,
 } from 'react-icons/lu';
 
@@ -215,10 +216,16 @@ const DriverPickupsView = () => {
       return (
         <TableEmptyRow
           colSpan={columnCount}
+          icon={<LuTruck className="size-6" />}
           title={
             activeTab === 'available'
               ? 'No pickups available to claim right now'
               : "You haven't claimed any pickups yet"
+          }
+          subtitle={
+            activeTab === 'available'
+              ? 'Approved requests open for drivers will show up here.'
+              : 'Claim one from the Available tab, or wait for one to be assigned to you.'
           }
         />
       );

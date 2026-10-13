@@ -66,7 +66,7 @@ const BlogPostTable = ({
         />
       );
     if (posts.length === 0) {
-      let emptySubtitle: string | undefined;
+      let emptySubtitle = 'Published and draft posts will show up here.';
       if (search) {
         emptySubtitle = `No matches for "${search}".`;
       } else if (statusFilter) {
@@ -75,6 +75,7 @@ const BlogPostTable = ({
       return (
         <TableEmptyRow
           colSpan={columnCount}
+          icon={<LuNewspaper className="size-6" />}
           title="No blog posts found"
           subtitle={emptySubtitle}
         />

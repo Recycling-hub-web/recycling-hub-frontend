@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { LuWalletCards } from 'react-icons/lu';
+import { LuWallet, LuWalletCards } from 'react-icons/lu';
 
 import { StatusBadge } from '../../../ui/badges/StatusBadge';
 import { AppDate } from '../../../ui/date/AppDate';
@@ -92,6 +92,7 @@ const FinanceRecordTable = ({
       return (
         <TableEmptyRow
           colSpan={columnCount}
+          icon={<LuWallet className="size-6" />}
           title="No finance records yet"
           subtitle="Priced, approved pickup requests will show up here."
         />

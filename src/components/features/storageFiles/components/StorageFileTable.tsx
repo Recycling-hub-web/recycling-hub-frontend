@@ -8,6 +8,7 @@ import {
   LuFile,
   LuFileText,
   LuFileVideo,
+  LuFolderOpen,
   LuImage,
   LuTrash2,
 } from 'react-icons/lu';
@@ -84,8 +85,13 @@ const StorageFileTable = ({
       return (
         <TableEmptyRow
           colSpan={columnCount}
+          icon={<LuFolderOpen className="size-6" />}
           title="No files found"
-          subtitle={search ? `No matches for "${search}".` : undefined}
+          subtitle={
+            search
+              ? `No matches for "${search}".`
+              : 'Files you upload will show up here.'
+          }
         />
       );
     }

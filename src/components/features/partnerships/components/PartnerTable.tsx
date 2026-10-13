@@ -2,7 +2,13 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { LuBuilding2, LuEye, LuPencil, LuTrash2 } from 'react-icons/lu';
+import {
+  LuBuilding2,
+  LuEye,
+  LuHandshake,
+  LuPencil,
+  LuTrash2,
+} from 'react-icons/lu';
 
 import { StatusBadge } from '../../../ui/badges/StatusBadge';
 import {
@@ -66,7 +72,7 @@ const PartnerTable = ({
         />
       );
     if (partners.length === 0) {
-      let emptySubtitle: string | undefined;
+      let emptySubtitle = 'Partners you add will show up here.';
       if (search) {
         emptySubtitle = `No matches for "${search}".`;
       } else if (typeFilter || statusFilter) {
@@ -75,6 +81,7 @@ const PartnerTable = ({
       return (
         <TableEmptyRow
           colSpan={columnCount}
+          icon={<LuHandshake className="size-6" />}
           title="No partners found"
           subtitle={emptySubtitle}
         />

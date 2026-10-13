@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { LuEye, LuPencil, LuTrash2 } from 'react-icons/lu';
+import { LuEye, LuMapPin, LuPencil, LuTrash2 } from 'react-icons/lu';
 
 import { StatusBadge } from '../../../ui/badges/StatusBadge';
 import {
@@ -63,8 +63,13 @@ const CollectionPointTable = ({
       return (
         <TableEmptyRow
           colSpan={columnCount}
+          icon={<LuMapPin className="size-6" />}
           title="No collection points found"
-          subtitle={search ? `No matches for "${search}".` : undefined}
+          subtitle={
+            search
+              ? `No matches for "${search}".`
+              : 'Drop-off stores you add will show up here.'
+          }
         />
       );
     }

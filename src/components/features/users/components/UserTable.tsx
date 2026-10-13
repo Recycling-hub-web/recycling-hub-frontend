@@ -2,7 +2,14 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { LuCrown, LuEye, LuPencil, LuSend, LuTrash2 } from 'react-icons/lu';
+import {
+  LuCrown,
+  LuEye,
+  LuPencil,
+  LuSend,
+  LuTrash2,
+  LuUsers,
+} from 'react-icons/lu';
 
 import {
   ROLE_LABELS,
@@ -90,7 +97,10 @@ const UserTable = ({
         />
       );
     if (users.length === 0) {
-      let emptySubtitle: string | undefined;
+      let emptySubtitle =
+        variant === 'pending'
+          ? 'New sign-ups awaiting approval will show up here.'
+          : 'Users you add will show up here.';
       if (search) {
         emptySubtitle = `No matches for "${search}".`;
       } else if (roleFilter) {
@@ -99,6 +109,7 @@ const UserTable = ({
       return (
         <TableEmptyRow
           colSpan={columnCount}
+          icon={<LuUsers className="size-6" />}
           title={
             variant === 'pending'
               ? 'No pending registrations'

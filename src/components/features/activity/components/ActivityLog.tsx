@@ -1,9 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { LuHistory } from 'react-icons/lu';
 
 import { SearchInput } from '../../../form/filter/SearchInput';
 import { AppDate } from '../../../ui/date/AppDate';
+import { EmptyState } from '../../../ui/empty/EmptyState';
 import { FilterSelect } from '../../../ui/FilterSelect';
 import { Loading } from '../../../ui/loading/Loading';
 import { TablePagination } from '../../../ui/table';
@@ -90,9 +92,11 @@ const ActivityLog = ({ entityType, entityId }: ActivityLogProps) => {
     }
     if (entries.length === 0) {
       return (
-        <p className="rounded-xl bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">
-          No activity yet.
-        </p>
+        <EmptyState
+          icon={<LuHistory className="size-6" />}
+          title="No activity yet"
+          description="Changes to this record will show up here."
+        />
       );
     }
     return (

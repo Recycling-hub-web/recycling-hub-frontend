@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { LuEye, LuPencil, LuTrash2 } from 'react-icons/lu';
+import { LuEye, LuMail, LuPencil, LuTrash2 } from 'react-icons/lu';
 
 import { StatusBadge } from '../../../ui/badges/StatusBadge';
 import { AppDate } from '../../../ui/date/AppDate';
@@ -69,7 +69,8 @@ const ContactMessageTable = ({
         />
       );
     if (messages.length === 0) {
-      let emptySubtitle: string | undefined;
+      let emptySubtitle =
+        "Messages sent through the website's contact form will show up here.";
       if (search) {
         emptySubtitle = `No matches for "${search}".`;
       } else if (statusFilter) {
@@ -78,6 +79,7 @@ const ContactMessageTable = ({
       return (
         <TableEmptyRow
           colSpan={columnCount}
+          icon={<LuMail className="size-6" />}
           title="No messages found"
           subtitle={emptySubtitle}
         />
