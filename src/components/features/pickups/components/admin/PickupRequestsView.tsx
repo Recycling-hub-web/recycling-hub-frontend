@@ -31,6 +31,7 @@ import type {
   PickupRequestType,
   PickupStatus,
 } from '../../types';
+import { EvaluateModal } from './EvaluateModal';
 import { PickupRequestTable } from './PickupRequestTable';
 import { QuickLeadTable } from './QuickLeadTable';
 
@@ -88,6 +89,11 @@ const PickupRequestsView = ({ basePath }: PickupRequestsViewProps) => {
     useState<PickupRequestListItem | null>(null);
   const { execute: evaluateRequest } = useEvaluatePickup();
   const [evaluatingId, setEvaluatingId] = useState<string | null>(null);
+  // Approving always requires a price (see EvaluateModal) — unlike
+  // rejecting, a table-row Approve click can't just call the API
+  // directly, so it opens this same modal the details page uses instead.
+  const [pendingApprove, setPendingApprove] =
+    useState<PickupRequestListItem | null>(null);
   const {
     requests: quickLeads,
     loading: loadingQuickLeads,
@@ -238,7 +244,7 @@ const PickupRequestsView = ({ basePath }: PickupRequestsViewProps) => {
             onRetry={refetch}
             basePath={basePath}
             onDeleteRequest={setPendingDelete}
-            onApprove={(request) => handleEvaluate(request, 'approved')}
+            onApprove={setPendingApprove}
             onReject={(request) => handleEvaluate(request, 'rejected')}
             evaluatingId={evaluatingId}
           />
@@ -264,6 +270,18 @@ const PickupRequestsView = ({ basePath }: PickupRequestsViewProps) => {
         confirmText="Delete"
         confirmVariant="danger"
         loading={deleting}
+      />
+
+      <EvaluateModal
+        requestId={pendingApprove?.id ?? ''}
+        open={Boolean(pendingApprove)}
+        onClose={() => setPendingApprove(null)}
+        onEvaluated={() => {
+          setPendingApprove(null);
+          toast.success('Evaluation saved');
+          refetch();
+        }}
+        items={pendingApprove?.items}
       />
     </PageContainer>
   );

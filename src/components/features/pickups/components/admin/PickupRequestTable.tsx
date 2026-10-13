@@ -44,9 +44,11 @@ type PickupRequestTableProps = {
    * CollectionRequestViewSet.get_permissions on the backend). */
   basePath: string;
   onDeleteRequest: (request: PickupRequestListItem) => void;
-  /** Quick approve/reject on a still-`pending`, unevaluated row — same
-   * decision as the Evaluate modal on the detail page, just without a
-   * note, for the common case of a one-click call. */
+  /** Reject is a direct one-click call (same decision as the Evaluate
+   * modal on the detail page, just without a note — rejecting never
+   * requires a price). Approve can't be one-click the same way:
+   * approving always requires a price, so this opens the same Evaluate
+   * modal the detail page uses instead of calling the API directly. */
   onApprove: (request: PickupRequestListItem) => void;
   onReject: (request: PickupRequestListItem) => void;
   evaluatingId: string | null;

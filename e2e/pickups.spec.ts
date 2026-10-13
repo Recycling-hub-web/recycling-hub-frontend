@@ -153,6 +153,39 @@ test.describe('Admin pickup requests', () => {
 
     await page.request.delete(`/api/v1/pickups/${id}/`);
   });
+
+  test('approving from the list table requires a price, same as the detail page', async ({
+    page,
+  }) => {
+    const fullName = uniqueName('TableApprove');
+    const id = await seedPickupRequest(page.request, fullName);
+
+    await loginAs(page, 'admin');
+    await page.goto('/admin/pickups');
+
+    const row = page.locator('tr', { hasText: fullName });
+    await expect(row).toBeVisible();
+    await row
+      .getByRole('button', { name: `Approve pickup request from ${fullName}` })
+      .click();
+
+    // Same EvaluateModal the detail page uses — submitting with no
+    // price shows the same inline validation, not a failed API call
+    // (this is the bug: the old one-click Approve sent no price at
+    // all, and the backend always rejects an approval with none).
+    const dialog = page.getByRole('dialog');
+    await expect(dialog.getByText('Evaluate pickup request')).toBeVisible();
+    await dialog.getByRole('button', { name: 'Approve' }).click();
+    await expect(dialog.getByText('Enter a valid price.')).toBeVisible();
+
+    await dialog.locator('[data-field="price"] input').fill('25.00');
+    await dialog.getByRole('button', { name: 'Approve' }).click();
+
+    await expect(page.getByText(/evaluation saved/i)).toBeVisible();
+    await expect(row.getByText('Approved')).toBeVisible();
+
+    await page.request.delete(`/api/v1/pickups/${id}/`);
+  });
 });
 
 test.describe('Staff pickup requests', () => {
