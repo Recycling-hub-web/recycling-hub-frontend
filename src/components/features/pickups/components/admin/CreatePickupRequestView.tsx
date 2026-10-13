@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import type { FormEvent } from 'react';
 import { useEffect, useState } from 'react';
-import { LuArrowLeft } from 'react-icons/lu';
+import { LuArrowLeft, LuCircleCheck, LuCircleX, LuClock } from 'react-icons/lu';
 
 import {
   joinPhoneNumber,
@@ -17,6 +17,9 @@ import { TextareaField } from '../../../../form/fields/TextareaField';
 import { PageContainer } from '../../../../layout/PageContainer';
 import { AlertBanner } from '../../../../ui/AlertBanner';
 import { Button } from '../../../../ui/buttons/Button';
+import { FormActions } from '../../../../ui/buttons/FormActions';
+import type { SegmentedOption } from '../../../../ui/buttons/SegmentedControl';
+import { SegmentedControl } from '../../../../ui/buttons/SegmentedControl';
 import { Card } from '../../../../ui/card/Card';
 import { Loading } from '../../../../ui/loading/Loading';
 import { PageHeader } from '../../../../ui/PageHeader';
@@ -30,9 +33,10 @@ import {
   useQuickPickupRequest,
 } from '../../hooks';
 import type { PickupRequestItemInput } from '../../services/pickupService';
-import type { PickupRequestType } from '../../types';
+import type { PickupRequestItem, PickupRequestType } from '../../types';
 import { PickupItemsFieldArray } from '../shared/PickupItemsFieldArray';
 import { type Photo, PickupPhotoUploader } from '../shared/PickupPhotoUploader';
+import { isValidPrice, PricingEditor } from '../shared/PricingEditor';
 
 const EMPTY_ITEM: PickupRequestItemInput = {
   category: '',
@@ -55,11 +59,9 @@ type FormState = {
   // on the details page afterward. Kept as its own trio of fields
   // rather than reusing EvaluateModal's own state, since this form has
   // a third option (''/"not yet") that modal doesn't need. Lump-sum
-  // only, unlike EvaluateModal's lump-vs-itemized toggle — the
-  // just-created items have no ids yet to price individually here.
-  // 'none' rather than '' — SelectField's own built-in disabled
-  // placeholder option also uses value="", and an empty-string real
-  // option collides with it (same gotcha found building Categories).
+  // Lump-sum or, with 2+ materials, priced per item — see itemPrices
+  // and matchItemPrices below.
+  // 'none' = evaluate later, from the details page.
   evaluation_decision: 'none' | 'approved' | 'rejected';
   evaluation_price: string;
   evaluation_reason: string;
@@ -84,11 +86,53 @@ const REQUEST_TYPE_OPTIONS = REQUEST_TYPE_FILTER_OPTIONS.filter(
   (opt) => opt.value,
 );
 
-const EVALUATE_NOW_OPTIONS = [
-  { value: 'none', label: 'Not yet — evaluate later' },
-  { value: 'approved', label: 'Approve' },
-  { value: 'rejected', label: 'Reject' },
+const EVALUATE_NOW_OPTIONS: SegmentedOption<
+  FormState['evaluation_decision']
+>[] = [
+  { value: 'none', label: 'Not yet', icon: LuClock },
+  {
+    value: 'approved',
+    label: 'Approve',
+    icon: LuCircleCheck,
+    activeClassName: 'text-brand-600',
+  },
+  {
+    value: 'rejected',
+    label: 'Reject',
+    icon: LuCircleX,
+    activeClassName: 'text-red-600',
+  },
 ];
+
+/** Pairs each form line's price with the item the backend created for
+ * it. The items are bulk-created, so their response order isn't
+ * guaranteed — they're matched by material (and quantity, to tell apart
+ * two lines of the same material) instead of by position. Returns null
+ * if any line can't be matched. */
+const matchItemPrices = (
+  formItems: PickupRequestItemInput[],
+  prices: string[],
+  created: PickupRequestItem[],
+): { item_id: string; price: string }[] | null => {
+  const unused = [...created];
+  const result: { item_id: string; price: string }[] = [];
+  for (let i = 0; i < formItems.length; i += 1) {
+    const line = formItems[i]!;
+    const sameMaterial = unused.filter((c) => c.category.id === line.category);
+    const quantity = line.estimated_quantity?.trim();
+    const match =
+      sameMaterial.find(
+        (c) =>
+          quantity &&
+          c.estimated_quantity !== null &&
+          Number(c.estimated_quantity) === Number(quantity),
+      ) ?? sameMaterial[0];
+    if (!match) return null;
+    unused.splice(unused.indexOf(match), 1);
+    result.push({ item_id: match.id, price: prices[i] ?? '' });
+  }
+  return result;
+};
 
 type CreatePickupRequestViewProps = {
   basePath: '/admin/pickups' | '/staff/pickups' | '/super-admin/pickups';
@@ -130,6 +174,16 @@ const CreatePickupRequestView = ({
   const [itemErrors, setItemErrors] = useState<Record<string, string>[]>([]);
   const [photoKey, setPhotoKey] = useState<string | null>(null);
   const [photoPreview, setPhotoPreview] = useState<Photo>(null);
+  const [pricingMode, setPricingMode] = useState<'lump' | 'itemized'>('lump');
+  // One price per materials line, by index — kept as long as `items`.
+  const [itemPrices, setItemPrices] = useState<string[]>([]);
+
+  const canItemize = items.length > 1;
+  const itemized =
+    formData.evaluation_decision === 'approved' &&
+    canItemize &&
+    pricingMode === 'itemized';
+  const prices = items.map((_, i) => itemPrices[i] ?? '');
 
   const submitting = creating || converting;
   const error = createError || convertError;
@@ -163,8 +217,11 @@ const CreatePickupRequestView = ({
     if (!data.pickup_address.trim())
       nextErrors.pickup_address = 'Pickup address is required.';
     if (data.evaluation_decision === 'approved') {
-      const price = Number(data.evaluation_price);
-      if (!data.evaluation_price || Number.isNaN(price) || price <= 0) {
+      if (itemized) {
+        if (!prices.every(isValidPrice)) {
+          nextErrors.evaluation_price = 'Enter a valid price for every item.';
+        }
+      } else if (!isValidPrice(data.evaluation_price)) {
         nextErrors.evaluation_price = 'Enter a valid price.';
       }
     } else if (
@@ -215,12 +272,19 @@ const CreatePickupRequestView = ({
 
       if (formData.evaluation_decision !== 'none') {
         try {
+          const pricedItems = itemized
+            ? matchItemPrices(items, prices, request.items ?? [])
+            : null;
+          if (itemized && !pricedItems) {
+            throw new Error('Could not match item prices to the request.');
+          }
           await evaluateRequest(request.id, {
             decision: formData.evaluation_decision,
             price:
-              formData.evaluation_decision === 'approved'
+              formData.evaluation_decision === 'approved' && !itemized
                 ? formData.evaluation_price
                 : undefined,
+            items: pricedItems ?? undefined,
             note:
               formData.evaluation_decision === 'rejected'
                 ? formData.evaluation_reason
@@ -343,6 +407,7 @@ const CreatePickupRequestView = ({
                 quantityUnitPlaceholder: 'e.g. kg',
                 addItem: 'Add another item',
                 removeItem: 'Remove',
+                itemHeading: 'Item',
               }}
             />
             <div className="sm:col-span-2">
@@ -371,41 +436,78 @@ const CreatePickupRequestView = ({
             </div>
           </div>
 
-          <div className="mt-3 grid grid-cols-2 gap-3 rounded-xl bg-slate-50 p-3.5">
-            <div className="col-span-2 text-xs font-medium text-slate-500">
-              Evaluate now — optional. Skips the separate Evaluate step on the
-              details page if you already know the outcome.
-            </div>
-            <div className="col-span-2">
-              <SelectField
-                label="Evaluate now"
-                field="evaluation_decision"
-                required={false}
-                options={EVALUATE_NOW_OPTIONS}
-                formData={formData}
-                errors={errors}
-                updateFormData={updateFormData}
-                disabled={submitting}
-              />
-            </div>
+          <section
+            aria-labelledby="evaluate-now-heading"
+            className="mt-1 rounded-xl border border-slate-200 bg-slate-50/60 p-4"
+          >
+            <h3
+              id="evaluate-now-heading"
+              className="text-sm font-semibold text-neutral-950"
+            >
+              Evaluation{' '}
+              <span className="font-normal text-slate-400">(optional)</span>
+            </h3>
+            <p className="mt-0.5 text-xs text-slate-500">
+              Already know the outcome? Decide it now and skip the Evaluate step
+              on the request&apos;s details page.
+            </p>
+
+            <SegmentedControl
+              ariaLabel="Evaluation decision"
+              options={EVALUATE_NOW_OPTIONS}
+              value={formData.evaluation_decision}
+              onChange={(value) => updateFormData('evaluation_decision', value)}
+              disabled={submitting}
+              fullWidth
+              className="mt-3"
+            />
+
             {formData.evaluation_decision === 'approved' && (
-              <InputField
-                label="Price"
-                field="evaluation_price"
-                type="number"
-                placeholder="Required to approve."
-                formData={formData}
-                errors={errors}
-                updateFormData={updateFormData}
-                disabled={submitting}
-              />
+              <div className="mt-4">
+                <PricingEditor
+                  lines={items.map((item, i) => {
+                    const quantity = item.estimated_quantity?.trim();
+                    return {
+                      key: String(i),
+                      label:
+                        categoryOptions.find((o) => o.value === item.category)
+                          ?.label ?? `Item ${i + 1}`,
+                      detail: quantity
+                        ? `${quantity} ${item.quantity_unit?.trim() || 'kg'}`
+                        : undefined,
+                      dataField: `item-price-${i}`,
+                    };
+                  })}
+                  itemized={pricingMode === 'itemized'}
+                  onItemizedChange={(on) => {
+                    setPricingMode(on ? 'itemized' : 'lump');
+                    setErrors((prev) => ({ ...prev, evaluation_price: '' }));
+                  }}
+                  total={formData.evaluation_price}
+                  onTotalChange={(value) =>
+                    updateFormData('evaluation_price', value)
+                  }
+                  totalDataField="evaluation_price"
+                  prices={Object.fromEntries(
+                    prices.map((value, i) => [String(i), value]),
+                  )}
+                  onPriceChange={(key, value) => {
+                    const next = [...prices];
+                    next[Number(key)] = value;
+                    setItemPrices(next);
+                    setErrors((prev) => ({ ...prev, evaluation_price: '' }));
+                  }}
+                  error={errors.evaluation_price}
+                  disabled={submitting}
+                />
+              </div>
             )}
             {formData.evaluation_decision === 'rejected' && (
-              <div className="col-span-2">
+              <div className="mt-4">
                 <TextareaField
                   label="Reason"
                   field="evaluation_reason"
-                  placeholder="Required to reject."
+                  placeholder="Why this request is being rejected"
                   formData={formData}
                   errors={errors}
                   updateFormData={updateFormData}
@@ -413,16 +515,16 @@ const CreatePickupRequestView = ({
                 />
               </div>
             )}
-          </div>
+          </section>
 
-          <div className="flex gap-5 pt-2">
-            <Button href={basePath} variant="secondary" className="flex-1">
+          <FormActions className="pt-5">
+            <Button href={basePath} variant="secondary">
               Cancel
             </Button>
-            <Button type="submit" disabled={submitting} className="flex-1">
+            <Button type="submit" disabled={submitting}>
               {submitting ? 'Creating…' : 'Create request'}
             </Button>
-          </div>
+          </FormActions>
         </form>
       </Card>
     </PageContainer>

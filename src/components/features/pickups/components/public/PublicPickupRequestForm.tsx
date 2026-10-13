@@ -266,6 +266,7 @@ const PublicPickupRequestForm = ({
                     quantityUnitPlaceholder: content.quantityUnitPlaceholder,
                     addItem: content.addItemButton,
                     removeItem: content.removeItemLabel,
+                    itemHeading: content.itemHeading,
                   }}
                 />
                 <div className="sm:col-span-2">

@@ -141,7 +141,7 @@ const ActionsDropdown = ({
         aria-haspopup="true"
         className={`flex items-center gap-2 rounded-full border px-3 py-2 text-sm font-medium transition-all duration-150 ${
           open
-            ? 'border-slate-300 bg-slate-100 text-slate-800 shadow-inner'
+            ? 'border-slate-300 bg-slate-100 text-slate-800'
             : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50'
         }`}
       >

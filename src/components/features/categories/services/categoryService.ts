@@ -16,14 +16,18 @@ type ListCategoriesParams = {
   isActive?: 'true' | 'false';
   /** DRF's SearchFilter — matches name or slug (CategoryViewSet.search_fields). */
   search?: string;
+  /** Rows per page — the backend default is 12, up to 200. */
+  pageSize?: number;
 };
 
 const listCategories = ({
   page = 1,
   isActive,
   search,
+  pageSize,
 }: ListCategoriesParams = {}): Promise<Paginated<CategoryListItem>> => {
   const params = new URLSearchParams({ page: String(page), module: MODULE });
+  if (pageSize) params.set('page_size', String(pageSize));
   if (isActive) params.set('is_active', isActive);
   if (search) params.set('search', search);
   return apiFetch(`/categories/?${params.toString()}`);

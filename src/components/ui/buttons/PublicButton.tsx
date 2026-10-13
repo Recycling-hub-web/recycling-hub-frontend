@@ -35,10 +35,10 @@ const variants: Record<PublicButtonVariant, string> = {
     'ring-2 ring-red-200 ring-offset-2 bg-white text-red-600 hover:bg-red-50 hover:text-red-700 hover:ring-red-300',
 };
 
-// transition-all so background-color, ring, transform, and box-shadow
-// all animate smoothly together on hover rather than snapping.
+// transition-all so background-color, ring and transform all animate
+// smoothly together on hover rather than snapping. No shadows.
 const base =
-  'inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-semibold transition-all duration-300 ease-out cursor-pointer hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 active:shadow-none';
+  'inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-semibold transition-all duration-300 ease-out cursor-pointer hover:-translate-y-0.5 active:translate-y-0';
 
 const isExternal = (href: string) =>
   href.startsWith('http') ||

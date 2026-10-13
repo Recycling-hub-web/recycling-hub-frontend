@@ -13,6 +13,8 @@ type InputFieldProps = {
   onBlur?: () => void;
   disabled?: boolean;
   helperText?: string;
+  /** Short fixed text inside the input's leading edge, e.g. "RM". */
+  prefix?: string;
 };
 
 const InputField = ({
@@ -28,6 +30,7 @@ const InputField = ({
   onBlur,
   disabled = false,
   helperText = '',
+  prefix,
 }: InputFieldProps) => {
   const value =
     (getNestedValue(formData, field) as string | number | undefined) ?? '';
@@ -42,21 +45,28 @@ const InputField = ({
         {label} {required && <span className="text-red-600">*</span>}
       </label>
 
-      <input
-        type={type}
-        value={value}
-        onChange={(e) =>
-          updateFormData(
-            field,
-            type === 'email' ? e.target.value.toLowerCase() : e.target.value,
-          )
-        }
-        onBlur={onBlur}
-        placeholder={placeholder}
-        disabled={disabled}
-        {...dateProps}
-        className={`mt-2 flex h-12 w-full items-center justify-start rounded-xl border p-3 py-2 text-sm outline-none transition-colors focus:outline-none focus:ring-1 focus:ring-brand-500 ${fieldStateClasses(disabled, Boolean(error))}`}
-      />
+      <div className="relative mt-2">
+        {prefix && (
+          <span className="pointer-events-none absolute inset-y-0 start-0 flex items-center ps-3.5 text-sm font-medium text-slate-500">
+            {prefix}
+          </span>
+        )}
+        <input
+          type={type}
+          value={value}
+          onChange={(e) =>
+            updateFormData(
+              field,
+              type === 'email' ? e.target.value.toLowerCase() : e.target.value,
+            )
+          }
+          onBlur={onBlur}
+          placeholder={placeholder}
+          disabled={disabled}
+          {...dateProps}
+          className={`flex h-12 w-full items-center justify-start rounded-xl border p-3 py-2 text-sm outline-none transition-colors focus:outline-none focus:ring-1 focus:ring-brand-500 ${prefix ? 'ps-11' : ''} ${fieldStateClasses(disabled, Boolean(error))}`}
+        />
+      </div>
 
       {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
       {!error && disabled && helperText && (

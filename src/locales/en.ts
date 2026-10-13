@@ -1332,6 +1332,7 @@ const en = {
       itemsSectionLabel: 'Materials',
       addItemButton: 'Add another item',
       removeItemLabel: 'Remove this item',
+      itemHeading: 'Item',
       note: 'Note',
       notePlaceholder: 'Anything else worth mentioning',
       errorFullNameRequired: 'Please enter your full name.',

@@ -29,7 +29,7 @@ const isExternal = (href: string) =>
   href.startsWith('https://wa.me');
 
 const cls =
-  'group inline-flex items-center gap-4 rounded-full bg-white py-2 pl-6 pr-2 shadow-[0_8px_40px_rgba(0,0,0,0.18)] transition-all duration-300 hover:shadow-[0_12px_48px_rgba(0,0,0,0.26)] hover:scale-[1.02]';
+  'group inline-flex items-center gap-4 rounded-full bg-white py-2 pl-6 pr-2 transition-all duration-300 hover:scale-[1.02]';
 
 const ArrowButton = ({ href, children, className = '' }: ArrowButtonProps) => {
   const inner = (

@@ -4,6 +4,7 @@ import { type FormEvent, useEffect, useState } from 'react';
 
 import { InputField } from '../../../form/fields/InputField';
 import { AlertBanner } from '../../../ui/AlertBanner';
+import { FormActions } from '../../../ui/buttons/FormActions';
 import { Modal } from '../../../ui/modal/Modal';
 import { useCreateBlogTag, useUpdateBlogTag } from '../hooks';
 import type { BlogTag } from '../types';
@@ -64,12 +65,12 @@ const TagFormModal = ({ open, onClose, onSaved, tag }: TagFormModalProps) => {
       onClose={handleClose}
       title={isEdit ? 'Edit tag' : 'New tag'}
       footer={
-        <div className="flex gap-2">
+        <FormActions>
           <button
             type="button"
             onClick={handleClose}
             disabled={submitting}
-            className="flex-1 rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Cancel
           </button>
@@ -77,11 +78,11 @@ const TagFormModal = ({ open, onClose, onSaved, tag }: TagFormModalProps) => {
             type="submit"
             form="tag-form"
             disabled={submitting}
-            className="flex-1 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {submitting ? 'Saving…' : 'Save'}
           </button>
-        </div>
+        </FormActions>
       }
     >
       <form id="tag-form" onSubmit={handleSubmit} noValidate>

@@ -7,6 +7,7 @@ import { InputField } from '../../../../form/fields/InputField';
 import { SelectField } from '../../../../form/fields/SelectField';
 import { TextareaField } from '../../../../form/fields/TextareaField';
 import { AlertBanner } from '../../../../ui/AlertBanner';
+import { FormActions } from '../../../../ui/buttons/FormActions';
 import { Modal } from '../../../../ui/modal/Modal';
 import { useUploadStorageFile } from '../../../storageFiles/hooks';
 import { useCollectPickup } from '../../hooks';
@@ -159,12 +160,12 @@ const CollectModal = ({
       title="Mark as collected"
       subtitle="Confirm what was actually picked up."
       footer={
-        <div className="flex gap-2">
+        <FormActions>
           <button
             type="button"
             onClick={handleClose}
             disabled={submitting}
-            className="flex-1 rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Cancel
           </button>
@@ -172,11 +173,11 @@ const CollectModal = ({
             type="submit"
             form="collect-pickup-form"
             disabled={submitting || uploading}
-            className="flex-1 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {submitting ? 'Saving…' : 'Mark collected'}
           </button>
-        </div>
+        </FormActions>
       }
     >
       <form

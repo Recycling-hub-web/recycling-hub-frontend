@@ -25,6 +25,8 @@ type PickupItemsFieldArrayLabels = {
   quantityUnitPlaceholder: string;
   addItem: string;
   removeItem: string;
+  /** Per-row heading shown with 2+ rows, numbered, e.g. "Item" → "Item 2". */
+  itemHeading: string;
 };
 
 type PickupItemsFieldArrayProps = {
@@ -69,14 +71,45 @@ const PickupItemsFieldArray = ({
     onChange(items.filter((_, i) => i !== index));
 
   return (
-    <div className="sm:col-span-2">
-      <p className="mb-2 text-sm font-medium text-slate-900">
-        {labels.itemsSection}
-      </p>
+    <div className="mb-4 sm:col-span-2">
+      {/* Section header — the add action sits top-right, like every
+          section-level action in the app. */}
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <p className="text-sm font-medium text-slate-900">
+          {labels.itemsSection}
+        </p>
+        <Button
+          type="button"
+          variant="secondary"
+          onClick={addItem}
+          disabled={disabled}
+          className="px-3.5 py-1.5 text-xs"
+        >
+          <LuPlus className="mr-1.5 size-3.5" />
+          {labels.addItem}
+        </Button>
+      </div>
       <div className="space-y-4">
         {items.map((item, index) => (
           // eslint-disable-next-line react/no-array-index-key -- rows have no stable id until submitted; index is fine for a client-only draft list
           <div key={index} className="rounded-xl border border-slate-200 p-4">
+            {items.length > 1 && (
+              <div className="mb-3 flex items-center justify-between gap-3">
+                <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                  {labels.itemHeading} {index + 1}
+                </p>
+                <Button
+                  type="button"
+                  variant="danger-outline"
+                  onClick={() => removeItem(index)}
+                  disabled={disabled}
+                  className="px-3.5 py-1.5 text-xs"
+                >
+                  <LuTrash2 className="mr-1.5 size-3.5" />
+                  {labels.removeItem}
+                </Button>
+              </div>
+            )}
             <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-3">
               <SelectField
                 label={labels.category}
@@ -113,31 +146,9 @@ const PickupItemsFieldArray = ({
                 disabled={disabled}
               />
             </div>
-            {items.length > 1 && (
-              <Button
-                type="button"
-                variant="danger-outline"
-                onClick={() => removeItem(index)}
-                disabled={disabled}
-                className="px-3.5 py-1.5 text-xs"
-              >
-                <LuTrash2 className="mr-1.5 size-3.5" />
-                {labels.removeItem}
-              </Button>
-            )}
           </div>
         ))}
       </div>
-      <Button
-        type="button"
-        variant="secondary"
-        onClick={addItem}
-        disabled={disabled}
-        className="mt-3 px-4 py-2 text-sm"
-      >
-        <LuPlus className="mr-1.5 size-4" />
-        {labels.addItem}
-      </Button>
     </div>
   );
 };

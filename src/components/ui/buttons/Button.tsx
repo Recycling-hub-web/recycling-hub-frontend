@@ -44,11 +44,12 @@ const sizes: Record<ButtonSize, string> = {
   lg: 'px-8 py-4 text-base',
 };
 
-// transition-all so background-color, border-color, transform, and
-// box-shadow (whichever a variant/hover state actually changes) all
-// animate smoothly together rather than snapping.
+// transition-all so background-color, border-color and transform
+// (whichever a variant/hover state actually changes) all animate
+// smoothly together rather than snapping. No shadows — buttons stay
+// flat, lifting slightly on hover instead.
 const base =
-  'inline-flex items-center justify-center rounded-full font-semibold transition-all duration-300 ease-out cursor-pointer hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 active:shadow-none';
+  'inline-flex items-center justify-center rounded-full font-semibold transition-all duration-300 ease-out cursor-pointer hover:-translate-y-0.5 active:translate-y-0';
 
 const isExternal = (href: string) =>
   href.startsWith('http') ||

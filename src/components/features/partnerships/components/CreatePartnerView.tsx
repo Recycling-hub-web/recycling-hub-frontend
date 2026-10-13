@@ -11,6 +11,7 @@ import { SelectField } from '../../../form/fields/SelectField';
 import { PageContainer } from '../../../layout/PageContainer';
 import { AlertBanner } from '../../../ui/AlertBanner';
 import { Button } from '../../../ui/buttons/Button';
+import { FormActions } from '../../../ui/buttons/FormActions';
 import { Card } from '../../../ui/card/Card';
 import { PageHeader } from '../../../ui/PageHeader';
 import { useToast } from '../../../ui/toast/ToastContext';
@@ -152,14 +153,14 @@ const CreatePartnerView = ({ basePath }: CreatePartnerViewProps) => {
             </div>
           </div>
 
-          <div className="flex gap-5 pt-2">
-            <Button href={basePath} variant="secondary" className="flex-1">
+          <FormActions className="pt-2">
+            <Button href={basePath} variant="secondary">
               Cancel
             </Button>
-            <Button type="submit" disabled={submitting} className="flex-1">
+            <Button type="submit" disabled={submitting}>
               {submitting ? 'Creating…' : 'Create partner'}
             </Button>
-          </div>
+          </FormActions>
         </form>
       </Card>
     </PageContainer>

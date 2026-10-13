@@ -8,6 +8,7 @@ import { ApiError } from '../../../../lib/api';
 import { PasswordField } from '../../../form/fields/PasswordField';
 import { AlertBanner } from '../../../ui/AlertBanner';
 import { Button } from '../../../ui/buttons/Button';
+import { FormActions } from '../../../ui/buttons/FormActions';
 import { Modal } from '../../../ui/modal/Modal';
 import { useToast } from '../../../ui/toast/ToastContext';
 // Cross-feature reuse — the auth feature already wraps
@@ -125,19 +126,14 @@ const ChangePasswordModal = ({ open, onClose }: ChangePasswordModalProps) => {
           errors={errors}
           updateFormData={updateFormData}
         />
-        <div className="flex gap-3 pt-2">
-          <Button
-            variant="secondary"
-            className="flex-1"
-            onClick={close}
-            disabled={loading}
-          >
+        <FormActions className="pt-2">
+          <Button variant="secondary" onClick={close} disabled={loading}>
             {'Cancel'}
           </Button>
-          <Button type="submit" className="flex-1" disabled={!canSubmit}>
+          <Button type="submit" disabled={!canSubmit}>
             {loading ? 'Updating…' : 'Update password'}
           </Button>
-        </div>
+        </FormActions>
       </form>
     </Modal>
   );

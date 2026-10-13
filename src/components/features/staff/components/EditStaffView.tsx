@@ -11,6 +11,7 @@ import { InputField } from '../../../form/fields/InputField';
 import { PageContainer } from '../../../layout/PageContainer';
 import { AlertBanner } from '../../../ui/AlertBanner';
 import { Button } from '../../../ui/buttons/Button';
+import { FormActions } from '../../../ui/buttons/FormActions';
 import { Card } from '../../../ui/card/Card';
 import { Loading } from '../../../ui/loading/Loading';
 import { PageHeader } from '../../../ui/PageHeader';
@@ -194,22 +195,14 @@ const EditStaffView = ({ staffId }: { staffId: string }) => {
             </div>
           </div>
 
-          <div className="flex gap-5 pt-5">
-            <Button
-              href={`/admin/staff/${profile.id}`}
-              variant="secondary"
-              className="flex-1"
-            >
+          <FormActions className="pt-5">
+            <Button href={`/admin/staff/${profile.id}`} variant="secondary">
               Cancel
             </Button>
-            <Button
-              type="submit"
-              disabled={submitting || !hasChanges}
-              className="flex-1"
-            >
+            <Button type="submit" disabled={submitting || !hasChanges}>
               {submitting ? 'Saving…' : 'Save changes'}
             </Button>
-          </div>
+          </FormActions>
         </form>
       </Card>
     </PageContainer>

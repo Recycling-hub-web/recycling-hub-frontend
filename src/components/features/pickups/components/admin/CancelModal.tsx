@@ -4,6 +4,7 @@ import { type FormEvent, useState } from 'react';
 
 import { TextareaField } from '../../../../form/fields/TextareaField';
 import { AlertBanner } from '../../../../ui/AlertBanner';
+import { FormActions } from '../../../../ui/buttons/FormActions';
 import { Modal } from '../../../../ui/modal/Modal';
 import { useCancelPickup } from '../../hooks';
 
@@ -77,12 +78,12 @@ const CancelModal = ({
       title="Cancel pickup"
       subtitle="This can't be undone."
       footer={
-        <div className="flex gap-2">
+        <FormActions>
           <button
             type="button"
             onClick={handleClose}
             disabled={submitting}
-            className="flex-1 rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Keep request
           </button>
@@ -90,11 +91,11 @@ const CancelModal = ({
             type="submit"
             form="cancel-pickup-form"
             disabled={submitting}
-            className="flex-1 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {submitting ? 'Cancelling…' : 'Cancel pickup'}
           </button>
-        </div>
+        </FormActions>
       }
     >
       <form

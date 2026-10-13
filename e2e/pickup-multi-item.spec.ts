@@ -130,8 +130,8 @@ test('evaluator can price a multi-item request as one lump total', async ({
   // The lump/itemized toggle only renders because this request has
   // more than one item.
   await expect(
-    dialog.getByRole('button', { name: 'One total price' }),
-  ).toBeVisible();
+    dialog.getByRole('switch', { name: 'Price each item' }),
+  ).toHaveAttribute('aria-checked', 'false');
   await page.locator('[data-field="price"] input').fill('345.00');
   await dialog.getByRole('button', { name: 'Approve' }).click();
 
@@ -151,13 +151,13 @@ test('evaluator can price a multi-item request per item, live-summed into the to
   await page.goto(`/admin/pickups/${id}`);
   await page.getByRole('button', { name: 'Evaluate' }).click();
   const dialog = page.getByRole('dialog');
-  await dialog.getByRole('button', { name: 'Price each item' }).click();
+  await dialog.getByRole('switch', { name: 'Price each item' }).click();
 
   // One price input per material.
   await page.locator('[data-field="item-price-E-waste"] input').fill('300');
   await page.locator('[data-field="item-price-Glass"] input').fill('45');
 
-  await expect(page.getByText('Total: 345.00')).toBeVisible();
+  await expect(page.getByText('RM 345.00')).toBeVisible();
   await dialog.getByRole('button', { name: 'Approve' }).click();
 
   await expect(page.getByText('Approved', { exact: true })).toBeVisible();

@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 
+import { FormActions } from '../buttons/FormActions';
 import { Modal } from './Modal';
 
 type ConfirmVariant = 'danger' | 'primary';
@@ -47,12 +48,12 @@ const ConfirmModal = ({
     icon={icon}
     size="sm"
     footer={
-      <div className="flex gap-2">
+      <FormActions>
         <button
           type="button"
           onClick={onClose}
           disabled={loading}
-          className="flex-1 rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+          className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {cancelText}
         </button>
@@ -60,11 +61,11 @@ const ConfirmModal = ({
           type="button"
           onClick={onConfirm}
           disabled={loading}
-          className={`flex-1 rounded-lg px-4 py-2 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-50 ${CONFIRM_VARIANT_CLASSES[confirmVariant]}`}
+          className={`rounded-lg px-4 py-2 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-50 ${CONFIRM_VARIANT_CLASSES[confirmVariant]}`}
         >
           {loading ? 'Please wait…' : confirmText}
         </button>
-      </div>
+      </FormActions>
     }
   >
     <p className="text-sm text-slate-600">{message}</p>

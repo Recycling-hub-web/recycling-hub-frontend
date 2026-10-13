@@ -2,12 +2,13 @@
 
 import { useEffect, useState } from 'react';
 
-import { InputField } from '../../../../form/fields/InputField';
 import { TextareaField } from '../../../../form/fields/TextareaField';
 import { AlertBanner } from '../../../../ui/AlertBanner';
+import { FormActions } from '../../../../ui/buttons/FormActions';
 import { Modal } from '../../../../ui/modal/Modal';
 import { useEvaluatePickup } from '../../hooks';
 import type { PickupRequestItem } from '../../types';
+import { isValidPrice, PricingEditor } from '../shared/PricingEditor';
 
 type EvaluateModalProps = {
   requestId: string;
@@ -66,28 +67,16 @@ const EvaluateModal = ({
     setErrors((prev) => ({ ...prev, [field]: '' }));
   };
 
-  const itemizedTotal = items.reduce(
-    (sum, item) => sum + (Number(itemPrices[item.id]) || 0),
-    0,
-  );
-
   const validate = (decision: 'approved' | 'rejected'): boolean => {
     if (decision === 'approved') {
       if (canItemize && pricingMode === 'itemized') {
-        const invalid = items.some((item) => {
-          const price = Number(itemPrices[item.id]);
-          return !itemPrices[item.id] || Number.isNaN(price) || price <= 0;
-        });
-        if (invalid) {
-          setErrors({ items: 'Enter a valid price for every item.' });
+        if (!items.every((item) => isValidPrice(itemPrices[item.id]))) {
+          setErrors({ price: 'Enter a valid price for every item.' });
           return false;
         }
-      } else {
-        const price = Number(formData.price);
-        if (!formData.price || Number.isNaN(price) || price <= 0) {
-          setErrors({ price: 'Enter a valid price.' });
-          return false;
-        }
+      } else if (!isValidPrice(formData.price)) {
+        setErrors({ price: 'Enter a valid price.' });
+        return false;
       }
     } else if (!formData.note.trim()) {
       setErrors({ note: 'A reason is required when rejecting.' });
@@ -138,12 +127,12 @@ const EvaluateModal = ({
       title="Evaluate pickup request"
       subtitle="Approve with a price, or reject with a reason."
       footer={
-        <div className="flex gap-2">
+        <FormActions>
           <button
             type="button"
             onClick={handleClose}
             disabled={submitting}
-            className="flex-1 rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Cancel
           </button>
@@ -151,7 +140,7 @@ const EvaluateModal = ({
             type="button"
             onClick={() => handleSubmit('rejected')}
             disabled={submitting}
-            className="flex-1 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {submitting ? 'Saving…' : 'Reject'}
           </button>
@@ -159,74 +148,41 @@ const EvaluateModal = ({
             type="button"
             onClick={() => handleSubmit('approved')}
             disabled={submitting}
-            className="flex-1 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {submitting ? 'Saving…' : 'Approve'}
           </button>
-        </div>
+        </FormActions>
       }
     >
       <div className="space-y-1">
         <AlertBanner message={apiError} />
 
-        {canItemize && (
-          <div className="mb-3 inline-flex rounded-full border border-slate-200 bg-slate-50 p-1">
-            {(['lump', 'itemized'] as const).map((mode) => (
-              <button
-                key={mode}
-                type="button"
-                onClick={() => setPricingMode(mode)}
-                aria-pressed={pricingMode === mode}
-                className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition ${
-                  pricingMode === mode
-                    ? 'bg-white text-brand-600 shadow-sm'
-                    : 'text-slate-500 hover:text-slate-700'
-                }`}
-              >
-                {mode === 'lump' ? 'One total price' : 'Price each item'}
-              </button>
-            ))}
-          </div>
-        )}
-
-        {canItemize && pricingMode === 'itemized' ? (
-          <div className="mb-4">
-            <div className="space-y-3">
-              {items.map((item) => (
-                <InputField
-                  key={item.id}
-                  label={item.category.name}
-                  field={item.id}
-                  dataField={`item-price-${item.category.name}`}
-                  type="number"
-                  required={false}
-                  placeholder="Price for this item"
-                  formData={itemPrices}
-                  updateFormData={(field, value) =>
-                    setItemPrices((prev) => ({ ...prev, [field]: value }))
-                  }
-                />
-              ))}
-            </div>
-            {errors.items && (
-              <p className="mt-1 text-xs text-red-600">{errors.items}</p>
-            )}
-            <p className="mt-2 text-sm font-medium text-slate-700">
-              Total: {itemizedTotal.toFixed(2)}
-            </p>
-          </div>
-        ) : (
-          <InputField
-            label="Price"
-            field="price"
-            type="number"
-            required={false}
-            placeholder="Required to approve."
-            formData={formData}
-            errors={errors}
-            updateFormData={updateFormData}
-          />
-        )}
+        <PricingEditor
+          lines={items.map((item) => ({
+            key: item.id,
+            label: item.category.name,
+            detail: item.estimated_quantity
+              ? `${Number(item.estimated_quantity)} ${item.quantity_unit || 'kg'}`
+              : undefined,
+            dataField: `item-price-${item.category.name}`,
+          }))}
+          itemized={pricingMode === 'itemized'}
+          onItemizedChange={(on) => {
+            setPricingMode(on ? 'itemized' : 'lump');
+            setErrors((prev) => ({ ...prev, price: '' }));
+          }}
+          total={formData.price}
+          onTotalChange={(value) => updateFormData('price', value)}
+          totalDataField="price"
+          prices={itemPrices}
+          onPriceChange={(key, value) => {
+            setItemPrices((prev) => ({ ...prev, [key]: value }));
+            setErrors((prev) => ({ ...prev, price: '' }));
+          }}
+          error={errors.price}
+          disabled={submitting}
+        />
         <TextareaField
           label="Note"
           field="note"

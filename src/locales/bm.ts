@@ -1319,6 +1319,7 @@ const bm: Dictionary = {
       itemsSectionLabel: 'Bahan',
       addItemButton: 'Tambah item lain',
       removeItemLabel: 'Alih keluar item ini',
+      itemHeading: 'Item',
       note: 'Nota',
       notePlaceholder: 'Sebarang perkara lain yang perlu disebut',
       errorFullNameRequired: 'Sila masukkan nama penuh anda.',
