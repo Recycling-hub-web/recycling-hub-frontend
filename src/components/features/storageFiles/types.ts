@@ -24,7 +24,9 @@ type StorageFile = {
 // One entry of the presigned-upload-urls response (PresignedUploadUrlView).
 type PresignedUpload = {
   upload_url: string;
-  fields: Record<string, string>;
+  method: 'PUT';
+  /** Send exactly as given — they're part of the URL's signature. */
+  headers: Record<string, string>;
   file_key: string;
   public_url: string;
   expires_in: number;

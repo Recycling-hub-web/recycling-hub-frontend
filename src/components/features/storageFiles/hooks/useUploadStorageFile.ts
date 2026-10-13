@@ -23,6 +23,7 @@ const useUploadStorageFile = () => {
           file_name: file.name,
           content_type: file.type || 'application/octet-stream',
           file_type: inferFileType(file.type),
+          file_size: file.size,
         },
       ]);
       const [upload] = uploads;

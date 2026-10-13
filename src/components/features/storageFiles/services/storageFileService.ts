@@ -38,9 +38,11 @@ type PresignedUploadRequest = {
   file_name: string;
   content_type: string;
   file_type: string;
+  /** Bytes — signed into the upload URL, so storage rejects any other size. */
+  file_size: number;
 };
 
-// Step 1 of the upload flow — ask our API for a presigned POST target.
+// Step 1 of the upload flow — ask our API for a presigned PUT URL.
 // This also creates the FileRecord row server-side (PresignedUploadUrlView),
 // marked is_confirmed=False until the direct-to-storage upload below
 // actually completes.
@@ -52,25 +54,22 @@ const requestPresignedUploads = (
     json: { files },
   });
 
-// Step 2 — upload the actual bytes straight to storage using the fields
-// from step 1. This goes to `upload_url` (DigitalOcean Spaces/S3), not
+// Step 2 — send the file's bytes straight to storage with a plain PUT to
+// the presigned `upload_url` from step 1 (any S3-compatible store: Google
+// Cloud Storage, Cloudflare R2, DigitalOcean Spaces, AWS…), not through
 // our own API — plain fetch, not apiFetch, since it's a different origin
-// with no auth cookie and a multipart body, not JSON.
+// with no auth cookie. `upload.headers` (Content-Type, and x-amz-acl if
+// the server uses per-object ACLs) are part of the signature, so they're
+// sent exactly as given; the browser sets Content-Length from the file,
+// which matches the signed size from step 1.
 const uploadToPresignedUrl = async (
   upload: PresignedUpload,
   file: File,
 ): Promise<void> => {
-  const formData = new FormData();
-  Object.entries(upload.fields).forEach(([key, value]) => {
-    formData.append(key, value);
-  });
-  // The file field must be appended last — S3-compatible presigned POST
-  // policies read form fields in order and expect the file part at the end.
-  formData.append('file', file);
-
   const response = await fetch(upload.upload_url, {
-    method: 'POST',
-    body: formData,
+    method: upload.method,
+    headers: upload.headers,
+    body: file,
   });
   if (!response.ok) {
     throw new ApiError(

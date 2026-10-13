@@ -19,6 +19,7 @@ const usePickupPhotoUpload = () => {
       const { uploads } = await requestPickupPhotoUploadUrl(
         file.name,
         file.type || 'image/jpeg',
+        file.size,
       );
       const [upload] = uploads;
       if (!upload) {
