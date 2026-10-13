@@ -11,7 +11,7 @@ import {
 
 import { OPERATIONAL_ROLES } from '../../../../layouts/operationalRoles';
 import { SectionContainer } from '../../../ui/card/SectionContainer';
-import { BarChart, DonutChart, LineChart } from '../../../ui/charts';
+import { BarChart, DonutChart } from '../../../ui/charts';
 import { STATUS_BADGE_VARIANT as FINANCE_STATUS_BADGE_VARIANT } from '../../finance/constants';
 import { FINANCE_STATUS_LABELS } from '../../finance/types';
 import { QuickLeadTable } from '../../pickups/components/admin/QuickLeadTable';
@@ -24,14 +24,10 @@ import { PICKUP_STATUS_LABELS } from '../../pickups/types';
 import { useStaffOverviewStats } from '../hooks';
 import { OverviewStatCard } from './OverviewStatCard';
 import { OverviewStatGrid } from './OverviewStatGrid';
+import { PickupVolumeChart } from './PickupVolumeChart';
 import { RoleOverviewLayout } from './RoleOverviewLayout';
 
 const LEADS_PREVIEW_SIZE = 5;
-
-const dayLabel = (isoDate: string) =>
-  new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short' }).format(
-    new Date(isoDate),
-  );
 
 /** Same shape as AdminOverviewView, minus the Users stat — Staff has no
  * Users module/access, so the shared AdminOverviewStatsView endpoint
@@ -44,9 +40,9 @@ const dayLabel = (isoDate: string) =>
  * yet contacted) — its own `count` is the real server-side total, and
  * the first few of its `results` are shown directly via QuickLeadTable
  * (same table PickupRequestsView's Quick Leads tab uses), not a
- * separately-derived number. The charts below that are the same
- * Bar/Donut/LineChart blocks AdminOverviewView renders, built from the
- * same endpoint's data. */
+ * separately-derived number. The charts below that are the same blocks
+ * AdminOverviewView renders: the Bar/Donut status breakdowns from the
+ * same stats endpoint, and the shared PickupVolumeChart. */
 const StaffOverviewView = () => {
   const stats = useStaffOverviewStats();
   const {
@@ -95,12 +91,6 @@ const StaffOverviewView = () => {
       }))
     : [];
 
-  const dailyVolumeData =
-    stats.dailyVolume?.map((point) => ({
-      x: dayLabel(point.date),
-      count: point.count,
-    })) ?? [];
-
   return (
     <RoleOverviewLayout
       navItems={OPERATIONAL_ROLES.staff.navItems}
@@ -136,17 +126,7 @@ const StaffOverviewView = () => {
       extra={
         <>
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-            <SectionContainer className="lg:col-span-2">
-              <h2 className="mb-4 text-sm font-semibold text-slate-900">
-                Daily pickup volume — last 30 days
-              </h2>
-              <LineChart
-                data={dailyVolumeData}
-                xKey="x"
-                series={[{ key: 'count', label: 'Pickup requests' }]}
-                loading={!stats.dailyVolume}
-              />
-            </SectionContainer>
+            <PickupVolumeChart />
             <SectionContainer>
               <h2 className="mb-4 text-sm font-semibold text-slate-900">
                 Pickup requests by status

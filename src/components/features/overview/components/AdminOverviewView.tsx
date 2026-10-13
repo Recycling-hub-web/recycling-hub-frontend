@@ -5,26 +5,21 @@ import { LuMail, LuNewspaper, LuTruck, LuUsers } from 'react-icons/lu';
 import { useAuth } from '../../../../contexts/AuthContext';
 import { adminNavItemsFor } from '../../../../layouts/navigation';
 import { SectionContainer } from '../../../ui/card/SectionContainer';
-import { BarChart, DonutChart, LineChart } from '../../../ui/charts';
+import { BarChart, DonutChart } from '../../../ui/charts';
 import { STATUS_BADGE_VARIANT as FINANCE_STATUS_BADGE_VARIANT } from '../../finance/constants';
 import { FINANCE_STATUS_LABELS } from '../../finance/types';
 import { PICKUP_STATUS_LABELS } from '../../pickups/types';
 import { useAdminOverviewStats } from '../hooks';
 import { OverviewStatCard } from './OverviewStatCard';
 import { OverviewStatGrid } from './OverviewStatGrid';
+import { PickupVolumeChart } from './PickupVolumeChart';
 import { RoleOverviewLayout } from './RoleOverviewLayout';
-
-const dayLabel = (isoDate: string) =>
-  new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short' }).format(
-    new Date(isoDate),
-  );
 
 /** Replaces the old `redirect('/admin/users')` — /admin is now a real
  * dashboard. Quick links reuse adminNavItemsFor (the same role-aware
  * list AdminLayout's sidebar renders) rather than a second, separately-maintained
- * list of admin modules. The daily-volume trend chart is the one place
- * in the app a LineChart backed by a genuinely new endpoint
- * (CollectionRequestViewSet.daily_volume) lives — it's a real
+ * list of admin modules. The pickup volume trend (PickupVolumeChart,
+ * shared with Staff) has its own endpoint and range picker — it's a real
  * cross-module/cross-driver aggregate, not something any one role's
  * own scoped data could produce. The status-breakdown Bar/DonutCharts
  * are the same pattern DriverOverviewView reuses for its own
@@ -56,12 +51,6 @@ const AdminOverviewView = () => {
         variant: FINANCE_STATUS_BADGE_VARIANT[s],
       }))
     : [];
-
-  const dailyVolumeData =
-    stats.dailyVolume?.map((point) => ({
-      x: dayLabel(point.date),
-      count: point.count,
-    })) ?? [];
 
   return (
     <RoleOverviewLayout
@@ -97,17 +86,7 @@ const AdminOverviewView = () => {
       }
       extra={
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-          <SectionContainer className="lg:col-span-2">
-            <h2 className="mb-4 text-sm font-semibold text-slate-900">
-              Daily pickup volume — last 30 days
-            </h2>
-            <LineChart
-              data={dailyVolumeData}
-              xKey="x"
-              series={[{ key: 'count', label: 'Pickup requests' }]}
-              loading={!stats.dailyVolume}
-            />
-          </SectionContainer>
+          <PickupVolumeChart />
           <SectionContainer>
             <h2 className="mb-4 text-sm font-semibold text-slate-900">
               Pickup requests by status

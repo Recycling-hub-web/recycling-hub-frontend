@@ -1,4 +1,4 @@
-import type { APIRequestContext } from '@playwright/test';
+import type { APIRequestContext, Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 
 import { loginAs } from './helpers/auth';
@@ -88,7 +88,7 @@ test.describe('Admin overview', () => {
     // The three shared charts — this is the one page in the app any of
     // them render on.
     await expect(
-      page.getByText('Daily pickup volume — last 30 days'),
+      page.getByRole('heading', { name: 'Pickup volume' }),
     ).toBeVisible();
     await expect(page.getByText('Pickup requests by status')).toBeVisible();
     await expect(page.getByText('Finance records by status')).toBeVisible();
@@ -115,7 +115,7 @@ test.describe('Staff overview', () => {
     // Same charts Admin's dashboard has — Staff now gets them too (same
     // shared AdminOverviewStatsView endpoint, see useStaffOverviewStats).
     await expect(
-      page.getByText('Daily pickup volume — last 30 days'),
+      page.getByRole('heading', { name: 'Pickup volume' }),
     ).toBeVisible();
     await expect(page.getByText('Pickup requests by status')).toBeVisible();
     await expect(page.getByText('Finance records by status')).toBeVisible();
@@ -163,8 +163,13 @@ test.describe('Driver overview', () => {
     await expect(statGrid.getByText('Open route')).toBeVisible();
 
     // Same chart types as Admin's dashboard, but scoped to this
-    // driver's own pickups/finance records — no new backend endpoint
-    // (see useDriverOverviewStats).
+    // driver's own pickups/finance records. "My pickup volume" is the
+    // same selectable-range chart Admin/Staff/Super Admin have (see
+    // PickupVolumeChart), scoped to this driver's own pickups
+    // (useDriverPickupVolume/DriverPickupVolumeView).
+    await expect(
+      page.getByRole('heading', { name: 'My pickup volume' }),
+    ).toBeVisible();
     await expect(page.getByText('My pickups by status')).toBeVisible();
     await expect(page.getByText('My money by status')).toBeVisible();
 
@@ -236,8 +241,10 @@ test.describe('Receiving Officer overview', () => {
     // New: a real aggregate this role didn't have before
     // (ReceivingOverviewStatsView).
     await expect(statGrid.getByText('Closed this month')).toBeVisible();
+    // Selectable-range chart, scoped to closed deliveries
+    // (useReceivingVolume/ReceivingVolumeView).
     await expect(
-      page.getByText('Daily closed deliveries — last 30 days'),
+      page.getByRole('heading', { name: 'Closed-delivery volume' }),
     ).toBeVisible();
     await expect(page.getByText('Deliveries by status')).toBeVisible();
 
@@ -274,6 +281,9 @@ test.describe('Super Admin overview', () => {
     await expect(statGrid.getByText('Reimbursed this month')).toBeVisible();
     await expect(statGrid.getByText('Active collection points')).toBeVisible();
     await expect(statGrid.getByText('Active service areas')).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'Pickup volume' }),
+    ).toBeVisible();
     await expect(page.getByText('Users by role')).toBeVisible();
 
     const quickLinks = page.getByTestId('overview-quick-links');
@@ -305,6 +315,11 @@ test.describe('Accounting overview', () => {
     // now a real server-side Sum, no longer capped at 200 fetched rows
     // (see apps/dashboard/tests.py's own test of that specifically).
     await expect(page.getByText('Reimbursed this month')).toBeVisible();
+    // Selectable-range chart, scoped to reimbursed records
+    // (useAccountingVolume/AccountingVolumeView).
+    await expect(
+      page.getByRole('heading', { name: 'Reimbursed volume' }),
+    ).toBeVisible();
     await expect(page.getByText('Finance records by status')).toBeVisible();
 
     await page.getByRole('link', { name: /unverified records/i }).click();
@@ -315,5 +330,84 @@ test.describe('Accounting overview', () => {
 
     await loginAs(page, 'admin');
     await page.request.delete(`/api/v1/pickups/${id}/`);
+  });
+});
+
+test.describe('Pickup volume chart — range picker', () => {
+  const total = (page: Page) => page.getByTestId('pickup-volume-total');
+  const rangeButton = (page: Page, name: string) =>
+    page
+      .getByRole('group', { name: 'Date range' })
+      .getByRole('button', { name, exact: true });
+  const totalNumber = async (page: Page) =>
+    Number((await total(page).innerText()).replace(/,/g, ''));
+
+  test('presets switch grouping, the total matches the API, and the choice is remembered', async ({
+    page,
+  }) => {
+    await loginAs(page, 'admin');
+    await page.goto('/admin');
+    // Start from the default regardless of what an earlier run stored.
+    await page.evaluate(() =>
+      window.localStorage.removeItem('rh_pickup_volume_range'),
+    );
+    await page.reload();
+
+    await expect(rangeButton(page, '30D')).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    await expect(page.getByText('Last 30 days · daily')).toBeVisible();
+    const thirtyDayTotal = await totalNumber(page);
+
+    await rangeButton(page, '6M').click();
+    await expect(page.getByText('Last 6 months · weekly')).toBeVisible();
+    const sixMonthTotal = await totalNumber(page);
+    expect(sixMonthTotal).toBeGreaterThanOrEqual(thirtyDayTotal);
+
+    const api = await page.request.get(
+      '/api/v1/dashboard/pickup-volume/?range=6m',
+    );
+    expect(api.ok()).toBe(true);
+    expect((await api.json()).total).toBe(sixMonthTotal);
+
+    await page.reload();
+    await expect(rangeButton(page, '6M')).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    await expect(page.getByText('Last 6 months · weekly')).toBeVisible();
+
+    await rangeButton(page, 'All').click();
+    await expect(page.getByText(/^All time · /)).toBeVisible();
+  });
+
+  test('a custom range shows its dates and rejects a start after the end', async ({
+    page,
+  }) => {
+    await loginAs(page, 'qaStaff');
+    await page.goto('/staff');
+    await rangeButton(page, 'Custom').click();
+
+    const from = page.locator('[data-field="from"] input');
+    const to = page.locator('[data-field="to"] input');
+    await expect(from).not.toHaveValue('');
+    await expect(to).not.toHaveValue('');
+
+    await from.fill('2026-09-20');
+    await to.fill('2026-09-10');
+    await expect(
+      page.getByText('The start date must be on or before the end date.'),
+    ).toBeVisible();
+
+    await to.fill('2026-09-30');
+    await expect(
+      page.getByText(/20 Sept? 2026 – 30 Sept? 2026 · daily/),
+    ).toBeVisible();
+
+    const api = await page.request.get(
+      '/api/v1/dashboard/pickup-volume/?from=2026-09-20&to=2026-09-30',
+    );
+    expect((await api.json()).total).toBe(await totalNumber(page));
   });
 });

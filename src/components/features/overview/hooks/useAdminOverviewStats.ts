@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 
 import type { FinanceStatus } from '../../finance/types';
-import type { DailyVolumePoint } from '../../pickups/services/pickupService';
 import type { PickupStatus } from '../../pickups/types';
 import { getAdminOverviewStats } from '../services/overviewService';
 
@@ -17,9 +16,6 @@ type AdminOverviewStats = {
    * DonutChart (reusing the same status→color mapping as its
    * StatusBadge). */
   financeStatusCounts: Record<FinanceStatus, number> | null;
-  /** Daily pickup request volume, last 30 days — powers the trend
-   * LineChart. */
-  dailyVolume: DailyVolumePoint[] | null;
 };
 
 const INITIAL: AdminOverviewStats = {
@@ -29,7 +25,6 @@ const INITIAL: AdminOverviewStats = {
   publishedPosts: null,
   pickupStatusCounts: null,
   financeStatusCounts: null,
-  dailyVolume: null,
 };
 
 /** Admin dashboard stats + chart data — one real server-side aggregate
@@ -53,7 +48,6 @@ const useAdminOverviewStats = () => {
           publishedPosts: data.published_posts,
           pickupStatusCounts: data.pickup_status_counts,
           financeStatusCounts: data.finance_status_counts,
-          dailyVolume: data.daily_pickup_volume,
         });
       })
       .catch(() => {});

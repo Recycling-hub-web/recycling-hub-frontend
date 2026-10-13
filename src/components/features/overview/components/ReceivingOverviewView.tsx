@@ -6,7 +6,7 @@ import { LuCalendarCheck, LuPackageCheck } from 'react-icons/lu';
 import { OPERATIONAL_ROLES } from '../../../../layouts/operationalRoles';
 import { StatusBadge } from '../../../ui/badges/StatusBadge';
 import { SectionContainer } from '../../../ui/card/SectionContainer';
-import { BarChart, LineChart } from '../../../ui/charts';
+import { BarChart } from '../../../ui/charts';
 import {
   TableEmptyRow,
   TableErrorRow,
@@ -15,18 +15,14 @@ import {
 } from '../../../ui/table';
 import { STATUS_BADGE_VARIANT } from '../../pickups/constants';
 import { itemsSummary, PICKUP_STATUS_LABELS } from '../../pickups/types';
-import { useReceivingOverviewStats } from '../hooks';
+import { useReceivingOverviewStats, useReceivingVolume } from '../hooks';
 import { OverviewStatCard } from './OverviewStatCard';
 import { OverviewStatGrid } from './OverviewStatGrid';
+import { PickupVolumeChart } from './PickupVolumeChart';
 import { RoleOverviewLayout } from './RoleOverviewLayout';
 
 const PREVIEW_SIZE = 5;
 const columnCount = 3;
-
-const dayLabel = (isoDate: string) =>
-  new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short' }).format(
-    new Date(isoDate),
-  );
 
 /** Receiving Officer's own "what do I need to do today" — the awaiting-
  * close tile + preview table both come from the same `status:
@@ -41,7 +37,6 @@ const ReceivingOverviewView = () => {
     awaitingCloseCount,
     closedThisMonth,
     pickupStatusCounts,
-    dailyClosedVolume,
     deliveries,
     loading,
     error,
@@ -54,12 +49,6 @@ const ReceivingOverviewView = () => {
         count: pickupStatusCounts[s],
       }))
     : [];
-
-  const dailyVolumeData =
-    dailyClosedVolume?.map((point) => ({
-      x: dayLabel(point.date),
-      count: point.count,
-    })) ?? [];
 
   const renderRows = () => {
     if (loading) return <TableLoadingRow colSpan={columnCount} />;
@@ -115,17 +104,13 @@ const ReceivingOverviewView = () => {
       extra={
         <>
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-            <SectionContainer className="lg:col-span-2">
-              <h2 className="mb-4 text-sm font-semibold text-slate-900">
-                Daily closed deliveries — last 30 days
-              </h2>
-              <LineChart
-                data={dailyVolumeData}
-                xKey="x"
-                series={[{ key: 'count', label: 'Closed' }]}
-                loading={!dailyClosedVolume}
-              />
-            </SectionContainer>
+            <PickupVolumeChart
+              useVolume={useReceivingVolume}
+              title="Closed-delivery volume"
+              seriesLabel="Closed"
+              unitLabel="deliveries closed"
+              emptyMessage="No closed deliveries in this range."
+            />
             <SectionContainer>
               <h2 className="mb-4 text-sm font-semibold text-slate-900">
                 Deliveries by status

@@ -17,9 +17,10 @@ import { STATUS_BADGE_VARIANT as FINANCE_STATUS_BADGE_VARIANT } from '../../fina
 import { FINANCE_STATUS_LABELS } from '../../finance/types';
 import { STATUS_BADGE_VARIANT } from '../../pickups/constants';
 import { itemsSummary, PICKUP_STATUS_LABELS } from '../../pickups/types';
-import { useDriverOverviewStats } from '../hooks';
+import { useDriverOverviewStats, useDriverPickupVolume } from '../hooks';
 import { OverviewStatCard } from './OverviewStatCard';
 import { OverviewStatGrid } from './OverviewStatGrid';
+import { PickupVolumeChart } from './PickupVolumeChart';
 import { RoleOverviewLayout } from './RoleOverviewLayout';
 
 const PREVIEW_SIZE = 5;
@@ -137,6 +138,13 @@ const DriverOverviewView = () => {
       extra={
         <>
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+            <PickupVolumeChart
+              useVolume={useDriverPickupVolume}
+              title="My pickup volume"
+              seriesLabel="My pickups"
+              unitLabel="pickups created"
+              emptyMessage="No pickups in this range."
+            />
             <SectionContainer>
               <h2 className="mb-4 text-sm font-semibold text-slate-900">
                 My pickups by status

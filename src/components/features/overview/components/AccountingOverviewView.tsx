@@ -7,9 +7,10 @@ import { SectionContainer } from '../../../ui/card/SectionContainer';
 import { DonutChart } from '../../../ui/charts';
 import { STATUS_BADGE_VARIANT as FINANCE_STATUS_BADGE_VARIANT } from '../../finance/constants';
 import { FINANCE_STATUS_LABELS } from '../../finance/types';
-import { useAccountingOverviewStats } from '../hooks';
+import { useAccountingOverviewStats, useAccountingVolume } from '../hooks';
 import { OverviewStatCard } from './OverviewStatCard';
 import { OverviewStatGrid } from './OverviewStatGrid';
+import { PickupVolumeChart } from './PickupVolumeChart';
 import { RoleOverviewLayout } from './RoleOverviewLayout';
 
 /** Accounting's own "what do I need to do today" — the first two
@@ -67,8 +68,15 @@ const AccountingOverviewView = () => {
         </OverviewStatGrid>
       }
       extra={
-        <div className="grid grid-cols-1 gap-4">
-          <SectionContainer>
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <PickupVolumeChart
+            useVolume={useAccountingVolume}
+            title="Reimbursed volume"
+            seriesLabel="Reimbursements"
+            unitLabel="reimbursements processed"
+            emptyMessage="No reimbursements in this range."
+          />
+          <SectionContainer className="lg:col-span-2">
             <h2 className="mb-4 text-sm font-semibold text-slate-900">
               Finance records by status
             </h2>

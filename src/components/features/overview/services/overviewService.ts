@@ -16,7 +16,25 @@ type AdminDashboardStats = {
   published_posts: number;
   pickup_status_counts: Record<PickupStatus, number>;
   finance_status_counts: Record<FinanceStatus, number>;
-  daily_pickup_volume: DailyVolumePoint[];
+};
+
+/** A preset for the pickup volume chart, or `custom` with from/to. */
+type PickupVolumeRange = '7d' | '30d' | '3m' | '6m' | '12m' | 'all' | 'custom';
+
+type PickupVolumeQuery =
+  | { range: Exclude<PickupVolumeRange, 'custom'> }
+  | { range: 'custom'; from: string; to: string };
+
+/** Response of GET /dashboard/pickup-volume/ (PickupVolumeView). The
+ * backend picks `interval` from the range's length; each point's `date`
+ * is its bucket's first day (a Monday for weeks, the 1st for months). */
+type PickupVolume = {
+  range: PickupVolumeRange;
+  from: string;
+  to: string;
+  interval: 'day' | 'week' | 'month';
+  total: number;
+  points: DailyVolumePoint[];
 };
 
 type DriverDashboardStats = {
@@ -34,7 +52,6 @@ type ReceivingDashboardStats = {
   closed_this_month: number;
   /** Only the two statuses a Receiving Officer ever sees. */
   pickup_status_counts: Record<'delivered' | 'closed', number>;
-  daily_closed_volume: DailyVolumePoint[];
 };
 
 type AccountingDashboardStats = {
@@ -75,17 +92,68 @@ const getAccountingOverviewStats = (): Promise<AccountingDashboardStats> =>
 const getSuperAdminOverviewStats = (): Promise<SuperAdminDashboardStats> =>
   apiFetch('/dashboard/super-admin/');
 
+// Shared by every "volume over a selectable range" endpoint below — one
+// query-string encoding instead of duplicating it per role. See
+// `volume_range_data` on the backend, which every one of these endpoints
+// is built on.
+const fetchVolume = (
+  path: string,
+  query: PickupVolumeQuery,
+): Promise<PickupVolume> => {
+  const params = new URLSearchParams(
+    query.range === 'custom'
+      ? { from: query.from, to: query.to }
+      : { range: query.range },
+  );
+  return apiFetch(`${path}?${params.toString()}`);
+};
+
+// Admin/staff only — the overview's pickup volume chart, on its own
+// endpoint so changing the range refetches only this. See
+// PickupVolumeView on the backend.
+const getPickupVolume = (query: PickupVolumeQuery): Promise<PickupVolume> =>
+  fetchVolume('/dashboard/pickup-volume/', query);
+
+// Driver only, scoped to the caller's own pickups — see
+// DriverPickupVolumeView.
+const getDriverPickupVolume = (
+  query: PickupVolumeQuery,
+): Promise<PickupVolume> =>
+  fetchVolume('/dashboard/driver/pickup-volume/', query);
+
+// Receiving Officer only — see ReceivingVolumeView.
+const getReceivingVolume = (query: PickupVolumeQuery): Promise<PickupVolume> =>
+  fetchVolume('/dashboard/receiving/volume/', query);
+
+// Accounting only — see AccountingVolumeView.
+const getAccountingVolume = (query: PickupVolumeQuery): Promise<PickupVolume> =>
+  fetchVolume('/dashboard/accounting/volume/', query);
+
+// Super Admin only, organization-wide — see SuperAdminPickupVolumeView.
+const getSuperAdminPickupVolume = (
+  query: PickupVolumeQuery,
+): Promise<PickupVolume> =>
+  fetchVolume('/dashboard/super-admin/pickup-volume/', query);
+
 export {
   getAccountingOverviewStats,
+  getAccountingVolume,
   getAdminOverviewStats,
   getDriverOverviewStats,
+  getDriverPickupVolume,
+  getPickupVolume,
   getReceivingOverviewStats,
+  getReceivingVolume,
   getSuperAdminOverviewStats,
+  getSuperAdminPickupVolume,
 };
 export type {
   AccountingDashboardStats,
   AdminDashboardStats,
   DriverDashboardStats,
+  PickupVolume,
+  PickupVolumeQuery,
+  PickupVolumeRange,
   ReceivingDashboardStats,
   SuperAdminDashboardStats,
 };

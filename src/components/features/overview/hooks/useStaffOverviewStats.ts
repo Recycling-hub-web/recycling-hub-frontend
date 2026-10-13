@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 
 import type { FinanceStatus } from '../../finance/types';
-import type { DailyVolumePoint } from '../../pickups/services/pickupService';
 import type { PickupStatus } from '../../pickups/types';
 import { getAdminOverviewStats } from '../services/overviewService';
 
@@ -14,7 +13,6 @@ type StaffOverviewStats = {
    * receives `total_users` back. */
   pickupStatusCounts: Record<PickupStatus, number> | null;
   financeStatusCounts: Record<FinanceStatus, number> | null;
-  dailyVolume: DailyVolumePoint[] | null;
 };
 
 const INITIAL: StaffOverviewStats = {
@@ -23,7 +21,6 @@ const INITIAL: StaffOverviewStats = {
   publishedPosts: null,
   pickupStatusCounts: null,
   financeStatusCounts: null,
-  dailyVolume: null,
 };
 
 /** Same endpoint as useAdminOverviewStats (AdminOverviewStatsView is
@@ -45,7 +42,6 @@ const useStaffOverviewStats = () => {
           publishedPosts: data.published_posts,
           pickupStatusCounts: data.pickup_status_counts,
           financeStatusCounts: data.finance_status_counts,
-          dailyVolume: data.daily_pickup_volume,
         });
       })
       .catch(() => {});

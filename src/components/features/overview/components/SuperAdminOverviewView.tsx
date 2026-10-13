@@ -14,9 +14,13 @@ import { ROLE_LABELS, type UserRole } from '../../../../types/auth';
 import { SectionContainer } from '../../../ui/card/SectionContainer';
 import { BarChart } from '../../../ui/charts';
 import { useRoleLimits } from '../../users/hooks';
-import { useSuperAdminOverviewStats } from '../hooks';
+import {
+  useSuperAdminOverviewStats,
+  useSuperAdminPickupVolume,
+} from '../hooks';
 import { OverviewStatCard } from './OverviewStatCard';
 import { OverviewStatGrid } from './OverviewStatGrid';
+import { PickupVolumeChart } from './PickupVolumeChart';
 import { RoleOverviewLayout } from './RoleOverviewLayout';
 
 /** Super Admin's own landing page (/super-admin) — separate from
@@ -92,8 +96,9 @@ const SuperAdminOverviewView = () => {
         </OverviewStatGrid>
       }
       extra={
-        <div className="grid grid-cols-1 gap-4">
-          <SectionContainer>
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <PickupVolumeChart useVolume={useSuperAdminPickupVolume} />
+          <SectionContainer className="lg:col-span-2">
             <h2 className="mb-4 text-sm font-semibold text-slate-900">
               Users by role
             </h2>
