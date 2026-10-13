@@ -239,10 +239,10 @@ const EditPickupRequestView = ({
               disabled={submitting}
             />
             <div className="sm:col-span-2">
-              <TextareaField
+              <InputField
                 label="Pickup address"
                 field="pickup_address"
-                placeholder="Street, building/unit, area, city — or a Google Maps Plus Code"
+                placeholder="Address where materials should be collected"
                 formData={formData}
                 errors={errors}
                 updateFormData={updateFormData}

@@ -53,7 +53,7 @@ test('staff edit requester details and address from the details page', async ({
   await page.locator('[data-field="full_name"] input').fill(newName);
   await page.locator('[data-field="phone_local"] input').fill('129998888');
   await page
-    .locator('[data-field="pickup_address"] textarea')
+    .locator('[data-field="pickup_address"] input')
     .fill('PV5 Platinum Hill Condo, Setapak, 53300 Kuala Lumpur');
   await save.click();
 
