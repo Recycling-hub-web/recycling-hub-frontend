@@ -19,14 +19,23 @@ const wazeNavigateUrl = (address: string) =>
 // `stops` must already be in the real optimized order (from
 // useOptimizeRoute), not raw selection order. Waze has no equivalent —
 // there is no multi-stop builder for it, by design (see above).
+//
+// `destination` can be an address instead of coordinates — pass the
+// store's address for the route's end point: bare coordinates make Google
+// label the pin after whatever business is nearest (e.g. a restaurant in
+// the same mall) instead of the store itself.
 const googleMapsMultiStopUrl = (
   origin: LatLng,
   stops: LatLng[],
-  destination: LatLng,
+  destination: LatLng | string,
 ) =>
   `https://www.google.com/maps/dir/?api=1` +
   `&origin=${origin.lat},${origin.lng}` +
-  `&destination=${destination.lat},${destination.lng}` +
+  `&destination=${
+    typeof destination === 'string'
+      ? encodeURIComponent(destination)
+      : `${destination.lat},${destination.lng}`
+  }` +
   `&waypoints=${stops.map((s) => `${s.lat},${s.lng}`).join('|')}` +
   `&travelmode=driving`;
 

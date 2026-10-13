@@ -15,7 +15,11 @@ import {
 } from '../../../../ui/table';
 import { useToast } from '../../../../ui/toast/ToastContext';
 import { STATUS_BADGE_VARIANT } from '../../constants';
-import { useCloseDelivery, usePickupRequests } from '../../hooks';
+import {
+  useCloseDelivery,
+  useCollectionPoints,
+  usePickupRequests,
+} from '../../hooks';
 import {
   itemsSummary,
   PICKUP_STATUS_LABELS,
@@ -37,9 +41,16 @@ const ReceivingDeliveriesView = () => {
   const [statusFilter, setStatusFilter] = useState<PickupStatus | ''>(
     'delivered',
   );
+  const [storeFilter, setStoreFilter] = useState('');
+  const { collectionPoints } = useCollectionPoints(true);
+  const storeOptions = [
+    { value: '', label: 'All stores' },
+    ...collectionPoints.map((p) => ({ value: p.id, label: p.name })),
+  ];
   const { requests, loading, error, refetch } = usePickupRequests({
     page: 1,
     status: statusFilter || undefined,
+    dropOffPoint: storeFilter || undefined,
   });
   const { execute: close, loading: closing } = useCloseDelivery();
   const [closingId, setClosingId] = useState<string | null>(null);
@@ -57,7 +68,7 @@ const ReceivingDeliveriesView = () => {
     }
   };
 
-  const columnCount = 4;
+  const columnCount = 5;
 
   const renderRows = () => {
     if (loading) return <TableLoadingRow colSpan={columnCount} />;
@@ -85,6 +96,9 @@ const ReceivingDeliveriesView = () => {
         <td className="px-6 py-4 text-slate-700">
           {itemsSummary(r.items)} —{' '}
           {r.delivered_quantity ?? r.items[0]?.collected_quantity ?? '—'}
+        </td>
+        <td className="px-6 py-4 text-slate-700">
+          {r.route?.collection_point?.name ?? '—'}
         </td>
         <td className="px-6 py-4">
           <StatusBadge variant={STATUS_BADGE_VARIANT[r.status]}>
@@ -115,8 +129,15 @@ const ReceivingDeliveriesView = () => {
         subtitle="Verify and close requests once a driver's route has been dropped off."
       />
 
-      <div className="mb-4 flex justify-end">
+      <div className="mb-4 flex flex-wrap justify-end gap-2">
         <FilterSelect
+          ariaLabel="Store"
+          value={storeFilter}
+          onChange={setStoreFilter}
+          options={storeOptions}
+        />
+        <FilterSelect
+          ariaLabel="Status"
           value={statusFilter}
           onChange={(value) => setStatusFilter(value as PickupStatus | '')}
           options={STATUS_FILTER_OPTIONS}
@@ -132,6 +153,9 @@ const ReceivingDeliveriesView = () => {
               </th>
               <th className="px-6 py-3 text-left font-semibold text-slate-500">
                 Category / quantity
+              </th>
+              <th className="px-6 py-3 text-left font-semibold text-slate-500">
+                Store
               </th>
               <th className="px-6 py-3 text-left font-semibold text-slate-500">
                 Status

@@ -227,9 +227,16 @@ test.describe('Receiving Officer overview', () => {
     const fullName = uniqueName('Receiving');
     const id = await seedCollectedOnRoute(page.request, fullName);
 
+    // Every drop-off is tied to a store — name one explicitly so this
+    // doesn't depend on whether the route already has an end point.
+    const pointsRes = await page.request.get(
+      '/api/v1/collection-points/?page_size=200',
+    );
+    const [store] = (await pointsRes.json()).results;
+
     await loginAs(page, 'qaDriver');
     const dropOffRes = await page.request.post('/api/v1/pickups/drop-off/', {
-      data: { items: [{ id }] },
+      data: { items: [{ id }], collection_point: store.id },
     });
     expect(dropOffRes.ok()).toBe(true);
 

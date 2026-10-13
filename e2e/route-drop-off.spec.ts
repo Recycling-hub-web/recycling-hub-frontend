@@ -12,6 +12,10 @@ import { loginAs } from './helpers/auth';
  * Officer (delivered -> closed). Driver-collected path only — a staff
  * collector's pickups stay terminal at `collected`, same as before this
  * feature existed.
+ *
+ * Every drop-off records its store (Route.collection_point): the route's
+ * planned end point by default, or one the driver picks — and Receiving
+ * sees and filters deliveries by it.
  */
 
 const E_WASTE_CATEGORY_ID = '89067cc7-38ef-4752-9cd4-3ea29975abcb';
@@ -66,6 +70,12 @@ test('driver drops off a route, receiving officer verifies and closes it', async
   await loginAs(page, 'admin');
   const fullName = uniqueName('Full');
   await seedCollectedOnRoute(page.request, fullName);
+  const pointsRes = await page.request.get(
+    '/api/v1/collection-points/?page_size=200',
+  );
+  const points: { id: string; name: string }[] = (await pointsRes.json())
+    .results;
+  const [store, otherStore] = points;
 
   await loginAs(page, 'qaDriver');
   await page.goto('/driver/drop-off');
@@ -73,6 +83,16 @@ test('driver drops off a route, receiving officer verifies and closes it', async
   const row = page.locator('tr', { hasText: fullName });
   await expect(row).toBeVisible();
   await row.getByRole('checkbox').check();
+
+  // The drop-off store card: pick the store explicitly — recorded as-is.
+  const storeCard = page.getByRole('region', { name: 'Drop-off store' });
+  await storeCard
+    .locator('[data-field="collection_point"] select')
+    .selectOption(store!.id);
+  await expect(storeCard).toContainText(store!.name);
+  await expect(
+    storeCard.getByRole('link', { name: 'Google Maps' }),
+  ).toBeVisible();
 
   await page.getByRole('button', { name: /drop off to store \(1\)/i }).click();
   await expect(page.getByText(/dropped off to store/i)).toBeVisible();
@@ -82,6 +102,13 @@ test('driver drops off a route, receiving officer verifies and closes it', async
   await page.goto('/receiving/deliveries');
   const deliveredRow = page.locator('tr', { hasText: fullName });
   await expect(deliveredRow).toContainText('Delivered');
+  // Shows which store it went to, and filters by it.
+  await expect(deliveredRow).toContainText(store!.name);
+  const storeFilter = page.getByRole('combobox', { name: 'Store' });
+  await storeFilter.selectOption(otherStore!.id);
+  await expect(page.locator('tr', { hasText: fullName })).toHaveCount(0);
+  await storeFilter.selectOption(store!.id);
+  await expect(deliveredRow).toBeVisible();
   // Icon-only row action — matched by its aria-label, not visible text.
   await deliveredRow.getByRole('button', { name: /verify and close/i }).click();
   await expect(page.getByText(/verified and closed/i)).toBeVisible();

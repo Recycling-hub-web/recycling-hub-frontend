@@ -13,9 +13,10 @@ type RouteInfo = {
   id: string;
   status: 'open' | 'dropped_off';
   dropped_off_at: string | null;
-  // This route's fixed drop-off destination, resolved the first time
-  // any of its stops is optimized (see useOptimizeRoute) — null before
-  // then.
+  // This route's drop-off store (its end point) — set from the first
+  // assigned stop that names a collection point, kept after; the
+  // drop-off records the store actually used. null only if no stop on
+  // the route had one yet.
   collection_point: PickupCollectionPoint;
 };
 

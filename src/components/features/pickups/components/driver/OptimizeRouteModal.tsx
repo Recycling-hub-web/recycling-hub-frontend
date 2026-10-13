@@ -5,6 +5,7 @@ import { LuMapPin, LuNavigation } from 'react-icons/lu';
 
 import { SelectField } from '../../../../form/fields/SelectField';
 import { AlertBanner } from '../../../../ui/AlertBanner';
+import { Button } from '../../../../ui/buttons/Button';
 import { FormActions } from '../../../../ui/buttons/FormActions';
 import { Modal } from '../../../../ui/modal/Modal';
 import { useCollectionPoints, useOptimizeRoute } from '../../hooks';
@@ -135,7 +136,11 @@ const OptimizeRouteModal = ({
   const handleOpenGoogleMaps = () => {
     if (!result || !origin) return;
     window.open(
-      googleMapsMultiStopUrl(origin, result.stops, result.destination),
+      googleMapsMultiStopUrl(
+        origin,
+        result.stops,
+        result.collection_point.address || result.destination,
+      ),
       '_blank',
       'noopener,noreferrer',
     );
@@ -174,41 +179,37 @@ const OptimizeRouteModal = ({
       footer={
         result ? (
           <FormActions>
-            <button
-              type="button"
+            <Button
+              variant="secondary"
+              size="sm"
+              className="gap-1.5"
               onClick={handleOpenWaze}
-              className="flex items-center justify-center gap-1.5 rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
             >
               <LuNavigation className="size-4" />
               Open in Waze
-            </button>
-            <button
-              type="button"
+            </Button>
+            <Button
+              size="sm"
+              className="gap-1.5"
               onClick={handleOpenGoogleMaps}
-              className="flex items-center justify-center gap-1.5 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700"
             >
               <LuMapPin className="size-4" />
               Open in Google Maps
-            </button>
+            </Button>
           </FormActions>
         ) : (
           <FormActions>
-            <button
-              type="button"
+            <Button
+              variant="secondary"
+              size="sm"
               onClick={handleClose}
               disabled={optimizing}
-              className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
             >
               Cancel
-            </button>
-            <button
-              type="button"
-              onClick={handleSubmit}
-              disabled={optimizing}
-              className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-50"
-            >
+            </Button>
+            <Button size="sm" onClick={handleSubmit} disabled={optimizing}>
               {optimizing ? 'Optimizing…' : 'Get optimized route'}
-            </button>
+            </Button>
           </FormActions>
         )
       }
@@ -217,8 +218,8 @@ const OptimizeRouteModal = ({
       {!result && (
         <>
           <p className="mb-2 text-xs text-slate-500">
-            Optional — leave blank to use this route&apos;s existing
-            destination, if it already has one.
+            Where the route ends. Pick a store to change it, or leave it as is
+            to keep this route&apos;s current destination.
           </p>
           <SelectField
             label="Collection point"
@@ -233,19 +234,27 @@ const OptimizeRouteModal = ({
         </>
       )}
       {result && (
-        <ol className="space-y-2 text-sm text-slate-700">
-          {result.stops.map((stop, i) => {
-            const req = selectedRequests.find((r) => r.id === stop.request_id);
-            return (
-              <li key={stop.request_id} className="flex items-center gap-2">
-                <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-slate-100 text-xs font-semibold text-slate-600">
-                  {i + 1}
-                </span>
-                {req?.full_name ?? stop.request_id}
-              </li>
-            );
-          })}
-        </ol>
+        <>
+          <ol className="space-y-2 text-sm text-slate-700">
+            {result.stops.map((stop, i) => {
+              const req = selectedRequests.find(
+                (r) => r.id === stop.request_id,
+              );
+              return (
+                <li key={stop.request_id} className="flex items-center gap-2">
+                  <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-slate-100 text-xs font-semibold text-slate-600">
+                    {i + 1}
+                  </span>
+                  {req?.full_name ?? stop.request_id}
+                </li>
+              );
+            })}
+          </ol>
+          <p className="mt-3 flex items-start gap-2 rounded-lg bg-slate-50 p-3 text-sm text-slate-700">
+            <span className="font-semibold">Ends at:</span>
+            <span>{result.collection_point.name}</span>
+          </p>
+        </>
       )}
     </Modal>
   );

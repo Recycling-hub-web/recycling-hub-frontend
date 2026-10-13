@@ -1,10 +1,17 @@
 'use client';
 
-import { useState } from 'react';
-import { LuPackageCheck, LuUpload } from 'react-icons/lu';
+import { useEffect, useState } from 'react';
+import {
+  LuMapPin,
+  LuNavigation,
+  LuPackageCheck,
+  LuUpload,
+} from 'react-icons/lu';
 
+import { SelectField } from '../../../../form/fields/SelectField';
 import { PageContainer } from '../../../../layout/PageContainer';
 import { AlertBanner } from '../../../../ui/AlertBanner';
+import { Button } from '../../../../ui/buttons/Button';
 import { PageHeader } from '../../../../ui/PageHeader';
 import {
   TableEmptyRow,
@@ -14,14 +21,26 @@ import {
 } from '../../../../ui/table';
 import { useToast } from '../../../../ui/toast/ToastContext';
 import { useUploadStorageFile } from '../../../storageFiles/hooks';
-import { useDropOffRoute, usePickupRequests } from '../../hooks';
+import {
+  useCollectionPoints,
+  useDropOffRoute,
+  usePickupRequests,
+} from '../../hooks';
 import { itemsSummary } from '../../types';
+import {
+  googleMapsDirectionsUrl,
+  wazeNavigateUrl,
+} from '../../utils/navigationLinks';
 
 /** The driver's own batch store drop-off — its own screen, not
  * CollectionTaskDetailsPage/CollectModal reused, since this covers
  * every `collected` request on the driver's current open Route at
  * once, not one task at a time. One proof photo for the whole batch.
- * See apps.pickups.services.drop_off_route on the backend. */
+ * See apps.pickups.services.drop_off_route on the backend.
+ *
+ * The route's end point (its collection point) is shown up front with
+ * navigation links, and the drop-off records the store actually used —
+ * the planned one by default, or a different one the driver picks. */
 const RouteDropOffView = () => {
   const toast = useToast();
   const { requests, loading, error, refetch } = usePickupRequests({
@@ -30,6 +49,23 @@ const RouteDropOffView = () => {
   });
   const { execute: dropOff, loading: submitting } = useDropOffRoute();
   const { execute: upload, loading: uploading } = useUploadStorageFile();
+  const { collectionPoints } = useCollectionPoints(true);
+
+  // Every collected request here is on the driver's one open route, so
+  // they share its planned end point.
+  const plannedStore = requests[0]?.route?.collection_point ?? null;
+  const [store, setStore] = useState({ collection_point: '' });
+  useEffect(() => {
+    if (plannedStore) setStore({ collection_point: plannedStore.id });
+  }, [plannedStore?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const chosenStore =
+    collectionPoints.find((p) => p.id === store.collection_point) ??
+    (plannedStore?.id === store.collection_point ? plannedStore : null);
+  const storeOptions = collectionPoints.map((p) => ({
+    value: p.id,
+    label: p.id === plannedStore?.id ? `${p.name} (planned)` : p.name,
+  }));
 
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [deliveredQuantities, setDeliveredQuantities] = useState<
@@ -77,6 +113,10 @@ const RouteDropOffView = () => {
       setApiError('Select at least one request to drop off.');
       return;
     }
+    if (!store.collection_point) {
+      setApiError('Choose the store you are dropping off at.');
+      return;
+    }
     try {
       await dropOff({
         items: Array.from(selected).map((id) => ({
@@ -84,6 +124,7 @@ const RouteDropOffView = () => {
           delivered_quantity: deliveredQuantities[id] || undefined,
         })),
         proof: proofKey || undefined,
+        collection_point: store.collection_point,
       });
       toast.success('Dropped off to store');
       setSelected(new Set());
@@ -162,6 +203,82 @@ const RouteDropOffView = () => {
 
       <AlertBanner message={apiError} />
 
+      {requests.length > 0 && (
+        <section
+          aria-label="Drop-off store"
+          className="mb-4 rounded-xl border border-slate-200 p-4"
+        >
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="flex min-w-0 items-start gap-3">
+              <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
+                <LuMapPin className="size-5" />
+              </span>
+              <div className="min-w-0">
+                <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                  Drop-off store
+                </p>
+                {chosenStore ? (
+                  <>
+                    <p className="font-semibold text-slate-900">
+                      {chosenStore.name}
+                    </p>
+                    <p className="text-sm text-slate-500">
+                      {chosenStore.address}
+                    </p>
+                  </>
+                ) : (
+                  <p className="text-sm text-slate-500">
+                    No store planned for this route — choose where you&apos;re
+                    dropping off.
+                  </p>
+                )}
+                {plannedStore &&
+                  store.collection_point &&
+                  store.collection_point !== plannedStore.id && (
+                    <p className="mt-1 text-xs font-medium text-amber-700">
+                      Different from the planned store ({plannedStore.name}).
+                    </p>
+                  )}
+              </div>
+            </div>
+            {chosenStore && (
+              <div className="flex shrink-0 gap-2">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="gap-1.5"
+                  href={googleMapsDirectionsUrl(chosenStore.address)}
+                >
+                  <LuNavigation className="size-4" />
+                  Google Maps
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="gap-1.5"
+                  href={wazeNavigateUrl(chosenStore.address)}
+                >
+                  <LuNavigation className="size-4" />
+                  Waze
+                </Button>
+              </div>
+            )}
+          </div>
+          <div className="mt-3 max-w-sm">
+            <SelectField
+              label="Dropping off at"
+              field="collection_point"
+              options={storeOptions}
+              formData={store}
+              updateFormData={(_, value) =>
+                setStore({ collection_point: value })
+              }
+              disabled={submitting}
+            />
+          </div>
+        </section>
+      )}
+
       <TableWrapper>
         <table className="min-w-full divide-y divide-slate-200 text-sm">
           <thead className="bg-slate-50">
@@ -225,16 +342,16 @@ const RouteDropOffView = () => {
           />
         </div>
 
-        <button
-          type="button"
+        <Button
           onClick={handleSubmit}
-          disabled={submitting || selected.size === 0}
-          className="inline-flex items-center justify-center rounded-full bg-brand-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-50"
+          disabled={
+            submitting || selected.size === 0 || !store.collection_point
+          }
         >
           {submitting
             ? 'Dropping off…'
             : `Drop off to store (${selected.size})`}
-        </button>
+        </Button>
       </div>
     </PageContainer>
   );

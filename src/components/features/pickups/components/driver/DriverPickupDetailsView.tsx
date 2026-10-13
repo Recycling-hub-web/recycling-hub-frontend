@@ -14,6 +14,7 @@ import {
 
 import { PageContainer } from '../../../../layout/PageContainer';
 import { StatusBadge } from '../../../../ui/badges/StatusBadge';
+import { Button } from '../../../../ui/buttons/Button';
 import { Card } from '../../../../ui/card/Card';
 import { AppDate } from '../../../../ui/date/AppDate';
 import { InfoRow } from '../../../../ui/InfoRow';
@@ -161,34 +162,24 @@ const DriverPickupDetailsView = ({
 
         {canNavigate && (
           <div className="mt-5 flex gap-2 border-t border-slate-100 pt-5">
-            <button
-              type="button"
-              onClick={() =>
-                window.open(
-                  googleMapsDirectionsUrl(request.pickup_address),
-                  '_blank',
-                  'noopener,noreferrer',
-                )
-              }
-              className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+            <Button
+              variant="secondary"
+              size="sm"
+              className="gap-1.5"
+              href={googleMapsDirectionsUrl(request.pickup_address)}
             >
               <LuMapPin className="size-4" />
               Google Maps
-            </button>
-            <button
-              type="button"
-              onClick={() =>
-                window.open(
-                  wazeNavigateUrl(request.pickup_address),
-                  '_blank',
-                  'noopener,noreferrer',
-                )
-              }
-              className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              className="gap-1.5"
+              href={wazeNavigateUrl(request.pickup_address)}
             >
               <LuNavigation className="size-4" />
               Waze
-            </button>
+            </Button>
           </div>
         )}
 

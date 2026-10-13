@@ -15,6 +15,7 @@ type UsePickupRequestsParams = {
   search?: string;
   requestType?: PickupRequestType;
   evaluationStatus?: PickupEvaluationStatus;
+  dropOffPoint?: string;
 };
 
 const usePickupRequests = ({
@@ -23,6 +24,7 @@ const usePickupRequests = ({
   search,
   requestType,
   evaluationStatus,
+  dropOffPoint,
 }: UsePickupRequestsParams) => {
   const [requests, setRequests] = useState<PickupRequestListItem[]>([]);
   const [count, setCount] = useState(0);
@@ -39,6 +41,7 @@ const usePickupRequests = ({
         search,
         requestType,
         evaluationStatus,
+        dropOffPoint,
       });
       setRequests(data.results);
       setCount(data.count);
@@ -51,7 +54,7 @@ const usePickupRequests = ({
     } finally {
       setLoading(false);
     }
-  }, [page, status, search, requestType, evaluationStatus]);
+  }, [page, status, search, requestType, evaluationStatus, dropOffPoint]);
 
   useEffect(() => {
     refetch();

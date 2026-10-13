@@ -56,8 +56,13 @@ test('driver can open a pickup from the list and see its read-only details', asy
   await expect(page.getByText(address)).toBeVisible();
 
   // Still scheduled (not yet collected) — navigation links are offered.
-  await expect(page.getByRole('button', { name: 'Google Maps' })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Waze' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Google Maps' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Waze' })).toBeVisible();
+  // External navigation links — open in a new tab.
+  await expect(page.getByRole('link', { name: 'Google Maps' })).toHaveAttribute(
+    'target',
+    '_blank',
+  );
 
   // No edit/schedule/evaluate actions on this page — driver-only, read-only.
   await expect(
@@ -69,10 +74,8 @@ test('driver can open a pickup from the list and see its read-only details', asy
   });
 
   await page.reload();
-  await expect(page.getByRole('button', { name: 'Google Maps' })).toHaveCount(
-    0,
-  );
-  await expect(page.getByRole('button', { name: 'Waze' })).toHaveCount(0);
+  await expect(page.getByRole('link', { name: 'Google Maps' })).toHaveCount(0);
+  await expect(page.getByRole('link', { name: 'Waze' })).toHaveCount(0);
 
   await loginAs(page, 'admin');
   await page.request.delete(`/api/v1/pickups/${id}/`);

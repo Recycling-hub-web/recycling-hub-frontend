@@ -11,6 +11,8 @@ import {
 } from 'react-icons/lu';
 
 import { PageContainer } from '../../../../layout/PageContainer';
+import { Button } from '../../../../ui/buttons/Button';
+import { IconButton } from '../../../../ui/buttons/IconButton';
 import { PageHeader } from '../../../../ui/PageHeader';
 import {
   TableEmptyRow,
@@ -275,8 +277,8 @@ const DriverPickupsView = () => {
             <div className="flex items-center justify-end gap-2">
               {canNavigate && (
                 <>
-                  <button
-                    type="button"
+                  <IconButton
+                    variant="ghost"
                     onClick={() =>
                       window.open(
                         googleMapsDirectionsUrl(r.pickup_address),
@@ -285,12 +287,10 @@ const DriverPickupsView = () => {
                       )
                     }
                     aria-label={`Navigate to ${r.full_name} with Google Maps`}
-                    className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-brand-50 hover:text-brand-600"
-                  >
-                    <LuMapPin className="size-4" />
-                  </button>
-                  <button
-                    type="button"
+                    icon={<LuMapPin className="size-4" />}
+                  />
+                  <IconButton
+                    variant="ghost"
                     onClick={() =>
                       window.open(
                         wazeNavigateUrl(r.pickup_address),
@@ -299,31 +299,25 @@ const DriverPickupsView = () => {
                       )
                     }
                     aria-label={`Navigate to ${r.full_name} with Waze`}
-                    className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-brand-50 hover:text-brand-600"
-                  >
-                    <LuNavigation className="size-4" />
-                  </button>
+                    icon={<LuNavigation className="size-4" />}
+                  />
                 </>
               )}
               {activeTab === 'available' ? (
-                <button
-                  type="button"
+                <IconButton
+                  variant="ghost"
                   onClick={() => handleClaim(r)}
                   disabled={claimingId === r.id}
                   aria-label={`Claim pickup for ${r.full_name}`}
-                  className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-brand-50 hover:text-brand-600 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  <LuPackage className="size-4" />
-                </button>
+                  icon={<LuPackage className="size-4" />}
+                />
               ) : (
-                <button
-                  type="button"
+                <IconButton
+                  variant="ghost"
                   onClick={() => setCollectTarget(r)}
                   aria-label={`Mark pickup for ${r.full_name} as collected`}
-                  className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-brand-50 hover:text-brand-600"
-                >
-                  <LuPackage className="size-4" />
-                </button>
+                  icon={<LuPackage className="size-4" />}
+                />
               )}
             </div>
           </td>
@@ -347,14 +341,13 @@ const DriverPickupsView = () => {
             {pendingCount === 1 ? '' : 's'} totaling RM
             {pendingTotal.toFixed(2)}
           </span>
-          <button
-            type="button"
+          <Button
+            size="sm"
             onClick={handleClaimReimbursements}
             disabled={claimingReimbursement}
-            className="inline-flex items-center justify-center rounded-full bg-brand-600 px-5 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {claimingReimbursement ? 'Claiming…' : 'Claim Reimbursement'}
-          </button>
+          </Button>
         </div>
       )}
 
@@ -370,14 +363,14 @@ const DriverPickupsView = () => {
           <span className="text-sm font-medium text-slate-700">
             {selectedIds.size}/{MAX_OPTIMIZE_STOPS} selected
           </span>
-          <button
-            type="button"
+          <Button
+            size="sm"
+            className="gap-1.5"
             onClick={() => setOptimizeModalOpen(true)}
-            className="inline-flex items-center gap-1.5 rounded-full bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700"
           >
             <LuRoute className="size-4" />
             Optimize Route
-          </button>
+          </Button>
         </div>
       )}
 

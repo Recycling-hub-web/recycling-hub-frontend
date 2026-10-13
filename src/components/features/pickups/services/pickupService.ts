@@ -33,6 +33,8 @@ type ListPickupRequestsParams = {
   search?: string;
   requestType?: PickupRequestType;
   evaluationStatus?: PickupEvaluationStatus;
+  /** Collection point id — requests whose route was dropped off there. */
+  dropOffPoint?: string;
 };
 
 const listPickupRequests = ({
@@ -41,6 +43,7 @@ const listPickupRequests = ({
   search,
   requestType,
   evaluationStatus,
+  dropOffPoint,
 }: ListPickupRequestsParams = {}): Promise<
   Paginated<PickupRequestListItem>
 > => {
@@ -49,6 +52,7 @@ const listPickupRequests = ({
   if (search) params.set('search', search);
   if (requestType) params.set('request_type', requestType);
   if (evaluationStatus) params.set('evaluation_status', evaluationStatus);
+  if (dropOffPoint) params.set('drop_off_point', dropOffPoint);
   return apiFetch(`/pickups/?${params.toString()}`);
 };
 
@@ -90,10 +94,15 @@ const createPickupRequest = (
 const requestPickupPhotoUploadUrl = (
   fileName: string,
   contentType: string,
+  fileSize: number,
 ): Promise<{ uploads: PresignedUpload[] }> =>
   apiFetch('/pickups/photo-upload-url/', {
     method: 'POST',
-    json: { file_name: fileName, content_type: contentType },
+    json: {
+      file_name: fileName,
+      content_type: contentType,
+      file_size: fileSize,
+    },
   });
 
 type UpdatePickupRequestPayload = Partial<{
@@ -219,6 +228,10 @@ type DropOffPayload = {
   items: DropOffItem[];
   /** One proof photo for the whole batch, not per item. */
   proof?: string;
+  /** The store the batch is dropped at — the route's planned end point,
+   * or a different one if the driver went elsewhere. Required by the
+   * backend when the route has no end point yet. */
+  collection_point?: string;
 };
 
 // The driver's batch store drop-off — every selected item on their
@@ -318,11 +331,6 @@ type DailyVolumePoint = {
   count: number;
 };
 
-// Admin/staff only — powers Admin's Overview dashboard trend chart. See
-// CollectionRequestViewSet.daily_volume on the backend.
-const getDailyPickupVolume = (days = 30): Promise<DailyVolumePoint[]> =>
-  apiFetch(`/pickups/daily-volume/?days=${days}`);
-
 export {
   assignDriverToRequest,
   cancelPickupRequest,
@@ -335,7 +343,6 @@ export {
   deletePickupRequest,
   dropOffRoute,
   evaluatePickupRequest,
-  getDailyPickupVolume,
   getPickupRequest,
   getQuickPickupRequest,
   listPickupRequests,
