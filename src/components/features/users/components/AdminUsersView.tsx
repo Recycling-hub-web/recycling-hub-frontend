@@ -13,6 +13,7 @@ import type {
 import { SearchInput } from '../../../form/filter/SearchInput';
 import { PageContainer } from '../../../layout/PageContainer';
 import { Button } from '../../../ui/buttons/Button';
+import { FilterToggle } from '../../../ui/filters/FilterToggle';
 import { FilterSelect } from '../../../ui/FilterSelect';
 import { ConfirmModal } from '../../../ui/modal/ConfirmModal';
 import { PageHeader } from '../../../ui/PageHeader';
@@ -176,14 +177,21 @@ const AdminUsersView = () => {
         className="-mt-2 mb-4 px-0"
       />
 
-      <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mb-4 flex flex-wrap items-center gap-2">
         <SearchInput
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
           placeholder="Search by name or email…"
           className="sm:max-w-xs"
         />
-        <div className="flex gap-2">
+        <FilterToggle
+          activeCount={
+            [
+              roleFilter,
+              activeTab === 'users' ? registrationStatusFilter : '',
+            ].filter(Boolean).length
+          }
+        >
           <FilterSelect
             value={roleFilter}
             onChange={handleRoleFilterChange}
@@ -196,7 +204,7 @@ const AdminUsersView = () => {
               options={REGISTRATION_STATUS_FILTER_OPTIONS}
             />
           )}
-        </div>
+        </FilterToggle>
       </div>
 
       <UserTable
