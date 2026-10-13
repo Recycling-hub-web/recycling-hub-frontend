@@ -177,6 +177,86 @@ test.describe('Driver route optimization', () => {
     await page.request.delete(`/api/v1/pickups/${id}/`);
   });
 
+  test('orders 5 real KL stops from Garden One South to PV128', async ({
+    page,
+    context,
+  }) => {
+    // Real addresses roughly between the two ends, exercising the live
+    // ORS geocode + VROOM optimize path with a realistic multi-stop
+    // route. Both endpoints are real seeded CollectionPoint rows in
+    // this dev DB: "Garden One South" (Taman Serdang Perdana, Seri
+    // Kembangan — south of the city, used here only for its real-world
+    // coordinates as the driver's starting point, not selected in the
+    // form) and "PV128" (Jalan Genting Kelang, Taman Danau Kota — north
+    // of the city, selected below as the route's destination).
+    await loginAs(page, 'admin');
+    const stops = [
+      { label: 'MidValley', address: 'Mid Valley Megamall, Kuala Lumpur' },
+      { label: 'KLCC', address: 'KLCC, Kuala Lumpur' },
+      { label: 'JalanIpoh', address: 'Jalan Ipoh, Kuala Lumpur' },
+      { label: 'WangsaMaju', address: 'Wangsa Maju, Kuala Lumpur' },
+      { label: 'Gombak', address: 'Gombak, Kuala Lumpur' },
+    ].map((s) => ({ ...s, name: uniqueName(s.label) }));
+
+    const ids: string[] = [];
+    for (const stop of stops) {
+      // Sequential on purpose — each seed is independent setup, not
+      // worth parallelizing for a one-off test.
+      ids.push(
+        // eslint-disable-next-line no-await-in-loop
+        await seedScheduledForDriver(page.request, stop.name, stop.address),
+      );
+    }
+
+    // Garden One South, Seri Kembangan — the driver's starting point.
+    await context.grantPermissions(['geolocation'], {
+      origin: 'http://localhost:3000',
+    });
+    await context.setGeolocation({ latitude: 3.0167, longitude: 101.7 });
+
+    await loginAs(page, 'qaDriver');
+    await page.goto('/driver/pickups');
+    await page.getByRole('button', { name: 'My Pickups' }).click();
+
+    for (const stop of stops) {
+      // eslint-disable-next-line no-await-in-loop
+      await page
+        .locator('tr', { hasText: stop.name })
+        .getByRole('checkbox')
+        .check();
+    }
+    await expect(page.getByText('5/10 selected')).toBeVisible();
+    await page.getByRole('button', { name: 'Optimize Route' }).click();
+
+    await page
+      .locator('[data-field="collection_point"] select')
+      .selectOption({ label: 'PV128' });
+    await page.getByRole('button', { name: 'Get optimized route' }).click();
+
+    await expect(
+      page.getByRole('button', { name: 'Open in Google Maps' }),
+    ).toBeVisible({ timeout: 15000 });
+    await expect(
+      page.getByRole('button', { name: 'Open in Waze' }),
+    ).toBeVisible();
+
+    // All 5 appear in the optimized order list, each numbered 1..5 —
+    // scoped to the modal dialog's own <li>s (other <li>s elsewhere on
+    // the page, e.g. nav items, would otherwise also match).
+    const dialog = page.getByRole('dialog');
+    await expect(dialog.locator('li')).toHaveCount(5);
+    for (const stop of stops) {
+      // eslint-disable-next-line no-await-in-loop
+      await expect(dialog.locator('li', { hasText: stop.name })).toBeVisible();
+    }
+
+    await loginAs(page, 'admin');
+    for (const id of ids) {
+      // eslint-disable-next-line no-await-in-loop
+      await page.request.delete(`/api/v1/pickups/${id}/`);
+    }
+  });
+
   test('caps selection at 10 stops, frontend-only', async ({ page }) => {
     await loginAs(page, 'admin');
     const label = uniqueName('Cap');
