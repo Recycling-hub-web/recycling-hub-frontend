@@ -61,7 +61,7 @@ const NAVIGABLE_STATUSES = ['pending', 'scheduled'];
 const DriverPickupsView = () => {
   const router = useRouter();
   const toast = useToast();
-  const [activeTab, setActiveTab] = useState<Tab>('available');
+  const [activeTab, setActiveTab] = useState<Tab>('mine');
   const {
     requests: available,
     count: availableCount,
@@ -181,12 +181,14 @@ const DriverPickupsView = () => {
   // pinged for every newly-approved request would be noisy for no real
   // benefit; this badge is enough to surface that there's something to
   // claim.
+  // My Pickups first (and the default) — a driver's own route is what
+  // they open this page for most of the time.
   const tabItems: { key: Tab; label: string }[] = [
+    { key: 'mine', label: 'My Pickups' },
     {
       key: 'available',
       label: availableCount > 0 ? `Available (${availableCount})` : 'Available',
     },
-    { key: 'mine', label: 'My Pickups' },
   ];
 
   const requests = activeTab === 'available' ? available : mine;

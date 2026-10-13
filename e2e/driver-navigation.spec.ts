@@ -43,7 +43,9 @@ test('driver can open Google Maps or Waze directions to an assigned pickup', asy
 
   await loginAs(page, 'qaDriver');
   await page.goto('/driver/pickups');
-  await page.getByRole('button', { name: 'My Pickups' }).click();
+  // My Pickups is the first tab and the default — no click needed.
+  const tabs = page.getByRole('button', { name: /^(My Pickups|Available)/ });
+  await expect(tabs.first()).toHaveText('My Pickups');
 
   const row = page.locator('tr', { hasText: fullName });
   await expect(row).toBeVisible();
