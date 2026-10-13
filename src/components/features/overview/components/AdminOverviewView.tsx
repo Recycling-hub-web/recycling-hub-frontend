@@ -3,7 +3,7 @@
 import { LuMail, LuNewspaper, LuTruck, LuUsers } from 'react-icons/lu';
 
 import { useAuth } from '../../../../contexts/AuthContext';
-import { adminNavItemsFor } from '../../../layout/AdminSidebar';
+import { adminNavItemsFor } from '../../../../layouts/navigation';
 import { SectionContainer } from '../../../ui/card/SectionContainer';
 import { BarChart, DonutChart, LineChart } from '../../../ui/charts';
 import { STATUS_BADGE_VARIANT as FINANCE_STATUS_BADGE_VARIANT } from '../../finance/constants';
@@ -21,7 +21,7 @@ const dayLabel = (isoDate: string) =>
 
 /** Replaces the old `redirect('/admin/users')` — /admin is now a real
  * dashboard. Quick links reuse adminNavItemsFor (the same role-aware
- * list AdminSidebar renders) rather than a second, separately-maintained
+ * list AdminLayout's sidebar renders) rather than a second, separately-maintained
  * list of admin modules. The daily-volume trend chart is the one place
  * in the app a LineChart backed by a genuinely new endpoint
  * (CollectionRequestViewSet.daily_volume) lives — it's a real

@@ -1,30 +1,21 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import { useState } from 'react';
 
-import { RequireAuth } from '../components/features/auth/components';
-import { AdminSidebar } from '../components/layout/AdminSidebar';
-import { AppFooter } from '../components/layout/AppFooter';
-import { Topbar } from '../components/layout/Topbar';
+import { useAuth } from '../contexts/AuthContext';
+import { DashboardLayout } from './DashboardLayout';
+import { adminNavItemsFor } from './navigation';
 
 const AdminLayout = ({ children }: { children: ReactNode }) => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { user } = useAuth();
 
   return (
-    <RequireAuth roles={['admin', 'super_admin']}>
-      <div className="flex min-h-screen bg-neutral-50 px-4 py-5 lg:gap-4 lg:px-6">
-        <AdminSidebar
-          open={sidebarOpen}
-          onClose={() => setSidebarOpen(false)}
-        />
-        <div className="flex min-w-0 flex-1 flex-col">
-          <Topbar onMenuClick={() => setSidebarOpen(true)} />
-          <main className="flex-1 overflow-x-hidden py-6">{children}</main>
-          <AppFooter />
-        </div>
-      </div>
-    </RequireAuth>
+    <DashboardLayout
+      roles={['admin', 'super_admin']}
+      navItems={adminNavItemsFor(user?.role)}
+    >
+      {children}
+    </DashboardLayout>
   );
 };
 

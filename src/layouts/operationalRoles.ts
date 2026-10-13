@@ -1,19 +1,6 @@
-import {
-  LuBell,
-  LuHandshake,
-  LuHardDrive,
-  LuLayoutDashboard,
-  LuMail,
-  LuMapPin,
-  LuNewspaper,
-  LuPackageCheck,
-  LuTag,
-  LuTruck,
-  LuWallet,
-} from 'react-icons/lu';
-
-import type { NavItem } from '../components/layout/Sidebar';
+import type { NavItem } from '../components/ui/navigation';
 import type { UserRole } from '../types/auth';
+import { buildNavItems } from './navigation';
 
 // Admin and Super Admin each have their own dedicated layout+sidebar
 // (AdminLayout/SuperAdminLayout) outside this operational-role bundle,
@@ -71,76 +58,44 @@ type OperationalRoleConfig = {
 const OPERATIONAL_ROLES: Record<OperationalRole, OperationalRoleConfig> = {
   staff: {
     route: '/staff',
-    navItems: [
-      { href: '/staff', label: 'Overview', icon: LuLayoutDashboard },
-      { href: '/staff/pickups', label: 'Pickup Requests', icon: LuTruck },
-      { href: '/staff/contact', label: 'Contact', icon: LuMail },
-      { href: '/staff/categories', label: 'Categories', icon: LuTag },
-      {
-        href: '/staff/collection-points',
-        label: 'Collection Points',
-        icon: LuMapPin,
-      },
-      {
-        href: '/staff/storage-files',
-        label: 'Storage Files',
-        icon: LuHardDrive,
-      },
-      { href: '/staff/blogs', label: 'Blog Posts', icon: LuNewspaper },
-      {
-        href: '/staff/partnerships',
-        label: 'Partnerships',
-        icon: LuHandshake,
-      },
-      { href: '/staff/finance', label: 'Finance Records', icon: LuWallet },
-      { href: '/staff/notifications', label: 'Notifications', icon: LuBell },
-    ],
+    navItems: buildNavItems('/staff', [
+      'overview',
+      'pickups',
+      'contact',
+      'categories',
+      'collectionPoints',
+      'storageFiles',
+      'blogs',
+      'partnerships',
+      'finance',
+      'notifications',
+    ]),
   },
   driver: {
     route: '/driver',
-    navItems: [
-      { href: '/driver', label: 'Overview', icon: LuLayoutDashboard },
-      { href: '/driver/pickups', label: 'Pickup Requests', icon: LuTruck },
-      {
-        href: '/driver/drop-off',
-        label: 'Drop Off to Store',
-        icon: LuPackageCheck,
-      },
-      { href: '/driver/finance', label: 'Finance Records', icon: LuWallet },
-      { href: '/driver/notifications', label: 'Notifications', icon: LuBell },
-    ],
+    navItems: buildNavItems('/driver', [
+      'overview',
+      'pickups',
+      'dropOff',
+      'finance',
+      'notifications',
+    ]),
   },
   receiving_officer: {
     route: '/receiving',
-    navItems: [
-      { href: '/receiving', label: 'Overview', icon: LuLayoutDashboard },
-      {
-        href: '/receiving/deliveries',
-        label: 'Deliveries',
-        icon: LuPackageCheck,
-      },
-      {
-        href: '/receiving/notifications',
-        label: 'Notifications',
-        icon: LuBell,
-      },
-    ],
+    navItems: buildNavItems('/receiving', [
+      'overview',
+      'deliveries',
+      'notifications',
+    ]),
   },
   accounting: {
     route: '/accounting',
-    navItems: [
-      { href: '/accounting', label: 'Overview', icon: LuLayoutDashboard },
-      {
-        href: '/accounting/finance',
-        label: 'Finance Records',
-        icon: LuWallet,
-      },
-      {
-        href: '/accounting/notifications',
-        label: 'Notifications',
-        icon: LuBell,
-      },
-    ],
+    navItems: buildNavItems('/accounting', [
+      'overview',
+      'finance',
+      'notifications',
+    ]),
   },
 };
 
