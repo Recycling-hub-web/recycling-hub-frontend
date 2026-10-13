@@ -96,7 +96,7 @@ const AdminOverviewView = () => {
         </OverviewStatGrid>
       }
       extra={
-        <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           <SectionContainer className="lg:col-span-2">
             <h2 className="mb-4 text-sm font-semibold text-slate-900">
               Daily pickup volume — last 30 days

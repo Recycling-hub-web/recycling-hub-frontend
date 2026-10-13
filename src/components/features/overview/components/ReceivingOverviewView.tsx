@@ -114,7 +114,7 @@ const ReceivingOverviewView = () => {
       }
       extra={
         <>
-          <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             <SectionContainer className="lg:col-span-2">
               <h2 className="mb-4 text-sm font-semibold text-slate-900">
                 Daily closed deliveries — last 30 days
@@ -146,7 +146,7 @@ const ReceivingOverviewView = () => {
           </div>
 
           {(loading || deliveries.length > 0) && (
-            <div className="mt-6">
+            <div>
               <div className="mb-3 flex items-center justify-between">
                 <h2 className="text-sm font-semibold text-slate-900">
                   Awaiting close

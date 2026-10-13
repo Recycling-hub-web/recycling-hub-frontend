@@ -136,7 +136,7 @@ const DriverOverviewView = () => {
       }
       extra={
         <>
-          <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             <SectionContainer>
               <h2 className="mb-4 text-sm font-semibold text-slate-900">
                 My pickups by status
@@ -166,7 +166,7 @@ const DriverOverviewView = () => {
           </div>
 
           {(stats.assignedLoading || stats.assigned.length > 0) && (
-            <div className="mt-6">
+            <div>
               <div className="mb-3 flex items-center justify-between">
                 <h2 className="text-sm font-semibold text-slate-900">
                   My assigned pickups

@@ -48,20 +48,26 @@ const RoleOverviewLayout = ({
         subtitle={ROLE_LABELS[user.role]}
       />
 
-      {statGrid}
+      {/* One consistent gap between every section below the header —
+       * works whether `extra` is a single block or (Staff/Driver/
+       * Receiving) a Fragment of several, since a Fragment doesn't
+       * wrap and its children become direct siblings here too. */}
+      <div className="space-y-6">
+        {statGrid}
 
-      {extra}
+        {extra}
 
-      <OverviewQuickLinks navItems={navItems} ownHref={ownHref} />
+        <OverviewQuickLinks navItems={navItems} ownHref={ownHref} />
 
-      <ProfileSummaryCard />
+        <ProfileSummaryCard />
 
-      {!hasQuickLinks && (
-        <p className="mt-6 text-sm text-slate-400">
-          More of your dashboard — assigned tasks, pickups, and reports — is on
-          the way.
-        </p>
-      )}
+        {!hasQuickLinks && (
+          <p className="text-sm text-slate-400">
+            More of your dashboard — assigned tasks, pickups, and reports — is
+            on the way.
+          </p>
+        )}
+      </div>
     </PageContainer>
   );
 };

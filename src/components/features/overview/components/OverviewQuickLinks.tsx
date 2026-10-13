@@ -22,7 +22,7 @@ const OverviewQuickLinks = ({ navItems, ownHref }: OverviewQuickLinksProps) => {
   if (items.length === 0) return null;
 
   return (
-    <div className="mb-5" data-testid="overview-quick-links">
+    <div data-testid="overview-quick-links">
       <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
         Quick links
       </p>

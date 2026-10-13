@@ -67,7 +67,7 @@ const AccountingOverviewView = () => {
         </OverviewStatGrid>
       }
       extra={
-        <div className="mt-6 grid grid-cols-1 gap-4">
+        <div className="grid grid-cols-1 gap-4">
           <SectionContainer>
             <h2 className="mb-4 text-sm font-semibold text-slate-900">
               Finance records by status
