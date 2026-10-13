@@ -26,6 +26,9 @@ const uniqueEmail = (label: string) =>
 test.describe('Admin staff management', () => {
   test('creates, edits, then deletes a staff profile', async ({ page }) => {
     const email = uniqueEmail('main');
+    // Unique per run, so rows left behind by an earlier failed run can't
+    // collide with this one in the list/search checks below.
+    const staffName = `E2E Staff Member ${Date.now()}`;
 
     await loginAs(page, 'admin');
     await page.goto('/admin/staff');
@@ -36,20 +39,20 @@ test.describe('Admin staff management', () => {
     await expect(page.getByText('Full name is required.')).toBeVisible();
     await expect(page.getByText('Email is required.')).toBeVisible();
 
-    await page
-      .locator('[data-field="full_name"] input')
-      .fill('E2E Staff Member');
+    await page.locator('[data-field="full_name"] input').fill(staffName);
     await page.locator('[data-field="email"] input').fill(email);
     await page.locator('[data-field="department"] input').fill('Operations');
     await page.locator('[data-field="position"] input').fill('Coordinator');
     await page.locator('[data-field="branch"] input').fill('Kuala Lumpur HQ');
     await page.getByRole('button', { name: 'Create staff member' }).click();
 
-    await expect(page).toHaveURL(/\/admin\/staff\/(?!create)[^/]+$/);
+    // Saving a staff profile auto-translates its fields server-side,
+    // which can take several seconds — longer than the default wait.
+    await expect(page).toHaveURL(/\/admin\/staff\/(?!create)[^/]+$/, {
+      timeout: 15_000,
+    });
     await expect(page.getByText(/staff member created/i)).toBeVisible();
-    await expect(
-      page.getByRole('heading', { name: 'E2E Staff Member' }),
-    ).toBeVisible();
+    await expect(page.getByRole('heading', { name: staffName })).toBeVisible();
     await expect(page.getByText('Operations')).toBeVisible();
 
     // Edit: Save has nothing to do until a field actually differs from
@@ -62,11 +65,9 @@ test.describe('Admin staff management', () => {
 
     const saveButton = page.getByRole('button', { name: 'Save changes' });
     await expect(saveButton).toBeDisabled();
-    // The subtitle ("E2E Staff Member · EMP-...") also contains this
+    // The subtitle ("<name> · EMP-...") also contains this
     // text, hence the exact match on the read-only field's own value.
-    await expect(
-      page.getByText('E2E Staff Member', { exact: true }),
-    ).toBeVisible();
+    await expect(page.getByText(staffName, { exact: true })).toBeVisible();
     // exact: true — the still-visible "Staff member created" toast from
     // the previous step also contains this email mid-sentence.
     await expect(page.getByText(email, { exact: true })).toBeVisible();
@@ -76,9 +77,14 @@ test.describe('Admin staff management', () => {
     await expect(saveButton).toBeEnabled();
     await saveButton.click();
 
-    await expect(page).toHaveURL(/\/admin\/staff\/(?!create)[^/]+$/);
+    // Saving a staff profile auto-translates its fields server-side,
+    // which can take several seconds — longer than the default wait.
+    await expect(page).toHaveURL(/\/admin\/staff\/(?!create)[^/]+$/, {
+      timeout: 15_000,
+    });
     await expect(page.getByText(/staff profile updated/i)).toBeVisible();
-    await expect(page.getByText('Finance')).toBeVisible();
+    // Exact — "Finance Records" in the sidebar also contains "Finance".
+    await expect(page.getByText('Finance', { exact: true })).toBeVisible();
     await expect(page.getByText('Penang Branch')).toBeVisible();
 
     // Delete: a real hard delete of the StaffProfile row, not a status
@@ -91,9 +97,9 @@ test.describe('Admin staff management', () => {
     await page.getByRole('button', { name: 'Delete', exact: true }).click();
     await expect(page).toHaveURL(/\/admin\/staff$/);
     await expect(page.getByText(/staff profile deleted/i)).toBeVisible();
-    await page.getByPlaceholder(/search/i).fill('E2E Staff Member');
+    await page.getByPlaceholder(/search/i).fill(staffName);
     const row = page.getByRole('cell', {
-      name: 'E2E Staff Member',
+      name: staffName,
       exact: true,
     });
     await expect(row).toHaveCount(1);

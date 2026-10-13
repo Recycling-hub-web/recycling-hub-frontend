@@ -44,7 +44,8 @@ test.describe('Public contact form', () => {
     await page.locator('[data-field="firstName"] input').fill('Playwright');
     await page.locator('[data-field="lastName"] input').fill('E2E');
     await page.locator('[data-field="email"] input').fill('e2e@example.com');
-    await page.locator('[data-field="phone"] input').fill('+60123456789');
+    // PhoneInputField: dial code (+60 default) + local number.
+    await page.locator('[data-field="phone_local"] input').fill('123456789');
     await page.locator('[data-field="subject"] input').fill(subject);
     await page
       .locator('[data-field="message"] textarea')
