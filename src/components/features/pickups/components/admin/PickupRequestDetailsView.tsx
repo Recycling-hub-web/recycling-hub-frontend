@@ -9,6 +9,7 @@ import {
   LuMail,
   LuMapPin,
   LuPackage,
+  LuPencil,
   LuPhone,
   LuTruck,
   LuUser,
@@ -127,6 +128,10 @@ const PickupRequestDetailsView = ({
         subtitle={`${itemsSummary(request.items)} pickup request`}
         actions={
           <>
+            <Button variant="secondary" href={`${basePath}/${request.id}/edit`}>
+              <LuPencil className="mr-1.5 size-4" />
+              Edit
+            </Button>
             {canEvaluate && (
               <Button variant="secondary" onClick={() => setEvaluateOpen(true)}>
                 <LuClipboardCheck className="mr-1.5 size-4" />

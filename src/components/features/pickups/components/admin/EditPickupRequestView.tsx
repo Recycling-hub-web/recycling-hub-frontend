@@ -6,8 +6,13 @@ import type { FormEvent } from 'react';
 import { useEffect, useState } from 'react';
 import { LuArrowLeft } from 'react-icons/lu';
 
+import {
+  joinPhoneNumber,
+  splitPhoneNumber,
+} from '../../../../../constants/dialCodes';
 import { ApiError } from '../../../../../lib/api';
 import { InputField } from '../../../../form/fields/InputField';
+import { PhoneInputField } from '../../../../form/fields/PhoneInputField';
 import { TextareaField } from '../../../../form/fields/TextareaField';
 import { PageContainer } from '../../../../layout/PageContainer';
 import { AlertBanner } from '../../../../ui/AlertBanner';
@@ -27,6 +32,12 @@ import { itemsSummary } from '../../types';
 import { PickupItemsFieldArray } from '../shared/PickupItemsFieldArray';
 
 type FormState = {
+  full_name: string;
+  email: string;
+  // Split for PhoneInputField, joined back into `phone_number` on save —
+  // same as CreatePickupRequestView.
+  phone_dial_code: string;
+  phone_local: string;
   pickup_address: string;
   requested_date: string;
   note: string;
@@ -55,10 +66,10 @@ type EditPickupRequestViewProps = {
   basePath: '/admin/pickups' | '/staff/pickups' | '/super-admin/pickups';
 };
 
-// Only pickup_address/estimated_quantity/requested_date/note are
-// editable here — see CollectionRequestUpdateSerializer's docstring on
-// the backend; full_name/email/category and status are deliberately not
-// (status only ever changes through schedule/collect/cancel).
+// Admin/staff correct the requester's details, the address, date, note
+// and (while still awaiting review) the items — see
+// CollectionRequestUpdateSerializer. Status is deliberately not editable
+// (it only ever changes through evaluate/schedule/collect/cancel).
 const EditPickupRequestView = ({
   requestId,
   basePath,
@@ -76,6 +87,7 @@ const EditPickupRequestView = ({
     usePickupCategories();
   const [formData, setFormData] = useState<FormState | null>(null);
   const [items, setItems] = useState<PickupRequestItemInput[]>([]);
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [itemErrors, setItemErrors] = useState<Record<string, string>[]>([]);
   const [error, setError] = useState('');
 
@@ -85,7 +97,12 @@ const EditPickupRequestView = ({
 
   useEffect(() => {
     if (!request) return;
+    const { dialCode, number } = splitPhoneNumber(request.phone_number);
     setFormData({
+      full_name: request.full_name,
+      email: request.email ?? '',
+      phone_dial_code: dialCode,
+      phone_local: number,
       pickup_address: request.pickup_address,
       requested_date: request.requested_date ?? '',
       note: request.note ?? '',
@@ -93,34 +110,59 @@ const EditPickupRequestView = ({
     setItems(toItemInputs(request.items));
   }, [request]);
 
-  const updateFormData = (field: string, value: string) =>
+  const updateFormData = (field: string, value: string) => {
     setFormData((prev) => (prev ? { ...prev, [field]: value } : prev));
+    setErrors((prev) => ({ ...prev, [field]: '' }));
+  };
+
+  const phoneNumber = formData
+    ? joinPhoneNumber(formData.phone_dial_code, formData.phone_local)
+    : '';
 
   const hasChanges =
     Boolean(formData) &&
     Boolean(request) &&
-    (formData!.pickup_address !== request!.pickup_address ||
+    (formData!.full_name !== request!.full_name ||
+      formData!.email !== (request!.email ?? '') ||
+      phoneNumber !== (request!.phone_number ?? '') ||
+      formData!.pickup_address !== request!.pickup_address ||
       formData!.requested_date !== (request!.requested_date ?? '') ||
       formData!.note !== (request!.note ?? '') ||
       (itemsEditable && !itemInputsEqual(items, toItemInputs(request!.items))));
 
-  const validate = (): boolean => {
-    if (!itemsEditable) return true;
+  const validate = (data: FormState): boolean => {
+    const nextErrors: Record<string, string> = {};
+    if (!data.full_name.trim()) nextErrors.full_name = 'Full name is required.';
+    if (request?.request_type === 'business' && !data.email.trim()) {
+      nextErrors.email = 'Email is required for business requests.';
+    }
+    if (!data.phone_local.trim())
+      nextErrors.phone_local = 'Phone number is required.';
+    if (!data.pickup_address.trim())
+      nextErrors.pickup_address = 'Pickup address is required.';
+    setErrors(nextErrors);
+    if (!itemsEditable) return Object.keys(nextErrors).length === 0;
     const nextItemErrors: Record<string, string>[] = items.map(
       (item): Record<string, string> =>
         item.category ? {} : { category: 'Category is required.' },
     );
     setItemErrors(nextItemErrors);
-    return nextItemErrors.every((e) => Object.keys(e).length === 0);
+    return (
+      Object.keys(nextErrors).length === 0 &&
+      nextItemErrors.every((e) => Object.keys(e).length === 0)
+    );
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!formData || !request) return;
-    if (!validate()) return;
+    if (!validate(formData)) return;
     setError('');
     try {
       await updateRequest(request.id, {
+        full_name: formData.full_name.trim(),
+        email: formData.email.trim(),
+        phone_number: phoneNumber,
         pickup_address: formData.pickup_address,
         requested_date: formData.requested_date || undefined,
         note: formData.note || undefined,
@@ -167,11 +209,42 @@ const EditPickupRequestView = ({
           <AlertBanner message={error} />
 
           <div className="grid gap-x-4 sm:grid-cols-2">
+            <InputField
+              label="Full name"
+              field="full_name"
+              placeholder="e.g. Fatima Ali"
+              formData={formData}
+              errors={errors}
+              updateFormData={updateFormData}
+              disabled={submitting}
+            />
+            <InputField
+              label="Email"
+              field="email"
+              type="email"
+              required={request.request_type === 'business'}
+              placeholder="e.g. fatima@recyclinghub.example"
+              formData={formData}
+              errors={errors}
+              updateFormData={updateFormData}
+              disabled={submitting}
+            />
+            <PhoneInputField
+              label="Phone number"
+              dialCodeField="phone_dial_code"
+              numberField="phone_local"
+              formData={formData}
+              errors={errors}
+              updateFormData={updateFormData}
+              disabled={submitting}
+            />
             <div className="sm:col-span-2">
               <TextareaField
                 label="Pickup address"
                 field="pickup_address"
+                placeholder="Street, building/unit, area, city — or a Google Maps Plus Code"
                 formData={formData}
+                errors={errors}
                 updateFormData={updateFormData}
                 disabled={submitting}
               />

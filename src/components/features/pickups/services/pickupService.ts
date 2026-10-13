@@ -106,6 +106,9 @@ const requestPickupPhotoUploadUrl = (
   });
 
 type UpdatePickupRequestPayload = Partial<{
+  full_name: string;
+  email: string;
+  phone_number: string;
   pickup_address: string;
   photo: string;
   requested_date: string;
