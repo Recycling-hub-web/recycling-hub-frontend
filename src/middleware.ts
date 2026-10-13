@@ -38,6 +38,15 @@ const ROUTE_ROLES: Record<string, string[]> = {
   '/driver': ['driver'],
   '/receiving': ['receiving_officer'],
   '/accounting': ['accounting'],
+  // Every signed-in role's own profile (ProfileLayout).
+  '/profile': [
+    'super_admin',
+    'admin',
+    'staff',
+    'driver',
+    'receiving_officer',
+    'accounting',
+  ],
 };
 
 function requiredRoles(pathname: string): string[] | null {
@@ -106,6 +115,7 @@ export const config = {
     '/driver/:path*',
     '/receiving/:path*',
     '/accounting/:path*',
+    '/profile/:path*',
     '/dashboard/:path*',
   ],
 };

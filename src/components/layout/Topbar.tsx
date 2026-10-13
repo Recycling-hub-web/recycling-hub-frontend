@@ -1,6 +1,8 @@
-import { LuMenu } from 'react-icons/lu';
+import Link from 'next/link';
+import { LuChevronDown, LuMenu, LuUserRound } from 'react-icons/lu';
 
 import { useAuth } from '../../contexts/AuthContext';
+import { Dropdown } from '../ui/dropdown/Dropdown';
 import { NotificationsButton } from './NotificationsButton';
 
 type TopbarProps = {
@@ -19,10 +21,10 @@ const getInitials = (name: string) =>
     .join('')
     .toUpperCase() || '?';
 
-/** Reusable topbar for every sidebar layout. Full identity + sign out
- * still live in Sidebar, not duplicated here — this is just a compact
- * "who's signed in" indicator alongside the mobile menu trigger (hidden
- * at lg, where Sidebar is always visible) and notifications. */
+/** Reusable topbar for every sidebar layout: the mobile menu trigger
+ * (hidden at lg, where Sidebar is always visible), notifications, and the
+ * signed-in user's avatar + name, which opens a small account menu
+ * ("My Profile"). Full identity + sign out still live in Sidebar. */
 const Topbar = ({ onMenuClick }: TopbarProps) => {
   const { user } = useAuth();
 
@@ -39,18 +41,47 @@ const Topbar = ({ onMenuClick }: TopbarProps) => {
       <div className="ms-auto flex items-center gap-3">
         <NotificationsButton />
         {user && (
-          <div className="flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-slate-100 bg-slate-50 text-xs font-bold text-slate-600">
-            {user.profile_photo?.public_url ? (
-              // eslint-disable-next-line @next/next/no-img-element -- remote/presigned URL, not a static asset
-              <img
-                src={user.profile_photo.public_url}
-                alt={user.full_name}
-                className="size-full object-cover"
-              />
-            ) : (
-              getInitials(user.full_name)
-            )}
-          </div>
+          <Dropdown
+            closeOnSelect
+            panelClassName="end-0 top-12 w-48"
+            button={
+              <button
+                type="button"
+                aria-label="Account menu"
+                className="flex items-center gap-2 rounded-full p-0.5 pe-2 transition-colors hover:bg-slate-50"
+              >
+                <span className="flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-slate-100 bg-slate-50 text-xs font-bold text-slate-600">
+                  {user.profile_photo?.public_url ? (
+                    // eslint-disable-next-line @next/next/no-img-element -- remote/presigned URL, not a static asset
+                    <img
+                      src={user.profile_photo.public_url}
+                      alt=""
+                      className="size-full object-cover"
+                    />
+                  ) : (
+                    getInitials(user.full_name)
+                  )}
+                </span>
+                <span className="hidden max-w-40 truncate text-sm font-medium text-slate-700 sm:block">
+                  {user.full_name}
+                </span>
+                <LuChevronDown
+                  className="size-4 text-slate-400"
+                  aria-hidden="true"
+                />
+              </button>
+            }
+          >
+            <div className="w-full rounded-xl border border-slate-100 bg-white p-1.5 shadow-lg">
+              <Link
+                href="/profile"
+                className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 hover:text-slate-900"
+              >
+                <LuUserRound className="size-4 text-slate-400" />
+                My Profile
+              </Link>
+            </div>
+          </Dropdown>
         )}
       </div>
     </header>

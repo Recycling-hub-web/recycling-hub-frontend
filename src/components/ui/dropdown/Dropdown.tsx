@@ -9,6 +9,9 @@ type DropdownProps = {
   className?: string;
   /** Positioning/animation classes for the panel, e.g. "top-11 right-0 w-max". */
   panelClassName?: string;
+  /** Close the panel when anything inside it is clicked — for menus whose
+   * items navigate or act, as opposed to panels you interact with. */
+  closeOnSelect?: boolean;
 };
 
 // Fixes from the pasted version: the trigger used `onMouseDown` instead of
@@ -20,6 +23,7 @@ const Dropdown = ({
   children,
   className = '',
   panelClassName = '',
+  closeOnSelect = false,
 }: DropdownProps) => {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
@@ -53,6 +57,7 @@ const Dropdown = ({
         className={`absolute z-10 origin-top-right transition-all duration-300 ease-in-out ${
           open ? 'scale-100' : 'pointer-events-none scale-0'
         } ${panelClassName}`}
+        onClick={closeOnSelect ? () => setOpen(false) : undefined}
       >
         {children}
       </div>
