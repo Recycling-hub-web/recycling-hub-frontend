@@ -1,0 +1,12 @@
+# Internal staff/driver areas are not for search engines (security audit L-1).
+User-agent: *
+Disallow: /admin
+Disallow: /super-admin
+Disallow: /staff
+Disallow: /driver
+Disallow: /receiving
+Disallow: /accounting
+Disallow: /profile
+Disallow: /dashboard
+Disallow: /login
+Disallow: /api/

@@ -3,6 +3,50 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 });
 
+// Security headers (security audit M-11, L-1). The enforced CSP holds only
+// directives that can't break a page; the full policy runs Report-Only
+// until its reports are clean, then can be enforced.
+const ENFORCED_CSP = [
+  "frame-ancestors 'none'",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+].join('; ');
+
+const REPORT_ONLY_CSP = [
+  "default-src 'self'",
+  // Next's dev server (hot reload) evaluates strings; production doesn't.
+  `script-src 'self' 'unsafe-inline'${
+    process.env.NODE_ENV === 'production' ? '' : " 'unsafe-eval'"
+  }`,
+  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+  "font-src 'self' data: https://fonts.gstatic.com",
+  // Uploaded files come from the storage bucket, whose host differs per
+  // environment; uploads PUT straight to it.
+  "img-src 'self' data: blob: https:",
+  "connect-src 'self' https:",
+  "frame-ancestors 'none'",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+].join('; ');
+
+// Internal areas never belong in search results; on non-production
+// deployments (e.g. staging) nothing does.
+const INTERNAL_PREFIXES = [
+  '/admin',
+  '/super-admin',
+  '/staff',
+  '/driver',
+  '/receiving',
+  '/accounting',
+  '/profile',
+  '/dashboard',
+  '/login',
+];
+const isProductionDeployment =
+  !process.env.VERCEL_ENV || process.env.VERCEL_ENV === 'production';
+
 module.exports = withBundleAnalyzer({
   eslint: {
     dirs: ['.'],
@@ -35,6 +79,30 @@ module.exports = withBundleAnalyzer({
   // NEXT_PUBLIC_API_URL should be the relative path "/api/v1" for this to
   // apply; API_PROXY_TARGET (server-only, not NEXT_PUBLIC_) is the real
   // backend origin it forwards to.
+  async headers() {
+    const noindex = { key: 'X-Robots-Tag', value: 'noindex, nofollow' };
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          { key: 'Content-Security-Policy', value: ENFORCED_CSP },
+          {
+            key: 'Content-Security-Policy-Report-Only',
+            value: REPORT_ONLY_CSP,
+          },
+          {
+            key: 'Permissions-Policy',
+            value: 'camera=(), microphone=(), payment=(), geolocation=(self)',
+          },
+          ...(isProductionDeployment ? [] : [noindex]),
+        ],
+      },
+      ...INTERNAL_PREFIXES.flatMap((prefix) => [
+        { source: prefix, headers: [noindex] },
+        { source: `${prefix}/:path*`, headers: [noindex] },
+      ]),
+    ];
+  },
   async rewrites() {
     const target = process.env.API_PROXY_TARGET;
     if (!target) return [];
