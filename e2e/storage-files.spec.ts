@@ -73,7 +73,9 @@ test.describe('Admin storage files', () => {
     // with a clear message when storage isn't configured — surfaced via
     // the modal's own inline banner, not a silent failure.
     await expect(
-      page.getByText(/failed to generate upload urls|storage configuration/i),
+      page.getByText(
+        /failed to generate upload urls|storage configuration|storage isn't configured/i,
+      ),
     ).toBeVisible();
   });
 

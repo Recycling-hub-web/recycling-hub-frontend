@@ -62,7 +62,9 @@ test.describe('Admin partnerships', () => {
       .locator('#partner-logo-input')
       .setInputFiles(path.join(__dirname, 'fixtures/sample-upload.txt'));
     await expect(
-      page.getByText(/failed to generate upload urls|storage configuration/i),
+      page.getByText(
+        /failed to generate upload urls|storage configuration|storage isn't configured/i,
+      ),
     ).toBeVisible();
 
     // Rest of the lifecycle continues against a partner seeded via the

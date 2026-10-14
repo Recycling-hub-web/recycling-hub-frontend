@@ -74,7 +74,9 @@ test.describe('Admin blog posts', () => {
       .locator('#cover-image-input')
       .setInputFiles(path.join(__dirname, 'fixtures/sample-upload.txt'));
     await expect(
-      page.getByText(/failed to generate upload urls|storage configuration/i),
+      page.getByText(
+        /failed to generate upload urls|storage configuration|storage isn't configured/i,
+      ),
     ).toBeVisible();
 
     await page.getByRole('button', { name: 'Create post' }).click();

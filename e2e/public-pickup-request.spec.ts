@@ -128,7 +128,9 @@ test.describe('Public pickup request form', () => {
       .locator('#pickup-photo-input')
       .setInputFiles(path.join(__dirname, 'fixtures/sample-photo.png'));
     await expect(
-      page.getByText(/failed to generate upload urls|storage configuration/i),
+      page.getByText(
+        /failed to generate upload urls|storage configuration|storage isn't configured/i,
+      ),
     ).toBeVisible();
   });
 

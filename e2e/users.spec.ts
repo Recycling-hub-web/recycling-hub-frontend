@@ -54,7 +54,9 @@ test.describe('Admin users', () => {
       .locator('#profile-photo-input')
       .setInputFiles(path.join(__dirname, 'fixtures/sample-upload.txt'));
     await expect(
-      page.getByText(/failed to generate upload urls|storage configuration/i),
+      page.getByText(
+        /failed to generate upload urls|storage configuration|storage isn't configured/i,
+      ),
     ).toBeVisible();
 
     await page.getByRole('button', { name: 'Create user' }).click();
@@ -103,30 +105,32 @@ test.describe('Admin users', () => {
 });
 
 test.describe('Staff users', () => {
-  test('has the same create/edit/delete access as admin', async ({ page }) => {
+  // User management is Admin-only (security audit C-2): Staff used to be
+  // able to change an Admin's email/role/2FA or delete them.
+  test('cannot list, create, edit or delete user accounts', async ({
+    page,
+  }) => {
     await loginAs(page, 'qaStaff');
 
+    const list = await page.request.get('/api/v1/accounts/users/');
+    expect(list.status()).toBe(403);
+
     const email = uniqueEmail('staff');
-    const createResponse = await page.request.post('/api/v1/accounts/users/', {
-      data: {
-        full_name: 'E2E Staff-Created User',
-        email,
-        role: 'accounting',
-      },
+    const create = await page.request.post('/api/v1/accounts/users/', {
+      data: { full_name: 'E2E Staff-Created User', email, role: 'accounting' },
     });
-    expect(createResponse.ok()).toBe(true);
-    const user = await createResponse.json();
+    expect(create.status()).toBe(403);
 
-    const patchResponse = await page.request.patch(
-      `/api/v1/accounts/users/${user.id}/`,
-      { data: { phone_number: '+60123456789' } },
-    );
-    expect(patchResponse.ok()).toBe(true);
-    expect((await patchResponse.json()).phone_number).toBe('+60123456789');
+    const me = await (await page.request.get('/api/v1/accounts/me/')).json();
+    const patch = await page.request.patch(`/api/v1/accounts/users/${me.id}/`, {
+      data: { phone_number: '+60123456789' },
+    });
+    expect(patch.status()).toBe(403);
+    const del = await page.request.delete(`/api/v1/accounts/users/${me.id}/`);
+    expect(del.status()).toBe(403);
 
-    const deleteResponse = await page.request.delete(
-      `/api/v1/accounts/users/${user.id}/`,
-    );
-    expect(deleteResponse.status()).toBe(204);
+    // Picking a driver still works — the one thing Staff needs.
+    const drivers = await page.request.get('/api/v1/accounts/drivers/');
+    expect(drivers.ok()).toBe(true);
   });
 });
