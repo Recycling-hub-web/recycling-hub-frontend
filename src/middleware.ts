@@ -23,6 +23,8 @@ import { NextResponse } from 'next/server';
 // public-site i18n redesign.
 
 const ACCESS_COOKIE = 'rh_access';
+// Matches the backend's SIMPLE_JWT REFRESH_TOKEN_LIFETIME (7 days).
+const REFRESH_WINDOW_SECONDS = 7 * 24 * 60 * 60;
 
 const secretKey = process.env.JWT_VERIFY_SECRET
   ? new TextEncoder().encode(process.env.JWT_VERIFY_SECRET)
@@ -82,8 +84,13 @@ export async function middleware(request: NextRequest) {
   }
 
   try {
+    // Access tokens now live 15 minutes and refresh silently on the client,
+    // so an expired-but-genuinely-signed token still gates by role here
+    // (up to the 7-day refresh window) instead of bouncing every page load
+    // after a short idle to /login. The API rejects it until refreshed.
     const { payload } = await jwtVerify(token, secretKey, {
       algorithms: ['HS256'],
+      clockTolerance: REFRESH_WINDOW_SECONDS,
     });
     if (payload.token_type !== 'access') {
       return redirectTo('/login');
