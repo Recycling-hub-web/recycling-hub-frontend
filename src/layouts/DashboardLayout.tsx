@@ -1,5 +1,6 @@
 'use client';
 
+import { ReactLenis } from 'lenis/react';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
 
@@ -33,7 +34,7 @@ const DashboardLayout = ({
 
   return (
     <RequireAuth roles={roles}>
-      <div className="flex min-h-screen bg-neutral-50 px-4 py-5 lg:gap-4 lg:px-6">
+      <div className="flex h-screen overflow-hidden bg-neutral-50 px-4 py-5 lg:gap-4 lg:px-6">
         <Sidebar
           navItems={navItems}
           open={sidebarOpen}
@@ -41,8 +42,20 @@ const DashboardLayout = ({
         />
         <div className="flex min-w-0 flex-1 flex-col">
           <Topbar onMenuClick={() => setSidebarOpen(true)} />
-          <main className={`flex-1 overflow-x-hidden ${contentPadding}`}>
-            {children}
+          <main className="flex-1 overflow-hidden">
+            {/* Non-root — the global root ReactLenis in providers.tsx/_app.tsx
+             * smooths window scroll for public/marketing pages, but this
+             * layout's own outer div is h-screen/overflow-hidden (so the
+             * sidebar stays put — see DashboardLayout's own history), which
+             * leaves the window nothing to scroll. This instance re-targets
+             * Lenis's smooth-scroll at this <main> instead, so dashboard
+             * pages keep the same smooth-scroll feel. */}
+            <ReactLenis
+              className={`h-full overflow-y-auto overflow-x-hidden ${contentPadding}`}
+              options={{ lerp: 0.1, duration: 1.2, smoothWheel: true }}
+            >
+              {children}
+            </ReactLenis>
           </main>
           <AppFooter />
         </div>
