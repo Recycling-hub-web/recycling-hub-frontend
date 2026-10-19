@@ -11,6 +11,8 @@ import {
   splitPhoneNumber,
 } from '../../../../../constants/dialCodes';
 import { ApiError } from '../../../../../lib/api';
+import type { SelectedAddress } from '../../../../../lib/geoapify';
+import { AddressInput } from '../../../../form/fields/AddressInput';
 import { InputField } from '../../../../form/fields/InputField';
 import { PhoneInputField } from '../../../../form/fields/PhoneInputField';
 import { TextareaField } from '../../../../form/fields/TextareaField';
@@ -90,6 +92,10 @@ const EditPickupRequestView = ({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [itemErrors, setItemErrors] = useState<Record<string, string>[]>([]);
   const [error, setError] = useState('');
+  // Only ever displayed, not submitted — see CreatePickupRequestView's
+  // own identical note.
+  const [selectedLocation, setSelectedLocation] =
+    useState<SelectedAddress | null>(null);
 
   // Items are only editable while evaluation_status is still `pending` —
   // same gate the backend's own validate_items() enforces.
@@ -239,7 +245,7 @@ const EditPickupRequestView = ({
               disabled={submitting}
             />
             <div className="sm:col-span-2">
-              <InputField
+              <AddressInput
                 label="Pickup address"
                 field="pickup_address"
                 placeholder="Address where materials should be collected"
@@ -247,7 +253,16 @@ const EditPickupRequestView = ({
                 errors={errors}
                 updateFormData={updateFormData}
                 disabled={submitting}
+                countryRestrictions={['my']}
+                onSelect={setSelectedLocation}
+                onClear={() => setSelectedLocation(null)}
               />
+              {selectedLocation && (
+                <p className="-mt-3 mb-4 text-xs text-slate-400">
+                  Verified at {selectedLocation.latitude.toFixed(5)},{' '}
+                  {selectedLocation.longitude.toFixed(5)}
+                </p>
+              )}
             </div>
             {itemsEditable ? (
               <PickupItemsFieldArray
