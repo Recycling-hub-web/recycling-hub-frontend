@@ -11,6 +11,7 @@ import {
   LuMapPin,
   LuNewspaper,
   LuPackageCheck,
+  LuReceipt,
   LuSettings,
   LuShieldCheck,
   LuTag,
@@ -83,6 +84,7 @@ const NAV_MODULES = {
     icon: LuHandshake,
   },
   finance: { segment: 'finance', label: 'Finance Records', icon: LuWallet },
+  claims: { segment: 'claims', label: 'Expense Claims', icon: LuReceipt },
   activity: { segment: 'activity', label: 'Activity Log', icon: LuHistory },
   notifications: {
     segment: 'notifications',
@@ -138,6 +140,7 @@ const adminNavItemsFor = (role: UserRole | undefined): NavItem[] => [
     'blogs',
     'partnerships',
     'finance',
+    'claims',
     'notifications',
   ]),
   ...(role === 'super_admin'
@@ -162,6 +165,7 @@ const SUPER_ADMIN_NAV_ITEMS: NavItem[] = buildNavItems('/super-admin', [
   'blogs',
   'partnerships',
   'finance',
+  'claims',
   'activity',
 ]);
 

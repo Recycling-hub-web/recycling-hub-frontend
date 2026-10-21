@@ -68,6 +68,7 @@ const OPERATIONAL_ROLES: Record<OperationalRole, OperationalRoleConfig> = {
       'blogs',
       'partnerships',
       'finance',
+      'claims',
       'notifications',
     ]),
   },
@@ -78,6 +79,7 @@ const OPERATIONAL_ROLES: Record<OperationalRole, OperationalRoleConfig> = {
       'pickups',
       'dropOff',
       'finance',
+      'claims',
       'notifications',
     ]),
   },
@@ -94,6 +96,7 @@ const OPERATIONAL_ROLES: Record<OperationalRole, OperationalRoleConfig> = {
     navItems: buildNavItems('/accounting', [
       'overview',
       'finance',
+      'claims',
       'notifications',
     ]),
   },
