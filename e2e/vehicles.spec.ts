@@ -21,7 +21,11 @@ import { loginAs } from './helpers/auth';
  * simple and skip that).
  */
 
-const uniquePlate = (label: string) => `E2E-${label}-${Date.now()}`;
+// plate_number is max_length=20 on the backend — a single-letter label
+// plus a 10-digit timestamp suffix keeps every generated plate well
+// under that (and `-U` for the post-edit plate still fits).
+const uniquePlate = (label: string) =>
+  `E2E${label}${Date.now().toString().slice(-10)}`;
 
 /** qaDriver's DriverProfile id — looked up live rather than hardcoded,
  * since Vehicle.assigned_driver is a DriverProfile id, not a User id
