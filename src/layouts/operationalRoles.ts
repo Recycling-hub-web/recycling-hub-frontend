@@ -55,6 +55,10 @@ type OperationalRoleConfig = {
 // verifying/closing requests a driver has already dropped off; the
 // backend already scopes its queryset to delivered/closed only, so
 // there's nothing earlier in the lifecycle to accidentally expose here.
+// "Vehicles" (VehiclesView) is admin/staff only, deliberately not added
+// to driver/accounting here — a driver only ever reads their own
+// assigned vehicle (GET /claims/vehicles/mine/, surfaced on the claim
+// form itself, not a sidebar page), never manages the fleet.
 const OPERATIONAL_ROLES: Record<OperationalRole, OperationalRoleConfig> = {
   staff: {
     route: '/staff',
@@ -69,6 +73,7 @@ const OPERATIONAL_ROLES: Record<OperationalRole, OperationalRoleConfig> = {
       'partnerships',
       'finance',
       'claims',
+      'vehicles',
       'notifications',
     ]),
   },

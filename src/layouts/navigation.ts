@@ -1,6 +1,7 @@
 import type { IconType } from 'react-icons';
 import {
   LuBell,
+  LuCar,
   LuCrown,
   LuHandshake,
   LuHardDrive,
@@ -85,6 +86,7 @@ const NAV_MODULES = {
   },
   finance: { segment: 'finance', label: 'Finance Records', icon: LuWallet },
   claims: { segment: 'claims', label: 'Expense Claims', icon: LuReceipt },
+  vehicles: { segment: 'vehicles', label: 'Vehicles', icon: LuCar },
   activity: { segment: 'activity', label: 'Activity Log', icon: LuHistory },
   notifications: {
     segment: 'notifications',
@@ -141,6 +143,7 @@ const adminNavItemsFor = (role: UserRole | undefined): NavItem[] => [
     'partnerships',
     'finance',
     'claims',
+    'vehicles',
     'notifications',
   ]),
   ...(role === 'super_admin'
