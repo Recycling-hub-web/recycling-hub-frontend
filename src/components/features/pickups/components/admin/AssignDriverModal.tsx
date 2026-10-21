@@ -58,12 +58,13 @@ const AssignDriverModal = ({
   const validate = (): boolean => {
     const nextErrors: Record<string, string> = {};
     if (!formData.driver) nextErrors.driver = 'Choose a driver.';
-    // Optional — a plain YYYY-MM-DD string, so a lexicographic compare
-    // against today's own YYYY-MM-DD is enough; no time component to
-    // reason about.
-    const today = new Date().toISOString().slice(0, 10);
-    if (formData.scheduled_at && formData.scheduled_at < today) {
-      nextErrors.scheduled_at = 'Pickup date must be today or later.';
+    // Optional. When given, it's the time agreed with the customer and
+    // counts as confirmed — the driver isn't asked to confirm it again.
+    if (
+      formData.scheduled_at &&
+      new Date(formData.scheduled_at).getTime() < Date.now()
+    ) {
+      nextErrors.scheduled_at = 'Pickup time must be in the future.';
     }
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
@@ -99,7 +100,7 @@ const AssignDriverModal = ({
       open={open}
       onClose={handleClose}
       title="Schedule pickup"
-      subtitle="Assign a driver, with an optional pickup date."
+      subtitle="Assign a driver, with an optional confirmed pickup date and time."
       footer={
         <FormActions>
           <button
@@ -138,10 +139,11 @@ const AssignDriverModal = ({
           disabled={loadingDrivers}
         />
         <InputField
-          label="Pickup date"
+          label="Confirmed pickup date & time"
           field="scheduled_at"
-          type="date"
+          type="datetime-local"
           required={false}
+          helperText="Optional. If set, the driver won't be asked to confirm the time."
           formData={formData}
           errors={errors}
           updateFormData={updateFormData}

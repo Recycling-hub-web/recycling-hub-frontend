@@ -369,18 +369,23 @@ const OrderDetailsView = ({
             {request.scheduled_at && (
               <InfoRow
                 icon={<LuCalendar className="size-4" />}
-                label="Scheduled for"
-                value={<AppDate value={request.scheduled_at} format="long" />}
+                label="Pickup date & time"
+                value={
+                  <AppDate value={request.scheduled_at} format="datetime" />
+                }
               />
             )}
             <InfoRow
               icon={<LuClipboardCheck className="size-4" />}
-              label="Driver confirmed pickup time"
+              label="Pickup time confirmed"
               value={
                 request.pickup_confirmed_at ? (
-                  <AppDate value={request.pickup_confirmed_at} format="long" />
+                  <AppDate
+                    value={request.pickup_confirmed_at}
+                    format="datetime"
+                  />
                 ) : (
-                  'Not yet'
+                  'Not yet — waiting for the driver'
                 )
               }
             />
