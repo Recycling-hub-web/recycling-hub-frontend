@@ -1,13 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import {
-  LuCheck,
-  LuEye,
-  LuMessageCircle,
-  LuPhoneCall,
-  LuUserRoundSearch,
-} from 'react-icons/lu';
+import { LuCheck, LuEye, LuPhoneCall, LuUserRoundSearch } from 'react-icons/lu';
 
 import { StatusBadge } from '../../../../ui/badges/StatusBadge';
 import { AppDate } from '../../../../ui/date/AppDate';
@@ -17,6 +11,7 @@ import {
   TableLoadingRow,
   TableWrapper,
 } from '../../../../ui/table';
+import { WhatsAppLink } from '../../../../ui/WhatsAppLink';
 import {
   QUICK_REQUEST_STATUS_BADGE_VARIANT,
   REQUEST_TYPE_BADGE_VARIANT,
@@ -44,9 +39,6 @@ const columnCount = 5;
 // wa.me only accepts digits (no "+", spaces, or dashes) — stored numbers
 // are already a plain "+<dialcode><number>" string (see joinPhoneNumber),
 // but this strips defensively in case of any other formatting.
-const whatsAppLink = (phoneNumber: string) =>
-  `https://wa.me/${phoneNumber.replace(/\D/g, '')}`;
-
 /** Pure presentational — the Quick Leads tab on PickupRequestsView. No
  * pagination yet (see useQuickPickupRequests — small-volume queue to
  * start). "Follow up" opens the existing create form prefilled with
@@ -83,17 +75,10 @@ const QuickLeadTable = ({
     return leads.map((lead) => (
       <tr key={lead.id} className="transition-colors hover:bg-slate-50">
         <td className="px-6 py-4 font-medium text-slate-900">
-          <a
-            href={whatsAppLink(lead.phone_number)}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={(e) => e.stopPropagation()}
-            aria-label={`Message ${lead.phone_number} on WhatsApp`}
-            className="inline-flex items-center gap-1.5 text-slate-900 transition hover:text-brand-600"
-          >
-            <LuMessageCircle className="size-4 shrink-0 text-brand-600" />
-            {lead.phone_number}
-          </a>
+          <WhatsAppLink
+            phoneNumber={lead.phone_number}
+            className="text-slate-900"
+          />
         </td>
         <td className="px-6 py-4">
           <StatusBadge variant={REQUEST_TYPE_BADGE_VARIANT[lead.request_type]}>

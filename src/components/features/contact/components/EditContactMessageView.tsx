@@ -9,6 +9,7 @@ import { LuArrowLeft } from 'react-icons/lu';
 import {
   joinPhoneNumber,
   splitPhoneNumber,
+  validatePhoneNumber,
 } from '../../../../constants/dialCodes';
 import { ApiError } from '../../../../lib/api';
 import { InputField } from '../../../form/fields/InputField';
@@ -93,8 +94,11 @@ const EditContactMessageView = ({
     if (!data.full_name.trim()) nextErrors.full_name = 'Full name is required.';
     if (!EMAIL_PATTERN.test(data.email))
       nextErrors.email = 'Enter a valid email address.';
-    if (!data.phone_local.trim())
-      nextErrors.phone_local = 'Phone number is required.';
+    const phoneError = validatePhoneNumber(
+      data.phone_dial_code,
+      data.phone_local,
+    );
+    if (phoneError) nextErrors.phone_local = phoneError;
     if (!data.subject.trim()) nextErrors.subject = 'Subject is required.';
     if (!data.message.trim()) nextErrors.message = 'Message is required.';
     setErrors(nextErrors);

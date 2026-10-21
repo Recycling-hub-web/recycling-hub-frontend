@@ -9,6 +9,7 @@ import { LuArrowLeft } from 'react-icons/lu';
 import {
   joinPhoneNumber,
   splitPhoneNumber,
+  validatePhoneNumber,
 } from '../../../../constants/dialCodes';
 import { ApiError } from '../../../../lib/api';
 import { InputField } from '../../../form/fields/InputField';
@@ -48,6 +49,7 @@ const EditUserView = ({ userId }: { userId: string }) => {
   const [formData, setFormData] = useState<FormState | null>(null);
   const [photoKey, setPhotoKey] = useState<string | null>(null);
   const [error, setError] = useState('');
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (!user) return;
@@ -62,8 +64,10 @@ const EditUserView = ({ userId }: { userId: string }) => {
     setPhotoKey(user.profile_photo?.file_key ?? null);
   }, [user]);
 
-  const updateFormData = (field: string, value: string | boolean) =>
+  const updateFormData = (field: string, value: string | boolean) => {
     setFormData((prev) => (prev ? { ...prev, [field]: value } : prev));
+    setErrors((prev) => ({ ...prev, [field]: '' }));
+  };
 
   const joinedPhone = formData
     ? joinPhoneNumber(formData.phone_dial_code, formData.phone_local)
@@ -82,6 +86,13 @@ const EditUserView = ({ userId }: { userId: string }) => {
     e.preventDefault();
     if (!formData || !user) return;
     setError('');
+    const phoneError = validatePhoneNumber(
+      formData.phone_dial_code,
+      formData.phone_local,
+      { required: false },
+    );
+    setErrors(phoneError ? { phone_local: phoneError } : {});
+    if (phoneError) return;
     try {
       await updateUser(user.id, {
         full_name: formData.full_name,
@@ -143,6 +154,7 @@ const EditUserView = ({ userId }: { userId: string }) => {
               numberField="phone_local"
               required={false}
               formData={formData}
+              errors={errors}
               updateFormData={updateFormData}
               disabled={submitting}
             />

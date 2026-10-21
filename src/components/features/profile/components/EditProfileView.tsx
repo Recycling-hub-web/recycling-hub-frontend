@@ -9,6 +9,7 @@ import { LuArrowLeft } from 'react-icons/lu';
 import {
   joinPhoneNumber,
   splitPhoneNumber,
+  validatePhoneNumber,
 } from '../../../../constants/dialCodes';
 import { useAuth } from '../../../../contexts/AuthContext';
 import { InputField } from '../../../form/fields/InputField';
@@ -34,7 +35,6 @@ type FormState = {
 
 // Same rule as the backend's pickups phone_validator — the own-profile
 // endpoint doesn't validate phone_number itself, so it's checked here.
-const PHONE_PATTERN = /^\+?[0-9 ]{7,15}$/;
 
 /** /profile/edit — the signed-in user edits their own name and phone
  * (PATCH /accounts/me/). Email, role and status aren't editable here, by
@@ -74,9 +74,12 @@ const EditProfileView = () => {
     setError('');
     const next: Record<string, string> = {};
     if (!fullName) next.full_name = 'Full name is required.';
-    if (phone && !PHONE_PATTERN.test(phone)) {
-      next.phone_local = 'Enter a valid phone number (7–15 digits).';
-    }
+    const phoneError = validatePhoneNumber(
+      formData.phone_dial_code,
+      formData.phone_local,
+      { required: false },
+    );
+    if (phoneError) next.phone_local = phoneError;
     setErrors(next);
     if (Object.keys(next).length) return;
 

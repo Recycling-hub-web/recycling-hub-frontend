@@ -6,7 +6,10 @@ import type { FormEvent } from 'react';
 import { useState } from 'react';
 import { LuArrowLeft } from 'react-icons/lu';
 
-import { joinPhoneNumber } from '../../../../constants/dialCodes';
+import {
+  joinPhoneNumber,
+  validatePhoneNumber,
+} from '../../../../constants/dialCodes';
 import { InputField } from '../../../form/fields/InputField';
 import { PhoneInputField } from '../../../form/fields/PhoneInputField';
 import { PageContainer } from '../../../layout/PageContainer';
@@ -70,6 +73,12 @@ const CreateStaffView = () => {
     const nextErrors: Record<string, string> = {};
     if (!data.full_name.trim()) nextErrors.full_name = 'Full name is required.';
     if (!data.email.trim()) nextErrors.email = 'Email is required.';
+    const phoneError = validatePhoneNumber(
+      data.phone_dial_code,
+      data.phone_local,
+      { required: false },
+    );
+    if (phoneError) nextErrors.phone_local = phoneError;
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
   };

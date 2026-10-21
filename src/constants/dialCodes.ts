@@ -211,14 +211,62 @@ const splitPhoneNumber = (
   };
 };
 
+/** The local number's digits only — spaces, dashes and brackets dropped,
+ * and a leading trunk "0" removed (Malaysians type "012-345 6789"; after
+ * +60 that's 123456789). */
+const phoneDigits = (number: string): string =>
+  number.replace(/\D/g, '').replace(/^0+/, '');
+
 /** Inverse of splitPhoneNumber — joins a dial code + local number back
- * into the single string the backend's `phone_number` field stores.
- * Returns '' (not just the bare dial code) when the local number is
- * empty, so an untouched/cleared field submits as genuinely blank. */
+ * into the single E.164 string the backend's `phone_number` field stores
+ * (e.g. "+60123456789"). Returns '' (not just the bare dial code) when the
+ * local number is empty, so an untouched/cleared field submits as
+ * genuinely blank. */
 const joinPhoneNumber = (dialCode: string, number: string): string => {
-  const trimmed = number.trim();
-  return trimmed ? `${dialCode}${trimmed}` : '';
+  const digits = phoneDigits(number);
+  return digits ? `${dialCode}${digits}` : '';
 };
 
-export { DEFAULT_DIAL_CODE, DIAL_CODES, joinPhoneNumber, splitPhoneNumber };
+type PhoneValidationOptions = {
+  required?: boolean;
+  /** Override the messages, e.g. with a translated public-site string. */
+  messages?: { required?: string; invalid?: string };
+};
+
+/** The one phone-number check every form uses. Returns an error message,
+ * or '' when the number is fine (or empty and optional).
+ * - Malaysia (+60): 8–10 digits after the country code — mobiles
+ *   (12-345 6789, 11-2345 6789) and landlines (3-1234 5678).
+ * - Anywhere else: E.164 — at most 15 digits including the country code. */
+const validatePhoneNumber = (
+  dialCode: string,
+  number: string,
+  { required = true, messages = {} }: PhoneValidationOptions = {},
+): string => {
+  if (!number.trim()) {
+    return required ? messages.required ?? 'Phone number is required.' : '';
+  }
+  const digits = phoneDigits(number);
+  const isMalaysian = dialCode === DEFAULT_DIAL_CODE;
+  const totalDigits = dialCode.replace(/\D/g, '').length + digits.length;
+  const valid = isMalaysian
+    ? /^[1-9]\d{7,9}$/.test(digits)
+    : digits.length >= 4 && totalDigits <= 15;
+  if (valid) return '';
+  return (
+    messages.invalid ??
+    (isMalaysian
+      ? 'Enter a valid Malaysian number, e.g. 12-345 6789.'
+      : 'Enter a valid phone number (up to 15 digits including the country code).')
+  );
+};
+
+export {
+  DEFAULT_DIAL_CODE,
+  DIAL_CODES,
+  joinPhoneNumber,
+  phoneDigits,
+  splitPhoneNumber,
+  validatePhoneNumber,
+};
 export type { DialCode };
