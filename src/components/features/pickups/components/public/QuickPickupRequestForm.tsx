@@ -3,7 +3,10 @@
 import { type FormEvent, useState } from 'react';
 import { LuBuilding2, LuSmartphone } from 'react-icons/lu';
 
-import { joinPhoneNumber } from '../../../../../constants/dialCodes';
+import {
+  joinPhoneNumber,
+  validatePhoneNumber,
+} from '../../../../../constants/dialCodes';
 import { useDictionary } from '../../../../../hooks/useDictionary';
 import { ApiError } from '../../../../../lib/api';
 import { PhoneInputField } from '../../../../form/fields/PhoneInputField';
@@ -60,8 +63,18 @@ const QuickPickupRequestForm = () => {
     e.preventDefault();
     setApiError('');
 
-    if (!formData.phone_local.trim()) {
-      setErrors({ phone_local: content.errorPhoneRequired });
+    const phoneError = validatePhoneNumber(
+      formData.phone_dial_code,
+      formData.phone_local,
+      {
+        messages: {
+          required: content.errorPhoneRequired,
+          invalid: content.errorPhoneInvalid,
+        },
+      },
+    );
+    if (phoneError) {
+      setErrors({ phone_local: phoneError });
       return;
     }
 

@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 
-import { EditPickupRequestView } from '../../../../../../components/features/pickups/components';
+import { EditOrderView } from '../../../../../../components/features/pickups/components';
 
 export const metadata: Metadata = {
-  title: 'Edit Pickup Request — Recycling Hub Super Admin',
+  title: 'Edit Order — Recycling Hub Super Admin',
   robots: { index: false, follow: false },
 };
 
@@ -13,7 +13,7 @@ export default function SuperAdminEditPickupPage({
   params: { requestId: string };
 }) {
   return (
-    <EditPickupRequestView
+    <EditOrderView
       requestId={params.requestId}
       basePath="/super-admin/pickups"
     />

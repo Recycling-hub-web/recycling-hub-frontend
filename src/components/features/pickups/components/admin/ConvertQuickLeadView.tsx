@@ -9,6 +9,7 @@ import { LuArrowLeft, LuCircleCheck, LuCircleX, LuClock } from 'react-icons/lu';
 import {
   joinPhoneNumber,
   splitPhoneNumber,
+  validatePhoneNumber,
 } from '../../../../../constants/dialCodes';
 import type { SelectedAddress } from '../../../../../lib/geoapify';
 import { AddressInput } from '../../../../form/fields/AddressInput';
@@ -29,7 +30,6 @@ import { useToast } from '../../../../ui/toast/ToastContext';
 import { REQUEST_TYPE_FILTER_OPTIONS } from '../../constants';
 import {
   useConvertQuickPickupRequest,
-  useCreatePickupRequest,
   useEvaluatePickup,
   usePickupCategories,
   useQuickPickupRequest,
@@ -37,7 +37,6 @@ import {
 import type { PickupRequestItemInput } from '../../services/pickupService';
 import type { PickupRequestItem, PickupRequestType } from '../../types';
 import { PickupItemsFieldArray } from '../shared/PickupItemsFieldArray';
-import { type Photo, PickupPhotoUploader } from '../shared/PickupPhotoUploader';
 import { isValidPrice, PricingEditor } from '../shared/PricingEditor';
 
 const EMPTY_ITEM: PickupRequestItemInput = {
@@ -56,14 +55,10 @@ type FormState = {
   phone_local: string;
   request_type: PickupRequestType;
   pickup_address: string;
+  requested_at: string;
   note: string;
   // Optional — evaluating right here skips the separate Evaluate step
-  // on the details page afterward. Kept as its own trio of fields
-  // rather than reusing EvaluateModal's own state, since this form has
-  // a third option (''/"not yet") that modal doesn't need. Lump-sum
-  // Lump-sum or, with 2+ materials, priced per item — see itemPrices
-  // and matchItemPrices below.
-  // 'none' = evaluate later, from the details page.
+  // on the details page afterward. 'none' = evaluate later.
   evaluation_decision: 'none' | 'approved' | 'rejected';
   evaluation_price: string;
   evaluation_reason: string;
@@ -76,6 +71,7 @@ const INITIAL_STATE: FormState = {
   phone_local: '',
   request_type: 'individual',
   pickup_address: '',
+  requested_at: '',
   note: '',
   evaluation_decision: 'none',
   evaluation_price: '',
@@ -136,29 +132,25 @@ const matchItemPrices = (
   return result;
 };
 
-type CreatePickupRequestViewProps = {
+type ConvertQuickLeadViewProps = {
+  /** This view's Orders basePath (e.g. /admin/pickups) — the new Order
+   * is redirected to `${basePath}/{id}` once created. */
   basePath: '/admin/pickups' | '/staff/pickups' | '/super-admin/pickups';
 };
 
-// Same public POST /pickups/ the real public request form uses (see
-// PublicPickupRequestForm) — this just lets admin/staff log a request
-// taken over the phone or in person, without requiring the requester to
-// use the public form themselves.
-const CreatePickupRequestView = ({
-  basePath,
-}: CreatePickupRequestViewProps) => {
+// Completes a Quick Lead (QuickLeadTable's "Follow up" action) into a
+// real pickup request AND one Order under it, in a single step — see
+// PickupQuickRequestViewSet.convert on the backend. This used to also
+// serve a plain "New request" create with no leadId; that's now a
+// two-step flow (create a bare PickupRequest, then an Order under it —
+// see PickupRequestCreateView/CreateOrderView), so this view only
+// renders anything useful once reached with a `leadId`.
+const ConvertQuickLeadView = ({ basePath }: ConvertQuickLeadViewProps) => {
   const router = useRouter();
   const toast = useToast();
   const searchParams = useSearchParams();
-  // Present only when reached via QuickLeadTable's "Follow up" action —
-  // completes that lead into a real request instead of a plain create.
   const leadId = searchParams?.get('leadId') ?? null;
 
-  const {
-    execute: createRequest,
-    loading: creating,
-    error: createError,
-  } = useCreatePickupRequest();
   const {
     execute: convertLead,
     loading: converting,
@@ -174,8 +166,6 @@ const CreatePickupRequestView = ({
   ]);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [itemErrors, setItemErrors] = useState<Record<string, string>[]>([]);
-  const [photoKey, setPhotoKey] = useState<string | null>(null);
-  const [photoPreview, setPhotoPreview] = useState<Photo>(null);
   const [pricingMode, setPricingMode] = useState<'lump' | 'itemized'>('lump');
   // One price per materials line, by index — kept as long as `items`.
   const [itemPrices, setItemPrices] = useState<string[]>([]);
@@ -192,8 +182,8 @@ const CreatePickupRequestView = ({
     pricingMode === 'itemized';
   const prices = items.map((_, i) => itemPrices[i] ?? '');
 
-  const submitting = creating || converting;
-  const error = createError || convertError;
+  const submitting = converting;
+  const error = convertError;
 
   // Prefill type + phone once the lead loads — staff can still edit
   // either before submitting.
@@ -219,10 +209,15 @@ const CreatePickupRequestView = ({
     if (data.request_type === 'business' && !data.email.trim()) {
       nextErrors.email = 'Email is required for business requests.';
     }
-    if (!data.phone_local.trim())
-      nextErrors.phone_local = 'Phone number is required.';
+    const phoneError = validatePhoneNumber(
+      data.phone_dial_code,
+      data.phone_local,
+    );
+    if (phoneError) nextErrors.phone_local = phoneError;
     if (!data.pickup_address.trim())
       nextErrors.pickup_address = 'Pickup address is required.';
+    if (!data.requested_at)
+      nextErrors.requested_at = 'Pickup date and time is required.';
     if (data.evaluation_decision === 'approved') {
       if (itemized) {
         if (!prices.every(isValidPrice)) {
@@ -253,39 +248,39 @@ const CreatePickupRequestView = ({
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    if (!leadId) return;
     if (!validate(formData)) return;
 
     const payload = {
       full_name: formData.full_name,
       email: formData.email || undefined,
-      phone_number:
-        joinPhoneNumber(formData.phone_dial_code, formData.phone_local) ||
-        undefined,
+      phone_number: joinPhoneNumber(
+        formData.phone_dial_code,
+        formData.phone_local,
+      ),
+      request_type: formData.request_type,
+      pickup_address: formData.pickup_address,
+      requested_at: new Date(formData.requested_at).toISOString(),
+      note: formData.note || undefined,
       items: items.map((item) => ({
         category: item.category,
         estimated_quantity: item.estimated_quantity?.trim() || undefined,
         quantity_unit: item.quantity_unit?.trim() || undefined,
       })),
-      request_type: formData.request_type,
-      pickup_address: formData.pickup_address,
-      photo: photoKey || undefined,
-      note: formData.note || undefined,
     };
 
     try {
-      const request = leadId
-        ? await convertLead(leadId, payload)
-        : await createRequest(payload);
+      const order = await convertLead(leadId, payload);
 
       if (formData.evaluation_decision !== 'none') {
         try {
           const pricedItems = itemized
-            ? matchItemPrices(items, prices, request.items ?? [])
+            ? matchItemPrices(items, prices, order.items ?? [])
             : null;
           if (itemized && !pricedItems) {
-            throw new Error('Could not match item prices to the request.');
+            throw new Error('Could not match item prices to the order.');
           }
-          await evaluateRequest(request.id, {
+          await evaluateRequest(order.id, {
             decision: formData.evaluation_decision,
             price:
               formData.evaluation_decision === 'approved' && !itemized
@@ -302,12 +297,13 @@ const CreatePickupRequestView = ({
             `A request for ${formData.full_name} has been added and ${formData.evaluation_decision}.`,
           );
         } catch {
-          // The request itself was created fine — only the follow-up
-          // evaluate call failed — so this isn't the generic failure
-          // toast; it's created, just needs evaluating manually now.
+          // The request/order itself was created fine — only the
+          // follow-up evaluate call failed — so this isn't the generic
+          // failure toast; it's created, just needs evaluating
+          // manually now.
           toast.error(
             'Request created, but evaluation failed',
-            'Open the request and evaluate it from there.',
+            'Open the order and evaluate it from there.',
           );
         }
       } else {
@@ -316,14 +312,36 @@ const CreatePickupRequestView = ({
           `A request for ${formData.full_name} has been added.`,
         );
       }
-      router.push(`${basePath}/${request.id}`);
+      router.push(`${basePath}/${order.id}`);
     } catch {
-      // useCreatePickupRequest/useConvertQuickPickupRequest already
-      // captured the message in `error`, shown below.
+      // useConvertQuickPickupRequest already captured the message in
+      // `error`, shown below.
     }
   };
 
-  if (leadId && loadingLead) return <Loading text="Loading lead…" />;
+  if (!leadId) {
+    return (
+      <PageContainer variant="form">
+        <Link
+          href={basePath}
+          className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600"
+        >
+          <LuArrowLeft className="size-4" />
+          Back to orders
+        </Link>
+        <Card className="p-5 text-sm text-slate-600">
+          This form follows up on a Quick Lead. To create a brand-new pickup
+          request, use the{' '}
+          <Link href={basePath} className="font-semibold text-brand-600">
+            Pickup Requests
+          </Link>{' '}
+          list&apos;s &ldquo;New request&rdquo; action instead.
+        </Card>
+      </PageContainer>
+    );
+  }
+
+  if (loadingLead) return <Loading text="Loading lead…" />;
 
   return (
     <PageContainer variant="form">
@@ -332,16 +350,12 @@ const CreatePickupRequestView = ({
         className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600"
       >
         <LuArrowLeft className="size-4" />
-        Back to pickup requests
+        Back to orders
       </Link>
 
       <PageHeader
-        title={leadId ? 'Follow up on quick lead' : 'New pickup request'}
-        subtitle={
-          leadId
-            ? 'Complete the rest of the details to create the real request.'
-            : 'Log a request taken over the phone or in person.'
-        }
+        title="Follow up on quick lead"
+        subtitle="Complete the rest of the details to create the real pickup request."
       />
 
       <Card className="p-5">
@@ -407,6 +421,15 @@ const CreatePickupRequestView = ({
                 </p>
               )}
             </div>
+            <InputField
+              label="Pickup date & time"
+              field="requested_at"
+              type="datetime-local"
+              formData={formData}
+              errors={errors}
+              updateFormData={updateFormData}
+              disabled={submitting}
+            />
             <PickupItemsFieldArray
               items={items}
               onChange={setItems}
@@ -426,18 +449,6 @@ const CreatePickupRequestView = ({
                 itemHeading: 'Item',
               }}
             />
-            <div className="sm:col-span-2">
-              <PickupPhotoUploader
-                value={photoPreview}
-                onChange={(key) => {
-                  setPhotoKey(key);
-                  setPhotoPreview(
-                    key ? { file_key: key, public_url: null } : null,
-                  );
-                }}
-                disabled={submitting}
-              />
-            </div>
             <div className="sm:col-span-2">
               <TextareaField
                 label="Note"
@@ -465,7 +476,7 @@ const CreatePickupRequestView = ({
             </h3>
             <p className="mt-0.5 text-xs text-slate-500">
               Already know the outcome? Decide it now and skip the Evaluate step
-              on the request&apos;s details page.
+              on the order&apos;s details page.
             </p>
 
             <SegmentedControl
@@ -547,4 +558,4 @@ const CreatePickupRequestView = ({
   );
 };
 
-export { CreatePickupRequestView };
+export { ConvertQuickLeadView };

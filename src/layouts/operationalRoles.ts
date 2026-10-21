@@ -64,6 +64,7 @@ const OPERATIONAL_ROLES: Record<OperationalRole, OperationalRoleConfig> = {
     route: '/staff',
     navItems: buildNavItems('/staff', [
       'overview',
+      'pickupRequests',
       'pickups',
       'contact',
       'categories',

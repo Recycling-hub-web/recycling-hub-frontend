@@ -1,14 +1,16 @@
 import { useState } from 'react';
 
-import { claimPickupRequest } from '../services/pickupService';
+import { claimOrder } from '../services/pickupService';
 
-const useClaimPickupRequest = () => {
+/** A driver self-assigning to an Order (renamed from
+ * useClaimPickupRequest). */
+const useClaimOrder = () => {
   const [loading, setLoading] = useState(false);
 
   const execute = async (id: string) => {
     setLoading(true);
     try {
-      return await claimPickupRequest(id);
+      return await claimOrder(id);
     } finally {
       setLoading(false);
     }
@@ -17,4 +19,4 @@ const useClaimPickupRequest = () => {
   return { execute, loading };
 };
 
-export { useClaimPickupRequest };
+export { useClaimOrder };

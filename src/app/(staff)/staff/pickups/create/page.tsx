@@ -1,12 +1,12 @@
 import type { Metadata } from 'next';
 
-import { CreatePickupRequestView } from '../../../../../components/features/pickups/components';
+import { ConvertQuickLeadView } from '../../../../../components/features/pickups/components';
 
 export const metadata: Metadata = {
-  title: 'New Pickup Request — Recycling Hub Staff',
+  title: 'Follow Up On Lead — Recycling Hub Staff',
   robots: { index: false, follow: false },
 };
 
 export default function StaffCreatePickupPage() {
-  return <CreatePickupRequestView basePath="/staff/pickups" />;
+  return <ConvertQuickLeadView basePath="/staff/pickups" />;
 }

@@ -1,12 +1,12 @@
 import type { Metadata } from 'next';
 
-import { CreatePickupRequestView } from '../../../../../components/features/pickups/components';
+import { ConvertQuickLeadView } from '../../../../../components/features/pickups/components';
 
 export const metadata: Metadata = {
-  title: 'New Pickup Request — Recycling Hub Super Admin',
+  title: 'Follow Up On Lead — Recycling Hub Super Admin',
   robots: { index: false, follow: false },
 };
 
 export default function SuperAdminCreatePickupPage() {
-  return <CreatePickupRequestView basePath="/super-admin/pickups" />;
+  return <ConvertQuickLeadView basePath="/super-admin/pickups" />;
 }

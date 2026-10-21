@@ -15,6 +15,10 @@ type SelectOption =
 type SelectFieldProps = {
   label: string;
   field: string;
+  /** Overrides the `data-field` wrapper attribute — same convention as
+   * InputField's own `dataField`. Needed wherever `field` itself isn't
+   * a stable, human-readable name (e.g. keyed by a row's uuid). */
+  dataField?: string;
   options: SelectOption[];
   required?: boolean;
   formData: Record<string, unknown>;
@@ -27,6 +31,7 @@ type SelectFieldProps = {
 const SelectField = ({
   label,
   field,
+  dataField,
   options,
   required = true,
   formData,
@@ -38,7 +43,7 @@ const SelectField = ({
   const value = (getNestedValue(formData, field) as string | undefined) ?? '';
 
   return (
-    <div className="mb-4" data-field={field}>
+    <div className="mb-4" data-field={dataField ?? field}>
       <label className="block text-sm font-medium text-slate-900">
         {label} {required && <span className="text-red-600">*</span>}
       </label>

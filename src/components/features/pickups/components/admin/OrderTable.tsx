@@ -18,17 +18,17 @@ import {
   REQUEST_TYPE_BADGE_VARIANT,
 } from '../../constants';
 import {
+  type CollectionRequestListItem,
   derivePickupStage,
   itemsSummary,
   PICKUP_REQUEST_TYPE_LABELS,
   PICKUP_STAGE_LABELS,
-  type PickupRequestListItem,
 } from '../../types';
 
 const PAGE_SIZE = 12;
 
-type PickupRequestTableProps = {
-  requests: PickupRequestListItem[];
+type OrderTableProps = {
+  requests: CollectionRequestListItem[];
   count: number;
   page: number;
   onPageChange: (page: number) => void;
@@ -43,21 +43,24 @@ type PickupRequestTableProps = {
    * staff have identical permissions on this module (see
    * CollectionRequestViewSet.get_permissions on the backend). */
   basePath: string;
-  onDeleteRequest: (request: PickupRequestListItem) => void;
+  onDeleteRequest: (request: CollectionRequestListItem) => void;
   /** Reject is a direct one-click call (same decision as the Evaluate
    * modal on the detail page, just without a note — rejecting never
    * requires a price). Approve can't be one-click the same way:
    * approving always requires a price, so this opens the same Evaluate
    * modal the detail page uses instead of calling the API directly. */
-  onApprove: (request: PickupRequestListItem) => void;
-  onReject: (request: PickupRequestListItem) => void;
+  onApprove: (request: CollectionRequestListItem) => void;
+  onReject: (request: CollectionRequestListItem) => void;
   evaluatingId: string | null;
 };
 
 const columnCount = 8;
 
-/** Pure presentational — every value it renders is a prop. */
-const PickupRequestTable = ({
+/** Pure presentational — every value it renders is a prop. Renamed
+ * from PickupRequestTable now that this table lists Orders, not the
+ * higher-level PickupRequest (see PickupRequestsListView's own table
+ * for that). */
+const OrderTable = ({
   requests,
   count,
   page,
@@ -72,7 +75,7 @@ const PickupRequestTable = ({
   onApprove,
   onReject,
   evaluatingId,
-}: PickupRequestTableProps) => {
+}: OrderTableProps) => {
   const router = useRouter();
 
   const renderRows = () => {
@@ -87,7 +90,7 @@ const PickupRequestTable = ({
       );
     if (requests.length === 0) {
       let emptySubtitle =
-        'Pickup requests from the website or added by staff will show up here.';
+        'Orders created from pickup requests will show up here.';
       if (search) {
         emptySubtitle = `No matches for "${search}".`;
       } else if (statusFilter) {
@@ -97,7 +100,7 @@ const PickupRequestTable = ({
         <TableEmptyRow
           colSpan={columnCount}
           icon={<LuTruck className="size-6" />}
-          title="No pickup requests found"
+          title="No orders found"
           subtitle={emptySubtitle}
         />
       );
@@ -110,18 +113,22 @@ const PickupRequestTable = ({
           onClick={() => router.push(`${basePath}/${r.id}`)}
           className="cursor-pointer transition-colors hover:bg-slate-50"
         >
-          <td className="max-w-[180px] truncate px-6 py-4 font-medium text-slate-900">
-            {r.full_name}
+          <td className="max-w-[140px] truncate px-6 py-4 font-medium text-slate-900">
+            {r.code}
           </td>
-          <td className="max-w-[200px] truncate px-6 py-4 text-slate-500">
-            {r.email}
+          <td className="max-w-[160px] truncate px-6 py-4 text-slate-700">
+            {r.pickup_request.full_name}
           </td>
           <td className="max-w-[160px] truncate px-6 py-4 text-slate-700">
             {itemsSummary(r.items)}
           </td>
           <td className="px-6 py-4">
-            <StatusBadge variant={REQUEST_TYPE_BADGE_VARIANT[r.request_type]}>
-              {PICKUP_REQUEST_TYPE_LABELS[r.request_type]}
+            <StatusBadge
+              variant={
+                REQUEST_TYPE_BADGE_VARIANT[r.pickup_request.request_type]
+              }
+            >
+              {PICKUP_REQUEST_TYPE_LABELS[r.pickup_request.request_type]}
             </StatusBadge>
           </td>
           <td className="px-6 py-4">
@@ -131,11 +138,7 @@ const PickupRequestTable = ({
           </td>
           <td className="px-6 py-4 text-slate-700">{r.price ?? '—'}</td>
           <td className="px-6 py-4 text-slate-500">
-            {r.requested_date ? (
-              <AppDate value={r.requested_date} format="short" />
-            ) : (
-              '—'
-            )}
+            <AppDate value={r.pickup_request.requested_at} format="short" />
           </td>
           <td className="px-6 py-4">
             <div
@@ -148,7 +151,7 @@ const PickupRequestTable = ({
                     type="button"
                     onClick={() => onApprove(r)}
                     disabled={evaluatingId === r.id}
-                    aria-label={`Approve pickup request from ${r.full_name}`}
+                    aria-label={`Approve order ${r.code}`}
                     className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-green-50 hover:text-green-600 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     <LuCheck className="size-4" />
@@ -157,7 +160,7 @@ const PickupRequestTable = ({
                     type="button"
                     onClick={() => onReject(r)}
                     disabled={evaluatingId === r.id}
-                    aria-label={`Reject pickup request from ${r.full_name}`}
+                    aria-label={`Reject order ${r.code}`}
                     className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     <LuX className="size-4" />
@@ -166,7 +169,7 @@ const PickupRequestTable = ({
               )}
               <Link
                 href={`${basePath}/${r.id}/edit`}
-                aria-label={`Edit pickup request from ${r.full_name}`}
+                aria-label={`Edit order ${r.code}`}
                 className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
               >
                 <LuPencil className="size-4" />
@@ -174,7 +177,7 @@ const PickupRequestTable = ({
               <button
                 type="button"
                 onClick={() => onDeleteRequest(r)}
-                aria-label={`Delete pickup request from ${r.full_name}`}
+                aria-label={`Delete order ${r.code}`}
                 className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-red-50 hover:text-red-600"
               >
                 <LuTrash2 className="size-4" />
@@ -195,7 +198,7 @@ const PickupRequestTable = ({
           itemsPerPage={PAGE_SIZE}
           itemCount={requests.length}
           totalCount={count}
-          itemLabel="pickup requests"
+          itemLabel="orders"
           loading={loading}
         />
       }
@@ -204,10 +207,10 @@ const PickupRequestTable = ({
         <thead className="bg-slate-50">
           <tr>
             <th className="px-6 py-3 text-left font-semibold text-slate-500">
-              Name
+              Order
             </th>
             <th className="px-6 py-3 text-left font-semibold text-slate-500">
-              Email
+              Requester
             </th>
             <th className="px-6 py-3 text-left font-semibold text-slate-500">
               Items
@@ -235,4 +238,4 @@ const PickupRequestTable = ({
   );
 };
 
-export { PAGE_SIZE, PickupRequestTable };
+export { OrderTable, PAGE_SIZE };

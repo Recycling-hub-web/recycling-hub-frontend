@@ -11,7 +11,10 @@ import {
 } from 'react-icons/lu';
 
 import { BRAND } from '../../../../constants/content';
-import { joinPhoneNumber } from '../../../../constants/dialCodes';
+import {
+  joinPhoneNumber,
+  validatePhoneNumber,
+} from '../../../../constants/dialCodes';
 import { useDictionary } from '../../../../hooks/useDictionary';
 import { ApiError } from '../../../../lib/api';
 import { InputField } from '../../../form/fields/InputField';
@@ -85,8 +88,17 @@ const ContactFormSection = () => {
       nextErrors.lastName = content.errorLastNameRequired;
     if (!EMAIL_PATTERN.test(formData.email))
       nextErrors.email = content.errorEmailInvalid;
-    if (!formData.phone_local.trim())
-      nextErrors.phone_local = content.errorPhoneRequired;
+    const phoneError = validatePhoneNumber(
+      formData.phone_dial_code,
+      formData.phone_local,
+      {
+        messages: {
+          required: content.errorPhoneRequired,
+          invalid: content.errorPhoneInvalid,
+        },
+      },
+    );
+    if (phoneError) nextErrors.phone_local = phoneError;
     if (!formData.subject.trim())
       nextErrors.subject = content.errorSubjectRequired;
     if (!formData.message.trim())

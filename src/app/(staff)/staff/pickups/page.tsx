@@ -1,12 +1,17 @@
 import type { Metadata } from 'next';
 
-import { PickupRequestsView } from '../../../../components/features/pickups/components';
+import { OrdersView } from '../../../../components/features/pickups/components';
 
 export const metadata: Metadata = {
-  title: 'Pickup Requests — Recycling Hub Staff',
+  title: 'Orders — Recycling Hub Staff',
   robots: { index: false, follow: false },
 };
 
 export default function StaffPickupsPage() {
-  return <PickupRequestsView basePath="/staff/pickups" />;
+  return (
+    <OrdersView
+      basePath="/staff/pickups"
+      requestsBasePath="/staff/pickup-requests"
+    />
+  );
 }

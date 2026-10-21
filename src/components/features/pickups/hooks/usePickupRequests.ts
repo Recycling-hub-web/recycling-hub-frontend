@@ -3,28 +3,25 @@ import { useCallback, useEffect, useState } from 'react';
 import { ApiError } from '../../../../lib/api';
 import { listPickupRequests } from '../services/pickupService';
 import type {
-  PickupEvaluationStatus,
   PickupRequestListItem,
+  PickupRequestStatus,
   PickupRequestType,
-  PickupStatus,
 } from '../types';
 
 type UsePickupRequestsParams = {
   page: number;
-  status?: PickupStatus;
+  status?: PickupRequestStatus;
   search?: string;
   requestType?: PickupRequestType;
-  evaluationStatus?: PickupEvaluationStatus;
-  dropOffPoint?: string;
 };
 
+/** The new, higher-level PickupRequest list — the customer's ask, each
+ * with its own Orders nested. Admin/staff only. */
 const usePickupRequests = ({
   page,
   status,
   search,
   requestType,
-  evaluationStatus,
-  dropOffPoint,
 }: UsePickupRequestsParams) => {
   const [requests, setRequests] = useState<PickupRequestListItem[]>([]);
   const [count, setCount] = useState(0);
@@ -40,8 +37,6 @@ const usePickupRequests = ({
         status,
         search,
         requestType,
-        evaluationStatus,
-        dropOffPoint,
       });
       setRequests(data.results);
       setCount(data.count);
@@ -54,7 +49,7 @@ const usePickupRequests = ({
     } finally {
       setLoading(false);
     }
-  }, [page, status, search, requestType, evaluationStatus, dropOffPoint]);
+  }, [page, status, search, requestType]);
 
   useEffect(() => {
     refetch();

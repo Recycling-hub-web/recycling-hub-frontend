@@ -15,11 +15,7 @@ import {
 } from '../../../../ui/table';
 import { useToast } from '../../../../ui/toast/ToastContext';
 import { STATUS_BADGE_VARIANT } from '../../constants';
-import {
-  useCloseDelivery,
-  useCollectionPoints,
-  usePickupRequests,
-} from '../../hooks';
+import { useCloseDelivery, useCollectionPoints, useOrders } from '../../hooks';
 import {
   itemsSummary,
   PICKUP_STATUS_LABELS,
@@ -47,7 +43,7 @@ const ReceivingDeliveriesView = () => {
     { value: '', label: 'All stores' },
     ...collectionPoints.map((p) => ({ value: p.id, label: p.name })),
   ];
-  const { requests, loading, error, refetch } = usePickupRequests({
+  const { requests, loading, error, refetch } = useOrders({
     page: 1,
     status: statusFilter || undefined,
     dropOffPoint: storeFilter || undefined,
@@ -68,7 +64,7 @@ const ReceivingDeliveriesView = () => {
     }
   };
 
-  const columnCount = 5;
+  const columnCount = 6;
 
   const renderRows = () => {
     if (loading) return <TableLoadingRow colSpan={columnCount} />;
@@ -93,7 +89,10 @@ const ReceivingDeliveriesView = () => {
     }
     return requests.map((r) => (
       <tr key={r.id} className="transition-colors hover:bg-slate-50">
-        <td className="px-6 py-4 font-medium text-slate-900">{r.full_name}</td>
+        <td className="px-6 py-4 font-medium text-slate-900">{r.code}</td>
+        <td className="px-6 py-4 text-slate-700">
+          {r.pickup_request.full_name}
+        </td>
         <td className="px-6 py-4 text-slate-700">
           {itemsSummary(r.items)} —{' '}
           {r.delivered_quantity ?? r.items[0]?.collected_quantity ?? '—'}
@@ -112,7 +111,7 @@ const ReceivingDeliveriesView = () => {
               type="button"
               disabled={closing && closingId === r.id}
               onClick={() => handleClose(r.id)}
-              aria-label={`Verify and close delivery from ${r.full_name}`}
+              aria-label={`Verify and close delivery from ${r.pickup_request.full_name}`}
               className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
               <LuCheckCheck className="size-4" />
@@ -149,6 +148,9 @@ const ReceivingDeliveriesView = () => {
         <table className="min-w-full divide-y divide-slate-200 text-sm">
           <thead className="bg-slate-50">
             <tr>
+              <th className="px-6 py-3 text-left font-semibold text-slate-500">
+                Order
+              </th>
               <th className="px-6 py-3 text-left font-semibold text-slate-500">
                 Requester
               </th>

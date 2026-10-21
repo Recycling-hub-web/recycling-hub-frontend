@@ -22,11 +22,7 @@ import {
 } from '../../../../ui/table';
 import { useToast } from '../../../../ui/toast/ToastContext';
 import { useUploadStorageFile } from '../../../storageFiles/hooks';
-import {
-  useCollectionPoints,
-  useDropOffRoute,
-  usePickupRequests,
-} from '../../hooks';
+import { useCollectionPoints, useDropOffRoute, useOrders } from '../../hooks';
 import { itemsSummary } from '../../types';
 import {
   googleMapsDirectionsUrl,
@@ -44,7 +40,7 @@ import {
  * the planned one by default, or a different one the driver picks. */
 const RouteDropOffView = () => {
   const toast = useToast();
-  const { requests, loading, error, refetch } = usePickupRequests({
+  const { requests, loading, error, refetch } = useOrders({
     page: 1,
     status: 'collected',
   });
@@ -138,7 +134,7 @@ const RouteDropOffView = () => {
     }
   };
 
-  const columnCount = 4;
+  const columnCount = 5;
 
   const renderRows = () => {
     if (loading) return <TableLoadingRow colSpan={columnCount} />;
@@ -169,10 +165,13 @@ const RouteDropOffView = () => {
             checked={selected.has(r.id)}
             onChange={() => toggleSelect(r.id)}
             className="size-4 rounded border-slate-300"
-            aria-label={`Select ${r.full_name}`}
+            aria-label={`Select ${r.pickup_request.full_name}`}
           />
         </td>
-        <td className="px-6 py-4 font-medium text-slate-900">{r.full_name}</td>
+        <td className="px-6 py-4 font-medium text-slate-900">{r.code}</td>
+        <td className="px-6 py-4 text-slate-700">
+          {r.pickup_request.full_name}
+        </td>
         <td className="px-6 py-4 text-slate-700">
           {itemsSummary(r.items)} — {r.items[0]?.collected_quantity ?? '—'}{' '}
           collected
@@ -295,6 +294,9 @@ const RouteDropOffView = () => {
                     aria-label="Select all"
                   />
                 )}
+              </th>
+              <th className="px-6 py-3 text-left font-semibold text-slate-500">
+                Order
               </th>
               <th className="px-6 py-3 text-left font-semibold text-slate-500">
                 Requester

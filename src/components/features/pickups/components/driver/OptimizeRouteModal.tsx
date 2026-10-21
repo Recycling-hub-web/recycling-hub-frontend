@@ -10,9 +10,9 @@ import { FormActions } from '../../../../ui/buttons/FormActions';
 import { Modal } from '../../../../ui/modal/Modal';
 import { useCollectionPoints, useOptimizeRoute } from '../../hooks';
 import type {
+  CollectionRequestListItem,
   LatLng,
   OptimizeRouteResult,
-  PickupRequestListItem,
 } from '../../types';
 import {
   googleMapsMultiStopUrl,
@@ -22,7 +22,7 @@ import {
 type OptimizeRouteModalProps = {
   open: boolean;
   onClose: () => void;
-  selectedRequests: PickupRequestListItem[];
+  selectedRequests: CollectionRequestListItem[];
   /** Waze has no multi-stop link — choosing it just closes this modal
    * and hands the optimized order back up so the table can badge each
    * row 1..N; the driver works them in order via each row's own
@@ -36,8 +36,9 @@ type OptimizeRouteModalProps = {
 // not, leave the field blank: the backend can still often infer one
 // itself from the requests' own `collection_point` (set at drop-off
 // routing time), and only errors if that's ambiguous too.
-const inferCollectionPointId = (requests: PickupRequestListItem[]): string =>
-  requests[0]?.route?.collection_point?.id ?? '';
+const inferCollectionPointId = (
+  requests: CollectionRequestListItem[],
+): string => requests[0]?.route?.collection_point?.id ?? '';
 
 const getCurrentPosition = (): Promise<LatLng> =>
   new Promise((resolve, reject) => {
@@ -158,7 +159,7 @@ const OptimizeRouteModal = ({
     );
     if (first) {
       window.open(
-        wazeNavigateUrl(first.pickup_address),
+        wazeNavigateUrl(first.pickup_request.pickup_address),
         '_blank',
         'noopener,noreferrer',
       );
@@ -245,7 +246,7 @@ const OptimizeRouteModal = ({
                   <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-slate-100 text-xs font-semibold text-slate-600">
                     {i + 1}
                   </span>
-                  {req?.full_name ?? stop.request_id}
+                  {req?.pickup_request.full_name ?? stop.request_id}
                 </li>
               );
             })}

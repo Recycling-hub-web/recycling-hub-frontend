@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { LuPlus } from 'react-icons/lu';
+import { LuClipboardList } from 'react-icons/lu';
 
 import { SearchInput } from '../../../../form/filter/SearchInput';
 import { PageContainer } from '../../../../layout/PageContainer';
@@ -18,43 +18,50 @@ import {
   STATUS_FILTER_OPTIONS,
 } from '../../constants';
 import {
-  useDeletePickupRequest,
+  useDeleteOrder,
   useEvaluatePickup,
   useMarkQuickPickupRequestContacted,
-  usePickupRequests,
+  useOrders,
   useQuickPickupRequests,
 } from '../../hooks';
 import type {
+  CollectionRequestListItem,
   PickupEvaluationStatus,
   PickupQuickRequestListItem,
-  PickupRequestListItem,
   PickupRequestType,
   PickupStatus,
 } from '../../types';
 import { EvaluateModal } from './EvaluateModal';
-import { PickupRequestTable } from './PickupRequestTable';
+import { OrderTable } from './OrderTable';
 import { QuickLeadTable } from './QuickLeadTable';
 
 const SEARCH_DEBOUNCE_MS = 350;
 
-type PickupRequestsViewProps = {
+type OrdersViewProps = {
   basePath: '/admin/pickups' | '/staff/pickups' | '/super-admin/pickups';
+  /** The matching Pickup Requests list's base path — where new work
+   * now originates (an Order can't be created without a parent
+   * request, so this view's old "New request" action now points
+   * there instead). */
+  requestsBasePath: string;
 };
 
-type Tab = 'requests' | 'quick';
+type Tab = 'orders' | 'quick';
 
 const TAB_ITEMS: { key: Tab; label: string }[] = [
-  { key: 'requests', label: 'All Requests' },
+  { key: 'orders', label: 'All Orders' },
   { key: 'quick', label: 'Quick Leads' },
 ];
 
 /** One list view shared by /super-admin/pickups and /staff/pickups — admin and
  * staff have identical permissions on this module (see
  * CollectionRequestViewSet.get_permissions on the backend), so unlike
- * the contact feature there's no canDelete split to parametrize. */
-const PickupRequestsView = ({ basePath }: PickupRequestsViewProps) => {
+ * the contact feature there's no canDelete split to parametrize.
+ * Renamed from PickupRequestsView now that this lists Orders, not the
+ * higher-level PickupRequest. */
+const OrdersView = ({ basePath, requestsBasePath }: OrdersViewProps) => {
   const toast = useToast();
-  const [activeTab, setActiveTab] = useState<Tab>('requests');
+  const [activeTab, setActiveTab] = useState<Tab>('orders');
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<PickupStatus | ''>('');
   const [requestTypeFilter, setRequestTypeFilter] = useState<
@@ -76,24 +83,23 @@ const PickupRequestsView = ({ basePath }: PickupRequestsViewProps) => {
     return () => clearTimeout(timeout);
   }, [searchInput]);
 
-  const { requests, count, loading, error, refetch } = usePickupRequests({
+  const { requests, count, loading, error, refetch } = useOrders({
     page,
     status: statusFilter || undefined,
     search: search || undefined,
     requestType: requestTypeFilter || undefined,
     evaluationStatus: evaluationStatusFilter || undefined,
   });
-  const { execute: deleteRequest, loading: deleting } =
-    useDeletePickupRequest();
+  const { execute: deleteRequest, loading: deleting } = useDeleteOrder();
   const [pendingDelete, setPendingDelete] =
-    useState<PickupRequestListItem | null>(null);
+    useState<CollectionRequestListItem | null>(null);
   const { execute: evaluateRequest } = useEvaluatePickup();
   const [evaluatingId, setEvaluatingId] = useState<string | null>(null);
   // Approving always requires a price (see EvaluateModal) — unlike
   // rejecting, a table-row Approve click can't just call the API
   // directly, so it opens this same modal the details page uses instead.
   const [pendingApprove, setPendingApprove] =
-    useState<PickupRequestListItem | null>(null);
+    useState<CollectionRequestListItem | null>(null);
   const {
     requests: quickLeads,
     loading: loadingQuickLeads,
@@ -105,10 +111,10 @@ const PickupRequestsView = ({ basePath }: PickupRequestsViewProps) => {
     null,
   );
 
-  // Converted leads already show up as a real request on the All
-  // Requests tab — see useQuickPickupRequests' own docstring for why
-  // this filters client-side instead of asking the backend for one
-  // exact status.
+  // Converted leads already show up as a real Order on the All Orders
+  // tab — see useQuickPickupRequests' own docstring for why this
+  // filters client-side instead of asking the backend for one exact
+  // status.
   const activeQuickLeads = quickLeads.filter(
     (lead) => lead.status !== 'converted',
   );
@@ -142,20 +148,18 @@ const PickupRequestsView = ({ basePath }: PickupRequestsViewProps) => {
   };
 
   const handleEvaluate = async (
-    request: PickupRequestListItem,
+    request: CollectionRequestListItem,
     decision: 'approved' | 'rejected',
   ) => {
     setEvaluatingId(request.id);
     try {
       await evaluateRequest(request.id, { decision });
       toast.success(
-        decision === 'approved'
-          ? 'Pickup request approved'
-          : 'Pickup request rejected',
+        decision === 'approved' ? 'Order approved' : 'Order rejected',
       );
       refetch();
     } catch {
-      toast.error('Could not evaluate this pickup request');
+      toast.error('Could not evaluate this order');
     } finally {
       setEvaluatingId(null);
     }
@@ -166,25 +170,25 @@ const PickupRequestsView = ({ basePath }: PickupRequestsViewProps) => {
     try {
       await deleteRequest(pendingDelete.id);
       toast.success(
-        'Pickup request deleted',
-        `The request from ${pendingDelete.full_name} has been removed.`,
+        'Order deleted',
+        `Order ${pendingDelete.code} has been removed.`,
       );
       setPendingDelete(null);
       refetch();
     } catch {
-      toast.error('Could not delete this pickup request');
+      toast.error('Could not delete this order');
     }
   };
 
   return (
     <PageContainer variant="table">
       <PageHeader
-        title="Pickup Requests"
-        subtitle="Collection requests submitted from the public site."
+        title="Orders"
+        subtitle="Materials/items staff have created under a pickup request."
         actions={
-          <Button href={`${basePath}/create`}>
-            <LuPlus className="mr-1.5 size-4" />
-            New request
+          <Button href={requestsBasePath} variant="secondary">
+            <LuClipboardList className="mr-1.5 size-4" />
+            View Pickup Requests
           </Button>
         }
       />
@@ -196,13 +200,13 @@ const PickupRequestsView = ({ basePath }: PickupRequestsViewProps) => {
         className="-mt-2 mb-4 px-0"
       />
 
-      {activeTab === 'requests' ? (
+      {activeTab === 'orders' ? (
         <>
           <div className="mb-4 flex flex-wrap items-center gap-2">
             <SearchInput
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              placeholder="Search by name, email, or phone…"
+              placeholder="Search by name, email, phone, or code…"
               className="sm:max-w-xs"
             />
             <FilterToggle
@@ -232,7 +236,7 @@ const PickupRequestsView = ({ basePath }: PickupRequestsViewProps) => {
             </FilterToggle>
           </div>
 
-          <PickupRequestTable
+          <OrderTable
             requests={requests}
             count={count}
             search={search}
@@ -265,8 +269,8 @@ const PickupRequestsView = ({ basePath }: PickupRequestsViewProps) => {
         open={Boolean(pendingDelete)}
         onClose={() => setPendingDelete(null)}
         onConfirm={handleConfirmDelete}
-        title="Delete pickup request"
-        message={`Are you sure you want to delete the pickup request from ${pendingDelete?.full_name}? This cannot be undone.`}
+        title="Delete order"
+        message={`Are you sure you want to delete order ${pendingDelete?.code}? This cannot be undone.`}
         confirmText="Delete"
         confirmVariant="danger"
         loading={deleting}
@@ -287,4 +291,4 @@ const PickupRequestsView = ({ basePath }: PickupRequestsViewProps) => {
   );
 };
 
-export { PickupRequestsView };
+export { OrdersView };

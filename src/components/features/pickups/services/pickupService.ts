@@ -1,6 +1,7 @@
 import { apiFetch } from '../../../../lib/api';
-import type { PresignedUpload } from '../../storageFiles/types';
 import type {
+  CollectionRequestDetails,
+  CollectionRequestListItem,
   LatLng,
   OptimizeRouteResult,
   PickupEvaluationStatus,
@@ -8,12 +9,13 @@ import type {
   PickupQuickRequestStatus,
   PickupRequestDetails,
   PickupRequestListItem,
+  PickupRequestStatus,
   PickupRequestType,
   PickupStatus,
 } from '../types';
 
-/** One material line as submitted on create/update — a request always
- * has at least one, for either request_type. */
+/** One material line as submitted on an Order's create/update — an
+ * Order may hold zero to MAX_PICKUP_ITEMS of these. */
 type PickupRequestItemInput = {
   category: string;
   estimated_quantity?: string;
@@ -27,26 +29,148 @@ type Paginated<T> = {
   results: T[];
 };
 
+// ── PickupRequest (the customer's ask) ──────────────────────────────
+
 type ListPickupRequestsParams = {
+  page?: number;
+  status?: PickupRequestStatus;
+  search?: string;
+  requestType?: PickupRequestType;
+};
+
+// Admin/staff only — GET /pickup-requests/.
+const listPickupRequests = ({
+  page = 1,
+  status,
+  search,
+  requestType,
+}: ListPickupRequestsParams = {}): Promise<
+  Paginated<PickupRequestListItem>
+> => {
+  const params = new URLSearchParams({ page: String(page) });
+  if (status) params.set('status', status);
+  if (search) params.set('search', search);
+  if (requestType) params.set('request_type', requestType);
+  return apiFetch(`/pickup-requests/?${params.toString()}`);
+};
+
+// Admin/staff only — GET /pickup-requests/{id}/.
+const getPickupRequest = (id: string): Promise<PickupRequestDetails> =>
+  apiFetch(`/pickup-requests/${id}/`);
+
+type PickupRequestCreatePayload = {
+  request_type?: PickupRequestType;
+  full_name: string;
+  /** Required for `business` requests only — optional for `individual`,
+   * see PickupRequestCreateSerializer.validate on the backend. */
+  email?: string;
+  phone_number: string;
+  /** Optional FK to a collection point, for drop-off instead of
+   * doorstep pickup. */
+  collection_point?: string;
+  pickup_address: string;
+  /** The requester's own chosen pickup date/time — required, ISO
+   * datetime. */
+  requested_at: string;
+  note?: string;
+};
+
+/** The common subset of what POST /pickup-requests/ always returns —
+ * for an anonymous (public) caller the backend deliberately returns
+ * only `{id, status}` (security audit L-6: internal fields are for
+ * admin/staff only); an authenticated admin/staff caller gets the full
+ * PickupRequestDetailsSerializer, a superset of this. */
+type PickupRequestCreateResult = {
+  id: string;
+  status: PickupRequestStatus;
+};
+
+// Public, no auth (AllowAny on create — see
+// PickupRequestViewSet.get_permissions) — used by both the public
+// request form and the admin/staff "New pickup request" view, same
+// endpoint either way. Unlike the old, now-removed flat create, there's
+// no `items`/`photo` here — those belong to an Order, created
+// separately via createOrder below.
+const createPickupRequest = (
+  payload: PickupRequestCreatePayload,
+): Promise<PickupRequestCreateResult> =>
+  apiFetch('/pickup-requests/', { method: 'POST', json: payload });
+
+type PickupRequestUpdatePayload = Partial<{
+  full_name: string;
+  email: string;
+  phone_number: string;
+  pickup_address: string;
+  collection_point: string;
+  requested_at: string;
+  note: string;
+}>;
+
+// Admin/staff correcting the requester's own details — see
+// PickupRequestUpdateSerializer. `status`/`request_type` aren't
+// editable here — status only ever changes via cancel (or the
+// automatic recompute once every Order under it is terminal).
+const updatePickupRequest = (
+  id: string,
+  payload: PickupRequestUpdatePayload,
+): Promise<PickupRequestDetails> =>
+  apiFetch(`/pickup-requests/${id}/`, { method: 'PATCH', json: payload });
+
+type CancelPickupRequestPayload = {
+  /** Becomes `cancellation_reason` on the backend. */
+  note: string;
+};
+
+// Cancels the request AND force-cancels every non-terminal Order under
+// it, in one action — see PickupRequestViewSet.cancel /
+// cancel_pickup_request on the backend.
+const cancelPickupRequest = (
+  id: string,
+  payload: CancelPickupRequestPayload,
+): Promise<PickupRequestDetails> =>
+  apiFetch(`/pickup-requests/${id}/cancel/`, { method: 'POST', json: payload });
+
+type CreateOrderPayload = {
+  /** Optional now (unlike the old public create) — staff can add/
+   * correct them afterward via updateOrder's whole-list items replace,
+   * while evaluation is still pending. Max 20. */
+  items?: PickupRequestItemInput[];
+  /** Up to 4 storage file keys — see PickupPhotosUploader. */
+  photos?: string[];
+};
+
+// Admin/staff creating an Order under an existing PickupRequest — up to
+// 7 per request (hard block past that, see validate_order_count on the
+// backend).
+const createOrder = (
+  pickupRequestId: string,
+  payload: CreateOrderPayload,
+): Promise<CollectionRequestDetails> =>
+  apiFetch(`/pickup-requests/${pickupRequestId}/orders/`, {
+    method: 'POST',
+    json: payload,
+  });
+
+// ── Order (CollectionRequest — "Order" is a UI/API label only) ──────
+
+type ListOrdersParams = {
   page?: number;
   status?: PickupStatus;
   search?: string;
   requestType?: PickupRequestType;
   evaluationStatus?: PickupEvaluationStatus;
-  /** Collection point id — requests whose route was dropped off there. */
+  /** Collection point id — Orders whose route was dropped off there. */
   dropOffPoint?: string;
 };
 
-const listPickupRequests = ({
+const listOrders = ({
   page = 1,
   status,
   search,
   requestType,
   evaluationStatus,
   dropOffPoint,
-}: ListPickupRequestsParams = {}): Promise<
-  Paginated<PickupRequestListItem>
-> => {
+}: ListOrdersParams = {}): Promise<Paginated<CollectionRequestListItem>> => {
   const params = new URLSearchParams({ page: String(page) });
   if (status) params.set('status', status);
   if (search) params.set('search', search);
@@ -56,80 +180,31 @@ const listPickupRequests = ({
   return apiFetch(`/pickups/?${params.toString()}`);
 };
 
-const getPickupRequest = (id: string): Promise<PickupRequestDetails> =>
+const getOrder = (id: string): Promise<CollectionRequestDetails> =>
   apiFetch(`/pickups/${id}/`);
 
-type CreatePickupRequestPayload = {
-  full_name: string;
-  /** Required for `business` requests only — optional for `individual`,
-   * see CollectionRequestCreateSerializer.validate on the backend. */
-  email?: string;
-  phone_number?: string;
-  /** One or more materials — individual and business requests are both
-   * free to submit several in one visit; item count is never gated by
-   * request_type. */
-  items: PickupRequestItemInput[];
-  request_type?: PickupRequestType;
-  pickup_address: string;
-  /** Optional photo of the item(s) to be collected — a storage file key. */
-  photo?: string;
-  note?: string;
-};
-
-// Public on the backend (CollectionRequestViewSet.get_permissions — no
-// resident accounts, so submission never requires auth) — used by both
-// the public request form and the admin/staff "New request" action,
-// same endpoint either way.
-const createPickupRequest = (
-  payload: CreatePickupRequestPayload,
-): Promise<PickupRequestDetails> =>
-  apiFetch('/pickups/', { method: 'POST', json: payload });
-
-// AllowAny, unlike the generic storage app's presigned-upload-urls — a
-// deliberately narrow endpoint (hard-coded folder/file_type, a small
-// image-only content-type allowlist, a 5 MB cap) specifically so the
-// public pickup form's optional photo field works for anonymous
-// visitors without exposing the full generic upload surface to them.
-// See PickupPhotoUploadUrlView on the backend.
-const requestPickupPhotoUploadUrl = (
-  fileName: string,
-  contentType: string,
-  fileSize: number,
-): Promise<{ uploads: PresignedUpload[] }> =>
-  apiFetch('/pickups/photo-upload-url/', {
-    method: 'POST',
-    json: {
-      file_name: fileName,
-      content_type: contentType,
-      file_size: fileSize,
-    },
-  });
-
-type UpdatePickupRequestPayload = Partial<{
-  full_name: string;
-  email: string;
-  phone_number: string;
-  pickup_address: string;
-  photo: string;
+type UpdateOrderPayload = Partial<{
   requested_date: string;
   note: string;
   /** Whole-list replace — every existing item is deleted and recreated
    * from this payload. Only accepted by the backend while
    * evaluation_status is still `pending` (see
-   * CollectionRequestUpdateSerializer.validate_items). */
+   * CollectionRequestUpdateSerializer.validate_items). Contact/address
+   * fields used to be editable here too — they live on the parent
+   * PickupRequest now (see updatePickupRequest above). */
   items: PickupRequestItemInput[];
 }>;
 
 // `status` is deliberately not editable here — see
 // CollectionRequestUpdateSerializer's docstring on the backend; status
 // only ever changes through schedule/collect/cancel below.
-const updatePickupRequest = (
+const updateOrder = (
   id: string,
-  payload: UpdatePickupRequestPayload,
-): Promise<PickupRequestDetails> =>
+  payload: UpdateOrderPayload,
+): Promise<CollectionRequestDetails> =>
   apiFetch(`/pickups/${id}/`, { method: 'PATCH', json: payload });
 
-const deletePickupRequest = (id: string): Promise<void> =>
+const deleteOrder = (id: string): Promise<void> =>
   apiFetch(`/pickups/${id}/`, { method: 'DELETE' });
 
 /** One item's price, for the itemized-pricing path. */
@@ -155,7 +230,7 @@ type EvaluatePickupPayload = {
 const evaluatePickupRequest = (
   id: string,
   payload: EvaluatePickupPayload,
-): Promise<PickupRequestDetails> =>
+): Promise<CollectionRequestDetails> =>
   apiFetch(`/pickups/${id}/evaluate/`, { method: 'POST', json: payload });
 
 type SchedulePickupPayload = {
@@ -169,7 +244,7 @@ type SchedulePickupPayload = {
 const schedulePickupRequest = (
   id: string,
   payload: SchedulePickupPayload,
-): Promise<PickupRequestDetails> =>
+): Promise<CollectionRequestDetails> =>
   apiFetch(`/pickups/${id}/schedule/`, { method: 'POST', json: payload });
 
 type AssignDriverPayload = {
@@ -186,25 +261,51 @@ type AssignDriverPayload = {
 const assignDriverToRequest = (
   id: string,
   payload: AssignDriverPayload,
-): Promise<PickupRequestDetails> =>
+): Promise<CollectionRequestDetails> =>
   apiFetch(`/pickups/${id}/assign-driver/`, { method: 'POST', json: payload });
 
 // The driver's self-service counterpart to assignDriverToRequest —
 // claims using the logged-in driver's own profile, no body needed.
-const claimPickupRequest = (id: string): Promise<PickupRequestDetails> =>
+const claimOrder = (id: string): Promise<CollectionRequestDetails> =>
   apiFetch(`/pickups/${id}/claim/`, { method: 'POST' });
 
-/** One item's actual collected quantity. */
-type CollectItemInput = {
-  id: string;
-  collected_quantity?: string;
+type ConfirmSchedulePayload = {
+  scheduled_at: string;
 };
+
+// The assigned driver's explicit confirmation of the pickup time —
+// closes the gap where assign-driver/claim alone reach `scheduled` with
+// no explicit time commitment from the driver. Only valid from
+// `scheduled`, and only by the assigned driver. Driver only.
+const confirmSchedule = (
+  id: string,
+  payload: ConfirmSchedulePayload,
+): Promise<CollectionRequestDetails> =>
+  apiFetch(`/pickups/${id}/confirm-schedule/`, {
+    method: 'POST',
+    json: payload,
+  });
+
+/** One item's actual collected quantity — corrects an existing item
+ * (`id` given, optionally with a corrected `category`/
+ * `estimated_quantity` too), or records a brand-new one the driver
+ * found on-site (no `id`, `category`/`collected_quantity`/
+ * `quantity_unit` all required). */
+type CollectItemInput =
+  | {
+      id: string;
+      collected_quantity?: string;
+      category?: string;
+      estimated_quantity?: string;
+    }
+  | { category: string; collected_quantity: string; quantity_unit: string };
 
 type CollectPickupPayload = {
   /** Single-item convenience path — only valid when the request has
    * exactly one item. Use `items` instead for a multi-item request. */
   collected_quantity?: string;
-  /** Per-item collected quantities for a multi-item request. */
+  /** Per-item collected quantities (and on-site additions/corrections)
+   * for a multi-item request. */
   items?: CollectItemInput[];
   note?: string;
   /** Driver-collected only — ignored by the backend otherwise. See
@@ -218,7 +319,7 @@ type CollectPickupPayload = {
 const collectPickupRequest = (
   id: string,
   payload: CollectPickupPayload,
-): Promise<PickupRequestDetails> =>
+): Promise<CollectionRequestDetails> =>
   apiFetch(`/pickups/${id}/collect/`, { method: 'POST', json: payload });
 
 type DropOffItem = {
@@ -242,7 +343,7 @@ type DropOffPayload = {
 // apps.pickups.services.drop_off_route on the backend.
 const dropOffRoute = (
   payload: DropOffPayload,
-): Promise<PickupRequestListItem[]> =>
+): Promise<CollectionRequestListItem[]> =>
   apiFetch('/pickups/drop-off/', { method: 'POST', json: payload });
 
 type OptimizeRoutePayload = {
@@ -266,21 +367,24 @@ const optimizeRoute = (
 // Receiving Officer (or admin) verifying a delivered request and
 // closing it out — only valid from `delivered`. See
 // CollectionRequestDecisionService.close_delivery.
-const closeDelivery = (id: string): Promise<PickupRequestDetails> =>
+const closeDelivery = (id: string): Promise<CollectionRequestDetails> =>
   apiFetch(`/pickups/${id}/close/`, { method: 'POST' });
 
-type CancelPickupPayload = {
+type CancelOrderPayload = {
   /** Becomes `cancellation_reason` on the backend. */
   note: string;
 };
 
 // Not valid once `collected` or already `cancelled` — see
 // CollectionRequestDecisionService.cancel.
-const cancelPickupRequest = (
+const cancelOrder = (
   id: string,
-  payload: CancelPickupPayload,
-): Promise<PickupRequestDetails> =>
+  payload: CancelOrderPayload,
+): Promise<CollectionRequestDetails> =>
   apiFetch(`/pickups/${id}/cancel/`, { method: 'POST', json: payload });
+
+// ── Quick leads (PickupQuickRequest — unaffected by the Request/Order
+// split beyond convert()'s payload, below) ──────────────────────────
 
 type CreateQuickPickupRequestPayload = {
   request_type?: PickupRequestType;
@@ -320,13 +424,21 @@ const markQuickPickupRequestContacted = (
 ): Promise<PickupQuickRequestListItem> =>
   apiFetch(`/pickups/quick/${id}/mark-contacted/`, { method: 'POST' });
 
-// Completes a lead into a real pickup request — same payload shape as
-// createPickupRequest, since it's the same CollectionRequestCreateSerializer
-// on the backend. Admin/staff only.
+type ConvertQuickPickupRequestPayload = PickupRequestCreatePayload & {
+  /** Optional — unlike createOrder, there's no separate step here: the
+   * lead is completed into a PickupRequest and one Order under it in a
+   * single call (see PickupQuickRequestViewSet.convert on the backend).
+   * No `photos` here — convert() doesn't accept them. */
+  items?: PickupRequestItemInput[];
+};
+
+// Completes a lead into a real pickup request — creates both a
+// PickupRequest and one Order under it in a single step, linking this
+// lead to the new Order. Admin/staff only.
 const convertQuickPickupRequest = (
   id: string,
-  payload: CreatePickupRequestPayload,
-): Promise<PickupRequestDetails> =>
+  payload: ConvertQuickPickupRequestPayload,
+): Promise<CollectionRequestDetails> =>
   apiFetch(`/pickups/quick/${id}/convert/`, { method: 'POST', json: payload });
 
 type DailyVolumePoint = {
@@ -336,43 +448,55 @@ type DailyVolumePoint = {
 
 export {
   assignDriverToRequest,
+  cancelOrder,
   cancelPickupRequest,
-  claimPickupRequest,
+  claimOrder,
   closeDelivery,
   collectPickupRequest,
+  confirmSchedule,
   convertQuickPickupRequest,
+  createOrder,
   createPickupRequest,
   createQuickPickupRequest,
-  deletePickupRequest,
+  deleteOrder,
   dropOffRoute,
   evaluatePickupRequest,
+  getOrder,
   getPickupRequest,
   getQuickPickupRequest,
+  listOrders,
   listPickupRequests,
   listQuickPickupRequests,
   markQuickPickupRequestContacted,
   optimizeRoute,
-  requestPickupPhotoUploadUrl,
   schedulePickupRequest,
+  updateOrder,
   updatePickupRequest,
 };
 export type {
   AssignDriverPayload,
-  CancelPickupPayload,
+  CancelOrderPayload,
+  CancelPickupRequestPayload,
   CollectItemInput,
   CollectPickupPayload,
-  CreatePickupRequestPayload,
+  ConfirmSchedulePayload,
+  ConvertQuickPickupRequestPayload,
+  CreateOrderPayload,
   CreateQuickPickupRequestPayload,
   DailyVolumePoint,
   DropOffItem,
   DropOffPayload,
   EvaluateItemInput,
   EvaluatePickupPayload,
+  ListOrdersParams,
   ListPickupRequestsParams,
   ListQuickPickupRequestsParams,
   OptimizeRoutePayload,
   Paginated,
+  PickupRequestCreatePayload,
+  PickupRequestCreateResult,
   PickupRequestItemInput,
+  PickupRequestUpdatePayload,
   SchedulePickupPayload,
-  UpdatePickupRequestPayload,
+  UpdateOrderPayload,
 };

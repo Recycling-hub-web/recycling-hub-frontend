@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import {
+  LuCalendarCheck,
   LuMapPin,
   LuNavigation,
   LuPackage,
@@ -14,6 +15,7 @@ import {
 import { PageContainer } from '../../../../layout/PageContainer';
 import { Button } from '../../../../ui/buttons/Button';
 import { IconButton } from '../../../../ui/buttons/IconButton';
+import { AppDate } from '../../../../ui/date/AppDate';
 import { PageHeader } from '../../../../ui/PageHeader';
 import {
   TableEmptyRow,
@@ -23,17 +25,19 @@ import {
 } from '../../../../ui/table';
 import { Tabs } from '../../../../ui/tabs';
 import { useToast } from '../../../../ui/toast/ToastContext';
+import { WhatsAppLink } from '../../../../ui/WhatsAppLink';
 import {
   useClaimReimbursements,
   usePendingReimbursementSummary,
 } from '../../../finance/hooks';
-import { useClaimPickupRequest, usePickupRequests } from '../../hooks';
-import { itemsSummary, type PickupRequestListItem } from '../../types';
+import { useClaimOrder, useOrders } from '../../hooks';
+import { type CollectionRequestListItem, itemsSummary } from '../../types';
 import {
   googleMapsDirectionsUrl,
   wazeNavigateUrl,
 } from '../../utils/navigationLinks';
 import { CollectModal } from '../shared/CollectModal';
+import { ConfirmScheduleModal } from './ConfirmScheduleModal';
 import { OptimizeRouteModal } from './OptimizeRouteModal';
 
 type Tab = 'available' | 'mine';
@@ -59,6 +63,29 @@ const NAVIGABLE_STATUSES = ['pending', 'scheduled'];
  * assignments (status=scheduled). No pagination UI (low expected
  * volume) — same choice QuickLeadTable already made for the Quick
  * Leads queue. */
+/** The confirmed pickup day and time, once the driver has confirmed it;
+ * "Not confirmed" while a scheduled pickup is still waiting on them. */
+const ConfirmedPickupCell = ({
+  order,
+}: {
+  order: CollectionRequestListItem;
+}) => {
+  if (order.pickup_confirmed_at && order.scheduled_at) {
+    return (
+      <span className="inline-flex items-center gap-1.5 whitespace-nowrap text-slate-700">
+        <LuCalendarCheck className="size-4 shrink-0 text-brand-600" />
+        <AppDate value={order.scheduled_at} format="datetime" />
+      </span>
+    );
+  }
+  if (order.status === 'scheduled') {
+    return (
+      <span className="whitespace-nowrap text-amber-600">Not confirmed</span>
+    );
+  }
+  return <span className="text-slate-400">—</span>;
+};
+
 const DriverPickupsView = () => {
   const router = useRouter();
   const toast = useToast();
@@ -69,13 +96,13 @@ const DriverPickupsView = () => {
     loading: loadingAvailable,
     error: availableError,
     refetch: refetchAvailable,
-  } = usePickupRequests({ page: 1, status: 'pending' });
+  } = useOrders({ page: 1, status: 'pending' });
   const {
     requests: mine,
     loading: loadingMine,
     error: mineError,
     refetch: refetchMine,
-  } = usePickupRequests({ page: 1, status: 'scheduled' });
+  } = useOrders({ page: 1, status: 'scheduled' });
   // A scheduled request's route can end up closed (dropped_off) or
   // unset without the request itself having moved off `scheduled` —
   // drop_off_route only transitions the specific items it was handed,
@@ -86,10 +113,20 @@ const DriverPickupsView = () => {
   // the trip actually being planned.
   const optimizableMine = mine.filter((r) => r.route?.status === 'open');
 
-  const { execute: claim } = useClaimPickupRequest();
+  const { execute: claim } = useClaimOrder();
   const [claimingId, setClaimingId] = useState<string | null>(null);
   const [collectTarget, setCollectTarget] =
-    useState<PickupRequestListItem | null>(null);
+    useState<CollectionRequestListItem | null>(null);
+  // The assigned driver confirms the pickup day and time (POST
+  // /pickups/{id}/confirm-schedule/) straight from the table.
+  const [confirmTarget, setConfirmTarget] =
+    useState<CollectionRequestListItem | null>(null);
+
+  const handleScheduleConfirmed = () => {
+    setConfirmTarget(null);
+    toast.success('Pickup time confirmed');
+    refetchMine();
+  };
 
   // Route optimization — only meaningful on the "mine" tab, where every
   // row is already this driver's own claimed, scheduled stop.
@@ -117,7 +154,7 @@ const DriverPickupsView = () => {
     }
   };
 
-  const handleClaim = async (request: PickupRequestListItem) => {
+  const handleClaim = async (request: CollectionRequestListItem) => {
     setClaimingId(request.id);
     try {
       await claim(request.id);
@@ -198,7 +235,7 @@ const DriverPickupsView = () => {
   const onRetry = activeTab === 'available' ? refetchAvailable : refetchMine;
   // One extra leading column for the selection checkbox — only on
   // "mine," where route optimization is meaningful.
-  const columnCount = activeTab === 'mine' ? 6 : 5;
+  const columnCount = activeTab === 'mine' ? 9 : 8;
   const selectedRequests = mine.filter((r) => selectedIds.has(r.id));
 
   const renderRows = () => {
@@ -259,13 +296,12 @@ const DriverPickupsView = () => {
                 disabled={offRoute || atCap}
                 title={checkboxTitle}
                 className="size-4 rounded border-slate-300 disabled:cursor-not-allowed disabled:opacity-40"
-                aria-label={`Select pickup for ${r.full_name}`}
+                aria-label={`Select pickup for ${r.pickup_request.full_name}`}
               />
             </td>
           )}
-          <td className="px-6 py-4 font-medium text-slate-900">
-            {itemsSummary(r.items)}
-          </td>
+          <td className="px-6 py-4 font-medium text-slate-900">{r.code}</td>
+          <td className="px-6 py-4 text-slate-700">{itemsSummary(r.items)}</td>
           <td className="px-6 py-4 text-slate-500">
             <span className="inline-flex items-center gap-1.5">
               {optimizedOrder[r.id] ? (
@@ -275,12 +311,18 @@ const DriverPickupsView = () => {
               ) : (
                 <LuMapPin className="size-4 shrink-0" />
               )}
-              {r.full_name}
+              {r.pickup_request.full_name}
             </span>
+          </td>
+          <td className="px-6 py-4">
+            <WhatsAppLink phoneNumber={r.pickup_request.phone_number} />
           </td>
           <td className="px-6 py-4 text-slate-700">{r.price ?? '—'}</td>
           <td className="px-6 py-4 text-slate-500">
-            {r.requested_date ?? '—'}
+            <AppDate value={r.pickup_request.requested_at} format="short" />
+          </td>
+          <td className="px-6 py-4">
+            <ConfirmedPickupCell order={r} />
           </td>
           <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-end gap-2">
@@ -290,24 +332,26 @@ const DriverPickupsView = () => {
                     variant="ghost"
                     onClick={() =>
                       window.open(
-                        googleMapsDirectionsUrl(r.pickup_address),
+                        googleMapsDirectionsUrl(
+                          r.pickup_request.pickup_address,
+                        ),
                         '_blank',
                         'noopener,noreferrer',
                       )
                     }
-                    aria-label={`Navigate to ${r.full_name} with Google Maps`}
+                    aria-label={`Navigate to ${r.pickup_request.full_name} with Google Maps`}
                     icon={<LuMapPin className="size-4" />}
                   />
                   <IconButton
                     variant="ghost"
                     onClick={() =>
                       window.open(
-                        wazeNavigateUrl(r.pickup_address),
+                        wazeNavigateUrl(r.pickup_request.pickup_address),
                         '_blank',
                         'noopener,noreferrer',
                       )
                     }
-                    aria-label={`Navigate to ${r.full_name} with Waze`}
+                    aria-label={`Navigate to ${r.pickup_request.full_name} with Waze`}
                     icon={<LuNavigation className="size-4" />}
                   />
                 </>
@@ -317,16 +361,27 @@ const DriverPickupsView = () => {
                   variant="ghost"
                   onClick={() => handleClaim(r)}
                   disabled={claimingId === r.id}
-                  aria-label={`Claim pickup for ${r.full_name}`}
+                  aria-label={`Claim pickup for ${r.pickup_request.full_name}`}
                   icon={<LuPackage className="size-4" />}
                 />
               ) : (
-                <IconButton
-                  variant="ghost"
-                  onClick={() => setCollectTarget(r)}
-                  aria-label={`Mark pickup for ${r.full_name} as collected`}
-                  icon={<LuPackage className="size-4" />}
-                />
+                <>
+                  {r.status === 'scheduled' && !r.pickup_confirmed_at && (
+                    <IconButton
+                      variant="ghost"
+                      onClick={() => setConfirmTarget(r)}
+                      aria-label={`Confirm pickup date and time for ${r.pickup_request.full_name}`}
+                      title="Confirm pickup date and time"
+                      icon={<LuCalendarCheck className="size-4" />}
+                    />
+                  )}
+                  <IconButton
+                    variant="ghost"
+                    onClick={() => setCollectTarget(r)}
+                    aria-label={`Mark pickup for ${r.pickup_request.full_name} as collected`}
+                    icon={<LuPackage className="size-4" />}
+                  />
+                </>
               )}
             </div>
           </td>
@@ -406,16 +461,25 @@ const DriverPickupsView = () => {
                 </th>
               )}
               <th className="px-6 py-3 text-left font-semibold text-slate-500">
+                Order
+              </th>
+              <th className="px-6 py-3 text-left font-semibold text-slate-500">
                 Category
               </th>
               <th className="px-6 py-3 text-left font-semibold text-slate-500">
                 Requester
               </th>
               <th className="px-6 py-3 text-left font-semibold text-slate-500">
+                Contact
+              </th>
+              <th className="px-6 py-3 text-left font-semibold text-slate-500">
                 Price
               </th>
               <th className="px-6 py-3 text-left font-semibold text-slate-500">
                 Requested
+              </th>
+              <th className="px-6 py-3 text-left font-semibold text-slate-500">
+                Confirmed pickup
               </th>
               <th className="px-6 py-3 text-right font-semibold text-slate-500">
                 Actions
@@ -437,6 +501,14 @@ const DriverPickupsView = () => {
         // collection, never the staff-collector path.
         showPaymentFields
         items={collectTarget?.items ?? []}
+      />
+
+      <ConfirmScheduleModal
+        requestId={confirmTarget?.id ?? ''}
+        open={Boolean(confirmTarget)}
+        onClose={() => setConfirmTarget(null)}
+        onConfirmed={handleScheduleConfirmed}
+        initialScheduledAt={confirmTarget?.scheduled_at}
       />
 
       <OptimizeRouteModal

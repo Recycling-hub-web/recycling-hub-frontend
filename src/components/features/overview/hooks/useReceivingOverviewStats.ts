@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { usePickupRequests } from '../../pickups/hooks';
+import { useOrders } from '../../pickups/hooks';
 import { getReceivingOverviewStats } from '../services/overviewService';
 
 /** Deliveries awaiting close + the preview table both still come from
@@ -13,7 +13,7 @@ import { getReceivingOverviewStats } from '../services/overviewService';
  * chart itself is a separate, selectable-range endpoint — see
  * useReceivingVolume/PickupVolumeChart. */
 const useReceivingOverviewStats = () => {
-  const { requests, count, loading, error, refetch } = usePickupRequests({
+  const { requests, count, loading, error, refetch } = useOrders({
     page: 1,
     status: 'delivered',
   });

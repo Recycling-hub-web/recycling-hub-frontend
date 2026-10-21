@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import type { FinanceStatus } from '../../finance/types';
-import { usePickupRequests } from '../../pickups/hooks';
+import { useOrders } from '../../pickups/hooks';
 import type { PickupStatus } from '../../pickups/types';
 import { getDriverOverviewStats } from '../services/overviewService';
 
@@ -19,8 +19,8 @@ import { getDriverOverviewStats } from '../services/overviewService';
  * (DriverOverviewStatsView), since they cover statuses the two queries
  * above don't (e.g. `collected`/`delivered`/`closed`). */
 const useDriverOverviewStats = () => {
-  const available = usePickupRequests({ page: 1, status: 'pending' });
-  const mine = usePickupRequests({ page: 1, status: 'scheduled' });
+  const available = useOrders({ page: 1, status: 'pending' });
+  const mine = useOrders({ page: 1, status: 'scheduled' });
 
   const openRouteStops = mine.requests.filter(
     (r) => r.route?.status === 'open',

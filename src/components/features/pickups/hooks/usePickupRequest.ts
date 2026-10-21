@@ -4,6 +4,8 @@ import { ApiError } from '../../../../lib/api';
 import { getPickupRequest } from '../services/pickupService';
 import type { PickupRequestDetails } from '../types';
 
+/** One PickupRequest — the customer's ask, with its own Orders nested
+ * (`request.orders`). Admin/staff only. */
 const usePickupRequest = (id: string) => {
   const [request, setRequest] = useState<PickupRequestDetails | null>(null);
   const [loading, setLoading] = useState(true);

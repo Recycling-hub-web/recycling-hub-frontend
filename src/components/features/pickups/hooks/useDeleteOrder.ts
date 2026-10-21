@@ -1,14 +1,14 @@
 import { useState } from 'react';
 
-import { deletePickupRequest } from '../services/pickupService';
+import { deleteOrder } from '../services/pickupService';
 
-const useDeletePickupRequest = () => {
+const useDeleteOrder = () => {
   const [loading, setLoading] = useState(false);
 
   const execute = async (id: string) => {
     setLoading(true);
     try {
-      await deletePickupRequest(id);
+      await deleteOrder(id);
     } finally {
       setLoading(false);
     }
@@ -17,4 +17,4 @@ const useDeletePickupRequest = () => {
   return { execute, loading };
 };
 
-export { useDeletePickupRequest };
+export { useDeleteOrder };

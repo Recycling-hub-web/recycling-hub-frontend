@@ -100,7 +100,9 @@ const DriverOverviewView = () => {
     }
     return stats.assigned.slice(0, PREVIEW_SIZE).map((r) => (
       <tr key={r.id} className="transition-colors hover:bg-slate-50">
-        <td className="px-6 py-4 font-medium text-slate-900">{r.full_name}</td>
+        <td className="px-6 py-4 font-medium text-slate-900">
+          {r.pickup_request.full_name}
+        </td>
         <td className="px-6 py-4 text-slate-500">{itemsSummary(r.items)}</td>
         <td className="px-6 py-4">
           <StatusBadge variant={STATUS_BADGE_VARIANT[r.status]}>

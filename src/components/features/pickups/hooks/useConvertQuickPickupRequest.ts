@@ -1,14 +1,17 @@
 import { useState } from 'react';
 
 import { ApiError } from '../../../../lib/api';
-import type { CreatePickupRequestPayload } from '../services/pickupService';
+import type { ConvertQuickPickupRequestPayload } from '../services/pickupService';
 import { convertQuickPickupRequest } from '../services/pickupService';
 
 const useConvertQuickPickupRequest = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const execute = async (id: string, payload: CreatePickupRequestPayload) => {
+  const execute = async (
+    id: string,
+    payload: ConvertQuickPickupRequestPayload,
+  ) => {
     setLoading(true);
     setError('');
     try {

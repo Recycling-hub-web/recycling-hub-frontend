@@ -2,6 +2,7 @@ import type { IconType } from 'react-icons';
 import {
   LuBell,
   LuCar,
+  LuClipboardList,
   LuCrown,
   LuHandshake,
   LuHardDrive,
@@ -47,7 +48,15 @@ const NAV_MODULES = {
     label: 'Administrators',
     icon: LuShieldCheck,
   },
-  pickups: { segment: 'pickups', label: 'Pickup Requests', icon: LuTruck },
+  // The customer's ask — PickupRequest (the restructure's new parent
+  // concept, up to 7 Orders each) — distinct from `pickups` below,
+  // which is the Orders queue (materials/pricing/driver workflow).
+  pickupRequests: {
+    segment: 'pickup-requests',
+    label: 'Pickup Requests',
+    icon: LuClipboardList,
+  },
+  pickups: { segment: 'pickups', label: 'Orders', icon: LuTruck },
   dropOff: {
     segment: 'drop-off',
     label: 'Drop Off to Store',
@@ -135,6 +144,7 @@ const adminNavItemsFor = (role: UserRole | undefined): NavItem[] => [
     'overview',
     'users',
     'staff',
+    'pickupRequests',
     'pickups',
     'contact',
     'categories',
@@ -160,6 +170,7 @@ const adminNavItemsFor = (role: UserRole | undefined): NavItem[] => [
 const SUPER_ADMIN_NAV_ITEMS: NavItem[] = buildNavItems('/super-admin', [
   'overview',
   'administrators',
+  'pickupRequests',
   'pickups',
   'contact',
   'categories',

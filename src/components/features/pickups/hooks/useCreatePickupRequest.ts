@@ -1,14 +1,17 @@
 import { useState } from 'react';
 
 import { ApiError } from '../../../../lib/api';
-import type { CreatePickupRequestPayload } from '../services/pickupService';
+import type { PickupRequestCreatePayload } from '../services/pickupService';
 import { createPickupRequest } from '../services/pickupService';
 
+/** Submits the customer's ask — public, no auth. Repurposed (same name,
+ * new meaning) now that the old flat create is gone; see the module
+ * docstring in pickupService.ts. */
 const useCreatePickupRequest = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const execute = async (payload: CreatePickupRequestPayload) => {
+  const execute = async (payload: PickupRequestCreatePayload) => {
     setLoading(true);
     setError('');
     try {

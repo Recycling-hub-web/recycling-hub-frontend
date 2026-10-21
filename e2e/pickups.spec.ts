@@ -4,61 +4,82 @@ import { expect, test } from '@playwright/test';
 import { loginAs } from './helpers/auth';
 
 /**
- * Pickup requests — covers the admin/staff lifecycle built for this
- * module (components/features/pickups/): schedule -> collect, and the
- * cancel path, both exercised through the actual status-driven action
- * buttons on the details page, not by calling the service layer
- * directly.
+ * Orders — covers the admin/staff lifecycle built for this module
+ * (components/features/pickups/): schedule -> collect, and the cancel
+ * path, both exercised through the actual status-driven action buttons
+ * on the Order details page (/admin/pickups/{id}, /staff/pickups/{id}),
+ * not by calling the service layer directly.
+ *
+ * Since the Request/Order restructure, public `POST /pickups/` is
+ * gone — every Order now needs a parent PickupRequest first (`POST
+ * /pickup-requests/`, public) and is itself created under it (`POST
+ * /pickup-requests/{id}/orders/`, admin/staff only). See
+ * e2e/pickup-requests.spec.ts for the Request-level flow (the public
+ * form, the Pickup Requests list/detail, cancel-cascades-to-orders,
+ * fulfilled recompute) — this file stays focused on the Order
+ * lifecycle itself, same as before the restructure.
  */
 
 // A real materials-module category id from the seeded dev DB
-// (apps.categories — Category.Module.MATERIALS). Pickup requests
-// require a valid category FK, so this can't be a placeholder.
+// (apps.categories — Category.Module.MATERIALS). Orders require a
+// valid category FK when items are given.
 const E_WASTE_CATEGORY_ID = '89067cc7-38ef-4752-9cd4-3ea29975abcb';
 
 const uniqueName = (label: string) => `E2E Pickup ${label} ${Date.now()}`;
 
-const seedPickupRequest = async (
+/** Creates a PickupRequest, then one Order under it with a single
+ * item — the new two-step equivalent of the old flat seedPickupRequest.
+ * Must be called with an authenticated request context (the Order
+ * creation step is admin/staff only). Returns the Order's id (what the
+ * rest of this file actually exercises). */
+const seedOrder = async (
   request: APIRequestContext,
   fullName: string,
-) => {
-  const res = await request.post('/api/v1/pickups/', {
+): Promise<{ orderId: string; pickupRequestId: string }> => {
+  const requestRes = await request.post('/api/v1/pickup-requests/', {
     data: {
       full_name: fullName,
       email: 'e2e-pickup@example.com',
       phone_number: '+60123456789',
-      items: [{ category: E_WASTE_CATEGORY_ID, estimated_quantity: '5.5' }],
       pickup_address: '1 Jalan Test, 50000 Kuala Lumpur',
-      requested_date: '2026-12-01',
+      requested_at: new Date(Date.now() + 86_400_000).toISOString(),
     },
   });
-  expect(res.ok()).toBe(true);
-  const { id } = await res.json();
-  return id as string;
+  expect(requestRes.ok()).toBe(true);
+  const pickupRequestId = (await requestRes.json()).id as string;
+
+  const orderRes = await request.post(
+    `/api/v1/pickup-requests/${pickupRequestId}/orders/`,
+    {
+      data: {
+        items: [{ category: E_WASTE_CATEGORY_ID, estimated_quantity: '5.5' }],
+      },
+    },
+  );
+  expect(orderRes.ok()).toBe(true);
+  const orderId = (await orderRes.json()).id as string;
+  return { orderId, pickupRequestId };
 };
 
 // Scheduling/assigning a driver both require evaluation_status=approved
 // (see CollectionRequestDecisionService.schedule/assign_driver) —
-// PickupRequestDetailsView only even renders "Schedule pickup" once
-// approved. Called with an authenticated request context (after
-// loginAs), since evaluate is admin/staff-only.
-const approvePickupRequest = async (request: APIRequestContext, id: string) => {
-  const res = await request.post(`/api/v1/pickups/${id}/evaluate/`, {
+// OrderDetailsView only even renders "Schedule pickup" once approved.
+const approveOrder = async (request: APIRequestContext, orderId: string) => {
+  const res = await request.post(`/api/v1/pickups/${orderId}/evaluate/`, {
     data: { decision: 'approved', price: '10.00' },
   });
   expect(res.ok()).toBe(true);
 };
 
-test.describe('Admin pickup requests', () => {
-  test('schedules a pending request, then marks it collected', async ({
+test.describe('Admin orders', () => {
+  test('schedules a pending order, then marks it collected', async ({
     page,
   }) => {
-    const fullName = uniqueName('Schedule');
-    const id = await seedPickupRequest(page.request, fullName);
-
     await loginAs(page, 'admin');
-    await approvePickupRequest(page.request, id);
-    await page.goto(`/admin/pickups/${id}`);
+    const fullName = uniqueName('Schedule');
+    const { orderId } = await seedOrder(page.request, fullName);
+    await approveOrder(page.request, orderId);
+    await page.goto(`/admin/pickups/${orderId}`);
 
     await expect(page.getByText('Pending', { exact: true })).toBeVisible();
     await page.getByRole('button', { name: 'Schedule pickup' }).click();
@@ -109,23 +130,23 @@ test.describe('Admin pickup requests', () => {
       page.getByRole('button', { name: 'Cancel', exact: true }),
     ).toHaveCount(0);
 
-    // There's no delete action in the UI (pickups are cancelled, not
+    // There's no delete action in the UI (orders are cancelled, not
     // deleted — a deliberate scope decision, unlike contact messages).
     // Clean up directly via the API so repeated runs don't pile up.
-    await page.request.delete(`/api/v1/pickups/${id}/`);
+    await page.request.delete(`/api/v1/pickups/${orderId}/`);
   });
 
-  test('cancels a pending request with a required reason', async ({ page }) => {
-    const fullName = uniqueName('Cancel');
-    const id = await seedPickupRequest(page.request, fullName);
-
+  test('cancels a pending order with a required reason', async ({ page }) => {
     await loginAs(page, 'admin');
-    await page.goto(`/admin/pickups/${id}`);
+    const fullName = uniqueName('Cancel');
+    const { orderId } = await seedOrder(page.request, fullName);
+    await page.goto(`/admin/pickups/${orderId}`);
 
     // exact: true — the notification bell (always rendered in the
-    // topbar) can contain this seeded request's own name in an unread
-    // "New pickup request submitted" item, whose accessible name would
-    // otherwise also match a loose "Cancel" substring search.
+    // topbar) can contain this seeded order's own requester name in an
+    // unread "New pickup request submitted" item, whose accessible
+    // name would otherwise also match a loose "Cancel" substring
+    // search.
     await page.getByRole('button', { name: 'Cancel', exact: true }).click();
     const confirmCancel = page.getByRole('button', {
       name: 'Cancel pickup',
@@ -151,23 +172,24 @@ test.describe('Admin pickup requests', () => {
       page.getByRole('button', { name: 'Schedule pickup' }),
     ).toHaveCount(0);
 
-    await page.request.delete(`/api/v1/pickups/${id}/`);
+    await page.request.delete(`/api/v1/pickups/${orderId}/`);
   });
 
   test('approving from the list table requires a price, same as the detail page', async ({
     page,
   }) => {
-    const fullName = uniqueName('TableApprove');
-    const id = await seedPickupRequest(page.request, fullName);
-
     await loginAs(page, 'admin');
-    await page.goto('/admin/pickups');
+    const fullName = uniqueName('TableApprove');
+    const { orderId } = await seedOrder(page.request, fullName);
+    const orderDetail = await page.request.get(`/api/v1/pickups/${orderId}/`);
+    const { code } = await orderDetail.json();
 
-    const row = page.locator('tr', { hasText: fullName });
+    await page.goto('/admin/pickups');
+    await page.getByPlaceholder(/search/i).fill(code);
+
+    const row = page.locator('tr', { hasText: code });
     await expect(row).toBeVisible();
-    await row
-      .getByRole('button', { name: `Approve pickup request from ${fullName}` })
-      .click();
+    await row.getByRole('button', { name: `Approve order ${code}` }).click();
 
     // Same EvaluateModal the detail page uses — submitting with no
     // price shows the same inline validation, not a failed API call
@@ -184,20 +206,19 @@ test.describe('Admin pickup requests', () => {
     await expect(page.getByText(/evaluation saved/i)).toBeVisible();
     await expect(row.getByText('Approved')).toBeVisible();
 
-    await page.request.delete(`/api/v1/pickups/${id}/`);
+    await page.request.delete(`/api/v1/pickups/${orderId}/`);
   });
 });
 
-test.describe('Staff pickup requests', () => {
+test.describe('Staff orders', () => {
   test('has the same schedule/collect/cancel access as admin', async ({
     page,
   }) => {
-    const fullName = uniqueName('Staff');
-    const id = await seedPickupRequest(page.request, fullName);
-
     await loginAs(page, 'qaStaff');
-    await approvePickupRequest(page.request, id);
-    await page.goto(`/staff/pickups/${id}`);
+    const fullName = uniqueName('Staff');
+    const { orderId } = await seedOrder(page.request, fullName);
+    await approveOrder(page.request, orderId);
+    await page.goto(`/staff/pickups/${orderId}`);
 
     await expect(
       page.getByRole('button', { name: 'Schedule pickup' }),
@@ -212,6 +233,6 @@ test.describe('Staff pickup requests', () => {
 
     // Staff can delete too — no admin-only restriction on this module,
     // unlike contact messages.
-    await page.request.delete(`/api/v1/pickups/${id}/`);
+    await page.request.delete(`/api/v1/pickups/${orderId}/`);
   });
 });

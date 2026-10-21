@@ -5,15 +5,13 @@ import { useState } from 'react';
 import {
   LuArrowLeft,
   LuCalendar,
-  LuClipboardCheck,
   LuMail,
   LuMapPin,
   LuPackage,
   LuPencil,
   LuPhone,
-  LuTruck,
+  LuPlus,
   LuUser,
-  LuUserCheck,
   LuX,
 } from 'react-icons/lu';
 
@@ -25,67 +23,53 @@ import { AppDate } from '../../../../ui/date/AppDate';
 import { InfoRow } from '../../../../ui/InfoRow';
 import { Loading } from '../../../../ui/loading/Loading';
 import { PageHeader } from '../../../../ui/PageHeader';
+import { TableEmptyRow, TableWrapper } from '../../../../ui/table';
 import { useToast } from '../../../../ui/toast/ToastContext';
-import { ActivityLog } from '../../../activity/components';
 import {
-  EVALUATION_STATUS_BADGE_VARIANT,
+  PICKUP_REQUEST_STATUS_BADGE_VARIANT,
+  PICKUP_STAGE_BADGE_VARIANT,
   REQUEST_TYPE_BADGE_VARIANT,
-  STATUS_BADGE_VARIANT,
 } from '../../constants';
 import { usePickupRequest } from '../../hooks';
 import {
+  derivePickupStage,
   itemsSummary,
-  PICKUP_EVALUATION_STATUS_LABELS,
+  PICKUP_REQUEST_STATUS_LABELS,
   PICKUP_REQUEST_TYPE_LABELS,
-  PICKUP_STATUS_LABELS,
+  PICKUP_STAGE_LABELS,
 } from '../../types';
-import { CollectModal } from '../shared/CollectModal';
-import { AssignDriverModal } from './AssignDriverModal';
-import { CancelModal } from './CancelModal';
-import { EvaluateModal } from './EvaluateModal';
+import { CancelPickupRequestModal } from './CancelPickupRequestModal';
+
+const MAX_ORDERS_PER_PICKUP_REQUEST = 7;
 
 type PickupRequestDetailsViewProps = {
   requestId: string;
-  basePath: '/admin/pickups' | '/staff/pickups' | '/super-admin/pickups';
+  basePath:
+    | '/admin/pickup-requests'
+    | '/staff/pickup-requests'
+    | '/super-admin/pickup-requests';
+  /** The matching Orders basePath (e.g. /admin/pickups) — where each
+   * nested order's row links to. */
+  ordersBasePath: '/admin/pickups' | '/staff/pickups' | '/super-admin/pickups';
 };
 
-/** Admin and staff have identical permissions on this module — every
- * action below is available to both (see
- * CollectionRequestViewSet.get_permissions). What's actually gated is
- * status: evaluate only from `pending`, schedule only from `pending` +
- * `evaluation_status=approved`, collect only from `scheduled`, cancel
- * from either — see CollectionRequestDecisionService on the backend,
- * mirrored here so an invalid action never even renders. */
+/** The customer's ask — its own contact/address/date fields plus a
+ * table of the Orders created under it. "Create order" starts
+ * CreateOrderView, scoped to this request; "Cancel request" cascades
+ * to every non-terminal Order (see CancelPickupRequestModal). Admin
+ * and staff share identical permissions on this module. */
 const PickupRequestDetailsView = ({
   requestId,
   basePath,
+  ordersBasePath,
 }: PickupRequestDetailsViewProps) => {
   const { request, loading, error, refetch } = usePickupRequest(requestId);
   const toast = useToast();
-  const [evaluateOpen, setEvaluateOpen] = useState(false);
-  const [assignDriverOpen, setAssignDriverOpen] = useState(false);
-  const [collectOpen, setCollectOpen] = useState(false);
   const [cancelOpen, setCancelOpen] = useState(false);
 
-  // Secondary/internal actions on a record — stay on this page (no
-  // navigation) and refresh it, but always pair that with an explicit
-  // toast: landing back on the same page a modal action was triggered
-  // from can't otherwise be distinguished from nothing having happened.
-  const handleEvaluated = () => {
-    refetch();
-    toast.success('Evaluation saved');
-  };
-  const handleDriverAssigned = () => {
-    refetch();
-    toast.success('Pickup scheduled');
-  };
-  const handleCollected = () => {
-    refetch();
-    toast.success('Marked as collected');
-  };
   const handleCancelled = () => {
     refetch();
-    toast.success('Pickup cancelled');
+    toast.success('Pickup request cancelled');
   };
 
   if (loading) return <Loading text="Loading pickup request…" />;
@@ -105,13 +89,11 @@ const PickupRequestDetailsView = ({
     );
   }
 
-  const canEvaluate = request.status === 'pending';
-  // Scheduling only ever assigns a driver — see AssignDriverModal.
-  const canAssignDriver =
-    request.status === 'pending' && request.evaluation_status === 'approved';
-  const canCollect = request.status === 'scheduled';
-  const canCancel =
-    request.status === 'pending' || request.status === 'scheduled';
+  const canEdit = request.status === 'open';
+  const canCancel = request.status === 'open';
+  const canCreateOrder =
+    request.status === 'open' &&
+    request.orders.length < MAX_ORDERS_PER_PICKUP_REQUEST;
 
   return (
     <PageContainer variant="form">
@@ -125,29 +107,22 @@ const PickupRequestDetailsView = ({
 
       <PageHeader
         title={request.full_name}
-        subtitle={`${itemsSummary(request.items)} pickup request`}
+        subtitle={`${request.orders.length} order${request.orders.length === 1 ? '' : 's'}`}
         actions={
           <>
-            <Button variant="secondary" href={`${basePath}/${request.id}/edit`}>
-              <LuPencil className="mr-1.5 size-4" />
-              Edit
-            </Button>
-            {canEvaluate && (
-              <Button variant="secondary" onClick={() => setEvaluateOpen(true)}>
-                <LuClipboardCheck className="mr-1.5 size-4" />
-                Evaluate
+            {canEdit && (
+              <Button
+                variant="secondary"
+                href={`${basePath}/${request.id}/edit`}
+              >
+                <LuPencil className="mr-1.5 size-4" />
+                Edit
               </Button>
             )}
-            {canAssignDriver && (
-              <Button onClick={() => setAssignDriverOpen(true)}>
-                <LuTruck className="mr-1.5 size-4" />
-                Schedule pickup
-              </Button>
-            )}
-            {canCollect && (
-              <Button onClick={() => setCollectOpen(true)}>
-                <LuPackage className="mr-1.5 size-4" />
-                Mark as collected
+            {canCreateOrder && (
+              <Button href={`${basePath}/${request.id}/orders/create`}>
+                <LuPlus className="mr-1.5 size-4" />
+                Create order
               </Button>
             )}
             {canCancel && (
@@ -156,7 +131,7 @@ const PickupRequestDetailsView = ({
                 onClick={() => setCancelOpen(true)}
               >
                 <LuX className="mr-1.5 size-4" />
-                Cancel
+                Cancel request
               </Button>
             )}
           </>
@@ -167,13 +142,10 @@ const PickupRequestDetailsView = ({
         <StatusBadge variant={REQUEST_TYPE_BADGE_VARIANT[request.request_type]}>
           {PICKUP_REQUEST_TYPE_LABELS[request.request_type]}
         </StatusBadge>
-        <StatusBadge variant={STATUS_BADGE_VARIANT[request.status]}>
-          {PICKUP_STATUS_LABELS[request.status]}
-        </StatusBadge>
         <StatusBadge
-          variant={EVALUATION_STATUS_BADGE_VARIANT[request.evaluation_status]}
+          variant={PICKUP_REQUEST_STATUS_BADGE_VARIANT[request.status]}
         >
-          {PICKUP_EVALUATION_STATUS_LABELS[request.evaluation_status]}
+          {PICKUP_REQUEST_STATUS_LABELS[request.status]}
         </StatusBadge>
       </div>
 
@@ -196,36 +168,14 @@ const PickupRequestDetailsView = ({
           />
           <InfoRow
             icon={<LuCalendar className="size-4" />}
-            label="Requested date"
-            value={
-              request.requested_date ? (
-                <AppDate value={request.requested_date} format="long" />
-              ) : (
-                '—'
-              )
-            }
-          />
-          <InfoRow
-            icon={<LuMapPin className="size-4" />}
-            label="Pickup address"
-            value={request.pickup_address}
+            label="Requested for"
+            value={<AppDate value={request.requested_at} format="long" />}
           />
           <div className="sm:col-span-2">
             <InfoRow
-              icon={<LuPackage className="size-4" />}
-              label="Materials"
-              value={
-                <ul className="space-y-0.5">
-                  {request.items.map((item) => (
-                    <li key={item.id}>
-                      {item.category.name}
-                      {item.estimated_quantity
-                        ? ` — ${item.estimated_quantity} ${item.quantity_unit}`
-                        : ''}
-                    </li>
-                  ))}
-                </ul>
-              }
+              icon={<LuMapPin className="size-4" />}
+              label="Pickup address"
+              value={request.pickup_address}
             />
           </div>
         </div>
@@ -242,20 +192,6 @@ const PickupRequestDetailsView = ({
           </div>
         )}
 
-        {request.photo?.public_url && (
-          <div className="mt-5 border-t border-slate-100 pt-5">
-            <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
-              Photo
-            </p>
-            {/* eslint-disable-next-line @next/next/no-img-element -- remote/presigned URL, not a static asset */}
-            <img
-              src={request.photo.public_url}
-              alt=""
-              className="size-32 rounded-xl border border-slate-200 object-cover"
-            />
-          </div>
-        )}
-
         {request.note && (
           <div className="mt-5 border-t border-slate-100 pt-5">
             <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
@@ -267,177 +203,119 @@ const PickupRequestDetailsView = ({
           </div>
         )}
 
-        {request.evaluation_status !== 'pending' && (
+        {request.status === 'cancelled' && (
           <div className="mt-5 border-t border-slate-100 pt-5">
             <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
-              Evaluation
+              Cancellation
             </p>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              {request.price && (
-                <InfoRow
-                  icon={<LuPackage className="size-4" />}
-                  label="Price"
-                  value={request.price}
-                />
-              )}
-              {request.evaluated_by && (
+              {request.cancelled_by && (
                 <InfoRow
                   icon={<LuUser className="size-4" />}
-                  label="Evaluated by"
-                  value={request.evaluated_by}
+                  label="Cancelled by"
+                  value={request.cancelled_by}
                 />
               )}
-              {request.evaluated_at && (
+              {request.cancelled_at && (
                 <InfoRow
                   icon={<LuCalendar className="size-4" />}
-                  label="Evaluated at"
-                  value={<AppDate value={request.evaluated_at} format="long" />}
+                  label="Cancelled at"
+                  value={<AppDate value={request.cancelled_at} format="long" />}
                 />
               )}
             </div>
-            {request.evaluation_note && (
+            {request.cancellation_reason && (
               <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-slate-700">
-                {request.evaluation_note}
+                {request.cancellation_reason}
               </p>
             )}
           </div>
         )}
       </Card>
 
-      {(request.status === 'scheduled' ||
-        request.status === 'collected' ||
-        request.status === 'delivered' ||
-        request.status === 'closed' ||
-        request.status === 'cancelled') && (
-        <Card className="mt-4 p-5">
-          <p className="mb-3 text-sm font-semibold text-slate-900">
-            {request.status === 'cancelled' ? 'Cancellation' : 'Progress'}
-          </p>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            {request.assigned_collector && (
-              <InfoRow
-                icon={<LuUserCheck className="size-4" />}
-                label="Assigned collector"
-                value={request.assigned_collector}
-              />
-            )}
-            {request.assigned_driver && (
-              <InfoRow
-                icon={<LuTruck className="size-4" />}
-                label="Assigned driver"
-                value={request.assigned_driver}
-              />
-            )}
-            {request.scheduled_at && (
-              <InfoRow
-                icon={<LuCalendar className="size-4" />}
-                label="Scheduled for"
-                value={<AppDate value={request.scheduled_at} format="long" />}
-              />
-            )}
-            {request.collected_at && (
-              <InfoRow
-                icon={<LuPackage className="size-4" />}
-                label="Collected at"
-                value={<AppDate value={request.collected_at} format="long" />}
-              />
-            )}
-            {request.items.some((item) => item.collected_quantity) && (
-              <div className="sm:col-span-2">
-                <InfoRow
-                  icon={<LuPackage className="size-4" />}
-                  label="Collected quantity"
-                  value={
-                    <ul className="space-y-0.5">
-                      {request.items.map((item) => (
-                        <li key={item.id}>
-                          {item.category.name}
-                          {item.collected_quantity
-                            ? ` — ${item.collected_quantity} ${item.quantity_unit}`
-                            : ''}
-                        </li>
-                      ))}
-                    </ul>
-                  }
-                />
-              </div>
-            )}
-            {request.delivered_quantity && (
-              <InfoRow
-                icon={<LuPackage className="size-4" />}
-                label="Delivered quantity"
-                value={request.delivered_quantity}
-              />
-            )}
-            {request.route && (
-              <InfoRow
-                icon={<LuTruck className="size-4" />}
-                label="Route"
-                value={
-                  request.route.status === 'dropped_off'
-                    ? 'Dropped off at store'
-                    : 'Still with driver'
-                }
-              />
-            )}
-            {request.closed_by && (
-              <InfoRow
-                icon={<LuUserCheck className="size-4" />}
-                label="Closed by"
-                value={request.closed_by}
-              />
-            )}
-            {request.closed_at && (
-              <InfoRow
-                icon={<LuCalendar className="size-4" />}
-                label="Closed at"
-                value={<AppDate value={request.closed_at} format="long" />}
-              />
-            )}
-            {request.cancelled_by && (
-              <InfoRow
-                icon={<LuUser className="size-4" />}
-                label="Cancelled by"
-                value={request.cancelled_by}
-              />
-            )}
-          </div>
-          {request.cancellation_reason && (
-            <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-slate-700">
-              {request.cancellation_reason}
-            </p>
-          )}
-        </Card>
-      )}
-
       <Card className="mt-4 p-5">
-        <p className="mb-3 text-sm font-semibold text-slate-900">Activity</p>
-        <ActivityLog entityType="collectionrequest" entityId={request.id} />
+        <p className="mb-3 text-sm font-semibold text-slate-900">Orders</p>
+        {request.orders.length === 0 ? (
+          <TableWrapper>
+            <table className="min-w-full divide-y divide-slate-200 text-sm">
+              <tbody>
+                <TableEmptyRow
+                  colSpan={1}
+                  icon={<LuPackage className="size-6" />}
+                  title="No orders yet"
+                  subtitle="Create one to start the materials/pricing/driver workflow."
+                />
+              </tbody>
+            </table>
+          </TableWrapper>
+        ) : (
+          <TableWrapper>
+            <table className="min-w-full divide-y divide-slate-200 text-sm">
+              <thead className="bg-slate-50">
+                <tr>
+                  <th className="px-6 py-3 text-left font-semibold text-slate-500">
+                    Order
+                  </th>
+                  <th className="px-6 py-3 text-left font-semibold text-slate-500">
+                    Items
+                  </th>
+                  <th className="px-6 py-3 text-left font-semibold text-slate-500">
+                    Status
+                  </th>
+                  <th className="px-6 py-3 text-left font-semibold text-slate-500">
+                    Price
+                  </th>
+                  <th className="px-6 py-3 text-left font-semibold text-slate-500">
+                    Created
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {request.orders.map((order) => {
+                  const stage = derivePickupStage(
+                    order.status,
+                    order.evaluation_status,
+                  );
+                  return (
+                    <tr key={order.id}>
+                      <td className="px-6 py-4 font-medium text-slate-900">
+                        <Link
+                          href={`${ordersBasePath}/${order.id}`}
+                          className="hover:text-brand-600"
+                        >
+                          {order.code}
+                        </Link>
+                      </td>
+                      <td className="max-w-[200px] truncate px-6 py-4 text-slate-700">
+                        {itemsSummary(order.items)}
+                      </td>
+                      <td className="px-6 py-4">
+                        <StatusBadge
+                          variant={PICKUP_STAGE_BADGE_VARIANT[stage]}
+                        >
+                          {PICKUP_STAGE_LABELS[stage]}
+                        </StatusBadge>
+                      </td>
+                      <td className="px-6 py-4 text-slate-700">
+                        {order.price ?? '—'}
+                      </td>
+                      <td className="px-6 py-4 text-slate-500">
+                        <AppDate
+                          value={order.requested_date ?? request.created_at}
+                          format="short"
+                        />
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </TableWrapper>
+        )}
       </Card>
 
-      <EvaluateModal
-        requestId={request.id}
-        open={evaluateOpen}
-        onClose={() => setEvaluateOpen(false)}
-        onEvaluated={handleEvaluated}
-        items={request.items}
-      />
-      <AssignDriverModal
-        requestId={request.id}
-        open={assignDriverOpen}
-        onClose={() => setAssignDriverOpen(false)}
-        onAssigned={handleDriverAssigned}
-      />
-      <CollectModal
-        requestId={request.id}
-        open={collectOpen}
-        onClose={() => setCollectOpen(false)}
-        onCollected={handleCollected}
-        showPaymentFields={request.assigned_driver !== null}
-        items={request.items}
-      />
-      <CancelModal
-        requestId={request.id}
+      <CancelPickupRequestModal
+        pickupRequestId={request.id}
         open={cancelOpen}
         onClose={() => setCancelOpen(false)}
         onCancelled={handleCancelled}

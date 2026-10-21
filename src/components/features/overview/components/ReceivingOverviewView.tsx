@@ -72,7 +72,9 @@ const ReceivingOverviewView = () => {
     }
     return deliveries.slice(0, PREVIEW_SIZE).map((d) => (
       <tr key={d.id} className="transition-colors hover:bg-slate-50">
-        <td className="px-6 py-4 font-medium text-slate-900">{d.full_name}</td>
+        <td className="px-6 py-4 font-medium text-slate-900">
+          {d.pickup_request.full_name}
+        </td>
         <td className="px-6 py-4 text-slate-500">{itemsSummary(d.items)}</td>
         <td className="px-6 py-4">
           <StatusBadge variant={STATUS_BADGE_VARIANT[d.status]}>

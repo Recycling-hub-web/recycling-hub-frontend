@@ -1,16 +1,17 @@
 'use client';
 
 import { type FormEvent, useEffect, useState } from 'react';
-import { LuReceipt, LuUpload } from 'react-icons/lu';
+import { LuPlus, LuReceipt, LuTrash2, LuUpload } from 'react-icons/lu';
 
 import { InputField } from '../../../../form/fields/InputField';
 import { SelectField } from '../../../../form/fields/SelectField';
 import { TextareaField } from '../../../../form/fields/TextareaField';
 import { AlertBanner } from '../../../../ui/AlertBanner';
+import { Button } from '../../../../ui/buttons/Button';
 import { FormActions } from '../../../../ui/buttons/FormActions';
 import { Modal } from '../../../../ui/modal/Modal';
 import { useUploadStorageFile } from '../../../storageFiles/hooks';
-import { useCollectPickup } from '../../hooks';
+import { useCollectPickup, usePickupCategories } from '../../hooks';
 import type { PickupRequestItem } from '../../types';
 
 type CollectModalProps = {
@@ -23,10 +24,11 @@ type CollectModalProps = {
    * later) — a staff collector has nothing to reimburse, so these
    * fields stay hidden on that path. See FinanceRecord on the backend. */
   showPaymentFields?: boolean;
-  /** The request's materials — a single-item request still collects via
+  /** The Order's materials — a single-item Order still collects via
    * the scalar convenience path (no quantity UI at all, same as before
    * this field existed); a multi-item one gets one quantity input per
-   * item here, defaulting to its estimated_quantity. */
+   * item here, defaulting to its estimated_quantity, plus a category
+   * select to correct a miscategorized line. */
   items?: PickupRequestItem[];
 };
 
@@ -34,6 +36,20 @@ type FormState = {
   note: string;
   payment_method: string;
   proof_of_payment: string;
+};
+
+/** One brand-new material the driver found on-site — no `id`, unlike a
+ * correction to an existing item. */
+type NewItemRow = {
+  category: string;
+  collected_quantity: string;
+  quantity_unit: string;
+};
+
+const EMPTY_NEW_ITEM: NewItemRow = {
+  category: '',
+  collected_quantity: '',
+  quantity_unit: 'kg',
 };
 
 const PAYMENT_METHOD_OPTIONS = [
@@ -46,7 +62,10 @@ const PAYMENT_METHOD_OPTIONS = [
  * see CollectionRequestDecisionService.collect on the backend. The
  * driver is standing at the customer's door once, paying them right
  * there — this captures how, in the same submit, rather than sending
- * them to a second screen later. */
+ * them to a second screen later. Also where the driver corrects an
+ * existing item's category/quantity, or adds a brand-new material
+ * found on-site — both go to the backend in the same `collect()` call
+ * (see the extended `items` payload shape on CollectPickupPayload). */
 const CollectModal = ({
   requestId,
   open,
@@ -57,6 +76,8 @@ const CollectModal = ({
 }: CollectModalProps) => {
   const { execute: collect, loading: submitting } = useCollectPickup();
   const { execute: upload, loading: uploading } = useUploadStorageFile();
+  const { options: categoryOptions, loading: loadingCategories } =
+    usePickupCategories();
   const initialState: FormState = {
     note: '',
     payment_method: '',
@@ -69,11 +90,13 @@ const CollectModal = ({
   const [itemQuantities, setItemQuantities] = useState<Record<string, string>>(
     {},
   );
+  const [itemCategories, setItemCategories] = useState<Record<string, string>>(
+    {},
+  );
+  const [newItems, setNewItems] = useState<NewItemRow[]>([]);
 
-  const isMultiItem = items.length > 1;
-
-  // Re-seed the per-item quantities (defaulting to each item's estimated
-  // quantity) every time the modal is opened for a request.
+  // Re-seed the per-item quantities/categories (defaulting to each
+  // item's own values) every time the modal is opened for a request.
   useEffect(() => {
     if (!open) return;
     setItemQuantities(
@@ -81,6 +104,10 @@ const CollectModal = ({
         items.map((item) => [item.id, item.estimated_quantity ?? '']),
       ),
     );
+    setItemCategories(
+      Object.fromEntries(items.map((item) => [item.id, item.category.id])),
+    );
+    setNewItems([]);
   }, [open, items]);
 
   let uploadLabel = 'Upload';
@@ -91,6 +118,17 @@ const CollectModal = ({
     setFormData((prev) => ({ ...prev, [field]: value }));
     setErrors((prev) => ({ ...prev, [field]: '' }));
   };
+
+  const updateNewItem = (index: number, field: string, value: string) => {
+    setNewItems((prev) =>
+      prev.map((row, i) => (i === index ? { ...row, [field]: value } : row)),
+    );
+  };
+
+  const addNewItemRow = () =>
+    setNewItems((prev) => [...prev, { ...EMPTY_NEW_ITEM }]);
+  const removeNewItemRow = (index: number) =>
+    setNewItems((prev) => prev.filter((_, i) => i !== index));
 
   const validate = (): boolean => {
     const nextErrors: Record<string, string> = {};
@@ -108,6 +146,8 @@ const CollectModal = ({
     setErrors({});
     setApiError('');
     setItemQuantities({});
+    setItemCategories({});
+    setNewItems([]);
     onClose();
   };
 
@@ -126,15 +166,33 @@ const CollectModal = ({
     e.preventDefault();
     setApiError('');
     if (!validate()) return;
+
+    const existingItemEntries = items.map((item) => {
+      const categoryChanged = itemCategories[item.id] !== item.category.id;
+      return {
+        id: item.id,
+        collected_quantity: itemQuantities[item.id] || undefined,
+        ...(categoryChanged && itemCategories[item.id]
+          ? { category: itemCategories[item.id] }
+          : {}),
+      };
+    });
+    const newItemEntries = newItems
+      .filter((row) => row.category && row.collected_quantity)
+      .map((row) => ({
+        category: row.category,
+        collected_quantity: row.collected_quantity,
+        quantity_unit: row.quantity_unit || 'kg',
+      }));
+    const anyItemEntries =
+      items.length > 0 || newItemEntries.length > 0
+        ? [...existingItemEntries, ...newItemEntries]
+        : undefined;
+
     try {
       await collect(requestId, {
         note: formData.note || undefined,
-        ...(isMultiItem && {
-          items: items.map((item) => ({
-            id: item.id,
-            collected_quantity: itemQuantities[item.id] || undefined,
-          })),
-        }),
+        ...(anyItemEntries && { items: anyItemEntries }),
         ...(showPaymentFields && {
           // actual_amount deliberately omitted — defaults server-side
           // to the agreed price (set at evaluation), which is always
@@ -188,30 +246,117 @@ const CollectModal = ({
       >
         <AlertBanner message={apiError} />
 
-        {isMultiItem && (
+        {items.length > 0 && (
           <div className="mb-4">
             <p className="mb-2 text-sm font-medium text-slate-900">
               Collected quantity per item
             </p>
             <div className="space-y-3">
               {items.map((item) => (
-                <InputField
+                <div
                   key={item.id}
-                  label={`${item.category.name} (${item.quantity_unit})`}
-                  field={item.id}
-                  dataField={`item-quantity-${item.category.name}`}
-                  type="number"
-                  required={false}
-                  placeholder="e.g. 5"
-                  formData={itemQuantities}
-                  updateFormData={(field, value) =>
-                    setItemQuantities((prev) => ({ ...prev, [field]: value }))
-                  }
-                />
+                  className="grid grid-cols-1 gap-x-4 sm:grid-cols-2"
+                >
+                  <SelectField
+                    label={`Category (${item.category.name})`}
+                    field={item.id}
+                    dataField={`item-category-${item.category.name}`}
+                    required={false}
+                    options={categoryOptions}
+                    formData={itemCategories}
+                    updateFormData={(field, value) =>
+                      setItemCategories((prev) => ({ ...prev, [field]: value }))
+                    }
+                    disabled={loadingCategories}
+                  />
+                  <InputField
+                    label={`${item.category.name} (${item.quantity_unit})`}
+                    field={item.id}
+                    dataField={`item-quantity-${item.category.name}`}
+                    type="number"
+                    required={false}
+                    placeholder="e.g. 5"
+                    formData={itemQuantities}
+                    updateFormData={(field, value) =>
+                      setItemQuantities((prev) => ({ ...prev, [field]: value }))
+                    }
+                  />
+                </div>
               ))}
             </div>
           </div>
         )}
+
+        <div className="mb-4">
+          <div className="mb-2 flex items-center justify-between gap-3">
+            <p className="text-sm font-medium text-slate-900">
+              Found on-site{' '}
+              <span className="font-normal text-slate-400">(optional)</span>
+            </p>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={addNewItemRow}
+              className="px-3.5 py-1.5 text-xs"
+            >
+              <LuPlus className="mr-1.5 size-3.5" />
+              Add another material
+            </Button>
+          </div>
+          {newItems.length > 0 && (
+            <div className="space-y-3">
+              {newItems.map((row, index) => (
+                // eslint-disable-next-line react/no-array-index-key -- rows have no stable id until submitted
+                <div
+                  key={index}
+                  className="grid grid-cols-1 gap-x-4 gap-y-1 rounded-xl border border-slate-200 p-3 sm:grid-cols-3"
+                >
+                  <SelectField
+                    label="Category"
+                    field="category"
+                    options={categoryOptions}
+                    formData={row}
+                    updateFormData={(field, value) =>
+                      updateNewItem(index, field, value)
+                    }
+                    disabled={loadingCategories}
+                  />
+                  <InputField
+                    label="Quantity"
+                    field="collected_quantity"
+                    type="number"
+                    required={false}
+                    placeholder="e.g. 5"
+                    formData={row}
+                    updateFormData={(field, value) =>
+                      updateNewItem(index, field, value)
+                    }
+                  />
+                  <div className="flex items-end gap-2">
+                    <InputField
+                      label="Unit"
+                      field="quantity_unit"
+                      required={false}
+                      placeholder="e.g. kg"
+                      formData={row}
+                      updateFormData={(field, value) =>
+                        updateNewItem(index, field, value)
+                      }
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeNewItemRow(index)}
+                      aria-label="Remove this material"
+                      className="mb-4 inline-flex size-9 shrink-0 items-center justify-center rounded-full text-slate-400 transition hover:bg-red-50 hover:text-red-600"
+                    >
+                      <LuTrash2 className="size-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
 
         <TextareaField
           label="Note"

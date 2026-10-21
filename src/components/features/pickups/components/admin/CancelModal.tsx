@@ -6,7 +6,7 @@ import { TextareaField } from '../../../../form/fields/TextareaField';
 import { AlertBanner } from '../../../../ui/AlertBanner';
 import { FormActions } from '../../../../ui/buttons/FormActions';
 import { Modal } from '../../../../ui/modal/Modal';
-import { useCancelPickup } from '../../hooks';
+import { useCancelOrder } from '../../hooks';
 
 type CancelModalProps = {
   requestId: string;
@@ -30,7 +30,7 @@ const CancelModal = ({
   onClose,
   onCancelled,
 }: CancelModalProps) => {
-  const { execute: cancel, loading: submitting } = useCancelPickup();
+  const { execute: cancel, loading: submitting } = useCancelOrder();
   const [formData, setFormData] = useState<FormState>(INITIAL_STATE);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [apiError, setApiError] = useState('');

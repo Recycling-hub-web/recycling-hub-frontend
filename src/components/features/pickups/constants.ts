@@ -1,10 +1,12 @@
 import type { BadgeVariant } from '../../ui/badges/variants';
 import {
   PICKUP_EVALUATION_STATUS_LABELS,
+  PICKUP_REQUEST_STATUS_LABELS,
   PICKUP_REQUEST_TYPE_LABELS,
   PICKUP_STATUS_LABELS,
   type PickupEvaluationStatus,
   type PickupQuickRequestStatus,
+  type PickupRequestStatus,
   type PickupRequestType,
   type PickupStage,
   type PickupStatus,
@@ -81,9 +83,33 @@ const QUICK_REQUEST_STATUS_BADGE_VARIANT: Record<
   converted: 'success',
 };
 
+// The new Request-level concept (PickupRequest) — distinct from
+// PickupStatus/STATUS_FILTER_OPTIONS above, which are an Order's own
+// status.
+const PICKUP_REQUEST_STATUS_FILTER_OPTIONS = [
+  { value: '', label: 'All statuses' },
+  ...(Object.keys(PICKUP_REQUEST_STATUS_LABELS) as PickupRequestStatus[]).map(
+    (status) => ({
+      value: status,
+      label: PICKUP_REQUEST_STATUS_LABELS[status],
+    }),
+  ),
+];
+
+const PICKUP_REQUEST_STATUS_BADGE_VARIANT: Record<
+  PickupRequestStatus,
+  BadgeVariant
+> = {
+  open: 'warning',
+  fulfilled: 'success',
+  cancelled: 'danger',
+};
+
 export {
   EVALUATION_STATUS_BADGE_VARIANT,
   EVALUATION_STATUS_FILTER_OPTIONS,
+  PICKUP_REQUEST_STATUS_BADGE_VARIANT,
+  PICKUP_REQUEST_STATUS_FILTER_OPTIONS,
   PICKUP_STAGE_BADGE_VARIANT,
   QUICK_REQUEST_STATUS_BADGE_VARIANT,
   REQUEST_TYPE_BADGE_VARIANT,

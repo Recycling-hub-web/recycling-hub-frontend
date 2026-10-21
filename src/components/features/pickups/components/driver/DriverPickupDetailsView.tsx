@@ -1,9 +1,13 @@
 'use client';
 
 import Link from 'next/link';
+import { useState } from 'react';
 import {
   LuArrowLeft,
   LuCalendar,
+  LuCalendarCheck,
+  LuClipboardCheck,
+  LuImage,
   LuMail,
   LuMapPin,
   LuNavigation,
@@ -20,11 +24,13 @@ import { AppDate } from '../../../../ui/date/AppDate';
 import { InfoRow } from '../../../../ui/InfoRow';
 import { Loading } from '../../../../ui/loading/Loading';
 import { PageHeader } from '../../../../ui/PageHeader';
+import { useToast } from '../../../../ui/toast/ToastContext';
+import { WhatsAppLink } from '../../../../ui/WhatsAppLink';
 import {
   EVALUATION_STATUS_BADGE_VARIANT,
   STATUS_BADGE_VARIANT,
 } from '../../constants';
-import { usePickupRequest } from '../../hooks';
+import { useOrder } from '../../hooks';
 import {
   itemsSummary,
   PICKUP_EVALUATION_STATUS_LABELS,
@@ -34,6 +40,7 @@ import {
   googleMapsDirectionsUrl,
   wazeNavigateUrl,
 } from '../../utils/navigationLinks';
+import { ConfirmScheduleModal } from './ConfirmScheduleModal';
 
 type DriverPickupDetailsViewProps = {
   requestId: string;
@@ -44,21 +51,25 @@ type DriverPickupDetailsViewProps = {
 // along: delivered/closed), the trip's over.
 const NAVIGABLE_STATUSES = ['pending', 'scheduled'];
 
-/** A driver's own read-only "pickup profile" — no edit/schedule/evaluate
- * actions like the admin/staff details page has (PickupRequestDetailsView),
- * just the information a driver needs about one stop. Collecting/claiming
- * stays on the list (DriverPickupsView) — this is purely informational. */
+/** A driver's own read-only "order profile" — no edit/schedule/evaluate
+ * actions like the admin/staff details page has (OrderDetailsView),
+ * just the information a driver needs about one stop, plus the one
+ * driver-only action this page does have: confirming the pickup time
+ * once scheduled (see ConfirmScheduleModal). Claiming/collecting stays
+ * on the list (DriverPickupsView). */
 const DriverPickupDetailsView = ({
   requestId,
 }: DriverPickupDetailsViewProps) => {
-  const { request, loading, error, refetch } = usePickupRequest(requestId);
+  const { request, loading, error, refetch } = useOrder(requestId);
+  const toast = useToast();
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
-  if (loading) return <Loading text="Loading pickup request…" />;
+  if (loading) return <Loading text="Loading order…" />;
 
   if (error || !request) {
     return (
       <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-        {error || 'Pickup request not found.'}{' '}
+        {error || 'Order not found.'}{' '}
         <button
           type="button"
           onClick={refetch}
@@ -71,6 +82,13 @@ const DriverPickupDetailsView = ({
   }
 
   const canNavigate = NAVIGABLE_STATUSES.includes(request.status);
+  const canConfirmSchedule =
+    request.status === 'scheduled' && !request.pickup_confirmed_at;
+
+  const handleConfirmed = () => {
+    refetch();
+    toast.success('Pickup time confirmed');
+  };
 
   return (
     <PageContainer variant="form">
@@ -79,12 +97,20 @@ const DriverPickupDetailsView = ({
         className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600"
       >
         <LuArrowLeft className="size-4" />
-        Back to pickup requests
+        Back to pickups
       </Link>
 
       <PageHeader
-        title={request.full_name}
-        subtitle={`${itemsSummary(request.items)} pickup request`}
+        title={request.code}
+        subtitle={`${request.pickup_request.full_name} — ${itemsSummary(request.items)}`}
+        actions={
+          canConfirmSchedule ? (
+            <Button onClick={() => setConfirmOpen(true)}>
+              <LuClipboardCheck className="mr-1.5 size-4" />
+              Confirm pickup time
+            </Button>
+          ) : undefined
+        }
       />
 
       <div className="mb-4 flex flex-wrap gap-2">
@@ -103,34 +129,35 @@ const DriverPickupDetailsView = ({
           <InfoRow
             icon={<LuUser className="size-4" />}
             label="Requester"
-            value={request.full_name}
+            value={request.pickup_request.full_name}
           />
           <InfoRow
             icon={<LuMail className="size-4" />}
             label="Email"
-            value={request.email || '—'}
+            value={request.pickup_request.email || '—'}
           />
           <InfoRow
             icon={<LuPhone className="size-4" />}
             label="Phone"
-            value={request.phone_number || '—'}
+            value={
+              <WhatsAppLink phoneNumber={request.pickup_request.phone_number} />
+            }
           />
           <InfoRow
             icon={<LuCalendar className="size-4" />}
-            label="Requested date"
+            label="Requested for"
             value={
-              request.requested_date ? (
-                <AppDate value={request.requested_date} format="long" />
-              ) : (
-                '—'
-              )
+              <AppDate
+                value={request.pickup_request.requested_at}
+                format="long"
+              />
             }
           />
           <div className="sm:col-span-2">
             <InfoRow
               icon={<LuMapPin className="size-4" />}
               label="Pickup address"
-              value={request.pickup_address}
+              value={request.pickup_request.pickup_address}
             />
           </div>
           <div className="sm:col-span-2">
@@ -138,16 +165,20 @@ const DriverPickupDetailsView = ({
               icon={<LuPackage className="size-4" />}
               label="Materials"
               value={
-                <ul className="space-y-0.5">
-                  {request.items.map((item) => (
-                    <li key={item.id}>
-                      {item.category.name}
-                      {item.estimated_quantity
-                        ? ` — ${item.estimated_quantity} ${item.quantity_unit}`
-                        : ''}
-                    </li>
-                  ))}
-                </ul>
+                request.items.length === 0 ? (
+                  '—'
+                ) : (
+                  <ul className="space-y-0.5">
+                    {request.items.map((item) => (
+                      <li key={item.id}>
+                        {item.category.name}
+                        {item.estimated_quantity
+                          ? ` — ${item.estimated_quantity} ${item.quantity_unit}`
+                          : ''}
+                      </li>
+                    ))}
+                  </ul>
+                )
               }
             />
           </div>
@@ -158,6 +189,33 @@ const DriverPickupDetailsView = ({
               value={request.price}
             />
           )}
+          {request.scheduled_at &&
+            (request.pickup_confirmed_at ? (
+              <InfoRow
+                icon={<LuCalendarCheck className="size-4" />}
+                label="Confirmed pickup"
+                value={
+                  <span>
+                    <AppDate value={request.scheduled_at} format="datetime" />
+                    <span className="block text-xs text-slate-400">
+                      Confirmed{' '}
+                      <AppDate
+                        value={request.pickup_confirmed_at}
+                        format="relative"
+                      />
+                    </span>
+                  </span>
+                }
+              />
+            ) : (
+              <InfoRow
+                icon={<LuCalendar className="size-4" />}
+                label="Scheduled for (not confirmed yet)"
+                value={
+                  <AppDate value={request.scheduled_at} format="datetime" />
+                }
+              />
+            ))}
         </div>
 
         {canNavigate && (
@@ -166,7 +224,9 @@ const DriverPickupDetailsView = ({
               variant="secondary"
               size="sm"
               className="gap-1.5"
-              href={googleMapsDirectionsUrl(request.pickup_address)}
+              href={googleMapsDirectionsUrl(
+                request.pickup_request.pickup_address,
+              )}
             >
               <LuMapPin className="size-4" />
               Google Maps
@@ -175,7 +235,7 @@ const DriverPickupDetailsView = ({
               variant="secondary"
               size="sm"
               className="gap-1.5"
-              href={wazeNavigateUrl(request.pickup_address)}
+              href={wazeNavigateUrl(request.pickup_request.pickup_address)}
             >
               <LuNavigation className="size-4" />
               Waze
@@ -183,43 +243,65 @@ const DriverPickupDetailsView = ({
           </div>
         )}
 
-        {request.photo?.public_url && (
+        {request.photos.length > 0 && (
           <div className="mt-5 border-t border-slate-100 pt-5">
             <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
-              Photo
+              Photos
             </p>
-            {/* eslint-disable-next-line @next/next/no-img-element -- remote/presigned URL, not a static asset */}
-            <img
-              src={request.photo.public_url}
-              alt=""
-              className="size-32 rounded-xl border border-slate-200 object-cover"
-            />
+            <div className="flex flex-wrap gap-2">
+              {request.photos.map((photo) =>
+                photo.file_key.public_url ? (
+                  // eslint-disable-next-line @next/next/no-img-element -- remote/presigned URL, not a static asset
+                  <img
+                    key={photo.id}
+                    src={photo.file_key.public_url}
+                    alt=""
+                    className="size-24 rounded-xl border border-slate-200 object-cover"
+                  />
+                ) : (
+                  <span
+                    key={photo.id}
+                    className="flex size-24 items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50 text-slate-400"
+                  >
+                    <LuImage className="size-6" />
+                  </span>
+                ),
+              )}
+            </div>
           </div>
         )}
 
-        {request.note && (
+        {request.pickup_request.note && (
           <div className="mt-5 border-t border-slate-100 pt-5">
             <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
-              Note
+              Requester&apos;s note
             </p>
             <p className="whitespace-pre-wrap text-sm leading-relaxed text-slate-700">
-              {request.note}
+              {request.pickup_request.note}
             </p>
           </div>
         )}
 
-        {request.collection_point && (
+        {request.pickup_request.collection_point && (
           <div className="mt-5 border-t border-slate-100 pt-5">
             <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
               Drop-off collection point
             </p>
             <p className="text-sm text-slate-700">
-              {request.collection_point.name} —{' '}
-              {request.collection_point.address}
+              {request.pickup_request.collection_point.name} —{' '}
+              {request.pickup_request.collection_point.address}
             </p>
           </div>
         )}
       </Card>
+
+      <ConfirmScheduleModal
+        requestId={request.id}
+        open={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        onConfirmed={handleConfirmed}
+        initialScheduledAt={request.scheduled_at}
+      />
     </PageContainer>
   );
 };
