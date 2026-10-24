@@ -19,17 +19,21 @@ import { useToast } from '../../../ui/toast/ToastContext';
 import { NONE_PARENT } from '../constants';
 import { useCreateCategory } from '../hooks';
 import { listCategories } from '../services/categoryService';
+import type { QuantityUnit } from '../types';
+import { MeasuredByField } from './MeasuredByField';
 
 type FormState = {
   name: string;
   description: string;
   parent: string;
+  allowed_quantity_units: QuantityUnit[];
 };
 
 const INITIAL_STATE: FormState = {
   name: '',
   description: '',
   parent: NONE_PARENT,
+  allowed_quantity_units: ['kg'],
 };
 
 type CreateCategoryViewProps = {
@@ -75,6 +79,9 @@ const CreateCategoryView = ({ basePath }: CreateCategoryViewProps) => {
   const validate = (data: FormState): boolean => {
     const nextErrors: Record<string, string> = {};
     if (!data.name.trim()) nextErrors.name = 'Name is required.';
+    if (!data.allowed_quantity_units.length) {
+      nextErrors.allowed_quantity_units = 'Choose at least one unit.';
+    }
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
   };
@@ -90,6 +97,7 @@ const CreateCategoryView = ({ basePath }: CreateCategoryViewProps) => {
         name: formData.name,
         description: formData.description || undefined,
         parent: formData.parent === NONE_PARENT ? null : formData.parent,
+        allowed_quantity_units: formData.allowed_quantity_units,
       });
       toast.success('Category created', `${formData.name} has been added.`);
       router.push(`${basePath}/${category.id}`);
@@ -137,6 +145,23 @@ const CreateCategoryView = ({ basePath }: CreateCategoryViewProps) => {
               updateFormData={updateFormData}
               disabled={submitting}
             />
+            <div className="sm:col-span-2">
+              <MeasuredByField
+                value={formData.allowed_quantity_units}
+                onChange={(units) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    allowed_quantity_units: units,
+                  }));
+                  setErrors((prev) => ({
+                    ...prev,
+                    allowed_quantity_units: '',
+                  }));
+                }}
+                error={errors.allowed_quantity_units}
+                disabled={submitting}
+              />
+            </div>
             <div className="sm:col-span-2">
               <TextareaField
                 label="Description"

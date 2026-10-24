@@ -9,6 +9,11 @@ import {
 } from '../../../../form/fields/SelectField';
 import { Button } from '../../../../ui/buttons/Button';
 import type { PickupRequestItemInput } from '../../services/pickupService';
+import {
+  QUANTITY_UNIT_LABELS,
+  QUANTITY_UNITS,
+  type UnitsByCategory,
+} from '../../units';
 
 const EMPTY_ITEM: PickupRequestItemInput = {
   category: '',
@@ -33,6 +38,9 @@ type PickupItemsFieldArrayProps = {
   items: PickupRequestItemInput[];
   onChange: (items: PickupRequestItemInput[]) => void;
   categoryOptions: SelectOption[];
+  /** How each category is measured — the unit dropdown only offers the
+   * chosen category's units. */
+  unitsByCategory?: UnitsByCategory;
   loadingCategories?: boolean;
   disabled?: boolean;
   /** One error map per row, same shape/index as `items`. */
@@ -52,16 +60,33 @@ const PickupItemsFieldArray = ({
   items,
   onChange,
   categoryOptions,
+  unitsByCategory = {},
   loadingCategories = false,
   disabled = false,
   errors = [],
   labels,
 }: PickupItemsFieldArrayProps) => {
+  const unitsFor = (category: string) =>
+    category ? unitsByCategory[category] ?? QUANTITY_UNITS : [];
+
   const updateItem = (index: number, field: string, value: string) => {
     onChange(
-      items.map((item, i) =>
-        i === index ? { ...item, [field]: value } : item,
-      ),
+      items.map((item, i) => {
+        if (i !== index) return item;
+        const next = { ...item, [field]: value };
+        // A new category keeps the unit only if it allows it; a
+        // category with a single unit always uses it.
+        if (field === 'category') {
+          const allowed = unitsFor(value);
+          if (
+            allowed.length === 1 ||
+            !(allowed as string[]).includes(next.quantity_unit ?? '')
+          ) {
+            next.quantity_unit = allowed.length === 1 ? allowed[0] : '';
+          }
+        }
+        return next;
+      }),
     );
   };
 
@@ -127,23 +152,33 @@ const PickupItemsFieldArray = ({
                 field="estimated_quantity"
                 type="number"
                 required={false}
-                placeholder={labels.estimatedQuantityPlaceholder}
+                placeholder={
+                  item.quantity_unit === 'unit'
+                    ? 'e.g. 3'
+                    : labels.estimatedQuantityPlaceholder
+                }
                 formData={item}
+                errors={errors[index]}
                 updateFormData={(field, value) =>
                   updateItem(index, field, value)
                 }
                 disabled={disabled}
               />
-              <InputField
+              <SelectField
                 label={labels.quantityUnit}
                 field="quantity_unit"
-                required={false}
-                placeholder={labels.quantityUnitPlaceholder}
+                options={unitsFor(item.category).map((unit) => ({
+                  value: unit,
+                  label: QUANTITY_UNIT_LABELS[unit],
+                }))}
                 formData={item}
+                errors={errors[index]}
                 updateFormData={(field, value) =>
                   updateItem(index, field, value)
                 }
-                disabled={disabled}
+                // Nothing to choose until a category is picked, or when it
+                // allows only one unit (already filled in).
+                disabled={disabled || unitsFor(item.category).length <= 1}
               />
             </div>
           </div>

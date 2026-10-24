@@ -39,6 +39,7 @@ import {
   PICKUP_REQUEST_TYPE_LABELS,
   PICKUP_STATUS_LABELS,
 } from '../../types';
+import { formatQuantity } from '../../units';
 import { CollectModal } from '../shared/CollectModal';
 import { AssignDriverModal } from './AssignDriverModal';
 import { CancelModal } from './CancelModal';
@@ -232,7 +233,7 @@ const OrderDetailsView = ({
                       <li key={item.id}>
                         {item.category.name}
                         {item.estimated_quantity
-                          ? ` — ${item.estimated_quantity} ${item.quantity_unit}`
+                          ? ` — ${formatQuantity(item.estimated_quantity, item.quantity_unit)}`
                           : ''}
                       </li>
                     ))}
@@ -407,7 +408,7 @@ const OrderDetailsView = ({
                         <li key={item.id}>
                           {item.category.name}
                           {item.collected_quantity
-                            ? ` — ${item.collected_quantity} ${item.quantity_unit}`
+                            ? ` — ${formatQuantity(item.collected_quantity, item.quantity_unit)}`
                             : ''}
                         </li>
                       ))}

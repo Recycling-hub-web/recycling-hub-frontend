@@ -1,6 +1,6 @@
 import { apiFetch } from '../../../../lib/api';
 import { MODULE } from '../constants';
-import type { Category, CategoryListItem } from '../types';
+import type { Category, CategoryListItem, QuantityUnit } from '../types';
 
 type Paginated<T> = {
   count: number;
@@ -40,6 +40,7 @@ type CreateCategoryPayload = {
   name: string;
   description?: string;
   parent?: string | null;
+  allowed_quantity_units?: QuantityUnit[];
 };
 
 const createCategory = (
@@ -55,6 +56,7 @@ type UpdateCategoryPayload = Partial<{
   description: string;
   parent: string | null;
   is_active: boolean;
+  allowed_quantity_units: QuantityUnit[];
 }>;
 
 const updateCategory = (

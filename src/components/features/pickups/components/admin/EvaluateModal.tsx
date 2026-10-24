@@ -8,6 +8,7 @@ import { FormActions } from '../../../../ui/buttons/FormActions';
 import { Modal } from '../../../../ui/modal/Modal';
 import { useEvaluatePickup } from '../../hooks';
 import type { PickupRequestItem } from '../../types';
+import { formatQuantity } from '../../units';
 import { isValidPrice, PricingEditor } from '../shared/PricingEditor';
 
 type EvaluateModalProps = {
@@ -163,7 +164,7 @@ const EvaluateModal = ({
             key: item.id,
             label: item.category.name,
             detail: item.estimated_quantity
-              ? `${Number(item.estimated_quantity)} ${item.quantity_unit || 'kg'}`
+              ? formatQuantity(item.estimated_quantity, item.quantity_unit)
               : undefined,
             dataField: `item-price-${item.category.name}`,
           }))}

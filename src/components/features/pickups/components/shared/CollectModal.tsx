@@ -13,6 +13,14 @@ import { Modal } from '../../../../ui/modal/Modal';
 import { useUploadStorageFile } from '../../../storageFiles/hooks';
 import { useCollectPickup, usePickupCategories } from '../../hooks';
 import type { PickupRequestItem } from '../../types';
+import {
+  hasItemErrors,
+  QUANTITY_UNIT_LABELS,
+  QUANTITY_UNITS,
+  quantityError,
+  type QuantityUnit,
+  validateItem,
+} from '../../units';
 
 type CollectModalProps = {
   requestId: string;
@@ -49,7 +57,7 @@ type NewItemRow = {
 const EMPTY_NEW_ITEM: NewItemRow = {
   category: '',
   collected_quantity: '',
-  quantity_unit: 'kg',
+  quantity_unit: '',
 };
 
 const PAYMENT_METHOD_OPTIONS = [
@@ -76,8 +84,11 @@ const CollectModal = ({
 }: CollectModalProps) => {
   const { execute: collect, loading: submitting } = useCollectPickup();
   const { execute: upload, loading: uploading } = useUploadStorageFile();
-  const { options: categoryOptions, loading: loadingCategories } =
-    usePickupCategories();
+  const {
+    options: categoryOptions,
+    unitsByCategory,
+    loading: loadingCategories,
+  } = usePickupCategories();
   const initialState: FormState = {
     note: '',
     payment_method: '',
@@ -94,6 +105,13 @@ const CollectModal = ({
     {},
   );
   const [newItems, setNewItems] = useState<NewItemRow[]>([]);
+  // Unit/quantity problems — per existing item (by id) and per new row.
+  const [itemErrors, setItemErrors] = useState<
+    Record<string, Record<string, string>>
+  >({});
+  const [newItemErrors, setNewItemErrors] = useState<Record<string, string>[]>(
+    [],
+  );
 
   // Re-seed the per-item quantities/categories (defaulting to each
   // item's own values) every time the modal is opened for a request.
@@ -119,9 +137,33 @@ const CollectModal = ({
     setErrors((prev) => ({ ...prev, [field]: '' }));
   };
 
+  // An existing item's fields are keyed by its id in this form.
+  const errorFor = (id: string, key: 'category' | 'quantity') => {
+    const message = itemErrors[id]?.[key];
+    return message ? { [id]: message } : undefined;
+  };
+
+  const unitsFor = (category: string): QuantityUnit[] =>
+    category ? unitsByCategory[category] ?? QUANTITY_UNITS : [];
+
   const updateNewItem = (index: number, field: string, value: string) => {
     setNewItems((prev) =>
-      prev.map((row, i) => (i === index ? { ...row, [field]: value } : row)),
+      prev.map((row, i) => {
+        if (i !== index) return row;
+        const next = { ...row, [field]: value };
+        // Same rule as the order forms: a category with one unit always
+        // uses it; a new category drops a unit it doesn't allow.
+        if (field === 'category') {
+          const allowed = unitsFor(value);
+          if (
+            allowed.length === 1 ||
+            !(allowed as string[]).includes(next.quantity_unit)
+          ) {
+            next.quantity_unit = allowed.length === 1 ? allowed[0] ?? '' : '';
+          }
+        }
+        return next;
+      }),
     );
   };
 
@@ -137,7 +179,52 @@ const CollectModal = ({
     }
     // Proof of payment is optional for now — not required client-side.
     setErrors(nextErrors);
-    return Object.keys(nextErrors).length === 0;
+
+    // Existing items: the quantity must suit the item's unit, and a new
+    // category must allow that unit.
+    const nextItemErrors: Record<string, Record<string, string>> = {};
+    items.forEach((item) => {
+      const rowErrors: Record<string, string> = {};
+      const quantity = quantityError(
+        itemQuantities[item.id],
+        item.quantity_unit,
+      );
+      if (quantity) rowErrors.quantity = quantity;
+      const category = itemCategories[item.id];
+      if (
+        category &&
+        !(unitsFor(category) as string[]).includes(item.quantity_unit)
+      ) {
+        rowErrors.category = `That material isn't measured in ${QUANTITY_UNIT_LABELS[item.quantity_unit as QuantityUnit] ?? item.quantity_unit}.`;
+      }
+      if (Object.keys(rowErrors).length) nextItemErrors[item.id] = rowErrors;
+    });
+    setItemErrors(nextItemErrors);
+
+    // New on-site items: only rows with something filled in are sent.
+    const nextNewItemErrors = newItems.map((row) => {
+      if (!row.category && !row.collected_quantity) return {};
+      const rowErrors = validateItem(
+        {
+          category: row.category,
+          estimated_quantity: row.collected_quantity,
+          quantity_unit: row.quantity_unit,
+        },
+        unitsByCategory,
+      );
+      if (rowErrors.estimated_quantity) {
+        rowErrors.collected_quantity = rowErrors.estimated_quantity;
+        delete rowErrors.estimated_quantity;
+      }
+      return rowErrors;
+    });
+    setNewItemErrors(nextNewItemErrors);
+
+    return (
+      Object.keys(nextErrors).length === 0 &&
+      Object.keys(nextItemErrors).length === 0 &&
+      !hasItemErrors(nextNewItemErrors)
+    );
   };
 
   const handleClose = () => {
@@ -148,6 +235,8 @@ const CollectModal = ({
     setItemQuantities({});
     setItemCategories({});
     setNewItems([]);
+    setItemErrors({});
+    setNewItemErrors([]);
     onClose();
   };
 
@@ -182,7 +271,9 @@ const CollectModal = ({
       .map((row) => ({
         category: row.category,
         collected_quantity: row.collected_quantity,
-        quantity_unit: row.quantity_unit || 'kg',
+        // Omitted when blank — the API fills in a single-unit category's
+        // unit itself.
+        ...(row.quantity_unit ? { quantity_unit: row.quantity_unit } : {}),
       }));
     const anyItemEntries =
       items.length > 0 || newItemEntries.length > 0
@@ -264,19 +355,23 @@ const CollectModal = ({
                     required={false}
                     options={categoryOptions}
                     formData={itemCategories}
+                    errors={errorFor(item.id, 'category')}
                     updateFormData={(field, value) =>
                       setItemCategories((prev) => ({ ...prev, [field]: value }))
                     }
                     disabled={loadingCategories}
                   />
                   <InputField
-                    label={`${item.category.name} (${item.quantity_unit})`}
+                    label={`${item.category.name} (${QUANTITY_UNIT_LABELS[item.quantity_unit as QuantityUnit] ?? item.quantity_unit})`}
                     field={item.id}
                     dataField={`item-quantity-${item.category.name}`}
                     type="number"
                     required={false}
-                    placeholder="e.g. 5"
+                    placeholder={
+                      item.quantity_unit === 'unit' ? 'e.g. 3' : 'e.g. 5'
+                    }
                     formData={itemQuantities}
+                    errors={errorFor(item.id, 'quantity')}
                     updateFormData={(field, value) =>
                       setItemQuantities((prev) => ({ ...prev, [field]: value }))
                     }
@@ -316,6 +411,7 @@ const CollectModal = ({
                     field="category"
                     options={categoryOptions}
                     formData={row}
+                    errors={newItemErrors[index]}
                     updateFormData={(field, value) =>
                       updateNewItem(index, field, value)
                     }
@@ -328,20 +424,26 @@ const CollectModal = ({
                     required={false}
                     placeholder="e.g. 5"
                     formData={row}
+                    errors={newItemErrors[index]}
                     updateFormData={(field, value) =>
                       updateNewItem(index, field, value)
                     }
                   />
                   <div className="flex items-end gap-2">
-                    <InputField
+                    <SelectField
                       label="Unit"
                       field="quantity_unit"
                       required={false}
-                      placeholder="e.g. kg"
+                      options={unitsFor(row.category).map((unit) => ({
+                        value: unit,
+                        label: QUANTITY_UNIT_LABELS[unit],
+                      }))}
                       formData={row}
+                      errors={newItemErrors[index]}
                       updateFormData={(field, value) =>
                         updateNewItem(index, field, value)
                       }
+                      disabled={unitsFor(row.category).length <= 1}
                     />
                     <button
                       type="button"

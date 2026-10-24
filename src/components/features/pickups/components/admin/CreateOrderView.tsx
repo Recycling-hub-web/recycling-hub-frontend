@@ -20,6 +20,7 @@ import {
   usePickupRequest,
 } from '../../hooks';
 import type { PickupRequestItemInput } from '../../services/pickupService';
+import { hasItemErrors, validateItems } from '../../units';
 import { PickupItemsFieldArray } from '../shared/PickupItemsFieldArray';
 import {
   type OrderPhoto,
@@ -57,19 +58,19 @@ const CreateOrderView = ({
     error: loadError,
   } = usePickupRequest(pickupRequestId);
   const { execute: createOrder, loading: submitting, error } = useCreateOrder();
-  const { options: categoryOptions, loading: loadingCategories } =
-    usePickupCategories();
+  const {
+    options: categoryOptions,
+    unitsByCategory,
+    loading: loadingCategories,
+  } = usePickupCategories();
   const [items, setItems] = useState<PickupRequestItemInput[]>([]);
   const [itemErrors, setItemErrors] = useState<Record<string, string>[]>([]);
   const [photos, setPhotos] = useState<OrderPhoto[]>([]);
 
   const validate = (): boolean => {
-    const nextItemErrors: Record<string, string>[] = items.map(
-      (item): Record<string, string> =>
-        item.category ? {} : { category: 'Category is required.' },
-    );
+    const nextItemErrors = validateItems(items, unitsByCategory);
     setItemErrors(nextItemErrors);
-    return nextItemErrors.every((e) => Object.keys(e).length === 0);
+    return !hasItemErrors(nextItemErrors);
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -129,6 +130,7 @@ const CreateOrderView = ({
               items={items}
               onChange={setItems}
               categoryOptions={categoryOptions}
+              unitsByCategory={unitsByCategory}
               loadingCategories={loadingCategories}
               disabled={submitting}
               errors={itemErrors}

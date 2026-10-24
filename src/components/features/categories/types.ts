@@ -8,6 +8,15 @@
 // turns into a read-only serializer field automatically) — kept here only
 // for display, never sent back on create/update. `slug`/`hex_color`/
 // `text_color` are backend-generated too; the form never touches them.
+/** How a material is measured — mirrors Category.allowed_quantity_units
+ * on the backend. */
+type QuantityUnit = 'kg' | 'unit';
+
+const QUANTITY_UNIT_LABELS: Record<QuantityUnit, string> = {
+  kg: 'KG',
+  unit: 'Unit',
+};
+
 type CategoryListItem = {
   id: string;
   name: string;
@@ -19,6 +28,8 @@ type CategoryListItem = {
   hex_color: string;
   text_color: string;
   is_active: boolean;
+  /** ["kg"], ["unit"] or ["kg", "unit"]. */
+  allowed_quantity_units: QuantityUnit[];
 };
 
 // Detail adds nested children — only present on the retrieve endpoint.
@@ -26,4 +37,5 @@ type Category = CategoryListItem & {
   children: CategoryListItem[];
 };
 
-export type { Category, CategoryListItem };
+export { QUANTITY_UNIT_LABELS };
+export type { Category, CategoryListItem, QuantityUnit };

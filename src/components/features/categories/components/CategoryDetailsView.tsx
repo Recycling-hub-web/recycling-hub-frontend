@@ -3,7 +3,13 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { LuArrowLeft, LuPencil, LuTag, LuTrash2 } from 'react-icons/lu';
+import {
+  LuArrowLeft,
+  LuPencil,
+  LuScale,
+  LuTag,
+  LuTrash2,
+} from 'react-icons/lu';
 
 import { ApiError } from '../../../../lib/api';
 import { PageContainer } from '../../../layout/PageContainer';
@@ -19,6 +25,7 @@ import { useToast } from '../../../ui/toast/ToastContext';
 import { STATUS_BADGE_VARIANT } from '../constants';
 import { useCategory, useDeleteCategory } from '../hooks';
 import { getCategory } from '../services/categoryService';
+import { QUANTITY_UNIT_LABELS } from '../types';
 
 type CategoryDetailsViewProps = {
   categoryId: string;
@@ -158,6 +165,13 @@ const CategoryDetailsView = ({
                 ? parentName ?? 'Loading…'
                 : 'None — top-level category'
             }
+          />
+          <InfoRow
+            icon={<LuScale className="size-4" />}
+            label="Measured by"
+            value={(category.allowed_quantity_units ?? ['kg'])
+              .map((unit) => QUANTITY_UNIT_LABELS[unit])
+              .join(' or ')}
           />
         </div>
 

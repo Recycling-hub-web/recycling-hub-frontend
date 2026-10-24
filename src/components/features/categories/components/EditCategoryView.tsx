@@ -21,12 +21,15 @@ import { useToast } from '../../../ui/toast/ToastContext';
 import { NONE_PARENT, STATUS_OPTIONS } from '../constants';
 import { useCategory, useUpdateCategory } from '../hooks';
 import { listCategories } from '../services/categoryService';
+import type { QuantityUnit } from '../types';
+import { MeasuredByField } from './MeasuredByField';
 
 type FormState = {
   name: string;
   description: string;
   parent: string;
   is_active: 'true' | 'false';
+  allowed_quantity_units: QuantityUnit[];
 };
 
 type EditCategoryViewProps = {
@@ -60,6 +63,7 @@ const EditCategoryView = ({ categoryId, basePath }: EditCategoryViewProps) => {
       description: category.description,
       parent: category.parent ?? NONE_PARENT,
       is_active: category.is_active ? 'true' : 'false',
+      allowed_quantity_units: category.allowed_quantity_units ?? ['kg'],
     });
   }, [category]);
 
@@ -85,6 +89,9 @@ const EditCategoryView = ({ categoryId, basePath }: EditCategoryViewProps) => {
   const validate = (data: FormState): boolean => {
     const nextErrors: Record<string, string> = {};
     if (!data.name.trim()) nextErrors.name = 'Name is required.';
+    if (!data.allowed_quantity_units.length) {
+      nextErrors.allowed_quantity_units = 'Choose at least one unit.';
+    }
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
   };
@@ -103,6 +110,7 @@ const EditCategoryView = ({ categoryId, basePath }: EditCategoryViewProps) => {
         description: formData.description,
         parent: formData.parent === NONE_PARENT ? null : formData.parent,
         is_active: formData.is_active === 'true',
+        allowed_quantity_units: formData.allowed_quantity_units,
       });
       toast.success('Category updated');
       router.push(`${basePath}/${category.id}`);
@@ -130,7 +138,9 @@ const EditCategoryView = ({ categoryId, basePath }: EditCategoryViewProps) => {
     formData.name !== category.name ||
     formData.description !== category.description ||
     formData.parent !== (category.parent ?? NONE_PARENT) ||
-    formData.is_active !== (category.is_active ? 'true' : 'false');
+    formData.is_active !== (category.is_active ? 'true' : 'false') ||
+    formData.allowed_quantity_units.join() !==
+      (category.allowed_quantity_units ?? ['kg']).join();
 
   return (
     <PageContainer variant="form">
@@ -177,6 +187,22 @@ const EditCategoryView = ({ categoryId, basePath }: EditCategoryViewProps) => {
               updateFormData={updateFormData}
               disabled={submitting}
             />
+            <div className="sm:col-span-2">
+              <MeasuredByField
+                value={formData.allowed_quantity_units}
+                onChange={(units) => {
+                  setFormData((prev) =>
+                    prev ? { ...prev, allowed_quantity_units: units } : prev,
+                  );
+                  setErrors((prev) => ({
+                    ...prev,
+                    allowed_quantity_units: '',
+                  }));
+                }}
+                error={errors.allowed_quantity_units}
+                disabled={submitting}
+              />
+            </div>
             <div className="sm:col-span-2">
               <TextareaField
                 label="Description"

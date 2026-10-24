@@ -36,6 +36,7 @@ import {
   PICKUP_EVALUATION_STATUS_LABELS,
   PICKUP_STATUS_LABELS,
 } from '../../types';
+import { formatQuantity } from '../../units';
 import {
   googleMapsDirectionsUrl,
   wazeNavigateUrl,
@@ -173,7 +174,7 @@ const DriverPickupDetailsView = ({
                       <li key={item.id}>
                         {item.category.name}
                         {item.estimated_quantity
-                          ? ` — ${item.estimated_quantity} ${item.quantity_unit}`
+                          ? ` — ${formatQuantity(item.estimated_quantity, item.quantity_unit)}`
                           : ''}
                       </li>
                     ))}

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { apiFetch } from '../../../../lib/api';
+import type { QuantityUnit, UnitsByCategory } from '../units';
 
 type CategoryOption = { value: string; label: string };
 type Paginated<T> = { results: T[] };
@@ -14,19 +15,36 @@ type Paginated<T> = { results: T[] };
  * fetch, not worth a whole categoryService-style file here. */
 const usePickupCategories = () => {
   const [options, setOptions] = useState<CategoryOption[]>([]);
+  // How each material is measured (kg, unit, or both) — the item
+  // editors only offer these units for the chosen category.
+  const [unitsByCategory, setUnitsByCategory] = useState<UnitsByCategory>({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    apiFetch<Paginated<{ id: string; name: string }>>(
-      '/categories/?module=materials&is_active=true&page_size=200',
-    )
+    apiFetch<
+      Paginated<{
+        id: string;
+        name: string;
+        allowed_quantity_units?: QuantityUnit[];
+      }>
+    >('/categories/?module=materials&is_active=true&page_size=200')
       .then((data) => {
         setOptions(data.results.map((c) => ({ value: c.id, label: c.name })));
+        setUnitsByCategory(
+          Object.fromEntries(
+            data.results.map((c) => [
+              c.id,
+              c.allowed_quantity_units?.length
+                ? c.allowed_quantity_units
+                : ['kg'],
+            ]),
+          ),
+        );
       })
       .finally(() => setLoading(false));
   }, []);
 
-  return { options, loading };
+  return { options, unitsByCategory, loading };
 };
 
 export { usePickupCategories };

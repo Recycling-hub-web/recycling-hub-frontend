@@ -36,6 +36,7 @@ import {
 } from '../../hooks';
 import type { PickupRequestItemInput } from '../../services/pickupService';
 import type { PickupRequestItem, PickupRequestType } from '../../types';
+import { hasItemErrors, validateItems } from '../../units';
 import { PickupItemsFieldArray } from '../shared/PickupItemsFieldArray';
 import { isValidPrice, PricingEditor } from '../shared/PricingEditor';
 
@@ -158,8 +159,11 @@ const ConvertQuickLeadView = ({ basePath }: ConvertQuickLeadViewProps) => {
   } = useConvertQuickPickupRequest();
   const { execute: evaluateRequest } = useEvaluatePickup();
   const { lead, loading: loadingLead } = useQuickPickupRequest(leadId);
-  const { options: categoryOptions, loading: loadingCategories } =
-    usePickupCategories();
+  const {
+    options: categoryOptions,
+    unitsByCategory,
+    loading: loadingCategories,
+  } = usePickupCategories();
   const [formData, setFormData] = useState<FormState>(INITIAL_STATE);
   const [items, setItems] = useState<PickupRequestItemInput[]>([
     { ...EMPTY_ITEM },
@@ -234,15 +238,11 @@ const ConvertQuickLeadView = ({ basePath }: ConvertQuickLeadViewProps) => {
     }
     setErrors(nextErrors);
 
-    const nextItemErrors: Record<string, string>[] = items.map(
-      (item): Record<string, string> =>
-        item.category ? {} : { category: 'Category is required.' },
-    );
+    const nextItemErrors = validateItems(items, unitsByCategory);
     setItemErrors(nextItemErrors);
 
     return (
-      Object.keys(nextErrors).length === 0 &&
-      nextItemErrors.every((e) => Object.keys(e).length === 0)
+      Object.keys(nextErrors).length === 0 && !hasItemErrors(nextItemErrors)
     );
   };
 
@@ -434,6 +434,7 @@ const ConvertQuickLeadView = ({ basePath }: ConvertQuickLeadViewProps) => {
               items={items}
               onChange={setItems}
               categoryOptions={categoryOptions}
+              unitsByCategory={unitsByCategory}
               loadingCategories={loadingCategories}
               disabled={submitting}
               errors={itemErrors}

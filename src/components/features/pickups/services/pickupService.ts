@@ -73,6 +73,9 @@ type PickupRequestCreatePayload = {
    * datetime. */
   requested_at: string;
   note?: string;
+  /** Admin/staff only: orders to create together with the request (at
+   * most 7) — see PickupRequestCreateSerializer.orders. */
+  orders?: CreateOrderPayload[];
 };
 
 /** The common subset of what POST /pickup-requests/ always returns —
@@ -298,7 +301,13 @@ type CollectItemInput =
       category?: string;
       estimated_quantity?: string;
     }
-  | { category: string; collected_quantity: string; quantity_unit: string };
+  | {
+      category: string;
+      collected_quantity: string;
+      /** "kg" or "unit" — may be omitted when the category allows only
+       * one (the API fills it in). */
+      quantity_unit?: string;
+    };
 
 type CollectPickupPayload = {
   /** Single-item convenience path — only valid when the request has

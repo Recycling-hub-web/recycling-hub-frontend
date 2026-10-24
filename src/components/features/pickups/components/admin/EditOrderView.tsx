@@ -20,6 +20,7 @@ import { useToast } from '../../../../ui/toast/ToastContext';
 import { useOrder, usePickupCategories, useUpdateOrder } from '../../hooks';
 import type { PickupRequestItemInput } from '../../services/pickupService';
 import { itemsSummary } from '../../types';
+import { formatQuantity, hasItemErrors, validateItems } from '../../units';
 import { PickupItemsFieldArray } from '../shared/PickupItemsFieldArray';
 
 type FormState = {
@@ -65,8 +66,11 @@ const EditOrderView = ({ requestId, basePath }: EditOrderViewProps) => {
     error: loadError,
   } = useOrder(requestId);
   const { execute: updateRequest, loading: submitting } = useUpdateOrder();
-  const { options: categoryOptions, loading: loadingCategories } =
-    usePickupCategories();
+  const {
+    options: categoryOptions,
+    unitsByCategory,
+    loading: loadingCategories,
+  } = usePickupCategories();
   const [formData, setFormData] = useState<FormState | null>(null);
   const [items, setItems] = useState<PickupRequestItemInput[]>([]);
   const [itemErrors, setItemErrors] = useState<Record<string, string>[]>([]);
@@ -98,12 +102,9 @@ const EditOrderView = ({ requestId, basePath }: EditOrderViewProps) => {
 
   const validate = (): boolean => {
     if (!itemsEditable) return true;
-    const nextItemErrors: Record<string, string>[] = items.map(
-      (item): Record<string, string> =>
-        item.category ? {} : { category: 'Category is required.' },
-    );
+    const nextItemErrors = validateItems(items, unitsByCategory);
     setItemErrors(nextItemErrors);
-    return nextItemErrors.every((e) => Object.keys(e).length === 0);
+    return !hasItemErrors(nextItemErrors);
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -161,6 +162,7 @@ const EditOrderView = ({ requestId, basePath }: EditOrderViewProps) => {
                 items={items}
                 onChange={setItems}
                 categoryOptions={categoryOptions}
+                unitsByCategory={unitsByCategory}
                 loadingCategories={loadingCategories}
                 disabled={submitting}
                 errors={itemErrors}
@@ -190,7 +192,7 @@ const EditOrderView = ({ requestId, basePath }: EditOrderViewProps) => {
                     <li key={item.id}>
                       {item.category.name}
                       {item.estimated_quantity
-                        ? ` — ${item.estimated_quantity} ${item.quantity_unit}`
+                        ? ` — ${formatQuantity(item.estimated_quantity, item.quantity_unit)}`
                         : ''}
                     </li>
                   ))}
