@@ -37,6 +37,7 @@ import {
   wazeNavigateUrl,
 } from '../../utils/navigationLinks';
 import { CollectModal } from '../shared/CollectModal';
+import { ConfirmedPickupCell } from '../shared/ConfirmedPickupCell';
 import { ConfirmScheduleModal } from './ConfirmScheduleModal';
 import { OptimizeRouteModal } from './OptimizeRouteModal';
 
@@ -63,29 +64,6 @@ const NAVIGABLE_STATUSES = ['pending', 'scheduled'];
  * assignments (status=scheduled). No pagination UI (low expected
  * volume) — same choice QuickLeadTable already made for the Quick
  * Leads queue. */
-/** The confirmed pickup day and time, once the driver has confirmed it;
- * "Not confirmed" while a scheduled pickup is still waiting on them. */
-const ConfirmedPickupCell = ({
-  order,
-}: {
-  order: CollectionRequestListItem;
-}) => {
-  if (order.pickup_confirmed_at && order.scheduled_at) {
-    return (
-      <span className="inline-flex items-center gap-1.5 whitespace-nowrap text-slate-700">
-        <LuCalendarCheck className="size-4 shrink-0 text-brand-600" />
-        <AppDate value={order.scheduled_at} format="datetime" />
-      </span>
-    );
-  }
-  if (order.status === 'scheduled') {
-    return (
-      <span className="whitespace-nowrap text-amber-600">Not confirmed</span>
-    );
-  }
-  return <span className="text-slate-400">—</span>;
-};
-
 const DriverPickupsView = () => {
   const router = useRouter();
   const toast = useToast();

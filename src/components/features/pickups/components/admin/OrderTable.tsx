@@ -24,6 +24,7 @@ import {
   PICKUP_REQUEST_TYPE_LABELS,
   PICKUP_STAGE_LABELS,
 } from '../../types';
+import { ConfirmedPickupCell } from '../shared/ConfirmedPickupCell';
 
 const PAGE_SIZE = 12;
 
@@ -54,7 +55,7 @@ type OrderTableProps = {
   evaluatingId: string | null;
 };
 
-const columnCount = 8;
+const columnCount = 9;
 
 /** Pure presentational — every value it renders is a prop. Renamed
  * from PickupRequestTable now that this table lists Orders, not the
@@ -139,6 +140,9 @@ const OrderTable = ({
           <td className="px-6 py-4 text-slate-700">{r.price ?? '—'}</td>
           <td className="px-6 py-4 text-slate-500">
             <AppDate value={r.pickup_request.requested_at} format="short" />
+          </td>
+          <td className="px-6 py-4">
+            <ConfirmedPickupCell order={r} />
           </td>
           <td className="px-6 py-4">
             <div
@@ -226,6 +230,9 @@ const OrderTable = ({
             </th>
             <th className="px-6 py-3 text-left font-semibold text-slate-500">
               Requested
+            </th>
+            <th className="px-6 py-3 text-left font-semibold text-slate-500">
+              Confirmed pickup
             </th>
             <th className="px-6 py-3 text-right font-semibold text-slate-500">
               Actions

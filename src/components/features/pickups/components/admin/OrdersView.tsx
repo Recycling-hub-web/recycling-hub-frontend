@@ -10,30 +10,21 @@ import { FilterToggle } from '../../../../ui/filters/FilterToggle';
 import { FilterSelect } from '../../../../ui/FilterSelect';
 import { ConfirmModal } from '../../../../ui/modal/ConfirmModal';
 import { PageHeader } from '../../../../ui/PageHeader';
-import { Tabs } from '../../../../ui/tabs';
 import { useToast } from '../../../../ui/toast/ToastContext';
 import {
   EVALUATION_STATUS_FILTER_OPTIONS,
   REQUEST_TYPE_FILTER_OPTIONS,
   STATUS_FILTER_OPTIONS,
 } from '../../constants';
-import {
-  useDeleteOrder,
-  useEvaluatePickup,
-  useMarkQuickPickupRequestContacted,
-  useOrders,
-  useQuickPickupRequests,
-} from '../../hooks';
+import { useDeleteOrder, useEvaluatePickup, useOrders } from '../../hooks';
 import type {
   CollectionRequestListItem,
   PickupEvaluationStatus,
-  PickupQuickRequestListItem,
   PickupRequestType,
   PickupStatus,
 } from '../../types';
 import { EvaluateModal } from './EvaluateModal';
 import { OrderTable } from './OrderTable';
-import { QuickLeadTable } from './QuickLeadTable';
 
 const SEARCH_DEBOUNCE_MS = 350;
 
@@ -46,13 +37,6 @@ type OrdersViewProps = {
   requestsBasePath: string;
 };
 
-type Tab = 'orders' | 'quick';
-
-const TAB_ITEMS: { key: Tab; label: string }[] = [
-  { key: 'orders', label: 'All Orders' },
-  { key: 'quick', label: 'Quick Leads' },
-];
-
 /** One list view shared by /super-admin/pickups and /staff/pickups — admin and
  * staff have identical permissions on this module (see
  * CollectionRequestViewSet.get_permissions on the backend), so unlike
@@ -61,7 +45,6 @@ const TAB_ITEMS: { key: Tab; label: string }[] = [
  * higher-level PickupRequest. */
 const OrdersView = ({ basePath, requestsBasePath }: OrdersViewProps) => {
   const toast = useToast();
-  const [activeTab, setActiveTab] = useState<Tab>('orders');
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<PickupStatus | ''>('');
   const [requestTypeFilter, setRequestTypeFilter] = useState<
@@ -100,38 +83,6 @@ const OrdersView = ({ basePath, requestsBasePath }: OrdersViewProps) => {
   // directly, so it opens this same modal the details page uses instead.
   const [pendingApprove, setPendingApprove] =
     useState<CollectionRequestListItem | null>(null);
-  const {
-    requests: quickLeads,
-    loading: loadingQuickLeads,
-    error: quickLeadsError,
-    refetch: refetchQuickLeads,
-  } = useQuickPickupRequests();
-  const { execute: markContacted } = useMarkQuickPickupRequestContacted();
-  const [markingContactedId, setMarkingContactedId] = useState<string | null>(
-    null,
-  );
-
-  // Converted leads already show up as a real Order on the All Orders
-  // tab — see useQuickPickupRequests' own docstring for why this
-  // filters client-side instead of asking the backend for one exact
-  // status.
-  const activeQuickLeads = quickLeads.filter(
-    (lead) => lead.status !== 'converted',
-  );
-
-  const handleMarkContacted = async (lead: PickupQuickRequestListItem) => {
-    setMarkingContactedId(lead.id);
-    try {
-      await markContacted(lead.id);
-      toast.success('Lead marked as contacted');
-      refetchQuickLeads();
-    } catch {
-      toast.error('Could not update this lead');
-    } finally {
-      setMarkingContactedId(null);
-    }
-  };
-
   const handleStatusFilterChange = (value: string) => {
     setStatusFilter(value as PickupStatus | '');
     setPage(1);
@@ -193,77 +144,54 @@ const OrdersView = ({ basePath, requestsBasePath }: OrdersViewProps) => {
         }
       />
 
-      <Tabs
-        tabs={TAB_ITEMS}
-        active={activeTab}
-        onChange={setActiveTab}
-        className="-mt-2 mb-4 px-0"
-      />
-
-      {activeTab === 'orders' ? (
-        <>
-          <div className="mb-4 flex flex-wrap items-center gap-2">
-            <SearchInput
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              placeholder="Search by name, email, phone, or code…"
-              className="sm:max-w-xs"
-            />
-            <FilterToggle
-              activeCount={
-                [
-                  requestTypeFilter,
-                  evaluationStatusFilter,
-                  statusFilter,
-                ].filter(Boolean).length
-              }
-            >
-              <FilterSelect
-                value={requestTypeFilter}
-                onChange={handleRequestTypeFilterChange}
-                options={REQUEST_TYPE_FILTER_OPTIONS}
-              />
-              <FilterSelect
-                value={evaluationStatusFilter}
-                onChange={handleEvaluationStatusFilterChange}
-                options={EVALUATION_STATUS_FILTER_OPTIONS}
-              />
-              <FilterSelect
-                value={statusFilter}
-                onChange={handleStatusFilterChange}
-                options={STATUS_FILTER_OPTIONS}
-              />
-            </FilterToggle>
-          </div>
-
-          <OrderTable
-            requests={requests}
-            count={count}
-            search={search}
-            page={page}
-            onPageChange={setPage}
-            statusFilter={statusFilter}
-            loading={loading}
-            error={error}
-            onRetry={refetch}
-            basePath={basePath}
-            onDeleteRequest={setPendingDelete}
-            onApprove={setPendingApprove}
-            onReject={(request) => handleEvaluate(request, 'rejected')}
-            evaluatingId={evaluatingId}
-          />
-        </>
-      ) : (
-        <QuickLeadTable
-          leads={activeQuickLeads}
-          loading={loadingQuickLeads}
-          error={quickLeadsError}
-          onRetry={refetchQuickLeads}
-          basePath={basePath}
-          onMarkContacted={handleMarkContacted}
-          markingContactedId={markingContactedId}
+      <div className="mb-4 flex flex-wrap items-center gap-2">
+        <SearchInput
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
+          placeholder="Search by name, email, phone, or code…"
+          className="sm:max-w-xs"
         />
-      )}
+        <FilterToggle
+          activeCount={
+            [requestTypeFilter, evaluationStatusFilter, statusFilter].filter(
+              Boolean,
+            ).length
+          }
+        >
+          <FilterSelect
+            value={requestTypeFilter}
+            onChange={handleRequestTypeFilterChange}
+            options={REQUEST_TYPE_FILTER_OPTIONS}
+          />
+          <FilterSelect
+            value={evaluationStatusFilter}
+            onChange={handleEvaluationStatusFilterChange}
+            options={EVALUATION_STATUS_FILTER_OPTIONS}
+          />
+          <FilterSelect
+            value={statusFilter}
+            onChange={handleStatusFilterChange}
+            options={STATUS_FILTER_OPTIONS}
+          />
+        </FilterToggle>
+      </div>
+
+      <OrderTable
+        requests={requests}
+        count={count}
+        search={search}
+        page={page}
+        onPageChange={setPage}
+        statusFilter={statusFilter}
+        loading={loading}
+        error={error}
+        onRetry={refetch}
+        basePath={basePath}
+        onDeleteRequest={setPendingDelete}
+        onApprove={setPendingApprove}
+        onReject={(request) => handleEvaluate(request, 'rejected')}
+        evaluatingId={evaluatingId}
+      />
 
       <ConfirmModal
         open={Boolean(pendingDelete)}

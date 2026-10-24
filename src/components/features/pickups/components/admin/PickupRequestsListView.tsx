@@ -19,23 +19,38 @@ import {
   TablePagination,
   TableWrapper,
 } from '../../../../ui/table';
+import { Tabs } from '../../../../ui/tabs';
+import { useToast } from '../../../../ui/toast/ToastContext';
 import {
   PICKUP_REQUEST_STATUS_BADGE_VARIANT,
   PICKUP_REQUEST_STATUS_FILTER_OPTIONS,
   REQUEST_TYPE_BADGE_VARIANT,
   REQUEST_TYPE_FILTER_OPTIONS,
 } from '../../constants';
-import { usePickupRequests } from '../../hooks';
+import {
+  useMarkQuickPickupRequestContacted,
+  usePickupRequests,
+  useQuickPickupRequests,
+} from '../../hooks';
 import {
   PICKUP_REQUEST_STATUS_LABELS,
   PICKUP_REQUEST_TYPE_LABELS,
+  type PickupQuickRequestListItem,
   type PickupRequestStatus,
   type PickupRequestType,
 } from '../../types';
+import { QuickLeadTable } from './QuickLeadTable';
 
 const SEARCH_DEBOUNCE_MS = 350;
 const PAGE_SIZE = 12;
 const columnCount = 6;
+
+type Tab = 'requests' | 'quick';
+
+const TAB_ITEMS: { key: Tab; label: string }[] = [
+  { key: 'requests', label: 'All Requests' },
+  { key: 'quick', label: 'Quick Leads' },
+];
 
 type PickupRequestsListViewProps = {
   basePath:
@@ -52,6 +67,40 @@ type PickupRequestsListViewProps = {
  * this module, same as Orders. */
 const PickupRequestsListView = ({ basePath }: PickupRequestsListViewProps) => {
   const router = useRouter();
+  const toast = useToast();
+  const [activeTab, setActiveTab] = useState<Tab>('requests');
+
+  // Quick leads — a customer asking to be called back. Following one up
+  // creates a Pickup Request, so they're listed here. Their links (the
+  // follow-up form, a converted lead's order) live under the Orders route.
+  const ordersBasePath = basePath.replace('/pickup-requests', '/pickups');
+  const {
+    requests: quickLeads,
+    loading: loadingQuickLeads,
+    error: quickLeadsError,
+    refetch: refetchQuickLeads,
+  } = useQuickPickupRequests();
+  const { execute: markContacted } = useMarkQuickPickupRequestContacted();
+  const [markingContactedId, setMarkingContactedId] = useState<string | null>(
+    null,
+  );
+  // Converted leads already show up as a real request on All Requests.
+  const activeQuickLeads = quickLeads.filter(
+    (lead) => lead.status !== 'converted',
+  );
+
+  const handleMarkContacted = async (lead: PickupQuickRequestListItem) => {
+    setMarkingContactedId(lead.id);
+    try {
+      await markContacted(lead.id);
+      toast.success('Lead marked as contacted');
+      refetchQuickLeads();
+    } catch {
+      toast.error('Could not update this lead');
+    } finally {
+      setMarkingContactedId(null);
+    }
+  };
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<PickupRequestStatus | ''>(
     '',
@@ -146,74 +195,99 @@ const PickupRequestsListView = ({ basePath }: PickupRequestsListViewProps) => {
         }
       />
 
-      <div className="mb-4 flex flex-wrap items-center gap-2">
-        <SearchInput
-          value={searchInput}
-          onChange={(e) => setSearchInput(e.target.value)}
-          placeholder="Search by name, email, or phone…"
-          className="sm:max-w-xs"
-        />
-        <FilterToggle
-          activeCount={[requestTypeFilter, statusFilter].filter(Boolean).length}
-        >
-          <FilterSelect
-            value={requestTypeFilter}
-            onChange={(value) => {
-              setRequestTypeFilter(value as PickupRequestType | '');
-              setPage(1);
-            }}
-            options={REQUEST_TYPE_FILTER_OPTIONS}
-          />
-          <FilterSelect
-            value={statusFilter}
-            onChange={(value) => {
-              setStatusFilter(value as PickupRequestStatus | '');
-              setPage(1);
-            }}
-            options={PICKUP_REQUEST_STATUS_FILTER_OPTIONS}
-          />
-        </FilterToggle>
-      </div>
+      <Tabs
+        tabs={TAB_ITEMS}
+        active={activeTab}
+        onChange={setActiveTab}
+        className="-mt-2 mb-4 px-0"
+      />
 
-      <TableWrapper
-        footer={
-          <TablePagination
-            currentPage={page}
-            onPageChange={setPage}
-            itemsPerPage={PAGE_SIZE}
-            itemCount={requests.length}
-            totalCount={count}
-            itemLabel="pickup requests"
-            loading={loading}
-          />
-        }
-      >
-        <table className="min-w-full divide-y divide-slate-200 text-sm">
-          <thead className="bg-slate-50">
-            <tr>
-              <th className="px-6 py-3 text-left font-semibold text-slate-500">
-                Name
-              </th>
-              <th className="px-6 py-3 text-left font-semibold text-slate-500">
-                Contact
-              </th>
-              <th className="px-6 py-3 text-left font-semibold text-slate-500">
-                Type
-              </th>
-              <th className="px-6 py-3 text-left font-semibold text-slate-500">
-                Status
-              </th>
-              <th className="px-6 py-3 text-left font-semibold text-slate-500">
-                Orders
-              </th>
-              <th className="px-6 py-3 text-left font-semibold text-slate-500">
-                Requested for
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100">{renderRows()}</tbody>
-        </table>
-      </TableWrapper>
+      {activeTab === 'quick' ? (
+        <QuickLeadTable
+          leads={activeQuickLeads}
+          loading={loadingQuickLeads}
+          error={quickLeadsError}
+          onRetry={refetchQuickLeads}
+          basePath={ordersBasePath}
+          onMarkContacted={handleMarkContacted}
+          markingContactedId={markingContactedId}
+        />
+      ) : (
+        <>
+          <div className="mb-4 flex flex-wrap items-center gap-2">
+            <SearchInput
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              placeholder="Search by name, email, or phone…"
+              className="sm:max-w-xs"
+            />
+            <FilterToggle
+              activeCount={
+                [requestTypeFilter, statusFilter].filter(Boolean).length
+              }
+            >
+              <FilterSelect
+                value={requestTypeFilter}
+                onChange={(value) => {
+                  setRequestTypeFilter(value as PickupRequestType | '');
+                  setPage(1);
+                }}
+                options={REQUEST_TYPE_FILTER_OPTIONS}
+              />
+              <FilterSelect
+                value={statusFilter}
+                onChange={(value) => {
+                  setStatusFilter(value as PickupRequestStatus | '');
+                  setPage(1);
+                }}
+                options={PICKUP_REQUEST_STATUS_FILTER_OPTIONS}
+              />
+            </FilterToggle>
+          </div>
+
+          <TableWrapper
+            footer={
+              <TablePagination
+                currentPage={page}
+                onPageChange={setPage}
+                itemsPerPage={PAGE_SIZE}
+                itemCount={requests.length}
+                totalCount={count}
+                itemLabel="pickup requests"
+                loading={loading}
+              />
+            }
+          >
+            <table className="min-w-full divide-y divide-slate-200 text-sm">
+              <thead className="bg-slate-50">
+                <tr>
+                  <th className="px-6 py-3 text-left font-semibold text-slate-500">
+                    Name
+                  </th>
+                  <th className="px-6 py-3 text-left font-semibold text-slate-500">
+                    Contact
+                  </th>
+                  <th className="px-6 py-3 text-left font-semibold text-slate-500">
+                    Type
+                  </th>
+                  <th className="px-6 py-3 text-left font-semibold text-slate-500">
+                    Status
+                  </th>
+                  <th className="px-6 py-3 text-left font-semibold text-slate-500">
+                    Orders
+                  </th>
+                  <th className="px-6 py-3 text-left font-semibold text-slate-500">
+                    Requested for
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {renderRows()}
+              </tbody>
+            </table>
+          </TableWrapper>
+        </>
+      )}
     </PageContainer>
   );
 };
