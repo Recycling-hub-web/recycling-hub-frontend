@@ -23,14 +23,13 @@ export const ASSETS = {
 
 export const BRAND = {
   name: 'Recycling Hub',
+  legalName: 'Recycling Hub Sdn. Bhd.',
   tagline: 'Certified E-Waste Collection & Disposal for Malaysia.',
   email: 'contact@recyclinghub.eco',
-  phone: '+60 11-6080 3604',
+  phone: '+60 11-2850 3845',
   website: 'recyclinghub.eco',
   whatsapp:
-    'https://wa.me/601160803604?text=Hi%20Recycling%20Hub%2C%20I%27m%20interested%20in%20your%20e-waste%20collection%20service.%20Could%20you%20please%20share%20more%20details%3F%20Thank%20you.',
-  calendly: 'https://calendly.com/recyclinghub',
-  ssm: 'SSM: Pending registration',
+    'https://wa.me/601128503845?text=Hi%20Recycling%20Hub%2C%20I%27m%20interested%20in%20your%20e-waste%20collection%20service.%20Could%20you%20please%20share%20more%20details%3F%20Thank%20you.',
   businessHours: 'Mon–Fri 9am–6pm · Sat 9am–1pm (MYT)',
   social: {
     linkedin: 'https://linkedin.com/company/recyclinghub',
@@ -39,41 +38,16 @@ export const BRAND = {
   },
 };
 
-// ─── Navbar ───────────────────────────────────────────────────────────────────
-// Labels kept functional. "Services" could become "How It Works" for benefit-forward UX — consider A/B testing.
-
-export const NAV_LINKS = [
-  { label: 'Home', href: '/' },
-  { label: 'Services', href: '/services' },
-  { label: 'Pricing', href: '/pricing' },
-  { label: 'About', href: '/about' },
-  { label: 'Contact', href: '/contact' },
-];
-
 // ─── Page Heroes ──────────────────────────────────────────────────────────────
 // Each hero now speaks directly to the reader's specific concern on that page, not a generic brand statement.
 
 export const PAGE_HEROES = {
-  services: {
-    eyebrow: 'What We Do',
-    headline: 'One Call,',
-    headlineAccent: 'Certified Disposal Handled End to End.',
-    description:
-      'Individual pickup or enterprise bulk collection — Recycling Hub handles licensed collection, certified data destruction, and full compliance documentation. Free for individuals. Custom-quoted for businesses.',
-  },
   about: {
     eyebrow: 'Who We Are',
-    headline: 'Three Engineers.',
-    headlineAccent: 'One Mandate. Built for Malaysia.',
+    headline: 'Three Founders.',
+    headlineAccent: 'One Mandate: Built for Malaysia.',
     description:
-      'We are a software agency based in Alor Setar and Petaling Jaya. We built Recycling Hub because Malaysian businesses deserved an e-invoice integration partner that was local, technically honest, and priced fairly.',
-  },
-  contact: {
-    eyebrow: 'Get In Touch',
-    headline: 'Not Sure If You Need This?',
-    headlineAccent: "Let's Find Out.",
-    description:
-      "Book a free 15-minute call, or just WhatsApp us. We'll help you figure out whether individual pickup or bulk collection fits your situation — and get you a quote if you need one. No commitment, no pressure.",
+      'We are a team based in Klang Valley. We built Recycling Hub because Malaysian households and businesses deserved an e-waste collector that was registered, documented, and honest about what happens to your devices after pickup.',
   },
   pricing: {
     eyebrow: 'Pricing',
@@ -157,20 +131,20 @@ export const HOW_IT_WORKS = {
 
 // ─── About ────────────────────────────────────────────────────────────────────
 // Headline names the team size (three engineers) — human and honest for a startup.
-// Body copy names the specific cities (Alor Setar, Petaling Jaya) — local credibility matters to Malaysian SMEs.
+// Body copy names Klang Valley — where the company operates, consistent with the Klang Valley-only pickup service area.
 // Team bios rewritten to emphasise Recycling Hub-specific roles, not just academic credentials.
 
 export const ABOUT = {
   eyebrow: 'Who We Are',
   headline:
-    'Three Engineers Building the Integration Agency Malaysian Businesses Actually Need.',
-  body: 'Recycling Hub is a software agency based in Malaysia — Alor Setar and Petaling Jaya. We are engineers who saw the confusion around the MyInvois mandate and built the service we always wished existed: fixed price, honest timelines, full source code handover, and no disappearing act after go-live.',
+    'Three Founders Building the E-Waste Collector Malaysia Actually Needs.',
+  body: 'Recycling Hub is based in Klang Valley, Malaysia. We saw how much e-waste was ending up with informal scrap dealers, with no registration, no data destruction, and no paper trail, and built the alternative we always wished existed: DOE-registered, fully documented, and honest about what happens to your devices after we collect them.',
   team: [
     {
       name: 'Kedir Jabir',
       role: 'Co-Founder · Software Engineer',
-      tagline: 'Backend Engineer · LHDN API Integration',
-      bio: 'Based in Alor Setar, Kedah. ALX Software Engineering graduate with hands-on experience in production web systems. Leads backend architecture and LHDN MyInvois API integration at Recycling Hub.',
+      tagline: 'Backend Engineer · Systems & Operations',
+      bio: 'ALX Software Engineering graduate with hands-on experience in production web systems. Leads backend architecture and operational systems at Recycling Hub.',
       linkedin: 'https://www.linkedin.com/in/ibnu-jabir/',
       initials: 'IJ',
     },
@@ -186,133 +160,107 @@ export const ABOUT = {
       name: 'Abderrahmane Bouzemlal',
       role: 'Co-Founder · Software Engineering',
       tagline: 'Backend Engineer · Django & REST APIs',
-      bio: 'Based in Alor Setar, Kedah. Specialises in backend web applications using Django and REST APIs. Leads data integration and pipeline engineering at Recycling Hub.',
+      bio: 'Specialises in backend web applications using Django and REST APIs. Leads data systems and booking infrastructure at Recycling Hub.',
       linkedin: 'https://www.linkedin.com/in/abderrahmanebouzemlal/',
       initials: 'AB',
     },
   ],
 };
 
-// Mission: quote rewritten to name the actual problem that existed before Recycling Hub — makes it
-// specific and believable. Body reframes the offer in terms of what the reader escapes from.
-
-export const ABOUT_MISSION = {
-  eyebrow: 'Our Mission',
-  quote:
-    'We built Recycling Hub because when the MyInvois mandate landed, Malaysian SMEs had three options: pay an expensive ERP vendor, wade through cryptic LHDN documentation, or submit manually and hope for the best. None of those is good enough.',
-  body: 'The e-invoice mandate is real, the fines are real, and the technical gap between your existing accounting software and LHDN MyInvois is real. We close that gap — in 7 to 14 days, at a fixed price, with full source code handover. No month-long vendor negotiations. No vague project scopes. No lock-in.',
-};
-
-// Values: descriptions sharpened to be concrete and specific — "we never cut corners" is generic,
-// naming the 55 mandatory fields makes the same claim credible.
+// Values: grounded in the same claims already established and evidenced under /services and
+// /resources (DOE/SW110 status, certified data destruction, free individual pickup) — no new,
+// unverifiable claims about the team's expertise or operations introduced here.
 
 export const ABOUT_VALUES = [
   {
     title: 'Compliance-First',
     description:
-      'Every integration we ship is fully validated against the LHDN MyInvois sandbox before a single live invoice is submitted. We do not cut corners on the 55 mandatory fields.',
+      'Every collection — individual or bulk — is carried out under our DOE-registered status, with SW110 scheduled-waste compliance for business volumes. We do not run informal collection rounds.',
     icon: 'shield',
   },
   {
-    title: 'Local Expertise',
+    title: 'Built for Malaysia',
     description:
-      'We know Malaysian accounting software, SST treatment, and LHDN API behaviour from the inside. You will not spend time explaining the basics — we already know them.',
+      'We operate under Malaysian e-waste regulation, not a generic global playbook — DOE registration, SW110 classification, and DuitNow payment, built around how collection actually works here.',
     icon: 'map',
   },
   {
     title: 'Simplicity',
     description:
-      'Fixed price. Fixed timeline. Source code yours on go-live. We eliminate every form of uncertainty that makes integration projects painful.',
+      'Free doorstep pickup for individuals in Klang Valley, no minimums, no paperwork. Transparent quoting for bulk and enterprise collection. We eliminate the uncertainty that makes disposal feel complicated.',
     icon: 'zap',
   },
   {
-    title: 'Security',
+    title: 'Data Security',
     description:
-      'Your invoice data is transmitted through encrypted API bridges with zero retention on our side. The code lives in your infrastructure — not ours.',
+      'Every data-bearing device goes through certified data destruction — physical, not a reversible software wipe — with a serialized certificate and full chain-of-custody tracking from collection to destruction.',
     icon: 'lock',
   },
 ];
 
-// Timeline: removed fabricated "First Integration Shipped" entry (pre-revenue startup, no paying clients yet).
-// Replaced with honest product milestones — architecture built, sandbox validated, SaaS in development.
+// Timeline: milestones grounded only in facts already established elsewhere on the site (DOE
+// registration, SW110 compliance, the platform itself existing). TODO: confirm exact founding
+// year and milestone order against actual company history before treating this as final —
+// carried over from the previous (unverified) timeline rather than newly invented here.
 
 export const ABOUT_TIMELINE = [
   {
     year: '2024',
     title: 'Recycling Hub Founded',
     description:
-      'Three engineers based in Malaysia set out to solve one problem: making the MyInvois mandate achievable for SMEs without massive cost or vendor lock-in.',
+      'Founded to give Malaysian households and businesses a properly registered, documented alternative to informal scrap collection — one that treats device data and compliance paperwork as seriously as the electronics themselves.',
   },
   {
     year: '2024',
-    title: 'Integration Architecture Built',
+    title: 'DOE Registration Secured',
     description:
-      'Completed the core setup architecture and began full LHDN MyInvois sandbox testing across spreadsheets, common accounting systems, and manual workflows.',
+      'Registered as a DOE e-waste collector, putting every collection — individual or bulk — under regulated, auditable status instead of an informal scrap channel.',
   },
   {
     year: '2025',
-    title: 'Phase 4 Sandbox Ready',
+    title: 'SW110 Compliance Framework Built',
     description:
-      "All 55 mandatory MyInvois fields validated across all supported accounting systems. Integration suite stress-tested against LHDN's live sandbox environment.",
+      'Built out the scheduled-waste compliance process for bulk and industrial collection — consignment notes, certified data destruction, and documentation ready for audit.',
   },
   {
     year: '2025',
-    title: 'Recycling Hub Connect in Development',
+    title: 'Recyclinghub.eco Launched',
     description:
-      'Began development of Recycling Hub Connect — our self-serve SaaS platform designed for businesses that want plug-and-play MyInvois compliance without a custom build.',
+      'Launched the platform for booking free individual pickup in Klang Valley, requesting bulk quotes, and retrieving collection certificates via Track & Trace.',
   },
 ];
 
-// Who We Work With: headline updated (not "trusted by" for a pre-revenue startup).
-// NGO category: removed MyCare, MAPIM, Hulwan, Aqsa Syarif — warm leads, not confirmed clients.
+// Who We Work With: categories mirror the market segments already established under /solutions
+// (Individuals & Households, Corporate & Enterprise, Government/NGO) rather than inventing new
+// customer types. "systems" replaced with accepted device categories — the accounting-software
+// list made no sense once this section covers e-waste collection, not e-invoice integration.
 
 export const ABOUT_WHO_WE_WORK_WITH = {
   eyebrow: 'Who We Work With',
-  headline: 'Built for Malaysian Businesses at Every Scale',
+  headline: 'Built for Malaysia at Every Scale',
   categories: [
     {
-      label: 'SMEs',
+      label: 'Individuals & Households',
       description:
-        'Small and medium enterprises across retail, trading, services, and manufacturing — navigating the e-invoice mandate and looking for a simple path to compliance.',
+        'Anyone clearing out old phones, laptops, or a drawer of dead electronics in Klang Valley — free doorstep pickup, no minimums, instant DuitNow payment.',
     },
     {
-      label: 'Accounting Firms',
+      label: 'Corporate & Enterprise',
       description:
-        'Firms managing compliance for multiple clients who need a single, reliable integration partner to handle the technical side across their entire portfolio.',
+        'Offices, warehouses, and factories generating e-waste on an ongoing basis — recurring SW110-compliant collection, certified data destruction, and ESG reporting.',
     },
     {
-      label: 'NGOs & Non-Profits',
+      label: 'Government & NGOs',
       description:
-        'Registered societies, charitable foundations, and religious organisations above RM 1M annual revenue that must comply with the MyInvois mandate like any other entity.',
+        'Public sector agencies, GLCs, and registered non-profits that need procurement-ready compliance and transparent, auditable documentation.',
     },
   ],
-  systems: [
-    'Spreadsheets',
-    'Wave',
-    'Manual Bookkeeping',
-    'AutoCount / Xero / QuickBooks',
-    'Custom ERP',
+  deviceCategories: [
+    'Phones & Tablets',
+    'Laptops & Computers',
+    'Monitors & Displays',
+    'Small Office IT Peripherals',
   ],
-};
-
-// ─── Book Demo ────────────────────────────────────────────────────────────────
-// Headline reframed from "see it in action" (product-centric) to "get clarity" (benefit-centric).
-// Bullets rewritten to be specific deliverables the prospect walks away with — not vague activities.
-
-export const BOOK_DEMO = {
-  eyebrow: 'Talk to Us',
-  headline:
-    'Get a Straight Answer on Your Bulk Collection — Free 15-Minute Call',
-  bullets: [
-    'We ask about your device types, volume, and site location — no assumptions',
-    'You get a clear scope: what gets collected, when, and what documentation you receive',
-    'You receive a quote and proposed collection timeline within 24 hours of the call',
-    "No obligation, no pressure — if bulk collection isn't the right fit yet, we'll tell you honestly",
-  ],
-  ctaPrimary: 'Book a Free Call',
-  ctaSecondary: 'WhatsApp Us Directly',
-  trustNote:
-    'No commitment required · Quote within 24 hours · Available on Zoom, Google Meet, or WhatsApp',
 };
 
 // ─── Trust Strip ──────────────────────────────────────────────────────────────
@@ -430,18 +378,6 @@ export const B2B_SECTION = {
   note: 'Built for finance, procurement, and sustainability teams that need paperwork they can hand straight to an auditor.',
 };
 
-// ─── Final CTA ────────────────────────────────────────────────────────────────
-
-export const FINAL_CTA = {
-  eyebrow: 'Ready When You Are',
-  headline: 'Free Pickup for You. Certified Disposal for Your Business.',
-  subtext:
-    "Whether it's one old phone or a warehouse of retired equipment, Recycling Hub handles the collection, the certificates, and the paperwork. Request a bulk quote or book a free call — either way, you'll have an answer within 24 hours.",
-  cta: 'Request Bulk Quote',
-  ctaHref: '/contact',
-  note: 'No commitment required · Quote within 24 hours · Individual pickup always free',
-};
-
 // ─── FAQ ──────────────────────────────────────────────────────────────────────
 // Answers rewritten to be direct and conversion-focused — each one removes a specific objection
 // or de-risks the next step. The sandbox pass rate guarantee (fix at no cost if it's our fault)
@@ -492,99 +428,6 @@ export const FAQ = {
       question: 'Do you charge for bulk or enterprise collection?',
       answer:
         "Individual pickup is always free. Bulk and enterprise collection is quoted based on volume and device types — request a quote and we'll confirm pricing before anything is scheduled.",
-    },
-  ],
-};
-
-// ─── FAQ Page ─────────────────────────────────────────────────────────────────
-// A fuller, categorized version of FAQ for the dedicated /faq page. Reuses the
-// same original answers as FAQ where they overlap, plus a few new questions
-// covering booking, service area, and certificate requests — no new facts
-// invented beyond what's already established elsewhere on the site.
-
-export const FAQ_PAGE = {
-  eyebrow: 'FAQ',
-  headline: 'Questions, Answered',
-  subtext:
-    "Everything we're asked most — from booking a free pickup to requesting a certificate for a past collection. Can't find what you need? Reach out and we'll answer directly.",
-  categories: [
-    {
-      name: 'Getting Started',
-      items: [
-        {
-          question: 'What devices do you accept?',
-          answer:
-            "Phones, tablets, laptops, desktops, monitors, and office IT equipment like servers, printers, and routers, plus hard drives, SSDs, and other storage devices. Get in touch if you're unsure whether a specific item — especially large appliances — is covered.",
-        },
-        {
-          question: 'How do I book a pickup?',
-          answer:
-            'Book online or over WhatsApp — it takes under a minute. Tell us roughly what you have and where, and we confirm a collection time.',
-        },
-        {
-          question: 'Which areas do you serve?',
-          answer:
-            "Get in touch via WhatsApp or our contact form with your location and we'll confirm whether it's covered before you book anything.",
-        },
-        {
-          question:
-            "What's the difference between individual and business collection?",
-          answer:
-            "Individual pickup is for households clearing out personal devices — it's free, with instant payment, no minimums. Business or bulk collection is for offices, warehouses, and factories, and is scheduled around your operations with a custom quote based on volume and device types. Both are collected under the same DOE-registered, SW110-compliant process.",
-        },
-      ],
-    },
-    {
-      name: 'Individual Pickup',
-      items: [
-        {
-          question: 'Is there a minimum number of devices for a free pickup?',
-          answer:
-            "No — whether it's a single old phone or a drawer full of devices, individual pickup is free and comes with instant DuitNow payment. There's no account or contract required.",
-        },
-        {
-          question: 'How do I get paid for my old devices?',
-          answer:
-            'Individual pickups are paid instantly via DuitNow, at the moment your devices are collected — no waiting period, no manual payout request.',
-        },
-      ],
-    },
-    {
-      name: 'Business & Bulk Collection',
-      items: [
-        {
-          question: 'Do you charge for bulk or enterprise collection?',
-          answer:
-            "Individual pickup is always free. Bulk and enterprise collection is quoted based on volume and device types — request a quote and we'll confirm pricing before anything is scheduled.",
-        },
-        {
-          question:
-            'What documentation do we get for compliance or audit purposes?',
-          answer:
-            'Business and bulk collections come with full chain-of-custody records, a serialized certificate of destruction for every data-bearing asset, and an ESG-ready diversion report covering tonnage recycled and landfill diverted — all retrievable on request.',
-        },
-      ],
-    },
-    {
-      name: 'Data, Certificates & Compliance',
-      items: [
-        {
-          question: 'What happens to my data before a device is recycled?',
-          answer:
-            "Any data-bearing device — phones, laptops, hard drives, servers — goes through certified destruction before it's recycled. For individuals, that's included in every pickup. For businesses, you receive a serialized certificate of destruction per asset, so you have proof it happened.",
-        },
-        {
-          question: 'Is Recycling Hub actually licensed to handle e-waste?',
-          answer:
-            'Yes — collection and processing is carried out under a registered DOE license and SW110 scheduled-waste compliance, not an informal or unlicensed setup.',
-        },
-        {
-          question:
-            'How do I request a certificate or check my collection status?',
-          answer:
-            "Use our Track & Trace / Certificate Request page — submit your booking reference if you have one, or just describe the collection, and we'll email you what you need.",
-        },
-      ],
     },
   ],
 };
@@ -755,11 +598,14 @@ export const PRICING_FAQ = [
 export const FOOTER = {
   services: [
     { label: 'Recycle & Get Paid', href: '/contact' },
-    { label: 'Bulk & Enterprise Collection', href: '/services' },
+    {
+      label: 'Bulk & Enterprise Collection',
+      href: '/services/bulk-industrial-collection',
+    },
     { label: 'How It Works', href: '/#how-it-works' },
     { label: 'Pricing', href: '/pricing' },
     { label: 'Track & Trace / Certificates', href: '/track-trace' },
-    { label: 'Request a Quote', href: '/contact' },
+    { label: 'Request a Quote', href: '/request-quote' },
   ],
   company: [
     { label: 'About Us', href: '/about' },
@@ -773,3 +619,193 @@ export const FOOTER = {
     { label: 'Terms of Service', href: '/terms' },
   ],
 };
+
+// ─── Services Section ─────────────────────────────────────────────────────────
+// Purely capability-focused (WHAT Recycling Hub does) — market-segment messaging
+// (WHO it's for) belongs in /solutions instead, not here. Six services, each with
+// its own sub-page under /services/<slug>, sharing one detail template.
+
+export const SERVICES = [
+  {
+    slug: 'collection-pickup',
+    icon: 'truck',
+    title: 'E-Waste Collection & Pickup',
+    summary:
+      'Scheduled doorstep collection for individual devices and household quantities, free of charge.',
+  },
+  {
+    slug: 'bulk-industrial-collection',
+    icon: 'factory',
+    title: 'Bulk & Industrial Collection',
+    summary:
+      'Recurring, volume-based collection for offices, warehouses, and factories — quoted and scheduled around your operations.',
+  },
+  {
+    slug: 'certified-data-destruction',
+    icon: 'shield',
+    title: 'Certified Data Destruction',
+    summary:
+      'Physical destruction of data-bearing devices with a serialized certificate and full chain-of-custody tracking.',
+  },
+  {
+    slug: 'esg-reporting',
+    icon: 'leaf',
+    title: 'ESG & Sustainability Reporting',
+    summary:
+      'Diversion and impact reporting — tonnage recycled, materials recovered, and estimated carbon impact — for your ESG disclosures.',
+  },
+  {
+    slug: 'material-recovery',
+    icon: 'recycle',
+    title: 'Recycling & Material Recovery',
+    summary:
+      'Licensed downstream processing that recovers reusable materials and diverts the rest from landfill.',
+  },
+  {
+    slug: 'compliance-documentation',
+    icon: 'file-check',
+    title: 'Compliance Documentation',
+    summary:
+      'Consignment notes and DOE-compliant paperwork issued for every collection, ready for audit.',
+  },
+] as const;
+
+export type ServiceSlug = (typeof SERVICES)[number]['slug'];
+
+// ─── Resources Section ────────────────────────────────────────────────────────
+// Educational guides grounded in facts already established under /services —
+// each one expands on a single compliance/process topic (DOE, SW110, data
+// destruction, ESG, pickup prep, certificates) rather than introducing new claims.
+export const RESOURCES = [
+  {
+    slug: 'doe-registration-explained',
+    icon: 'badge-check',
+    title: 'What DOE Registration Means for You',
+  },
+  {
+    slug: 'sw110-compliance-for-businesses',
+    icon: 'factory',
+    title: 'SW110 Compliance for Businesses',
+  },
+  {
+    slug: 'certified-data-destruction-guide',
+    icon: 'lock',
+    title: 'How Certified Data Destruction Works',
+  },
+  {
+    slug: 'esg-reporting-for-ewaste',
+    icon: 'leaf',
+    title: 'ESG & Sustainability Reporting for E-Waste',
+  },
+  {
+    slug: 'preparing-devices-for-pickup',
+    icon: 'truck',
+    title: 'How to Prepare Your Devices for Pickup',
+  },
+  {
+    slug: 'understanding-your-certificate',
+    icon: 'file-check',
+    title: 'Understanding Your Recycling Certificate',
+  },
+] as const;
+
+export type ResourceSlug = (typeof RESOURCES)[number]['slug'];
+
+// Structural-only per service: which trust-callout visual placeholder (if any)
+// to render. The translatable copy (description, included bullets, trust
+// text, and its TODO-flagged real-data gaps) lives in src/locales/{en,bm}.ts
+// instead, keyed by the same slug.
+export const SERVICE_DETAILS: Record<
+  ServiceSlug,
+  { visual?: 'certificate' | 'photos' }
+> = {
+  'collection-pickup': { visual: 'photos' },
+  'bulk-industrial-collection': {},
+  'certified-data-destruction': { visual: 'certificate' },
+  'esg-reporting': {},
+  'material-recovery': {},
+  'compliance-documentation': {},
+};
+
+// ─── Solutions Section ────────────────────────────────────────────────────────
+// Purely market-segment-focused (WHO Recycling Hub serves) — functional/capability
+// messaging (WHAT the company does) belongs in /services instead. Six segments,
+// each with its own sub-page under /solutions/<slug>, sharing one detail template.
+// Corporate & Enterprise and Individuals & Households are the two active primary
+// markets — `priority: true` on those drives the visual emphasis on the landing
+// grid. The other four are built and live, just not surfaced in the navbar
+// dropdown yet (see ServicesDropdown/SolutionsDropdown) until the business is
+// ready to actively market to those segments.
+
+export const SOLUTIONS = [
+  {
+    slug: 'corporate-enterprise',
+    icon: 'building',
+    title: 'Corporate & Enterprise',
+    summary:
+      'Recurring bulk collection, certified data destruction, and ESG reporting for offices, corporate IT, and manufacturing facilities.',
+    priority: true,
+  },
+  {
+    slug: 'individuals-households',
+    icon: 'house',
+    title: 'Individuals & Households',
+    summary:
+      'Free doorstep pickup and instant DuitNow payment for personal electronics — no minimums, no paperwork.',
+    priority: true,
+  },
+  {
+    slug: 'government-glc',
+    icon: 'landmark',
+    title: 'Government & GLC',
+    summary:
+      'Procurement-ready compliance and transparent documentation for public sector agencies and government-linked companies.',
+    priority: false,
+  },
+  {
+    slug: 'education',
+    icon: 'graduation-cap',
+    title: 'Education',
+    summary:
+      'Bulk collection for computer lab upgrades and campus-wide IT refresh cycles, with certified destruction of student and staff data.',
+    priority: false,
+  },
+  {
+    slug: 'healthcare',
+    icon: 'stethoscope',
+    title: 'Healthcare',
+    summary:
+      'Chain-of-custody-tracked collection and certified destruction for retired hospital and clinic IT equipment.',
+    priority: false,
+  },
+  {
+    slug: 'ngo',
+    icon: 'heart',
+    title: 'NGO & Non-Profit',
+    summary:
+      'Flexible, lower-volume collection at partnership rates for nonprofits and community organizations.',
+    priority: false,
+  },
+] as const;
+
+export type SolutionSlug = (typeof SOLUTIONS)[number]['slug'];
+
+// Structural-only per segment: just the CTA destination. The translatable
+// copy (framing, why-us bullets, CTA label, testimonial placeholder, and its
+// TODO-flagged real-data gaps) lives in src/locales/{en,bm}.ts instead, keyed
+// by the same slug.
+export const SOLUTION_DETAILS: Record<SolutionSlug, { cta: { href: string } }> =
+  {
+    'corporate-enterprise': {
+      cta: { href: '/request-quote?service=bulk-industrial-collection' },
+    },
+    'individuals-households': { cta: { href: BRAND.whatsapp } },
+    'government-glc': { cta: { href: '/contact' } },
+    education: {
+      cta: { href: '/request-quote?service=bulk-industrial-collection' },
+    },
+    healthcare: {
+      cta: { href: '/request-quote?service=certified-data-destruction' },
+    },
+    ngo: { cta: { href: '/contact' } },
+  };

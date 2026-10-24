@@ -29,26 +29,26 @@ type Stat = {
 
 const STATS: Stat[] = [
   {
-    value: 'RM 20,000',
-    label: 'Maximum fine per non-compliant invoice',
-    arrow: true,
-    filled: true,
-  },
-  {
-    value: '55',
-    label: 'Mandatory fields required per MyInvois submission',
-    arrow: true,
-    filled: false,
-  },
-  {
-    value: '4',
-    label: 'Accounting systems supported out of the box',
+    value: 'DOE',
+    label: 'Registered E-Waste Collector',
     arrow: false,
     filled: true,
   },
   {
-    value: '7 Days',
-    label: 'Average integration timeline from discovery to go-live',
+    value: 'Free',
+    label: 'Doorstep Pickup for Individuals',
+    arrow: false,
+    filled: false,
+  },
+  {
+    value: 'Instant',
+    label: 'DuitNow Payment on Collection',
+    arrow: false,
+    filled: true,
+  },
+  {
+    value: 'SW110',
+    label: 'Compliant Bulk & Enterprise Collection',
     arrow: false,
     filled: false,
   },
@@ -67,7 +67,7 @@ const StatisticsSection = () => (
           className="mb-6 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-500"
         >
           <ChartBarIcon />
-          Statistics
+          At a Glance
         </motion.div>
 
         <motion.h2
@@ -77,7 +77,7 @@ const StatisticsSection = () => (
           transition={{ duration: 0.5, delay: 0.08, ease }}
           className="font-montserrat text-4xl font-bold tracking-tight text-neutral-950 md:text-5xl"
         >
-          The Mandate, By the Numbers
+          What You Can Count On
         </motion.h2>
       </div>
 

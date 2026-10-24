@@ -36,10 +36,10 @@ const WhoWeWorkWith = () => (
         ))}
       </div>
 
-      {/* Supported systems */}
+      {/* Accepted device categories */}
       <div className="text-center">
         <p className="mb-5 text-xs font-semibold uppercase tracking-widest text-slate-400">
-          Supported Accounting Systems
+          Accepted Device Categories
         </p>
         <motion.div
           initial="hidden"
@@ -51,7 +51,7 @@ const WhoWeWorkWith = () => (
           }}
           className="flex flex-wrap items-center justify-center gap-3"
         >
-          {ABOUT_WHO_WE_WORK_WITH.systems.map((sys) => (
+          {ABOUT_WHO_WE_WORK_WITH.deviceCategories.map((sys) => (
             <motion.span
               key={sys}
               variants={{

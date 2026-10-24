@@ -66,6 +66,14 @@
           { "argsIgnorePattern": "^_" }
         ]
       }
+    },
+    // e2e tests + their config are dev-only tooling, not shipped app code
+    // — @playwright/test belongs in devDependencies, not dependencies.
+    {
+      "files": ["e2e/**/*.ts", "playwright.config.ts"],
+      "rules": {
+        "import/no-extraneous-dependencies": "off"
+      }
     }
   ]
 }

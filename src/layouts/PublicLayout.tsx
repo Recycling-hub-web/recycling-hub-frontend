@@ -2,6 +2,8 @@ import type { ReactNode } from 'react';
 
 import { Footer } from '../components/layout/Footer';
 import { Navbar } from '../components/navbar';
+import { StickyRecycleCTA } from '../components/ui/StickyRecycleCTA';
+import { WhatsAppFloatingButton } from '../components/ui/WhatsAppFloatingButton';
 
 type PublicLayoutProps = {
   children: ReactNode;
@@ -13,6 +15,8 @@ const PublicLayout = ({ children, navVariant = 'dark' }: PublicLayoutProps) => (
     <Navbar variant={navVariant} />
     <main>{children}</main>
     <Footer />
+    <WhatsAppFloatingButton />
+    <StickyRecycleCTA />
   </div>
 );
 

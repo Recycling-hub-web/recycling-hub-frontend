@@ -1,0 +1,84 @@
+'use client';
+
+import Link from 'next/link';
+import type { FormEvent } from 'react';
+import { useState } from 'react';
+import { LuCircleCheck, LuKeyRound } from 'react-icons/lu';
+
+import type { Dictionary } from '../../../../lib/dictionary';
+import { InputField } from '../../../form/fields/InputField';
+import { Button } from '../../../ui/buttons/Button';
+import { useForgotPassword } from '../hooks';
+import { AuthCard } from './AuthCard';
+
+const ForgotPasswordView = ({
+  t,
+}: {
+  t: Dictionary['auth']['forgotPassword'];
+}) => {
+  const { execute: submitForgotPassword, loading: submitting } =
+    useForgotPassword();
+  const [formData, setFormData] = useState({ email: '' });
+  const [sent, setSent] = useState(false);
+
+  const updateFormData = (field: string, value: string) =>
+    setFormData((prev) => ({ ...prev, [field]: value }));
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    try {
+      await submitForgotPassword(formData.email);
+    } finally {
+      // Always shows success, regardless of outcome — the backend itself
+      // never reveals whether the email exists (ForgotPasswordView returns
+      // 200 either way), so there's nothing to branch on here either.
+      setSent(true);
+    }
+  };
+
+  if (sent) {
+    return (
+      <AuthCard
+        icon={<LuCircleCheck className="size-5" />}
+        title={t.successTitle}
+        subtitle={t.successMessage}
+      >
+        <Button href="/login" className="mt-6 w-full">
+          {t.backToLogin}
+        </Button>
+      </AuthCard>
+    );
+  }
+
+  return (
+    <AuthCard
+      icon={<LuKeyRound className="size-5" />}
+      title={t.title}
+      subtitle={t.subtitle}
+    >
+      <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
+        <InputField
+          label={t.emailLabel}
+          field="email"
+          type="email"
+          placeholder={t.emailPlaceholder}
+          formData={formData}
+          updateFormData={updateFormData}
+        />
+
+        <Button type="submit" disabled={submitting} className="w-full">
+          {submitting ? t.submitting : t.submit}
+        </Button>
+
+        <Link
+          href="/login"
+          className="block w-full text-center text-xs font-medium text-slate-500 hover:text-brand-600"
+        >
+          {t.backToLogin}
+        </Link>
+      </form>
+    </AuthCard>
+  );
+};
+
+export { ForgotPasswordView };
