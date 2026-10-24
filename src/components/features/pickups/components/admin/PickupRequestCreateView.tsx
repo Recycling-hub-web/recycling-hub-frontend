@@ -24,8 +24,10 @@ import { Card } from '../../../../ui/card/Card';
 import { PageHeader } from '../../../../ui/PageHeader';
 import { useToast } from '../../../../ui/toast/ToastContext';
 import { REQUEST_TYPE_FILTER_OPTIONS } from '../../constants';
-import { useCreatePickupRequest } from '../../hooks';
+import { useCreatePickupRequest, usePickupCategories } from '../../hooks';
 import type { PickupRequestType } from '../../types';
+import { hasItemErrors, validateItems } from '../../units';
+import { type DraftOrder, NewOrdersFieldArray } from './NewOrdersFieldArray';
 
 type FormState = {
   full_name: string;
@@ -80,6 +82,15 @@ const PickupRequestCreateView = ({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [selectedLocation, setSelectedLocation] =
     useState<SelectedAddress | null>(null);
+  const [orders, setOrders] = useState<DraftOrder[]>([]);
+  const [orderItemErrors, setOrderItemErrors] = useState<
+    Record<string, string>[][]
+  >([]);
+  const {
+    options: categoryOptions,
+    unitsByCategory,
+    loading: loadingCategories,
+  } = usePickupCategories();
 
   const updateFormData = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -103,7 +114,14 @@ const PickupRequestCreateView = ({
     if (!formData.requested_at)
       nextErrors.requested_at = 'Pickup date and time is required.';
     setErrors(nextErrors);
-    return Object.keys(nextErrors).length === 0;
+    const nextOrderItemErrors = orders.map((order) =>
+      validateItems(order.items, unitsByCategory),
+    );
+    setOrderItemErrors(nextOrderItemErrors);
+    return (
+      Object.keys(nextErrors).length === 0 &&
+      !nextOrderItemErrors.some(hasItemErrors)
+    );
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -122,10 +140,23 @@ const PickupRequestCreateView = ({
         pickup_address: formData.pickup_address,
         requested_at: new Date(formData.requested_at).toISOString(),
         note: formData.note || undefined,
+        orders: orders.length
+          ? orders.map((order) => ({
+              items: order.items.map((item) => ({
+                category: item.category,
+                estimated_quantity:
+                  item.estimated_quantity?.trim() || undefined,
+                quantity_unit: item.quantity_unit?.trim() || undefined,
+              })),
+              photos: order.photos.map((p) => p.file_key),
+            }))
+          : undefined,
       });
       toast.success(
         'Pickup request created',
-        `A request for ${formData.full_name} has been added.`,
+        orders.length
+          ? `A request for ${formData.full_name} has been added with ${orders.length} order${orders.length === 1 ? '' : 's'}.`
+          : `A request for ${formData.full_name} has been added.`,
       );
       router.push(`${basePath}/${result.id}`);
     } catch {
@@ -233,6 +264,15 @@ const PickupRequestCreateView = ({
                 disabled={submitting}
               />
             </div>
+            <NewOrdersFieldArray
+              orders={orders}
+              onChange={setOrders}
+              categoryOptions={categoryOptions}
+              unitsByCategory={unitsByCategory}
+              loadingCategories={loadingCategories}
+              disabled={submitting}
+              itemErrors={orderItemErrors}
+            />
           </div>
 
           <FormActions className="pt-5">
