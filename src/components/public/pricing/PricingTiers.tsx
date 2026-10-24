@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 
 import { PRICING_TIERS } from '../../../constants/content';
-import { Button } from '../../ui/buttons/Button';
+import { PublicButton } from '../../ui/buttons/PublicButton';
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -156,13 +156,13 @@ const PricingTiers = () => {
               </ul>
 
               <div className="mt-auto">
-                <Button
+                <PublicButton
                   href="/contact"
                   variant={tier.highlight ? 'primary' : 'secondary'}
                   className="w-full"
                 >
                   {tier.cta}
-                </Button>
+                </PublicButton>
               </div>
             </motion.div>
           ))}

@@ -2,40 +2,17 @@ import { AnimatePresence, motion } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
-import {
-  LuBriefcase,
-  LuChevronDown,
-  LuGraduationCap,
-  LuHeart,
-  LuShoppingBag,
-} from 'react-icons/lu';
+import { LuArrowRight, LuChevronDown } from 'react-icons/lu';
 
-const SOLUTIONS = [
-  {
-    href: '/solutions/ngo',
-    icon: LuHeart,
-    title: 'For NGOs & Charities',
-    description: 'Certified disposal and ESG reporting for donated electronics',
-  },
-  {
-    href: '/solutions/education',
-    icon: LuGraduationCap,
-    title: 'For Education & Colleges',
-    description: 'Decommission computer labs and campus IT, fully documented',
-  },
-  {
-    href: '/solutions/professional-services',
-    icon: LuBriefcase,
-    title: 'For Professional Services',
-    description: 'Certified data destruction for client-facing firms',
-  },
-  {
-    href: '/solutions/retail',
-    icon: LuShoppingBag,
-    title: 'For Retail & Trading',
-    description: 'Bulk collection for returned and end-of-life inventory',
-  },
-] as const;
+import { SOLUTIONS } from '../../constants/content';
+import { useDictionary } from '../../hooks/useDictionary';
+import { SOLUTION_ICONS } from '../public/solutions/SolutionsGrid';
+
+// Only the two active primary markets are linked directly from the nav —
+// the other four segments are built and live at /solutions/<slug>, just not
+// surfaced here yet. Reachable via "View All Solutions" below until the
+// business is ready to actively market to those segments.
+const NAV_SOLUTIONS = SOLUTIONS.filter((s) => s.priority);
 
 const DOT_SPRING = { type: 'spring', stiffness: 600, damping: 25 } as const;
 
@@ -55,6 +32,7 @@ const SolutionsDropdown = ({ light }: SolutionsDropdownProps) => {
   const [open, setOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const dict = useDictionary();
 
   const isActiveSolutions = router.pathname.startsWith('/solutions');
   const showDot = isActiveSolutions || open;
@@ -95,7 +73,7 @@ const SolutionsDropdown = ({ light }: SolutionsDropdownProps) => {
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className={`group flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium transition-colors duration-200 lg:text-sm ${triggerCls}`}
+        className={`group flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-xs font-medium transition-colors duration-200 lg:text-sm ${triggerCls}`}
       >
         <motion.span
           className="shrink-0"
@@ -107,7 +85,7 @@ const SolutionsDropdown = ({ light }: SolutionsDropdownProps) => {
         >
           <NavDot />
         </motion.span>
-        Solutions
+        {dict.nav.solutions}
         <motion.span
           animate={{ rotate: open ? 180 : 0 }}
           transition={{ duration: 0.2, ease: 'easeOut' }}
@@ -127,11 +105,13 @@ const SolutionsDropdown = ({ light }: SolutionsDropdownProps) => {
             transition={{ duration: 0.15, ease: 'easeOut' }}
             className="absolute left-1/2 top-[calc(100%+8px)] z-50 w-80 -translate-x-1/2 rounded-2xl border border-slate-200 bg-white p-2 shadow-[0_8px_30px_rgba(0,0,0,0.08)]"
           >
-            {SOLUTIONS.map(({ href, icon: Icon, title, description }) => {
+            {NAV_SOLUTIONS.map(({ slug, icon, title, summary }) => {
+              const href = `/solutions/${slug}`;
+              const Icon = SOLUTION_ICONS[icon];
               const active = router.pathname === href;
               return (
                 <Link
-                  key={href}
+                  key={slug}
                   href={href}
                   className={`group flex w-full items-start gap-3 rounded-xl p-4 transition-colors duration-150 ${
                     active
@@ -159,12 +139,20 @@ const SolutionsDropdown = ({ light }: SolutionsDropdownProps) => {
                       {title}
                     </p>
                     <p className="mt-0.5 text-xs leading-relaxed text-slate-500">
-                      {description}
+                      {summary}
                     </p>
                   </div>
                 </Link>
               );
             })}
+
+            <Link
+              href="/solutions"
+              className="mt-1 flex items-center justify-between rounded-xl border-t border-slate-100 px-4 py-3 text-sm font-semibold text-brand-600 transition-colors duration-150 hover:bg-neutral-100"
+            >
+              {dict.nav.viewAllSolutions}
+              <LuArrowRight size={15} />
+            </Link>
           </motion.div>
         )}
       </AnimatePresence>
@@ -177,6 +165,7 @@ const SolutionsDropdown = ({ light }: SolutionsDropdownProps) => {
 const SolutionsMobileAccordion = () => {
   const [open, setOpen] = useState(false);
   const router = useRouter();
+  const dict = useDictionary();
 
   const isActiveSolutions = router.pathname.startsWith('/solutions');
 
@@ -207,7 +196,7 @@ const SolutionsMobileAccordion = () => {
               <NavDot />
             </motion.span>
           )}
-          Solutions
+          {dict.nav.solutions}
         </span>
 
         <motion.span
@@ -229,11 +218,13 @@ const SolutionsMobileAccordion = () => {
             className="overflow-hidden"
           >
             <div className="ml-4 mt-1 flex flex-col gap-0.5 border-l border-slate-200 pl-3">
-              {SOLUTIONS.map(({ href, icon: Icon, title }) => {
+              {NAV_SOLUTIONS.map(({ slug, icon, title }) => {
+                const href = `/solutions/${slug}`;
+                const Icon = SOLUTION_ICONS[icon];
                 const active = router.pathname === href;
                 return (
                   <Link
-                    key={href}
+                    key={slug}
                     href={href}
                     className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors duration-150 ${
                       active
@@ -246,6 +237,12 @@ const SolutionsMobileAccordion = () => {
                   </Link>
                 );
               })}
+              <Link
+                href="/solutions"
+                className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-semibold text-brand-600 transition-colors hover:bg-neutral-100"
+              >
+                {dict.nav.viewAllSolutions}
+              </Link>
             </div>
           </motion.div>
         )}

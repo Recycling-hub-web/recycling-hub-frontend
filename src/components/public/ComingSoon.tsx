@@ -10,19 +10,19 @@ import {
   LuTruck,
 } from 'react-icons/lu';
 
-import { ASSETS, BRAND } from '../../constants/content';
+import { ASSETS } from '../../constants/content';
 import { Meta } from '../layout/Meta';
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+// Icons only for now — the profile links are hidden.
 const SOCIALS = [
-  { label: 'Instagram', href: BRAND.social.instagram, Icon: FaInstagram },
-  { label: 'Facebook', href: BRAND.social.facebook, Icon: FaFacebook },
-  { label: 'LinkedIn', href: BRAND.social.linkedin, Icon: FaLinkedin },
-  // TODO: swap in a real TikTok profile URL once the account exists
-  { label: 'TikTok', href: '#', Icon: FaTiktok },
+  { label: 'Instagram', Icon: FaInstagram },
+  { label: 'Facebook', Icon: FaFacebook },
+  { label: 'LinkedIn', Icon: FaLinkedin },
+  { label: 'TikTok', Icon: FaTiktok },
 ];
 
 // Same stock photography and organic-blob styling as the homepage
@@ -96,7 +96,7 @@ const ComingSoon = () => {
       <main className="relative min-h-screen overflow-hidden bg-white px-6 py-8 sm:p-10">
         {/* Grid line texture */}
         <div
-          className="pointer-events-none absolute inset-0 opacity-[0.05]"
+          className="pointer-events-none absolute inset-0 opacity-5"
           style={{
             backgroundImage:
               'linear-gradient(rgba(0,0,0,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.6) 1px, transparent 1px)',
@@ -239,17 +239,14 @@ const ComingSoon = () => {
 
           {/* Social links */}
           <div className="flex justify-center gap-4 border-t border-slate-100 pt-6">
-            {SOCIALS.map(({ label, href, Icon }) => (
-              <a
+            {SOCIALS.map(({ label, Icon }) => (
+              <span
                 key={label}
-                href={href}
-                target="_blank"
-                rel="noopener noreferrer"
                 aria-label={label}
-                className="flex size-9 items-center justify-center rounded-full text-slate-400 transition-colors hover:text-brand-600"
+                className="flex size-9 items-center justify-center rounded-full text-slate-400"
               >
                 <Icon size={18} />
-              </a>
+              </span>
             ))}
           </div>
         </div>

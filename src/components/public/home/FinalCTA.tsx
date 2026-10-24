@@ -1,34 +1,39 @@
-import { BRAND, FINAL_CTA } from '../../../constants/content';
-import { Button } from '../../ui/buttons/Button';
+import { BRAND } from '../../../constants/content';
+import { useDictionary } from '../../../hooks/useDictionary';
+import { PublicButton } from '../../ui/buttons/PublicButton';
 import { FadeIn } from '../../ui/FadeIn';
 import { SectionHeading } from '../../ui/SectionHeading';
 
-const FinalCTA = () => (
-  <section className="bg-hero-gradient py-20 md:py-28">
-    <div className="mx-auto max-w-7xl px-5 text-center md:px-8">
-      <SectionHeading
-        eyebrow={FINAL_CTA.eyebrow}
-        headline={FINAL_CTA.headline}
-        subtext={FINAL_CTA.subtext}
-        light
-      />
+const FinalCTA = () => {
+  const { home } = useDictionary();
+  const { finalCta: content } = home;
 
-      <FadeIn delay={0.5}>
-        <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <Button href={FINAL_CTA.ctaHref} variant="white">
-            {FINAL_CTA.cta}
-          </Button>
-          <Button href={BRAND.whatsapp} variant="outline-white">
-            WhatsApp Us
-          </Button>
-        </div>
-      </FadeIn>
+  return (
+    <section className="bg-white py-20 md:py-28">
+      <div className="mx-auto max-w-7xl px-5 text-center md:px-8">
+        <SectionHeading
+          eyebrow={content.eyebrow}
+          headline={content.headline}
+          subtext={content.subtext}
+        />
 
-      <FadeIn delay={0.65}>
-        <p className="mt-6 text-xs text-white/45">{FINAL_CTA.note}</p>
-      </FadeIn>
-    </div>
-  </section>
-);
+        <FadeIn delay={0.5}>
+          <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <PublicButton href={content.ctaHref} variant="primary">
+              {content.cta}
+            </PublicButton>
+            <PublicButton href={BRAND.whatsapp} variant="secondary">
+              {content.whatsapp}
+            </PublicButton>
+          </div>
+        </FadeIn>
+
+        <FadeIn delay={0.65}>
+          <p className="mt-6 text-xs text-slate-500">{content.note}</p>
+        </FadeIn>
+      </div>
+    </section>
+  );
+};
 
 export { FinalCTA };

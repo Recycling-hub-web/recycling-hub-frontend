@@ -1,58 +1,10 @@
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 
-import { ABOUT_VALUES } from '../../../constants/content';
+import { ABOUT_VALUES, ASSETS } from '../../../constants/content';
 
 const ease = [0.22, 1, 0.36, 1] as const;
-
-const EyeIcon = () => (
-  <svg
-    width="22"
-    height="22"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-    <circle cx="12" cy="12" r="3" />
-  </svg>
-);
-
-const TargetIcon = () => (
-  <svg
-    width="22"
-    height="22"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <circle cx="12" cy="12" r="10" />
-    <circle cx="12" cy="12" r="6" />
-    <circle cx="12" cy="12" r="2" />
-  </svg>
-);
-
-const ValuesIcon = () => (
-  <svg
-    width="22"
-    height="22"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <polyline points="9 11 12 14 22 4" />
-    <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
-  </svg>
-);
 
 const LABELS = ['Vision', 'Mission', 'Core Values'];
 
@@ -153,16 +105,22 @@ const FoundationSection = () => {
                 transition={{ duration: 0.6, ease }}
                 className="w-full rounded-2xl border border-slate-200 bg-white p-8 md:p-10"
               >
-                <div className="mb-6 flex size-12 items-center justify-center rounded-xl bg-neutral-100 text-neutral-950">
-                  <EyeIcon />
+                <div className="mb-6 flex size-12 items-center justify-center rounded-xl bg-neutral-100">
+                  <Image
+                    src={ASSETS.logo.symbolColor}
+                    alt=""
+                    width={560}
+                    height={565}
+                    className="size-7 object-contain"
+                  />
                 </div>
                 <h3 className="font-montserrat text-2xl font-bold text-neutral-950">
                   Our Vision
                 </h3>
                 <p className="mt-4 text-base leading-relaxed text-slate-500">
-                  A Malaysia where every SME submits e-invoices automatically —
-                  zero manual work, zero compliance risk, and zero disruption to
-                  the way you run your business.
+                  A Malaysia where no old device ends up with an informal scrap
+                  dealer — every collection registered, every device accounted
+                  for, and every byte of data properly destroyed.
                 </p>
               </motion.div>
             </div>
@@ -179,18 +137,24 @@ const FoundationSection = () => {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true, margin: '-60px' }}
                 transition={{ duration: 0.6, ease }}
-                className="w-full rounded-2xl bg-gradient-to-br from-[#184e90] to-[#1370e2] p-8 md:p-10"
+                className="w-full rounded-2xl bg-gradient-to-br from-brand-800 to-brand-600 p-8 md:p-10"
               >
-                <div className="mb-6 flex size-12 items-center justify-center rounded-xl bg-white/15 text-white">
-                  <TargetIcon />
+                <div className="mb-6 flex size-12 items-center justify-center rounded-xl bg-white/15">
+                  <Image
+                    src={ASSETS.logo.symbolWhite}
+                    alt=""
+                    width={560}
+                    height={565}
+                    className="size-7 object-contain"
+                  />
                 </div>
                 <h3 className="font-montserrat text-2xl font-bold text-white">
                   Our Mission
                 </h3>
                 <p className="mt-4 text-base leading-relaxed text-white/75">
-                  To connect every Malaysian accounting system to LHDN&apos;s
-                  MyInvois API — fast, affordable, and without disrupting how
-                  you already work.
+                  To make DOE-registered, fully documented e-waste collection
+                  the easy default — free for individuals, compliant and
+                  reported for businesses, and safe for your data either way.
                 </p>
               </motion.div>
             </div>
@@ -209,8 +173,14 @@ const FoundationSection = () => {
                 transition={{ duration: 0.6, ease }}
                 className="w-full rounded-2xl border border-slate-200 bg-white p-8 md:p-10"
               >
-                <div className="mb-6 flex size-12 items-center justify-center rounded-xl bg-neutral-100 text-neutral-950">
-                  <ValuesIcon />
+                <div className="mb-6 flex size-12 items-center justify-center rounded-xl bg-neutral-100">
+                  <Image
+                    src={ASSETS.logo.symbolColor}
+                    alt=""
+                    width={560}
+                    height={565}
+                    className="size-7 object-contain"
+                  />
                 </div>
                 <h3 className="font-montserrat text-2xl font-bold text-neutral-950">
                   Core Values

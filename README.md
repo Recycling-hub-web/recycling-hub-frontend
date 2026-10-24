@@ -14,7 +14,7 @@ Multi-page marketing website for **Recycling Hub**, a Malaysian e-invoicing midd
 | Language | TypeScript (strict) |
 | Linting | ESLint (Airbnb + Next.js) + Prettier |
 | Git hooks | Husky + lint-staged (ESLint, Prettier, tsc on every commit) |
-| Deployment | Vercel (auto-deploy from `master`) |
+| Deployment | Vercel (auto-deploy from `main`) |
 
 ---
 
@@ -238,9 +238,10 @@ invoices       id, integrationId, lhdnRef, status, submittedAt, errorLog
 
 | Branch | Purpose |
 |---|---|
-| `master` | Production — auto-deployed to Vercel |
-| `release/1.0.0` | Current release candidate |
-| `feature/*` | Feature branches off `master` |
+| `main` | Production — auto-deployed to Vercel |
+| `release/staging` | Active development/staging branch |
+| `release/1.0.0` | Legacy — stale, not merged forward |
+| `feature/*` | Feature branches off `release/staging` |
 
 ---
 

@@ -1,0 +1,248 @@
+'use client';
+
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { LuCheck, LuPencil, LuTrash2, LuTruck, LuX } from 'react-icons/lu';
+
+import { StatusBadge } from '../../../../ui/badges/StatusBadge';
+import { AppDate } from '../../../../ui/date/AppDate';
+import {
+  TableEmptyRow,
+  TableErrorRow,
+  TableLoadingRow,
+  TablePagination,
+  TableWrapper,
+} from '../../../../ui/table';
+import {
+  PICKUP_STAGE_BADGE_VARIANT,
+  REQUEST_TYPE_BADGE_VARIANT,
+} from '../../constants';
+import {
+  type CollectionRequestListItem,
+  derivePickupStage,
+  itemsSummary,
+  PICKUP_REQUEST_TYPE_LABELS,
+  PICKUP_STAGE_LABELS,
+} from '../../types';
+import { ConfirmedPickupCell } from '../shared/ConfirmedPickupCell';
+
+const PAGE_SIZE = 12;
+
+type OrderTableProps = {
+  requests: CollectionRequestListItem[];
+  count: number;
+  page: number;
+  onPageChange: (page: number) => void;
+  statusFilter: string;
+  search?: string;
+  loading: boolean;
+  error: string;
+  onRetry: () => void;
+  /** Base route this table's links point into — /super-admin/pickups or
+   * /staff/pickups — so one component serves both role areas. Unlike
+   * the contact table, there's no canDelete split here: admin and
+   * staff have identical permissions on this module (see
+   * CollectionRequestViewSet.get_permissions on the backend). */
+  basePath: string;
+  onDeleteRequest: (request: CollectionRequestListItem) => void;
+  /** Reject is a direct one-click call (same decision as the Evaluate
+   * modal on the detail page, just without a note — rejecting never
+   * requires a price). Approve can't be one-click the same way:
+   * approving always requires a price, so this opens the same Evaluate
+   * modal the detail page uses instead of calling the API directly. */
+  onApprove: (request: CollectionRequestListItem) => void;
+  onReject: (request: CollectionRequestListItem) => void;
+  evaluatingId: string | null;
+};
+
+const columnCount = 9;
+
+/** Pure presentational — every value it renders is a prop. Renamed
+ * from PickupRequestTable now that this table lists Orders, not the
+ * higher-level PickupRequest (see PickupRequestsListView's own table
+ * for that). */
+const OrderTable = ({
+  requests,
+  count,
+  page,
+  onPageChange,
+  statusFilter,
+  search,
+  loading,
+  error,
+  onRetry,
+  basePath,
+  onDeleteRequest,
+  onApprove,
+  onReject,
+  evaluatingId,
+}: OrderTableProps) => {
+  const router = useRouter();
+
+  const renderRows = () => {
+    if (loading) return <TableLoadingRow colSpan={columnCount} />;
+    if (error)
+      return (
+        <TableErrorRow
+          colSpan={columnCount}
+          message={error}
+          onRetry={onRetry}
+        />
+      );
+    if (requests.length === 0) {
+      let emptySubtitle =
+        'Orders created from pickup requests will show up here.';
+      if (search) {
+        emptySubtitle = `No matches for "${search}".`;
+      } else if (statusFilter) {
+        emptySubtitle = 'Try a different status filter.';
+      }
+      return (
+        <TableEmptyRow
+          colSpan={columnCount}
+          icon={<LuTruck className="size-6" />}
+          title="No orders found"
+          subtitle={emptySubtitle}
+        />
+      );
+    }
+    return requests.map((r) => {
+      const stage = derivePickupStage(r.status, r.evaluation_status);
+      return (
+        <tr
+          key={r.id}
+          onClick={() => router.push(`${basePath}/${r.id}`)}
+          className="cursor-pointer transition-colors hover:bg-slate-50"
+        >
+          <td className="max-w-[140px] truncate px-6 py-4 font-medium text-slate-900">
+            {r.code}
+          </td>
+          <td className="max-w-[160px] truncate px-6 py-4 text-slate-700">
+            {r.pickup_request.full_name}
+          </td>
+          <td className="max-w-[160px] truncate px-6 py-4 text-slate-700">
+            {itemsSummary(r.items)}
+          </td>
+          <td className="px-6 py-4">
+            <StatusBadge
+              variant={
+                REQUEST_TYPE_BADGE_VARIANT[r.pickup_request.request_type]
+              }
+            >
+              {PICKUP_REQUEST_TYPE_LABELS[r.pickup_request.request_type]}
+            </StatusBadge>
+          </td>
+          <td className="px-6 py-4">
+            <StatusBadge variant={PICKUP_STAGE_BADGE_VARIANT[stage]}>
+              {PICKUP_STAGE_LABELS[stage]}
+            </StatusBadge>
+          </td>
+          <td className="px-6 py-4 text-slate-700">{r.price ?? '—'}</td>
+          <td className="px-6 py-4 text-slate-500">
+            <AppDate value={r.pickup_request.requested_at} format="short" />
+          </td>
+          <td className="px-6 py-4">
+            <ConfirmedPickupCell order={r} />
+          </td>
+          <td className="px-6 py-4">
+            <div
+              className="flex items-center justify-end"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {r.status === 'pending' && r.evaluation_status === 'pending' && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => onApprove(r)}
+                    disabled={evaluatingId === r.id}
+                    aria-label={`Approve order ${r.code}`}
+                    className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-green-50 hover:text-green-600 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    <LuCheck className="size-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onReject(r)}
+                    disabled={evaluatingId === r.id}
+                    aria-label={`Reject order ${r.code}`}
+                    className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    <LuX className="size-4" />
+                  </button>
+                </>
+              )}
+              <Link
+                href={`${basePath}/${r.id}/edit`}
+                aria-label={`Edit order ${r.code}`}
+                className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+              >
+                <LuPencil className="size-4" />
+              </Link>
+              <button
+                type="button"
+                onClick={() => onDeleteRequest(r)}
+                aria-label={`Delete order ${r.code}`}
+                className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-red-50 hover:text-red-600"
+              >
+                <LuTrash2 className="size-4" />
+              </button>
+            </div>
+          </td>
+        </tr>
+      );
+    });
+  };
+
+  return (
+    <TableWrapper
+      footer={
+        <TablePagination
+          currentPage={page}
+          onPageChange={onPageChange}
+          itemsPerPage={PAGE_SIZE}
+          itemCount={requests.length}
+          totalCount={count}
+          itemLabel="orders"
+          loading={loading}
+        />
+      }
+    >
+      <table className="min-w-full divide-y divide-slate-200 text-sm">
+        <thead className="bg-slate-50">
+          <tr>
+            <th className="px-6 py-3 text-left font-semibold text-slate-500">
+              Order
+            </th>
+            <th className="px-6 py-3 text-left font-semibold text-slate-500">
+              Requester
+            </th>
+            <th className="px-6 py-3 text-left font-semibold text-slate-500">
+              Items
+            </th>
+            <th className="px-6 py-3 text-left font-semibold text-slate-500">
+              Type
+            </th>
+            <th className="px-6 py-3 text-left font-semibold text-slate-500">
+              Status
+            </th>
+            <th className="px-6 py-3 text-left font-semibold text-slate-500">
+              Price
+            </th>
+            <th className="px-6 py-3 text-left font-semibold text-slate-500">
+              Requested
+            </th>
+            <th className="px-6 py-3 text-left font-semibold text-slate-500">
+              Confirmed pickup
+            </th>
+            <th className="px-6 py-3 text-right font-semibold text-slate-500">
+              Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-slate-100">{renderRows()}</tbody>
+      </table>
+    </TableWrapper>
+  );
+};
+
+export { OrderTable, PAGE_SIZE };
