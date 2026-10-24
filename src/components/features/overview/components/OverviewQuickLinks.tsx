@@ -17,7 +17,19 @@ type OverviewQuickLinksProps = {
  * Officer/Accounting) — the caller's "more is on the way" note covers
  * that case instead. */
 const OverviewQuickLinks = ({ navItems, ownHref }: OverviewQuickLinksProps) => {
-  const items = navItems.filter((item) => item.href !== ownHref);
+  // A grouped menu entry (e.g. "Pickups") stands for several pages —
+  // each gets its own card here.
+  const items = navItems
+    .flatMap((item) =>
+      item.isGroup && item.children
+        ? item.children.map((child) => ({
+            href: child.href,
+            label: child.label,
+            icon: child.icon ?? item.icon,
+          }))
+        : [item],
+    )
+    .filter((item) => item.href !== ownHref);
 
   if (items.length === 0) return null;
 

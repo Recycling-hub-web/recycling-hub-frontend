@@ -25,12 +25,6 @@ type BlogMediaType =
 // features/storageFiles/types.ts's PresignedUpload for the write side.
 type CoverImage = { file_key: string; public_url: string | null } | null;
 
-type BlogTag = {
-  id: string;
-  name: string;
-  slug: string;
-};
-
 // Mirrors apps.blogs.serializers.BlogMediaSerializer.
 type BlogMedia = {
   id: string;
@@ -75,7 +69,6 @@ type BlogPost = {
   content_type: BlogContentType;
   cover_image: CoverImage;
   category: string | null;
-  tags: string[];
   media: BlogMedia[];
   related_blogs: BlogPostSummary[];
   author: string | null;
@@ -107,7 +100,6 @@ export type {
   BlogPost,
   BlogPostSummary,
   BlogStatus,
-  BlogTag,
   BlogVisibility,
   CoverImage,
 };

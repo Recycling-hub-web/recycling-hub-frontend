@@ -1,6 +1,6 @@
 import type { NavItem } from '../components/ui/navigation';
 import type { UserRole } from '../types/auth';
-import { buildNavItems } from './navigation';
+import { buildNavSections } from './navigation';
 
 // Admin and Super Admin each have their own dedicated layout+sidebar
 // (AdminLayout/SuperAdminLayout) outside this operational-role bundle,
@@ -62,48 +62,45 @@ type OperationalRoleConfig = {
 const OPERATIONAL_ROLES: Record<OperationalRole, OperationalRoleConfig> = {
   staff: {
     route: '/staff',
-    navItems: buildNavItems('/staff', [
-      'overview',
-      'pickupRequests',
-      'pickups',
-      'contact',
-      'categories',
-      'collectionPoints',
-      'storageFiles',
-      'blogs',
-      'partnerships',
-      'finance',
-      'claims',
-      'vehicles',
-      'notifications',
+    navItems: buildNavSections('/staff', [
+      { title: 'Main', entries: ['overview', 'notifications'] },
+      {
+        title: 'Operations',
+        entries: ['pickupsMenu', 'collectionPoints', 'vehicles'],
+      },
+      { title: 'Finance', entries: ['financeMenu'] },
+      {
+        title: 'Content',
+        entries: [
+          'blogs',
+          'categories',
+          'partnerships',
+          'contact',
+          'storageFiles',
+        ],
+      },
     ]),
   },
   driver: {
     route: '/driver',
-    navItems: buildNavItems('/driver', [
-      'overview',
-      'pickups',
-      'dropOff',
-      'finance',
-      'claims',
-      'notifications',
+    navItems: buildNavSections('/driver', [
+      { title: 'Main', entries: ['overview', 'notifications'] },
+      { title: 'Work', entries: ['pickups', 'dropOff'] },
+      { title: 'Finance', entries: ['financeMenu'] },
     ]),
   },
   receiving_officer: {
     route: '/receiving',
-    navItems: buildNavItems('/receiving', [
-      'overview',
-      'deliveries',
-      'notifications',
+    navItems: buildNavSections('/receiving', [
+      { title: 'Main', entries: ['overview', 'notifications'] },
+      { title: 'Work', entries: ['deliveries'] },
     ]),
   },
   accounting: {
     route: '/accounting',
-    navItems: buildNavItems('/accounting', [
-      'overview',
-      'finance',
-      'claims',
-      'notifications',
+    navItems: buildNavSections('/accounting', [
+      { title: 'Main', entries: ['overview', 'notifications'] },
+      { title: 'Finance', entries: ['financeMenu'] },
     ]),
   },
 };

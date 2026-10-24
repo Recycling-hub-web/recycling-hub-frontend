@@ -6,7 +6,6 @@ import type { FormEvent } from 'react';
 import { useState } from 'react';
 import { LuArrowLeft } from 'react-icons/lu';
 
-import { CheckSimpleBoxGroup } from '../../../form/fields/CheckSimpleBoxGroup';
 import { InputField } from '../../../form/fields/InputField';
 import { SelectField } from '../../../form/fields/SelectField';
 import { TextareaField } from '../../../form/fields/TextareaField';
@@ -25,7 +24,7 @@ import {
   NONE_DIFFICULTY,
   VISIBILITY_OPTIONS,
 } from '../constants';
-import { useBlogTags, useCreateBlogPost, usePostCategories } from '../hooks';
+import { useCreateBlogPost, usePostCategories } from '../hooks';
 import type {
   BlogContentType,
   BlogDifficultyLevel,
@@ -95,9 +94,7 @@ const CreateBlogPostView = ({ basePath }: CreateBlogPostViewProps) => {
   const [formData, setFormData] = useState<FormState>(INITIAL_STATE);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [coverImage, setCoverImage] = useState<CoverImage>(null);
-  const [tagIds, setTagIds] = useState<string[]>([]);
   const categoryOptions = usePostCategories();
-  const { tags: tagOptions } = useBlogTags();
 
   const updateFormData = (field: string, value: string | boolean) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -142,7 +139,6 @@ const CreateBlogPostView = ({ basePath }: CreateBlogPostViewProps) => {
         og_description: formData.og_description,
         og_image: formData.og_image,
         no_index: formData.no_index,
-        tags: tagIds,
       });
       toast.success('Post created', `"${formData.title}" has been added.`);
       router.push(`${basePath}/${post.id}`);
@@ -237,20 +233,6 @@ const CreateBlogPostView = ({ basePath }: CreateBlogPostViewProps) => {
                 disabled={submitting}
               />
             </div>
-
-            {tagOptions.length > 0 && (
-              <div className="sm:col-span-2">
-                <CheckSimpleBoxGroup
-                  label="Tags"
-                  field="tags"
-                  options={tagOptions}
-                  formData={{ tags: tagIds }}
-                  updateFormData={(_field, value) =>
-                    setTagIds(value as string[])
-                  }
-                />
-              </div>
-            )}
 
             <div className="sm:col-span-2">
               <TextareaField

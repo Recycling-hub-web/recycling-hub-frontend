@@ -7,7 +7,6 @@ import type {
   BlogMediaType,
   BlogPost,
   BlogStatus,
-  BlogTag,
   BlogVisibility,
 } from '../types';
 
@@ -92,7 +91,6 @@ type BlogPostPayload = Partial<{
   og_description: string;
   og_image: string;
   no_index: boolean;
-  tags: string[];
   related_blog_ids: string[];
 }>;
 
@@ -110,37 +108,6 @@ const updateBlogPost = (
 // no hard-delete endpoint.
 const deleteBlogPost = (id: string): Promise<void> =>
   apiFetch(`/blogs/${id}/`, { method: 'DELETE' });
-
-// ─────────────────────────────────────────────────────────────────────
-// Tags
-// ─────────────────────────────────────────────────────────────────────
-
-type ListBlogTagsParams = { search?: string };
-
-const listBlogTags = ({ search }: ListBlogTagsParams = {}): Promise<
-  Paginated<BlogTag>
-> => {
-  const params = new URLSearchParams();
-  if (search) params.set('search', search);
-  // page_size=200 (server-capped) — this list backs both the Tags CRUD
-  // table (no pagination controls, see BlogTagTable) and the Tags
-  // picker on Create/Edit; both silently truncated to 12 before this.
-  params.set('page_size', '200');
-  return apiFetch(`/blogs/tags/?${params.toString()}`);
-};
-
-const createBlogTag = (name: string): Promise<BlogTag> =>
-  apiFetch('/blogs/tags/', { method: 'POST', json: { name } });
-
-const updateBlogTag = (id: string, name: string): Promise<BlogTag> =>
-  apiFetch(`/blogs/tags/${id}/`, { method: 'PATCH', json: { name } });
-
-// Real hard delete on the backend (BlogTagViewSet is a plain
-// ModelViewSet, no soft-delete override) — a tag in use is simply
-// unlinked from any post that had it (the M2M row is removed), not
-// blocked.
-const deleteBlogTag = (id: string): Promise<void> =>
-  apiFetch(`/blogs/tags/${id}/`, { method: 'DELETE' });
 
 // ─────────────────────────────────────────────────────────────────────
 // Media
@@ -167,24 +134,19 @@ const deleteBlogMedia = (id: string): Promise<void> =>
 export {
   createBlogMedia,
   createBlogPost,
-  createBlogTag,
   deleteBlogMedia,
   deleteBlogPost,
-  deleteBlogTag,
   getBlogPost,
   getCategoryName,
   listBlogMedia,
   listBlogPosts,
-  listBlogTags,
   listPostCategories,
   updateBlogPost,
-  updateBlogTag,
 };
 export type {
   BlogPostPayload,
   CategoryOption,
   CreateBlogMediaPayload,
   ListBlogPostsParams,
-  ListBlogTagsParams,
   Paginated,
 };

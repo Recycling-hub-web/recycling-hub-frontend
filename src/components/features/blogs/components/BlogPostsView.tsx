@@ -90,9 +90,6 @@ const BlogPostsView = ({ basePath }: BlogPostsViewProps) => {
         subtitle="Manage the posts shown on the public blog."
         actions={
           <>
-            <Button href={`${basePath}/tags`} variant="secondary">
-              Manage tags
-            </Button>
             <Button href={`${basePath}/create`}>
               <LuPlus className="mr-1.5 size-4" />
               New post

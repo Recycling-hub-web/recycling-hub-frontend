@@ -36,12 +36,7 @@ import {
   STATUS_LABELS,
   VISIBILITY_LABELS,
 } from '../constants';
-import {
-  useBlogMediaList,
-  useBlogPost,
-  useBlogTags,
-  useDeleteBlogPost,
-} from '../hooks';
+import { useBlogMediaList, useBlogPost, useDeleteBlogPost } from '../hooks';
 import { getCategoryName } from '../services/blogService';
 
 type BlogPostDetailsViewProps = {
@@ -58,7 +53,6 @@ const BlogPostDetailsView = ({
   const { post, loading, error, refetch } = useBlogPost(postId);
   const { execute: deletePost, loading: deleting } = useDeleteBlogPost();
   const { media } = useBlogMediaList(post ? postId : null);
-  const { tags: allTags } = useBlogTags();
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [categoryName, setCategoryName] = useState<string | null>(null);
 
@@ -216,24 +210,6 @@ const BlogPostDetailsView = ({
             value={post.location || 'None'}
           />
         </div>
-
-        {post.tags.length > 0 && (
-          <div className="mt-5 border-t border-slate-100 pt-5">
-            <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
-              Tags
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {post.tags.map((tagId) => (
-                <span
-                  key={tagId}
-                  className="rounded-full border border-slate-200 px-3 py-1 text-xs font-medium text-slate-600"
-                >
-                  {allTags.find((t) => t.id === tagId)?.name ?? tagId}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
 
         <div className="mt-5 border-t border-slate-100 pt-5">
           <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">

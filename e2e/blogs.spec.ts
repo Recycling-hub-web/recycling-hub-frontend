@@ -31,12 +31,6 @@ const seedPostsCategory = async (request: APIRequestContext, name: string) => {
   return (await res.json()).id as string;
 };
 
-const seedTag = async (request: APIRequestContext, name: string) => {
-  const res = await request.post('/api/v1/blogs/tags/', { data: { name } });
-  expect(res.ok()).toBe(true);
-  return (await res.json()).id as string;
-};
-
 test.describe('Admin blog posts', () => {
   test('creates, edits content/category/status, then archives a post', async ({
     page,
@@ -49,8 +43,6 @@ test.describe('Admin blog posts', () => {
       page.request,
       uniqueTitle('Category'),
     );
-    const tagName = uniqueTitle('Tag');
-    await seedTag(page.request, tagName);
     await page.goto('/admin/blogs');
 
     // Create: validation error stays on the page and shows inline
@@ -111,7 +103,7 @@ test.describe('Admin blog posts', () => {
       .locator('[data-field="status"] select')
       .selectOption('published');
     // The module-expansion fields: content type, difficulty, visibility,
-    // location, featured toggle, and the tags picker (CheckSimpleBoxGroup).
+    // location and featured toggle.
     await page
       .locator('[data-field="content_type"] select')
       .selectOption('guide');
@@ -123,13 +115,6 @@ test.describe('Admin blog posts', () => {
     // its own switch UI — click the switch-row label that wraps it
     // instead (not the field's own outer label, hence .last()).
     await page.locator('[data-field="is_featured"] label').last().click();
-    // Click the label text rather than the checkbox role directly — same
-    // fix as the is_featured toggle above, more reliable against
-    // CheckSimpleBoxGroup's own re-renders while typing elsewhere in the
-    // form.
-    await page
-      .locator('[data-field="tags"] label', { hasText: tagName })
-      .click();
     await expect(saveButton).toBeEnabled();
     await saveButton.click();
 
@@ -151,7 +136,6 @@ test.describe('Admin blog posts', () => {
     await expect(page.getByText('Beginner', { exact: true })).toBeVisible();
     await expect(page.getByText('Featured', { exact: true })).toBeVisible();
     await expect(page.getByText('Klang Valley')).toBeVisible();
-    await expect(page.getByText(tagName)).toBeVisible();
 
     // The category can't be deleted while a post still references it —
     // CategoryViewSet.perform_destroy's existing collection_requests

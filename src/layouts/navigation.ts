@@ -83,10 +83,6 @@ const NAV_MODULES = {
     segment: 'blogs',
     label: 'Blog Posts',
     icon: LuNewspaper,
-    children: [
-      { segment: '', label: 'All Posts' },
-      { segment: 'tags', label: 'Tags' },
-    ],
   },
   partnerships: {
     segment: 'partnerships',
@@ -107,30 +103,84 @@ const NAV_MODULES = {
 
 type NavModule = keyof typeof NAV_MODULES;
 
+/** Menu entries that group several pages under one expandable item. */
+const NAV_GROUPS = {
+  pickupsMenu: {
+    label: 'Pickups',
+    icon: LuTruck,
+    modules: ['pickupRequests', 'pickups'],
+  },
+  financeMenu: {
+    label: 'Finance',
+    icon: LuWallet,
+    modules: ['finance', 'claims'],
+  },
+} satisfies Record<
+  string,
+  { label: string; icon: IconType; modules: NavModule[] }
+>;
+
+type NavGroup = keyof typeof NAV_GROUPS;
+type NavEntry = NavModule | NavGroup;
+
+/** One sidebar section: a heading and the entries under it. */
+type NavSection = { title: string; entries: NavEntry[] };
+
 const joinPath = (base: string, segment: string) =>
   segment ? `${base}/${segment}` : base;
 
-/** A section's sidebar items, in the given order, e.g.
- * buildNavItems('/staff', ['overview', 'blogs']) →
- * /staff (Overview), /staff/blogs (Blog Posts, with sub-links
- * /staff/blogs "All Posts" and /staff/blogs/tags "Tags"). */
+/** One sidebar item for a module, e.g. buildNavItem('/staff', 'blogs') →
+ * /staff/blogs (Blog Posts). */
+const buildNavItem = (basePath: string, module: NavModule): NavItem => {
+  const { segment, label, icon, children }: NavModuleConfig =
+    NAV_MODULES[module];
+  const href = joinPath(basePath, segment);
+  return {
+    href,
+    label,
+    icon,
+    ...(children && {
+      children: children.map((child) => ({
+        href: joinPath(href, child.segment),
+        label: child.label,
+      })),
+    }),
+  };
+};
+
 const buildNavItems = (basePath: string, modules: NavModule[]): NavItem[] =>
-  modules.map((module) => {
-    const { segment, label, icon, children }: NavModuleConfig =
-      NAV_MODULES[module];
-    const href = joinPath(basePath, segment);
-    return {
-      href,
-      label,
-      icon,
-      ...(children && {
-        children: children.map((child) => ({
-          href: joinPath(href, child.segment),
-          label: child.label,
+  modules.map((module) => buildNavItem(basePath, module));
+
+const isGroup = (entry: NavEntry): entry is NavGroup => entry in NAV_GROUPS;
+
+/** A sidebar divided into headed sections. A group entry becomes one
+ * expandable item whose sub-links are its pages; its own href is the
+ * first page's (where quick links and a collapsed group point). */
+const buildNavSections = (
+  basePath: string,
+  sections: NavSection[],
+): NavItem[] =>
+  sections.flatMap(({ title, entries }) =>
+    entries.map((entry): NavItem => {
+      if (!isGroup(entry)) {
+        return { ...buildNavItem(basePath, entry), section: title };
+      }
+      const { label, icon, modules } = NAV_GROUPS[entry];
+      const pages = buildNavItems(basePath, modules);
+      return {
+        href: pages[0]?.href ?? basePath,
+        label,
+        icon,
+        section: title,
+        isGroup: true,
+        children: pages.map((page) => ({
+          href: page.href,
+          label: page.label,
+          icon: page.icon,
         })),
-      }),
-    };
-  });
+      };
+    }),
+  );
 
 // Admin keeps Pickups through Finance Records as its own pages — also
 // available under Super Admin's own section reusing the exact same
@@ -140,24 +190,28 @@ const buildNavItems = (basePath: string, modules: NavModule[]): NavItem[] =>
 // only; the extra "Super Admin" link is their way back to their own
 // section from there.
 const adminNavItemsFor = (role: UserRole | undefined): NavItem[] => [
-  ...buildNavItems('/admin', [
-    'overview',
-    'users',
-    'staff',
-    'pickupRequests',
-    'pickups',
-    'contact',
-    'categories',
-    'collectionPoints',
-    'blogs',
-    'partnerships',
-    'finance',
-    'claims',
-    'vehicles',
-    'notifications',
+  ...buildNavSections('/admin', [
+    { title: 'Main', entries: ['overview', 'notifications'] },
+    {
+      title: 'Operations',
+      entries: ['pickupsMenu', 'collectionPoints', 'vehicles'],
+    },
+    { title: 'Finance', entries: ['financeMenu'] },
+    {
+      title: 'Content',
+      entries: ['blogs', 'categories', 'partnerships', 'contact'],
+    },
+    { title: 'People', entries: ['users', 'staff'] },
   ]),
   ...(role === 'super_admin'
-    ? [{ href: '/super-admin', label: 'Super Admin', icon: LuCrown }]
+    ? [
+        {
+          href: '/super-admin',
+          label: 'Super Admin',
+          icon: LuCrown,
+          section: 'System',
+        },
+      ]
     : []),
 ];
 
@@ -167,21 +221,23 @@ const adminNavItemsFor = (role: UserRole | undefined): NavItem[] => [
 // /admin/* from here. System Settings (/super-admin/system) is hidden from
 // the menu for now — add 'system' back to show it; the page still works
 // by direct URL.
-const SUPER_ADMIN_NAV_ITEMS: NavItem[] = buildNavItems('/super-admin', [
-  'overview',
-  'administrators',
-  'pickupRequests',
-  'pickups',
-  'contact',
-  'categories',
-  'collectionPoints',
-  'storageFiles',
-  'blogs',
-  'partnerships',
-  'finance',
-  'claims',
-  'activity',
+const SUPER_ADMIN_NAV_ITEMS: NavItem[] = buildNavSections('/super-admin', [
+  { title: 'Main', entries: ['overview'] },
+  { title: 'Operations', entries: ['pickupsMenu', 'collectionPoints'] },
+  { title: 'Finance', entries: ['financeMenu'] },
+  {
+    title: 'Content',
+    entries: ['blogs', 'categories', 'partnerships', 'contact', 'storageFiles'],
+  },
+  { title: 'People', entries: ['administrators'] },
+  { title: 'System', entries: ['activity'] },
 ]);
 
-export { adminNavItemsFor, buildNavItems, NAV_MODULES, SUPER_ADMIN_NAV_ITEMS };
-export type { NavModule };
+export {
+  adminNavItemsFor,
+  buildNavItems,
+  buildNavSections,
+  NAV_MODULES,
+  SUPER_ADMIN_NAV_ITEMS,
+};
+export type { NavEntry, NavModule, NavSection };

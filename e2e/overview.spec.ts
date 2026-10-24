@@ -96,7 +96,7 @@ test.describe('Admin overview', () => {
     const quickLinks = page.getByTestId('overview-quick-links');
     await expect(quickLinks).toBeVisible();
     await quickLinks.getByRole('link', { name: 'Pickup Requests' }).click();
-    await expect(page).toHaveURL(/\/admin\/pickups$/);
+    await expect(page).toHaveURL(/\/admin\/pickup-requests$/);
   });
 });
 
@@ -296,7 +296,7 @@ test.describe('Super Admin overview', () => {
     const quickLinks = page.getByTestId('overview-quick-links');
     await expect(quickLinks).toBeVisible();
     await quickLinks.getByRole('link', { name: 'Pickup Requests' }).click();
-    await expect(page).toHaveURL(/\/super-admin\/pickups$/);
+    await expect(page).toHaveURL(/\/super-admin\/pickup-requests$/);
   });
 });
 

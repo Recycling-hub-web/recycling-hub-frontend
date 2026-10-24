@@ -30,7 +30,6 @@ import {
 } from '../constants';
 import {
   useBlogPost,
-  useBlogTags,
   usePostCategories,
   usePostOptions,
   useUpdateBlogPost,
@@ -80,10 +79,8 @@ const EditBlogPostView = ({ postId, basePath }: EditBlogPostViewProps) => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [apiError, setApiError] = useState('');
   const [coverImage, setCoverImage] = useState<CoverImage>(null);
-  const [tagIds, setTagIds] = useState<string[]>([]);
   const [relatedIds, setRelatedIds] = useState<string[]>([]);
   const categoryOptions = usePostCategories();
-  const { tags: tagOptions } = useBlogTags();
   const postOptions = usePostOptions(postId);
 
   useEffect(() => {
@@ -109,7 +106,6 @@ const EditBlogPostView = ({ postId, basePath }: EditBlogPostViewProps) => {
       no_index: post.no_index,
     });
     setCoverImage(post.cover_image);
-    setTagIds(post.tags);
     setRelatedIds(post.related_blogs.map((p) => p.id));
   }, [post]);
 
@@ -159,7 +155,6 @@ const EditBlogPostView = ({ postId, basePath }: EditBlogPostViewProps) => {
         og_description: formData.og_description,
         og_image: formData.og_image,
         no_index: formData.no_index,
-        tags: tagIds,
         related_blog_ids: relatedIds,
       });
       toast.success('Post updated');
@@ -186,8 +181,6 @@ const EditBlogPostView = ({ postId, basePath }: EditBlogPostViewProps) => {
   // a safe, real dirty-check, not just a first-render diff. Media isn't
   // part of this check — PostMediaManager saves each item immediately
   // on its own, it doesn't wait for this form's Save.
-  const sortedTagIds = [...tagIds].sort();
-  const sortedOriginalTagIds = [...post.tags].sort();
   const sortedRelatedIds = [...relatedIds].sort();
   const sortedOriginalRelatedIds = [
     ...post.related_blogs.map((p) => p.id),
@@ -212,7 +205,6 @@ const EditBlogPostView = ({ postId, basePath }: EditBlogPostViewProps) => {
     formData.og_image !== post.og_image ||
     formData.no_index !== post.no_index ||
     (coverImage?.file_key ?? null) !== (post.cover_image?.file_key ?? null) ||
-    JSON.stringify(sortedTagIds) !== JSON.stringify(sortedOriginalTagIds) ||
     JSON.stringify(sortedRelatedIds) !==
       JSON.stringify(sortedOriginalRelatedIds);
 
@@ -311,20 +303,6 @@ const EditBlogPostView = ({ postId, basePath }: EditBlogPostViewProps) => {
                 disabled={submitting}
               />
             </div>
-
-            {tagOptions.length > 0 && (
-              <div className="sm:col-span-2">
-                <CheckSimpleBoxGroup
-                  label="Tags"
-                  field="tags"
-                  options={tagOptions}
-                  formData={{ tags: tagIds }}
-                  updateFormData={(_field, value) =>
-                    setTagIds(value as string[])
-                  }
-                />
-              </div>
-            )}
 
             {postOptions.length > 0 && (
               <div className="sm:col-span-2">

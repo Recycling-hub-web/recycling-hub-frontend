@@ -5,71 +5,83 @@ import type { ACCOUNTS } from './helpers/auth';
 import { loginAs } from './helpers/auth';
 
 /**
- * Every role's sidebar, now built from the one shared module catalog in
- * src/layouts/navigation.ts (buildNavItems) and rendered by the shared
- * DashboardLayout shell. Checks each role's menu — labels and order —
- * plus the active-item rule (longest matching href wins, exposed as
- * aria-current="page"), and sub-link groups (ui/navigation/
- * SidebarNavGroup) — Blog Posts → All Posts / Tags.
+ * Every role's sidebar, built in src/layouts/navigation.ts
+ * (buildNavSections) and rendered by the shared Sidebar: headed sections,
+ * with related pages grouped as expandable sub-links (ui/navigation/
+ * SidebarNavGroup) — e.g. Pickups → Pickup Requests / Orders, Finance →
+ * Finance Records / Expense Claims. Also checks the active-item rule
+ * (longest matching href wins, exposed as aria-current="page").
  */
 
-const sidebar = (page: Page) => page.locator('nav').filter({ hasText: 'Menu' });
+const sidebar = (page: Page) =>
+  page.locator('nav').filter({ has: page.locator('ul[data-nav-section]') });
 
-// Top-level menu entries only — a plain item is a link, an item with
-// sub-links is a group button — not the logo link or any sub-link.
+// Section headings, in order.
+const expectSections = async (page: Page, titles: string[]) => {
+  const lists = sidebar(page).locator('ul[data-nav-section]');
+  await expect(lists).toHaveCount(titles.length);
+  const actual = await lists.evaluateAll((uls) =>
+    uls.map((ul) => ul.getAttribute('data-nav-section')),
+  );
+  expect(actual).toEqual(titles);
+};
+
+// Top-level entries across every section, in order — a plain item is a
+// link, a group is a button; sub-links aren't included.
 const expectMenu = async (page: Page, labels: string[]) => {
   await expect(
-    sidebar(page)
-      .getByRole('list')
-      .first()
-      .locator(':scope > li > a, :scope > li > button'),
+    sidebar(page).locator(
+      'ul[data-nav-section] > li > a, ul[data-nav-section] > li > button',
+    ),
   ).toHaveText(labels);
 };
 
-const blogGroup = (page: Page) =>
-  sidebar(page).getByRole('button', { name: 'Blog Posts' });
+const group = (page: Page, name: string) =>
+  sidebar(page).getByRole('button', { name, exact: true });
 
 const MENUS: {
   role: string;
   account: keyof typeof ACCOUNTS;
   home: string;
+  sections: string[];
   labels: string[];
 }[] = [
   {
     role: 'Admin',
     account: 'admin',
     home: '/admin',
+    sections: ['Main', 'Operations', 'Finance', 'Content', 'People'],
     labels: [
       'Overview',
+      'Notifications',
+      'Pickups',
+      'Collection Points',
+      'Vehicles',
+      'Finance',
+      'Blog Posts',
+      'Categories',
+      'Partnerships',
+      'Contact',
       'Users',
       'Staff',
-      'Pickup Requests',
-      'Contact',
-      'Categories',
-      'Collection Points',
-      'Blog Posts',
-      'Partnerships',
-      'Finance Records',
-      'Expense Claims',
-      'Notifications',
     ],
   },
   {
     role: 'Super Admin',
     account: 'qaSuperAdmin',
     home: '/super-admin',
+    sections: ['Main', 'Operations', 'Finance', 'Content', 'People', 'System'],
     labels: [
       'Overview',
-      'Administrators',
-      'Pickup Requests',
-      'Contact',
-      'Categories',
+      'Pickups',
       'Collection Points',
-      'Storage Files',
+      'Finance',
       'Blog Posts',
+      'Categories',
       'Partnerships',
-      'Finance Records',
-      'Expense Claims',
+      'Contact',
+      'Storage Files',
+      'Administrators',
       'Activity Log',
     ],
   },
@@ -77,59 +89,76 @@ const MENUS: {
     role: 'Staff',
     account: 'qaStaff',
     home: '/staff',
+    sections: ['Main', 'Operations', 'Finance', 'Content'],
     labels: [
       'Overview',
-      'Pickup Requests',
-      'Contact',
-      'Categories',
-      'Collection Points',
-      'Storage Files',
-      'Blog Posts',
-      'Partnerships',
-      'Finance Records',
-      'Expense Claims',
       'Notifications',
+      'Pickups',
+      'Collection Points',
+      'Vehicles',
+      'Finance',
+      'Blog Posts',
+      'Categories',
+      'Partnerships',
+      'Contact',
+      'Storage Files',
     ],
   },
   {
     role: 'Driver',
     account: 'qaDriver',
     home: '/driver',
+    sections: ['Main', 'Work', 'Finance'],
     labels: [
       'Overview',
-      'Pickup Requests',
-      'Drop Off to Store',
-      'Finance Records',
-      'Expense Claims',
       'Notifications',
+      'Orders',
+      'Drop Off to Store',
+      'Finance',
     ],
   },
   {
     role: 'Receiving Officer',
     account: 'qaReceivingOfficer',
     home: '/receiving',
-    labels: ['Overview', 'Deliveries', 'Notifications'],
+    sections: ['Main', 'Work'],
+    labels: ['Overview', 'Notifications', 'Deliveries'],
   },
   {
     role: 'Accounting',
     account: 'qaAccounting',
     home: '/accounting',
-    labels: ['Overview', 'Finance Records', 'Expense Claims', 'Notifications'],
+    sections: ['Main', 'Finance'],
+    labels: ['Overview', 'Notifications', 'Finance'],
   },
 ];
 
-for (const { role, account, home, labels } of MENUS) {
-  test(`${role} sidebar shows its own menu, Overview active on home`, async ({
+for (const { role, account, home, sections, labels } of MENUS) {
+  test(`${role} sidebar shows its own sections and menu, Overview active on home`, async ({
     page,
   }) => {
     await loginAs(page, account);
     await page.goto(home);
+    await expectSections(page, sections);
     await expectMenu(page, labels);
     await expect(
       sidebar(page).getByRole('link', { name: 'Overview' }),
     ).toHaveAttribute('aria-current', 'page');
   });
 }
+
+test('Blog Posts is a plain link — there is no Tags page any more', async ({
+  page,
+}) => {
+  await loginAs(page, 'admin');
+  await page.goto('/admin');
+  await expect(
+    sidebar(page).getByRole('link', { name: 'Blog Posts' }),
+  ).toBeVisible();
+  await expect(sidebar(page).getByRole('link', { name: 'Tags' })).toHaveCount(
+    0,
+  );
+});
 
 test('Super Admin sidebar hides System Settings, page still opens by URL', async ({
   page,
@@ -161,67 +190,93 @@ test('a sub-page highlights its own section, not Overview', async ({
 test('clicking a sidebar link navigates and moves the highlight', async ({
   page,
 }) => {
-  await loginAs(page, 'qaStaff');
-  await page.goto('/staff');
+  await loginAs(page, 'admin');
+  await page.goto('/admin');
   await sidebar(page).getByRole('link', { name: 'Contact' }).click();
 
-  await expect(page).toHaveURL(/\/staff\/contact$/);
+  await expect(page).toHaveURL(/\/admin\/contact$/);
   await expect(
     sidebar(page).getByRole('link', { name: 'Contact' }),
   ).toHaveAttribute('aria-current', 'page');
 });
 
-test.describe('Sub-link group (Blog Posts)', () => {
+test.describe('Sub-link group (Pickups)', () => {
   test('starts collapsed elsewhere, expands on click, and navigates', async ({
     page,
   }) => {
     await loginAs(page, 'admin');
     await page.goto('/admin');
 
-    await expect(blogGroup(page)).toHaveAttribute('aria-expanded', 'false');
-    await expect(sidebar(page).getByRole('link', { name: 'Tags' })).toHaveCount(
-      0,
+    await expect(group(page, 'Pickups')).toHaveAttribute(
+      'aria-expanded',
+      'false',
     );
-
-    await blogGroup(page).click();
-    await expect(blogGroup(page)).toHaveAttribute('aria-expanded', 'true');
-    await sidebar(page).getByRole('link', { name: 'Tags' }).click();
-
-    await expect(page).toHaveURL(/\/admin\/blogs\/tags$/);
     await expect(
-      sidebar(page).getByRole('link', { name: 'Tags' }),
+      sidebar(page).getByRole('link', { name: 'Orders' }),
+    ).toHaveCount(0);
+
+    await group(page, 'Pickups').click();
+    await expect(group(page, 'Pickups')).toHaveAttribute(
+      'aria-expanded',
+      'true',
+    );
+    await sidebar(page).getByRole('link', { name: 'Orders' }).click();
+
+    await expect(page).toHaveURL(/\/admin\/pickups$/);
+    await expect(
+      sidebar(page).getByRole('link', { name: 'Orders' }),
     ).toHaveAttribute('aria-current', 'page');
     await expect(
-      sidebar(page).getByRole('link', { name: 'All Posts' }),
+      sidebar(page).getByRole('link', { name: 'Pickup Requests' }),
     ).not.toHaveAttribute('aria-current', 'page');
   });
 
   test('opens on its own when landing on one of its pages', async ({
     page,
   }) => {
-    await loginAs(page, 'qaStaff');
-    await page.goto('/staff/blogs');
+    await loginAs(page, 'admin');
+    await page.goto('/admin/pickup-requests');
 
-    await expect(blogGroup(page)).toHaveAttribute('aria-expanded', 'true');
+    await expect(group(page, 'Pickups')).toHaveAttribute(
+      'aria-expanded',
+      'true',
+    );
     await expect(
-      sidebar(page).getByRole('link', { name: 'All Posts' }),
+      sidebar(page).getByRole('link', { name: 'Pickup Requests' }),
     ).toHaveAttribute('aria-current', 'page');
   });
 
-  test('a post sub-page highlights All Posts, collapses on click', async ({
+  test('a sub-page highlights its page, and the group collapses on click', async ({
     page,
   }) => {
-    await loginAs(page, 'qaSuperAdmin');
-    await page.goto('/super-admin/blogs/create');
+    await loginAs(page, 'admin');
+    await page.goto('/admin/pickup-requests/create');
 
     await expect(
-      sidebar(page).getByRole('link', { name: 'All Posts' }),
+      sidebar(page).getByRole('link', { name: 'Pickup Requests' }),
     ).toHaveAttribute('aria-current', 'page');
 
-    await blogGroup(page).click();
-    await expect(blogGroup(page)).toHaveAttribute('aria-expanded', 'false');
+    await group(page, 'Pickups').click();
+    await expect(group(page, 'Pickups')).toHaveAttribute(
+      'aria-expanded',
+      'false',
+    );
     await expect(
-      sidebar(page).getByRole('link', { name: 'All Posts' }),
+      sidebar(page).getByRole('link', { name: 'Pickup Requests' }),
     ).toHaveCount(0);
+  });
+
+  test('Finance groups Finance Records and Expense Claims', async ({
+    page,
+  }) => {
+    await loginAs(page, 'admin');
+    await page.goto('/admin');
+    await group(page, 'Finance').click();
+    await expect(
+      sidebar(page).getByRole('link', { name: 'Finance Records' }),
+    ).toBeVisible();
+    await expect(
+      sidebar(page).getByRole('link', { name: 'Expense Claims' }),
+    ).toBeVisible();
   });
 });

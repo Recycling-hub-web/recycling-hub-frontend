@@ -4,6 +4,9 @@ import type { IconType } from 'react-icons';
 type NavSubItem = {
   href: string;
   label: string;
+  /** Only for a group built from whole pages (see NavItem.isGroup) — lets
+   * quick links show each page with its own icon. */
+  icon?: IconType;
 };
 
 type NavItem = {
@@ -14,6 +17,13 @@ type NavItem = {
   label: string;
   icon: IconType;
   children?: NavSubItem[];
+  /** Sidebar section heading this item sits under (e.g. "Operations").
+   * Items without one render under a single "Menu" heading. */
+  section?: string;
+  /** True when `children` are separate pages grouped under one menu
+   * entry (e.g. "Pickups" → Pickup Requests + Orders) rather than
+   * sub-pages of one module — quick links then list each page. */
+  isGroup?: boolean;
 };
 
 /** The href to highlight for `pathname`, across top-level items and their
@@ -21,8 +31,7 @@ type NavItem = {
  * /admin/contact/[id]) must still light up its section — so every href
  * that prefixes the path is a candidate and the longest one wins;
  * otherwise "Overview" (/admin) and "Contact" (/admin/contact) would both
- * match /admin/contact/[id], and "All Posts" (/admin/blogs) and "Tags"
- * (/admin/blogs/tags) would both match /admin/blogs/tags. */
+ * match /admin/contact/[id]. */
 const getActiveHref = (
   items: NavItem[],
   pathname: string | null,

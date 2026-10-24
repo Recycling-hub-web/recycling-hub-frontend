@@ -33,6 +33,17 @@ type SidebarProps = {
  *
  * User identity + sign out live here (SidebarUserCard), not in Topbar —
  * one place, not two. */
+/** Consecutive items sharing a `section` become one headed block; items
+ * without one fall under a single "Menu" heading. */
+const groupBySection = (items: NavItem[]) =>
+  items.reduce<{ title: string; items: NavItem[] }[]>((blocks, item) => {
+    const title = item.section ?? 'Menu';
+    const last = blocks[blocks.length - 1];
+    if (last && last.title === title) last.items.push(item);
+    else blocks.push({ title, items: [item] });
+    return blocks;
+  }, []);
+
 const Sidebar = ({ navItems, open, onClose }: SidebarProps) => {
   const pathname = usePathname();
   const activeHref = getActiveHref(navItems, pathname);
@@ -88,28 +99,32 @@ const Sidebar = ({ navItems, open, onClose }: SidebarProps) => {
         </div>
 
         <div className="flex flex-1 flex-col overflow-y-auto px-3 py-6">
-          <p className="mb-2 px-4 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
-            Menu
-          </p>
-          <ul className="flex flex-col gap-1">
-            {navItems.map(({ children, ...item }) =>
-              children?.length ? (
-                <SidebarNavGroup
-                  key={item.href}
-                  label={item.label}
-                  icon={item.icon}
-                  items={children}
-                  activeHref={activeHref}
-                />
-              ) : (
-                <SidebarNavLink
-                  key={item.href}
-                  {...item}
-                  active={item.href === activeHref}
-                />
-              ),
-            )}
-          </ul>
+          {groupBySection(navItems).map(({ title, items }, index) => (
+            <div key={title} className={index > 0 ? 'mt-5' : ''}>
+              <p className="mb-2 px-4 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+                {title}
+              </p>
+              <ul data-nav-section={title} className="flex flex-col gap-1">
+                {items.map(({ children, ...item }) =>
+                  children?.length ? (
+                    <SidebarNavGroup
+                      key={item.href}
+                      label={item.label}
+                      icon={item.icon}
+                      items={children}
+                      activeHref={activeHref}
+                    />
+                  ) : (
+                    <SidebarNavLink
+                      key={item.href}
+                      {...item}
+                      active={item.href === activeHref}
+                    />
+                  ),
+                )}
+              </ul>
+            </div>
+          ))}
         </div>
 
         <SidebarUserCard />
