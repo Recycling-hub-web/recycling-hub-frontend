@@ -40,44 +40,24 @@ const Footer = () => {
             </p>
 
             <div className="flex flex-col gap-1.5 text-sm">
-              <a
-                href={`mailto:${BRAND.email}`}
-                className="text-neutral-950 transition-colors hover:text-brand-600"
-              >
-                {BRAND.email}
-              </a>
-              <a
-                href={BRAND.whatsapp}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-slate-500 transition-colors hover:text-brand-600"
-              >
-                {BRAND.phone}
-              </a>
               <span className="text-xs text-slate-400">
                 {BRAND.businessHours}
               </span>
             </div>
 
             <div className="mt-5 flex items-center gap-2.5">
-              <a
-                href={BRAND.social.instagram}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex size-8 items-center justify-center rounded-lg bg-neutral-100 text-slate-500 transition-colors hover:bg-brand-50 hover:text-brand-600"
+              <span
+                className="flex size-8 items-center justify-center rounded-lg bg-neutral-100 text-slate-500"
                 aria-label="Instagram"
               >
                 <InstagramIcon />
-              </a>
-              <a
-                href={BRAND.social.facebook}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex size-8 items-center justify-center rounded-lg bg-neutral-100 text-slate-500 transition-colors hover:bg-brand-50 hover:text-brand-600"
+              </span>
+              <span
+                className="flex size-8 items-center justify-center rounded-lg bg-neutral-100 text-slate-500"
                 aria-label="Facebook"
               >
                 <FacebookIcon />
-              </a>
+              </span>
             </div>
           </div>
 

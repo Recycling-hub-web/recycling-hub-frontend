@@ -1,14 +1,7 @@
 'use client';
 
 import { type FormEvent, useState } from 'react';
-import {
-  LuFacebook,
-  LuHeadset,
-  LuInstagram,
-  LuLinkedin,
-  LuMail,
-  LuMessageCircle,
-} from 'react-icons/lu';
+import { LuFacebook, LuHeadset, LuInstagram, LuLinkedin } from 'react-icons/lu';
 
 import { BRAND } from '../../../../constants/content';
 import {
@@ -148,24 +141,12 @@ const ContactFormSection = () => {
       value: BRAND.phone,
       href: `tel:${BRAND.phone.replace(/\s+/g, '')}`,
     },
-    {
-      icon: <LuMessageCircle className="size-5" />,
-      label: content.sidePanel.whatsappLabel,
-      value: BRAND.phone,
-      href: BRAND.whatsapp,
-    },
-    {
-      icon: <LuMail className="size-5" />,
-      label: content.sidePanel.emailLabel,
-      value: BRAND.email,
-      href: `mailto:${BRAND.email}`,
-    },
   ];
 
   const SOCIALS = [
-    { icon: <LuFacebook className="size-5" />, href: BRAND.social.facebook },
-    { icon: <LuInstagram className="size-5" />, href: BRAND.social.instagram },
-    { icon: <LuLinkedin className="size-5" />, href: BRAND.social.linkedin },
+    { icon: <LuFacebook className="size-5" />, label: 'Facebook' },
+    { icon: <LuInstagram className="size-5" />, label: 'Instagram' },
+    { icon: <LuLinkedin className="size-5" />, label: 'LinkedIn' },
   ];
 
   return (
@@ -312,15 +293,13 @@ const ContactFormSection = () => {
                   </p>
                   <div className="mt-3 flex gap-2.5">
                     {SOCIALS.map((s) => (
-                      <a
-                        key={s.href}
-                        href={s.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex size-9 items-center justify-center rounded-full bg-white/10 transition hover:bg-white/20"
+                      <span
+                        key={s.label}
+                        aria-label={s.label}
+                        className="flex size-9 items-center justify-center rounded-full bg-white/10"
                       >
                         {s.icon}
-                      </a>
+                      </span>
                     ))}
                   </div>
                 </div>
