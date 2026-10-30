@@ -40,24 +40,36 @@ const Footer = () => {
             </p>
 
             <div className="flex flex-col gap-1.5 text-sm">
+              <a
+                href={`tel:${BRAND.phone.replace(/[\s-]+/g, '')}`}
+                className="w-fit text-neutral-950 transition-colors hover:text-brand-600"
+              >
+                {BRAND.phone}
+              </a>
               <span className="text-xs text-slate-400">
                 {BRAND.businessHours}
               </span>
             </div>
 
             <div className="mt-5 flex items-center gap-2.5">
-              <span
-                className="flex size-8 items-center justify-center rounded-lg bg-neutral-100 text-slate-500"
+              <a
+                href={BRAND.social.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex size-8 items-center justify-center rounded-lg bg-neutral-100 text-slate-500 transition-colors hover:bg-brand-50 hover:text-brand-600"
                 aria-label="Instagram"
               >
                 <InstagramIcon />
-              </span>
-              <span
-                className="flex size-8 items-center justify-center rounded-lg bg-neutral-100 text-slate-500"
+              </a>
+              <a
+                href={BRAND.social.facebook}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex size-8 items-center justify-center rounded-lg bg-neutral-100 text-slate-500 transition-colors hover:bg-brand-50 hover:text-brand-600"
                 aria-label="Facebook"
               >
                 <FacebookIcon />
-              </span>
+              </a>
             </div>
           </div>
 

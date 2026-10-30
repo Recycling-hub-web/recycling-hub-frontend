@@ -1,6 +1,6 @@
 'use client';
 
-import { type FormEvent, useState } from 'react';
+import { type FormEvent, type ReactNode, useState } from 'react';
 import { LuFacebook, LuHeadset, LuInstagram, LuLinkedin } from 'react-icons/lu';
 
 import { BRAND } from '../../../../constants/content';
@@ -143,9 +143,18 @@ const ContactFormSection = () => {
     },
   ];
 
-  const SOCIALS = [
-    { icon: <LuFacebook className="size-5" />, label: 'Facebook' },
-    { icon: <LuInstagram className="size-5" />, label: 'Instagram' },
+  // Only accounts with an `href` link out; the rest show as icons only.
+  const SOCIALS: { icon: ReactNode; label: string; href?: string }[] = [
+    {
+      icon: <LuFacebook className="size-5" />,
+      label: 'Facebook',
+      href: BRAND.social.facebook,
+    },
+    {
+      icon: <LuInstagram className="size-5" />,
+      label: 'Instagram',
+      href: BRAND.social.instagram,
+    },
     { icon: <LuLinkedin className="size-5" />, label: 'LinkedIn' },
   ];
 
@@ -292,15 +301,28 @@ const ContactFormSection = () => {
                     {content.sidePanel.connectHeading}
                   </p>
                   <div className="mt-3 flex gap-2.5">
-                    {SOCIALS.map((s) => (
-                      <span
-                        key={s.label}
-                        aria-label={s.label}
-                        className="flex size-9 items-center justify-center rounded-full bg-white/10"
-                      >
-                        {s.icon}
-                      </span>
-                    ))}
+                    {SOCIALS.map((s) =>
+                      s.href ? (
+                        <a
+                          key={s.label}
+                          href={s.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={s.label}
+                          className="flex size-9 items-center justify-center rounded-full bg-white/10 transition hover:bg-white/20"
+                        >
+                          {s.icon}
+                        </a>
+                      ) : (
+                        <span
+                          key={s.label}
+                          aria-label={s.label}
+                          className="flex size-9 items-center justify-center rounded-full bg-white/10"
+                        >
+                          {s.icon}
+                        </span>
+                      ),
+                    )}
                   </div>
                 </div>
               </div>

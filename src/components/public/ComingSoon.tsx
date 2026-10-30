@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { type FormEvent, useState } from 'react';
+import type { IconType } from 'react-icons';
 import { FaFacebook, FaInstagram, FaLinkedin, FaTiktok } from 'react-icons/fa6';
 import {
   LuArrowUpRight,
@@ -10,17 +11,17 @@ import {
   LuTruck,
 } from 'react-icons/lu';
 
-import { ASSETS } from '../../constants/content';
+import { ASSETS, BRAND } from '../../constants/content';
 import { Meta } from '../layout/Meta';
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-// Icons only for now — the profile links are hidden.
-const SOCIALS = [
-  { label: 'Instagram', Icon: FaInstagram },
-  { label: 'Facebook', Icon: FaFacebook },
+// Only accounts with an `href` link out; the rest show as icons only.
+const SOCIALS: { label: string; Icon: IconType; href?: string }[] = [
+  { label: 'Instagram', Icon: FaInstagram, href: BRAND.social.instagram },
+  { label: 'Facebook', Icon: FaFacebook, href: BRAND.social.facebook },
   { label: 'LinkedIn', Icon: FaLinkedin },
   { label: 'TikTok', Icon: FaTiktok },
 ];
@@ -239,15 +240,28 @@ const ComingSoon = () => {
 
           {/* Social links */}
           <div className="flex justify-center gap-4 border-t border-slate-100 pt-6">
-            {SOCIALS.map(({ label, Icon }) => (
-              <span
-                key={label}
-                aria-label={label}
-                className="flex size-9 items-center justify-center rounded-full text-slate-400"
-              >
-                <Icon size={18} />
-              </span>
-            ))}
+            {SOCIALS.map(({ label, Icon, href }) =>
+              href ? (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
+                  className="flex size-9 items-center justify-center rounded-full text-slate-400 transition-colors hover:text-brand-600"
+                >
+                  <Icon size={18} />
+                </a>
+              ) : (
+                <span
+                  key={label}
+                  aria-label={label}
+                  className="flex size-9 items-center justify-center rounded-full text-slate-400"
+                >
+                  <Icon size={18} />
+                </span>
+              ),
+            )}
           </div>
         </div>
       </main>
