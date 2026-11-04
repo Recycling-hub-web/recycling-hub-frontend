@@ -78,7 +78,7 @@ const seedCollectedOnRoute = async (
 };
 
 test.describe('Admin overview', () => {
-  test('shows real stats, quick links, and the three dashboard charts', async ({
+  test('shows real stats, quick links, and the dashboard charts', async ({
     page,
   }) => {
     await loginAs(page, 'admin');
@@ -89,12 +89,14 @@ test.describe('Admin overview', () => {
     await expect(page.getByText('Pending messages')).toBeVisible();
     await expect(page.getByText('Published posts')).toBeVisible();
 
-    // The three shared charts — this is the one page in the app any of
-    // them render on.
+    // The dashboard charts (overview-charts.spec.ts checks the newer ones
+    // in detail).
     await expect(
       page.getByRole('heading', { name: 'Pickup volume' }),
     ).toBeVisible();
-    await expect(page.getByText('Pickup requests by status')).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'Orders by outcome' }),
+    ).toBeVisible();
     await expect(page.getByText('Finance records by status')).toBeVisible();
 
     const quickLinks = page.getByTestId('overview-quick-links');

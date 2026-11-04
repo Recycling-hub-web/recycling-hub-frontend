@@ -74,7 +74,7 @@ const FeatureTabs = () => {
             >
               <div className="flex flex-col gap-8 md:flex-row md:items-stretch md:gap-10">
                 {/* Left column — text + checklist + quote */}
-                <div className="flex shrink-0 flex-col md:w-[42%]">
+                <div className="flex shrink-0 flex-col md:w-42p">
                   <h3 className="max-w-xs text-lg font-semibold leading-snug text-neutral-950">
                     {tab.headline}
                   </h3>

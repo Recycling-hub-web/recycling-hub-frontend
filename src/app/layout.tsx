@@ -1,6 +1,6 @@
 import '../styles/global.css';
 
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 
 import { Providers } from './providers';
 
@@ -18,6 +18,12 @@ import { Providers } from './providers';
 // App Router can still resolve). Real bm support for these routes is
 // follow-up work alongside the Phase 3 public-site i18n redesign (see the
 // App Router migration plan), not a gap introduced casually here.
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+};
+
 export const metadata: Metadata = {
   title: 'Recycling Hub',
 };

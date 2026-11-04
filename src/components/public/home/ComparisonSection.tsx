@@ -148,7 +148,7 @@ const ComparisonSection = () => {
       </div>
 
       {/* Card 1 — sticky */}
-      <div className="sticky top-20 z-[10] mt-10 overflow-hidden rounded-t-3xl">
+      <div className="sticky top-20 z-10 mt-10 overflow-hidden rounded-t-3xl">
         <OldWayCard />
       </div>
 
@@ -158,7 +158,7 @@ const ComparisonSection = () => {
       </div>
 
       {/* CTA — slides over both cards */}
-      <div className="relative z-[20] bg-neutral-50 py-16 md:py-20">
+      <div className="relative z-20 bg-neutral-50 py-16 md:py-20">
         <FadeIn className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
           <PublicButton
             href="/request-quote?service=bulk-industrial-collection"

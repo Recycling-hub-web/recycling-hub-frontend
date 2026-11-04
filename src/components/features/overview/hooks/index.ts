@@ -1,6 +1,12 @@
 export { useAccountingOverviewStats } from './useAccountingOverviewStats';
 export { useAdminOverviewStats } from './useAdminOverviewStats';
 export { useDriverOverviewStats } from './useDriverOverviewStats';
+export type { PickupWeekState } from './usePickupTrends';
+export {
+  percentChange,
+  usePickupHeatmap,
+  usePickupWeek,
+} from './usePickupTrends';
 export {
   useAccountingVolume,
   useDriverPickupVolume,

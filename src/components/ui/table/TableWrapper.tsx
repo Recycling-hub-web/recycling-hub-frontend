@@ -24,6 +24,19 @@ const TableWrapper = ({ children, footer }: TableWrapperProps) => {
       setCanScrollRight(el.scrollWidth - el.clientWidth - el.scrollLeft > 1);
     };
 
+    // Carry column headings into the stacked mobile record cards.
+    el.querySelectorAll('table').forEach((table) => {
+      const headings = Array.from(
+        table.querySelectorAll('thead tr:first-child th'),
+      ).map((cell) => cell.textContent?.trim() ?? '');
+      table.querySelectorAll('tbody tr').forEach((row) => {
+        Array.from(row.children).forEach((cell, index) => {
+          if (cell.tagName === 'TD' && !cell.hasAttribute('colspan')) {
+            cell.setAttribute('data-column-label', headings[index] ?? '');
+          }
+        });
+      });
+    });
     updateScrollState();
     el.addEventListener('scroll', updateScrollState);
     const resizeObserver = new ResizeObserver(updateScrollState);
@@ -36,7 +49,7 @@ const TableWrapper = ({ children, footer }: TableWrapperProps) => {
   }, [children]);
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <div className="system-record-list overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
       <div className="relative">
         <div ref={scrollRef} className="overflow-x-auto">
           {children}

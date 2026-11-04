@@ -135,12 +135,22 @@ const getSuperAdminPickupVolume = (
 ): Promise<PickupVolume> =>
   fetchVolume('/dashboard/super-admin/pickup-volume/', query);
 
+/** Pickup requests by weekday × hour of their chosen pickup time
+ * (Malaysian time), from requests submitted in the last `days`.
+ * `counts` is 7 rows (Monday first) of 24 hours (midnight first). See
+ * PickupHeatmapView. Admin/staff only. */
+type PickupHeatmap = { days: number; total: number; counts: number[][] };
+
+const getPickupHeatmap = (days = 90): Promise<PickupHeatmap> =>
+  apiFetch(`/dashboard/pickup-heatmap/?days=${days}`);
+
 export {
   getAccountingOverviewStats,
   getAccountingVolume,
   getAdminOverviewStats,
   getDriverOverviewStats,
   getDriverPickupVolume,
+  getPickupHeatmap,
   getPickupVolume,
   getReceivingOverviewStats,
   getReceivingVolume,
@@ -151,6 +161,7 @@ export type {
   AccountingDashboardStats,
   AdminDashboardStats,
   DriverDashboardStats,
+  PickupHeatmap,
   PickupVolume,
   PickupVolumeQuery,
   PickupVolumeRange,

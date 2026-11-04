@@ -5,6 +5,8 @@ import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { LuX } from 'react-icons/lu';
 
+import { useSystemExperience } from '../../../contexts/SystemExperienceContext';
+
 type ModalSize = 'sm' | 'md' | 'lg' | 'xl';
 
 type ModalProps = {
@@ -37,6 +39,7 @@ const Modal = ({
   size = 'md',
   closeOnBackdrop = true,
 }: ModalProps) => {
+  const system = useSystemExperience();
   const [visible, setVisible] = useState(false);
   const [shown, setShown] = useState(false);
 
@@ -75,7 +78,7 @@ const Modal = ({
 
   return createPortal(
     <div
-      className={`fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm transition-all duration-300 ${
+      className={`${system ? 'system-modal-backdrop' : ''} fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm transition-all duration-300 ${
         shown ? 'bg-black/40' : 'bg-black/0'
       }`}
       onClick={closeOnBackdrop ? onClose : undefined}
@@ -84,7 +87,8 @@ const Modal = ({
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className={`relative w-full ${SIZE_CLASSES[size]} rounded-2xl bg-white shadow-2xl transition-all duration-300 ${
+        data-shown={shown}
+        className={`${system ? 'system-modal-panel' : ''} relative w-full ${SIZE_CLASSES[size]} rounded-2xl bg-white shadow-2xl transition-all duration-300 ${
           shown
             ? 'translate-y-0 scale-100 opacity-100'
             : 'translate-y-4 scale-95 opacity-0'
