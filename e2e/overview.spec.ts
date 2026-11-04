@@ -2,6 +2,8 @@ import type { APIRequestContext, Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 
 import { loginAs } from './helpers/auth';
+import { E_WASTE_CATEGORY_ID } from './helpers/categories';
+import { E2E_PHOTO } from './helpers/storage';
 
 /**
  * Overview dashboards for all six roles, built from the reusable
@@ -24,8 +26,6 @@ import { loginAs } from './helpers/auth';
  * /super-admin.
  */
 
-const E_WASTE_CATEGORY_ID = '89067cc7-38ef-4752-9cd4-3ea29975abcb';
-
 const uniqueName = (label: string) => `E2E Overview ${label} ${Date.now()}`;
 const uniquePhone = () => `+6019${Date.now().toString().slice(-7)}`;
 
@@ -43,7 +43,7 @@ const seedCollectedOnRoute = async (
       full_name: fullName,
       email: 'e2e-overview@example.com',
       phone_number: '+60123456789',
-      items: [{ category: E_WASTE_CATEGORY_ID }],
+      items: [{ category: E_WASTE_CATEGORY_ID, quantity_unit: 'kg' }],
       pickup_address: '1 Jalan Test, 50000 Kuala Lumpur',
     },
   });
@@ -66,7 +66,11 @@ const seedCollectedOnRoute = async (
   expect(assignRes.ok()).toBe(true);
 
   const collectRes = await request.post(`/api/v1/pickups/${id}/collect/`, {
-    data: { actual_amount: price, payment_method: 'cash' },
+    data: {
+      actual_amount: price,
+      payment_method: 'cash',
+      proof_of_payment: E2E_PHOTO,
+    },
   });
   expect(collectRes.ok()).toBe(true);
 
@@ -187,7 +191,7 @@ test.describe('Driver overview', () => {
         full_name: fullName,
         email: 'e2e-overview@example.com',
         phone_number: '+60123456789',
-        items: [{ category: E_WASTE_CATEGORY_ID }],
+        items: [{ category: E_WASTE_CATEGORY_ID, quantity_unit: 'kg' }],
         pickup_address: '1 Jalan Test, 50000 Kuala Lumpur',
       },
     });
@@ -236,7 +240,7 @@ test.describe('Receiving Officer overview', () => {
 
     await loginAs(page, 'qaDriver');
     const dropOffRes = await page.request.post('/api/v1/pickups/drop-off/', {
-      data: { items: [{ id }], collection_point: store.id },
+      data: { items: [{ id }], collection_point: store.id, proof: E2E_PHOTO },
     });
     expect(dropOffRes.ok()).toBe(true);
 

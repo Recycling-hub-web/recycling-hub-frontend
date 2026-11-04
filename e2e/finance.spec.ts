@@ -2,6 +2,8 @@ import type { APIRequestContext } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 
 import { loginAs } from './helpers/auth';
+import { E_WASTE_CATEGORY_ID } from './helpers/categories';
+import { attachPhoto, mockStorageUploads } from './helpers/storage';
 
 /**
  * Finance Records / driver reimbursement — the real entity is
@@ -11,14 +13,12 @@ import { loginAs } from './helpers/auth';
  * capturing payment details -> driver's one-click bulk claim ->
  * accounting/admin/staff's Verify & Reimburse (single or bulk), each
  * via ReimburseModal rather than a direct API call, since the modal
- * also collects an optional reimbursement proof (one file for the
+ * also collects a required reimbursement proof (one file for the
  * whole batch, not per record — see FinanceRecordViewSet.verify_reimburse).
  * The per-row table action is icon-only with a tooltip (standing
  * convention — no text buttons inside tables), and each row links to
  * its own FinanceRecordDetailsView page.
  */
-
-const E_WASTE_CATEGORY_ID = '89067cc7-38ef-4752-9cd4-3ea29975abcb';
 
 const uniqueName = (label: string) => `E2E Finance ${label} ${Date.now()}`;
 
@@ -36,7 +36,7 @@ const seedDriverCollectedRecord = async (
       full_name: fullName,
       email: 'e2e-finance@example.com',
       phone_number: '+60123456789',
-      items: [{ category: E_WASTE_CATEGORY_ID }],
+      items: [{ category: E_WASTE_CATEGORY_ID, quantity_unit: 'kg' }],
       pickup_address: '1 Jalan Test, 50000 Kuala Lumpur',
     },
   });
@@ -72,6 +72,11 @@ const seedDriverCollectedRecord = async (
   return id as string;
 };
 
+// Uploads go to a faked storage — see helpers/storage.ts.
+test.beforeEach(async ({ page }) => {
+  await mockStorageUploads(page);
+});
+
 test('driver claims reimbursement, accounting verifies and reimburses', async ({
   page,
 }) => {
@@ -93,7 +98,7 @@ test('driver claims reimbursement, accounting verifies and reimburses', async ({
 
   // Admin verifies and reimburses — single-row action. Icon-only with
   // a tooltip, not a text button in the table; opens a modal (where
-  // an optional reimbursement proof can be attached) rather than
+  // the required reimbursement proof is attached) rather than
   // calling the API directly.
   await loginAs(page, 'admin');
   await page.goto('/admin/finance');
@@ -102,6 +107,7 @@ test('driver claims reimbursement, accounting verifies and reimburses', async ({
   await row
     .getByRole('button', { name: `Verify and reimburse ${fullName}` })
     .click();
+  await attachPhoto(page.locator('[data-field="reimbursement_proof"]'));
   await page.locator('button[form="reimburse-form"]').click();
 
   await expect(page.locator('tr', { hasText: fullName })).toContainText(
@@ -128,6 +134,7 @@ test('bulk Verify & Reimburse pays back several claimed records at once', async 
   await page
     .getByRole('button', { name: /verify & reimburse selected \(2\)/i })
     .click();
+  await attachPhoto(page.locator('[data-field="reimbursement_proof"]'));
   await page.locator('button[form="reimburse-form"]').click();
 
   await expect(page.locator('tr', { hasText: nameA })).toContainText(
@@ -149,7 +156,7 @@ test('collect modal requires payment method and proof when a driver is assigned'
       full_name: fullName,
       email: 'e2e-finance@example.com',
       phone_number: '+60123456789',
-      items: [{ category: E_WASTE_CATEGORY_ID }],
+      items: [{ category: E_WASTE_CATEGORY_ID, quantity_unit: 'kg' }],
       pickup_address: '1 Jalan Test, 50000 Kuala Lumpur',
     },
   });
@@ -178,12 +185,14 @@ test('collect modal requires payment method and proof when a driver is assigned'
     page.getByText(/select how the customer was paid/i),
   ).toBeVisible();
 
-  // Proof of payment is optional for now — selecting just the payment
-  // method (no upload, since this dev environment has no real storage
-  // configured) is enough to complete the collection.
+  await expect(
+    page.getByText('Upload a photo of the proof of payment.'),
+  ).toBeVisible();
+
   await page
     .locator('[data-field="payment_method"] select')
     .selectOption('cash');
+  await attachPhoto(page.locator('[data-field="proof_of_payment"]'));
   await page
     .getByRole('button', { name: 'Mark collected', exact: true })
     .click();
@@ -212,6 +221,7 @@ test('staff can reach Finance Records and verify & reimburse a claimed record', 
   await row
     .getByRole('button', { name: `Verify and reimburse ${fullName}` })
     .click();
+  await attachPhoto(page.locator('[data-field="reimbursement_proof"]'));
   await page.locator('button[form="reimburse-form"]').click();
   await expect(page.locator('tr', { hasText: fullName })).toContainText(
     'Reimbursed',
@@ -246,9 +256,8 @@ test('clicking a row opens its details page, which can also Verify & Reimburse',
   await expect(page.getByRole('heading', { name: fullName })).toBeVisible();
   await expect(page.getByText('Claimed', { exact: true })).toBeVisible();
 
-  // Proof stays optional — same as collect()'s own proof_of_payment —
-  // so confirming with none attached still succeeds.
   await page.getByRole('button', { name: 'Verify & Reimburse' }).click();
+  await attachPhoto(page.locator('[data-field="reimbursement_proof"]'));
   await page.locator('button[form="reimburse-form"]').click();
   await expect(page.getByText('Reimbursed', { exact: true })).toBeVisible();
 

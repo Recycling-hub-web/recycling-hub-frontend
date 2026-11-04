@@ -1,6 +1,8 @@
 import { expect, test } from '@playwright/test';
 
 import { loginAs } from './helpers/auth';
+import { E_WASTE_CATEGORY_ID } from './helpers/categories';
+import { E2E_PHOTO } from './helpers/storage';
 
 /**
  * Driver's own read-only Order "profile" page (DriverPickupDetailsView)
@@ -14,8 +16,6 @@ import { loginAs } from './helpers/auth';
  * navigation links). See
  * features/pickups/components/driver/DriverPickupDetailsView.tsx.
  */
-
-const E_WASTE_CATEGORY_ID = '89067cc7-38ef-4752-9cd4-3ea29975abcb';
 
 test('driver can open an order from the list and see its read-only details', async ({
   page,
@@ -36,7 +36,12 @@ test('driver can open an order from the list and see its read-only details', asy
   const pickupRequestId = (await requestRes.json()).id as string;
   const orderRes = await page.request.post(
     `/api/v1/pickup-requests/${pickupRequestId}/orders/`,
-    { data: { items: [{ category: E_WASTE_CATEGORY_ID }] } },
+    {
+      data: {
+        items: [{ category: E_WASTE_CATEGORY_ID, quantity_unit: 'kg' }],
+        photos: [E2E_PHOTO],
+      },
+    },
   );
   const { id, code } = await orderRes.json();
   await page.request.post(`/api/v1/pickups/${id}/evaluate/`, {
@@ -78,7 +83,9 @@ test('driver can open an order from the list and see its read-only details', asy
     page.getByRole('button', { name: /edit|schedule|evaluate/i }),
   ).toHaveCount(0);
 
-  await page.request.post(`/api/v1/pickups/${id}/collect/`, { data: {} });
+  await page.request.post(`/api/v1/pickups/${id}/collect/`, {
+    data: { proof_of_payment: E2E_PHOTO },
+  });
 
   await page.reload();
   await expect(page.getByRole('link', { name: 'Google Maps' })).toHaveCount(0);

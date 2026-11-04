@@ -1330,6 +1330,11 @@ const en = {
       requestedAtPlaceholder: 'Choose a date and time',
       note: 'Note',
       notePlaceholder: 'Anything else worth mentioning',
+      photos: 'Photos',
+      photosHelper:
+        'Photos of what we should collect — at least 1, up to 4 (JPG, PNG or WebP, 5 MB each).',
+      photosAdd: 'Add photo',
+      errorPhotosRequired: 'Please add at least one photo.',
       errorFullNameRequired: 'Please enter your full name.',
       errorEmailInvalid: 'Enter a valid email address.',
       errorEmailRequired: 'Email is required for business requests.',

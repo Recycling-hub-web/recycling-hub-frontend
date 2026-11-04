@@ -17,6 +17,11 @@ import { PublicButton } from '../../../../ui/buttons/PublicButton';
 import { FadeIn } from '../../../../ui/FadeIn';
 import { useToast } from '../../../../ui/toast/ToastContext';
 import { useCreatePickupRequest } from '../../hooks';
+import { uploadPublicPickupPhoto } from '../../services/pickupService';
+import {
+  type OrderPhoto,
+  PickupPhotosUploader,
+} from '../shared/PickupPhotosUploader';
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -46,9 +51,10 @@ const INITIAL_STATE: FormState = {
 /** Public, anonymous business/bulk pickup-request form — posts straight
  * to the real PickupRequest endpoint (AllowAny on create, same as
  * ContactFormSection), no account required. The customer's ask only:
- * contact info, address, and a chosen pickup date/time — no items, no
- * photo at submission time (those belong to an Order, created later by
- * staff once this request has been reviewed — see CreateOrderView). Same
+ * contact info, address, a chosen pickup date/time and 1–4 photos of
+ * what to collect (uploaded anonymously via uploadPublicPickupPhoto).
+ * No items — those belong to an Order, created later by staff once
+ * this request has been reviewed (see CreateOrderView). Same
  * useCreatePickupRequest hook as the admin/staff "New pickup request"
  * action. Always `request_type: 'business'` — the public site has no
  * individual/household option; individuals use the callback form. */
@@ -65,6 +71,7 @@ const PublicPickupRequestForm = () => {
   const [selectedLocation, setSelectedLocation] =
     useState<SelectedAddress | null>(null);
   const [apiError, setApiError] = useState('');
+  const [photos, setPhotos] = useState<OrderPhoto[]>([]);
 
   const updateField = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -96,6 +103,7 @@ const PublicPickupRequestForm = () => {
       nextErrors.pickup_address = content.errorAddressRequired;
     if (!formData.requested_at)
       nextErrors.requested_at = content.errorRequestedAtRequired;
+    if (!photos.length) nextErrors.photos = content.errorPhotosRequired;
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
   };
@@ -117,11 +125,13 @@ const PublicPickupRequestForm = () => {
         pickup_address: formData.pickup_address.trim(),
         requested_at: new Date(formData.requested_at).toISOString(),
         note: formData.note.trim() || undefined,
+        photos: photos.map((p) => p.file_key),
       });
       // Create action a visitor could plausibly repeat (another address,
       // another batch) — stay on the page and reset in place, same as
       // ContactFormSection, rather than navigating or freezing the form.
       setFormData(INITIAL_STATE);
+      setPhotos([]);
       setSelectedLocation(null);
       setErrors({});
       toast.success(content.successMessage);
@@ -204,6 +214,23 @@ const PublicPickupRequestForm = () => {
                       {selectedLocation.longitude.toFixed(5)}
                     </p>
                   )}
+                </div>
+                <div className="sm:col-span-2">
+                  <PickupPhotosUploader
+                    value={photos}
+                    onChange={(next) => {
+                      setPhotos(next);
+                      if (next.length) {
+                        setErrors((prev) => ({ ...prev, photos: '' }));
+                      }
+                    }}
+                    upload={uploadPublicPickupPhoto}
+                    disabled={submitting}
+                    label={content.photos}
+                    helperText={content.photosHelper}
+                    addLabel={content.photosAdd}
+                    error={errors.photos}
+                  />
                 </div>
                 <div className="sm:col-span-2">
                   <TextareaField

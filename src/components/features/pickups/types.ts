@@ -180,6 +180,9 @@ type PickupRequestListItem = PickupRequestSummary & {
 /** Admin/staff detail shape (PickupRequestDetailsSerializer) — same as
  * the list shape plus the cancellation fields. */
 type PickupRequestDetails = PickupRequestSummary & {
+  /** What the requester attached on the public form (1–4); staff-made
+   * requests may have none. Same shape as an Order's photos. */
+  photos: CollectionRequestPhoto[];
   orders: CollectionRequestListItem[];
   cancelled_by: string | null;
   cancelled_at: string | null;

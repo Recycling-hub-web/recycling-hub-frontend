@@ -233,6 +233,33 @@ const PickupRequestDetailsView = ({
         )}
       </Card>
 
+      {request.photos.length > 0 && (
+        <Card className="mt-4 p-5">
+          <p className="mb-3 text-sm font-semibold text-slate-900">
+            Photos from the requester
+          </p>
+          <div className="flex flex-wrap gap-3">
+            {request.photos.map((photo) =>
+              photo.file_key?.public_url ? (
+                <a
+                  key={photo.id}
+                  href={photo.file_key.public_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element -- remote storage URL */}
+                  <img
+                    src={photo.file_key.public_url}
+                    alt="Photo from the requester"
+                    className="size-24 rounded-xl border border-slate-200 object-cover transition hover:opacity-90"
+                  />
+                </a>
+              ) : null,
+            )}
+          </div>
+        </Card>
+      )}
+
       <Card className="mt-4 p-5">
         <p className="mb-3 text-sm font-semibold text-slate-900">Orders</p>
         {request.orders.length === 0 ? (

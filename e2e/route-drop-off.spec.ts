@@ -2,6 +2,8 @@ import type { APIRequestContext } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 
 import { loginAs } from './helpers/auth';
+import { E_WASTE_CATEGORY_ID } from './helpers/categories';
+import { attachPhoto, E2E_PHOTO, mockStorageUploads } from './helpers/storage';
 
 /**
  * Store drop-off + Receiving Officer verification — the real, chosen
@@ -18,8 +20,6 @@ import { loginAs } from './helpers/auth';
  * sees and filters deliveries by it.
  */
 
-const E_WASTE_CATEGORY_ID = '89067cc7-38ef-4752-9cd4-3ea29975abcb';
-
 const uniqueName = (label: string) => `E2E Route ${label} ${Date.now()}`;
 
 // Takes a pickup through evaluate -> assign-driver -> collect via the
@@ -34,7 +34,7 @@ const seedCollectedOnRoute = async (
       full_name: fullName,
       email: 'e2e-route@example.com',
       phone_number: '+60123456789',
-      items: [{ category: E_WASTE_CATEGORY_ID }],
+      items: [{ category: E_WASTE_CATEGORY_ID, quantity_unit: 'kg' }],
       pickup_address: '1 Jalan Test, 50000 Kuala Lumpur',
     },
   });
@@ -57,12 +57,21 @@ const seedCollectedOnRoute = async (
   expect(assignRes.ok()).toBe(true);
 
   const collectRes = await request.post(`/api/v1/pickups/${id}/collect/`, {
-    data: { actual_amount: '15.00', payment_method: 'cash' },
+    data: {
+      actual_amount: '15.00',
+      payment_method: 'cash',
+      proof_of_payment: E2E_PHOTO,
+    },
   });
   expect(collectRes.ok()).toBe(true);
 
   return id as string;
 };
+
+// Uploads go to a faked storage — see helpers/storage.ts.
+test.beforeEach(async ({ page }) => {
+  await mockStorageUploads(page);
+});
 
 test('driver drops off a route, receiving officer verifies and closes it', async ({
   page,
@@ -94,6 +103,9 @@ test('driver drops off a route, receiving officer verifies and closes it', async
     storeCard.getByRole('link', { name: 'Google Maps' }),
   ).toBeVisible();
 
+  await page.getByRole('button', { name: /drop off to store \(1\)/i }).click();
+  await expect(page.getByText('Upload a photo of the drop-off.')).toBeVisible();
+  await attachPhoto(page);
   await page.getByRole('button', { name: /drop off to store \(1\)/i }).click();
   await expect(page.getByText(/dropped off to store/i)).toBeVisible();
   await expect(page.locator('tr', { hasText: fullName })).toHaveCount(0);
@@ -127,7 +139,7 @@ test('receiving officer never sees requests earlier in the lifecycle', async ({
       full_name: fullName,
       email: 'e2e-route@example.com',
       phone_number: '+60123456789',
-      items: [{ category: E_WASTE_CATEGORY_ID }],
+      items: [{ category: E_WASTE_CATEGORY_ID, quantity_unit: 'kg' }],
       pickup_address: '1 Jalan Test, 50000 Kuala Lumpur',
     },
   });

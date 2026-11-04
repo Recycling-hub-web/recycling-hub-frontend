@@ -1319,6 +1319,11 @@ const bm: Dictionary = {
       requestedAtPlaceholder: 'Pilih tarikh dan masa',
       note: 'Nota',
       notePlaceholder: 'Sebarang perkara lain yang perlu disebut',
+      photos: 'Gambar',
+      photosHelper:
+        'Gambar barang yang perlu kami kutip — sekurang-kurangnya 1, hingga 4 (JPG, PNG atau WebP, 5 MB setiap satu).',
+      photosAdd: 'Tambah gambar',
+      errorPhotosRequired: 'Sila tambah sekurang-kurangnya satu gambar.',
       errorFullNameRequired: 'Sila masukkan nama penuh anda.',
       errorEmailInvalid: 'Masukkan alamat e-mel yang sah.',
       errorEmailRequired: 'E-mel diperlukan untuk permintaan perniagaan.',

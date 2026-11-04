@@ -1,4 +1,6 @@
 import { apiFetch } from '../../../../lib/api';
+import { uploadToPresignedUrl } from '../../storageFiles/services/storageFileService';
+import type { PresignedUpload } from '../../storageFiles/types';
 import type {
   CollectionRequestDetails,
   CollectionRequestListItem,
@@ -76,6 +78,9 @@ type PickupRequestCreatePayload = {
   /** Admin/staff only: orders to create together with the request (at
    * most 7) — see PickupRequestCreateSerializer.orders. */
   orders?: CreateOrderPayload[];
+  /** 1–4 photo keys from uploadPublicPickupPhoto — required on the
+   * public form, optional for admin/staff. */
+  photos?: string[];
 };
 
 /** The common subset of what POST /pickup-requests/ always returns —
@@ -455,6 +460,29 @@ type DailyVolumePoint = {
   count: number;
 };
 
+/** The public form's photo upload — no login: the API's dedicated
+ * anonymous endpoint (images only, 5 MB, its own folder) hands out the
+ * presigned URL, then the browser PUTs the file straight to storage. */
+const uploadPublicPickupPhoto = async (
+  file: File,
+): Promise<{ file_key: string; public_url: string | null }> => {
+  const { uploads } = await apiFetch<{ uploads: PresignedUpload[] }>(
+    '/pickups/photo-upload-url/',
+    {
+      method: 'POST',
+      json: {
+        file_name: file.name,
+        content_type: file.type,
+        file_size: file.size,
+      },
+    },
+  );
+  const [upload] = uploads;
+  if (!upload) throw new Error('Could not start the upload.');
+  await uploadToPresignedUrl(upload, file);
+  return { file_key: upload.file_key, public_url: upload.public_url };
+};
+
 export {
   assignDriverToRequest,
   cancelOrder,
@@ -481,6 +509,7 @@ export {
   schedulePickupRequest,
   updateOrder,
   updatePickupRequest,
+  uploadPublicPickupPhoto,
 };
 export type {
   AssignDriverPayload,

@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 import { loginAs } from './helpers/auth';
+import { attachPhoto, mockStorageUploads } from './helpers/storage';
 
 /**
  * Admin/staff can add orders (with their materials) while creating a
@@ -9,6 +10,7 @@ import { loginAs } from './helpers/auth';
 
 // No live address suggestions — their dropdown would cover the form.
 test.beforeEach(async ({ page }) => {
+  await mockStorageUploads(page);
   await page.route(
     'https://api.geoapify.com/v1/geocode/autocomplete**',
     (route) => route.fulfill({ json: { results: [] } }),
@@ -45,7 +47,15 @@ test('admin creates a pickup request with two orders in one go', async ({
     await order.getByRole('button', { name: 'Add another item' }).click();
     await order
       .locator('[data-field="category"] select')
-      .selectOption({ index: 1 });
+      .selectOption({ label: 'E-waste' });
+    // E-waste is measured by KG or Unit, so the unit has to be picked.
+    await order
+      .locator('[data-field="quantity_unit"] select')
+      .selectOption('kg');
+    await attachPhoto(order);
+    await expect(
+      order.getByRole('button', { name: /Remove photo 1/ }),
+    ).toBeVisible();
   };
   await addMaterial(0);
   await addMaterial(1);
@@ -86,5 +96,9 @@ test('an order with a material but no category is caught before saving', async (
   await page.getByRole('button', { name: 'Create request' }).click();
 
   await expect(page.getByText('Category is required.')).toBeVisible();
+  // Every order needs at least one photo too.
+  await expect(
+    page.getByText('Add at least one photo of the materials.'),
+  ).toBeVisible();
   await expect(page).toHaveURL(/\/create$/);
 });

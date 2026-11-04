@@ -83,6 +83,7 @@ const PickupRequestCreateView = ({
   const [selectedLocation, setSelectedLocation] =
     useState<SelectedAddress | null>(null);
   const [orders, setOrders] = useState<DraftOrder[]>([]);
+  const [orderPhotoErrors, setOrderPhotoErrors] = useState<string[]>([]);
   const [orderItemErrors, setOrderItemErrors] = useState<
     Record<string, string>[][]
   >([]);
@@ -118,9 +119,14 @@ const PickupRequestCreateView = ({
       validateItems(order.items, unitsByCategory),
     );
     setOrderItemErrors(nextOrderItemErrors);
+    const nextOrderPhotoErrors = orders.map((order) =>
+      order.photos.length ? '' : 'Add at least one photo of the materials.',
+    );
+    setOrderPhotoErrors(nextOrderPhotoErrors);
     return (
       Object.keys(nextErrors).length === 0 &&
-      !nextOrderItemErrors.some(hasItemErrors)
+      !nextOrderItemErrors.some(hasItemErrors) &&
+      !nextOrderPhotoErrors.some(Boolean)
     );
   };
 
@@ -272,6 +278,7 @@ const PickupRequestCreateView = ({
               loadingCategories={loadingCategories}
               disabled={submitting}
               itemErrors={orderItemErrors}
+              photoErrors={orderPhotoErrors}
             />
           </div>
 

@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 import { loginAs } from './helpers/auth';
+import { E2E_PHOTO } from './helpers/storage';
 
 /**
  * Quick Leads live on the Pickup Requests page (following one up creates
@@ -56,7 +57,12 @@ test('the Orders table shows the confirmed pickup time', async ({ page }) => {
   const pickupRequestId = (await req.json()).id as string;
   const order = await page.request.post(
     `/api/v1/pickup-requests/${pickupRequestId}/orders/`,
-    { data: { items: [{ category: category.id }] } },
+    {
+      data: {
+        items: [{ category: category.id, quantity_unit: 'kg' }],
+        photos: [E2E_PHOTO],
+      },
+    },
   );
   const orderId = (await order.json()).id as string;
   await page.request.post(`/api/v1/pickups/${orderId}/evaluate/`, {

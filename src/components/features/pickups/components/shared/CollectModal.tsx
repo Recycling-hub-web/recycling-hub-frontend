@@ -177,7 +177,9 @@ const CollectModal = ({
     if (showPaymentFields && !formData.payment_method) {
       nextErrors.payment_method = 'Select how the customer was paid.';
     }
-    // Proof of payment is optional for now — not required client-side.
+    if (showPaymentFields && !formData.proof_of_payment) {
+      nextErrors.proof_of_payment = 'Upload a photo of the proof of payment.';
+    }
     setErrors(nextErrors);
 
     // Existing items: the quantity must suit the item's unit, and a new
@@ -483,7 +485,7 @@ const CollectModal = ({
 
             <div className="mb-4" data-field="proof_of_payment">
               <label className="block text-sm font-medium text-slate-900">
-                Proof of payment
+                Proof of payment <span className="text-red-600">*</span>
               </label>
               <p className="mt-0.5 text-xs text-slate-500">
                 A receipt screenshot — distinct from the collection photo, this

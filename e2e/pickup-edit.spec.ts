@@ -2,6 +2,7 @@ import type { APIRequestContext } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 
 import { loginAs } from './helpers/auth';
+import { E2E_PHOTO } from './helpers/storage';
 
 /**
  * Editing an Order (EditOrderView, /staff/pickups/{id}/edit) — since
@@ -33,7 +34,18 @@ const seedOrder = async (request: APIRequestContext): Promise<string> => {
 
   const orderRes = await request.post(
     `/api/v1/pickup-requests/${pickupRequestId}/orders/`,
-    { data: { items: [{ category: category.id, estimated_quantity: '2' }] } },
+    {
+      data: {
+        items: [
+          {
+            category: category.id,
+            estimated_quantity: '2',
+            quantity_unit: 'kg',
+          },
+        ],
+        photos: [E2E_PHOTO],
+      },
+    },
   );
   expect(orderRes.ok()).toBe(true);
   return (await orderRes.json()).id as string;
