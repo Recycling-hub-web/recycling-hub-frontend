@@ -21,7 +21,7 @@ const futureIso = (hoursFromNow = 48) =>
 test.describe('Public pickup request form', () => {
   test('phone number is required', async ({ page }) => {
     await page.goto('/request-pickup');
-    await page.getByText('Individual / Household').click();
+    await page.getByText('Business / Bulk').click();
 
     await page.locator('[data-field="full_name"] input').fill('No Phone');
     const addressField = page.locator('[data-field="pickup_address"] input');

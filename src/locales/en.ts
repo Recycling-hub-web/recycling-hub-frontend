@@ -1289,17 +1289,16 @@ const en = {
     typeSelector: {
       heading: 'What are you recycling?',
       subheading: "Choose the option that fits, and we'll take it from there.",
-      individual: {
-        title: 'Individual / Household',
+      callback: {
+        title: 'Request a Callback',
         description:
-          'Free doorstep pickup for your old phones, laptops, and gadgets.',
+          "Leave your number and we'll call you back to sort out the rest.",
       },
       business: {
         title: 'Business / Bulk',
         description:
           'Get a quote for office, warehouse, or factory decommissioning.',
       },
-      quickLinkText: 'Just want a callback? Leave your number',
     },
     quickForm: {
       heading: 'Request a Callback',

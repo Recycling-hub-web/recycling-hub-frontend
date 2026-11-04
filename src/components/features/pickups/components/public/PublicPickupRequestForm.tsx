@@ -1,7 +1,6 @@
 'use client';
 
 import { type FormEvent, useState } from 'react';
-import { LuBuilding2, LuSmartphone } from 'react-icons/lu';
 
 import {
   joinPhoneNumber,
@@ -18,15 +17,6 @@ import { PublicButton } from '../../../../ui/buttons/PublicButton';
 import { FadeIn } from '../../../../ui/FadeIn';
 import { useToast } from '../../../../ui/toast/ToastContext';
 import { useCreatePickupRequest } from '../../hooks';
-import {
-  PICKUP_REQUEST_TYPE_LABELS,
-  type PickupRequestType,
-} from '../../types';
-
-const REQUEST_TYPE_ICONS = {
-  individual: LuSmartphone,
-  business: LuBuilding2,
-} as const;
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -53,28 +43,16 @@ const INITIAL_STATE: FormState = {
   note: '',
 };
 
-type PublicPickupRequestFormProps = {
-  requestType: PickupRequestType;
-  onSelectType: (type: PickupRequestType) => void;
-};
-
-/** Public, anonymous pickup-request form — posts straight to the real
- * PickupRequest endpoint (AllowAny on create, same as
+/** Public, anonymous business/bulk pickup-request form — posts straight
+ * to the real PickupRequest endpoint (AllowAny on create, same as
  * ContactFormSection), no account required. The customer's ask only:
  * contact info, address, and a chosen pickup date/time — no items, no
- * photo at submission time any more (those now belong to an Order,
- * created later by staff once this request has been reviewed — see
- * CreateOrderView). Same useCreatePickupRequest hook as the admin/
- * staff "New pickup request" action. Shared by both PickupTypeSelector
- * choices — `requestType` is the only thing that differs between an
- * individual and a business submission. The type toggle below reuses
- * the same icon+label design as PickupTypeSelector so switching reads
- * as the same choice, not a different control — and switches
- * instantly, no separate step. */
-const PublicPickupRequestForm = ({
-  requestType,
-  onSelectType,
-}: PublicPickupRequestFormProps) => {
+ * photo at submission time (those belong to an Order, created later by
+ * staff once this request has been reviewed — see CreateOrderView). Same
+ * useCreatePickupRequest hook as the admin/staff "New pickup request"
+ * action. Always `request_type: 'business'` — the public site has no
+ * individual/household option; individuals use the callback form. */
+const PublicPickupRequestForm = () => {
   const {
     pickupRequest: { form: content },
   } = useDictionary();
@@ -88,8 +66,6 @@ const PublicPickupRequestForm = ({
     useState<SelectedAddress | null>(null);
   const [apiError, setApiError] = useState('');
 
-  const isBusiness = requestType === 'business';
-
   const updateField = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     setErrors((prev) => ({ ...prev, [field]: '' }));
@@ -100,7 +76,7 @@ const PublicPickupRequestForm = ({
     const nextErrors: Record<string, string> = {};
     if (!formData.full_name.trim())
       nextErrors.full_name = content.errorFullNameRequired;
-    if (isBusiness && !formData.email.trim()) {
+    if (!formData.email.trim()) {
       nextErrors.email = content.errorEmailRequired;
     } else if (formData.email.trim() && !EMAIL_PATTERN.test(formData.email)) {
       nextErrors.email = content.errorEmailInvalid;
@@ -137,7 +113,7 @@ const PublicPickupRequestForm = ({
           formData.phone_dial_code,
           formData.phone_local.trim(),
         ),
-        request_type: requestType,
+        request_type: 'business',
         pickup_address: formData.pickup_address.trim(),
         requested_at: new Date(formData.requested_at).toISOString(),
         note: formData.note.trim() || undefined,
@@ -159,40 +135,10 @@ const PublicPickupRequestForm = ({
       <div className="mx-auto max-w-4xl px-5 md:px-8">
         <FadeIn>
           <div className="rounded-3xl border border-slate-200 p-6 shadow-sm md:p-10">
-            <div className="flex flex-wrap items-start justify-between gap-4">
-              <div>
-                <h2 className="text-2xl font-bold text-neutral-950 sm:text-3xl">
-                  {content.heading}
-                </h2>
-                <p className="mt-2 text-sm text-slate-500">
-                  {content.subheading}
-                </p>
-              </div>
-              <div className="inline-flex shrink-0 rounded-full border border-slate-200 bg-slate-50 p-1">
-                {(Object.keys(REQUEST_TYPE_ICONS) as PickupRequestType[]).map(
-                  (type) => {
-                    const Icon = REQUEST_TYPE_ICONS[type];
-                    const active = type === requestType;
-                    return (
-                      <button
-                        key={type}
-                        type="button"
-                        onClick={() => onSelectType(type)}
-                        aria-pressed={active}
-                        className={`flex items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-medium transition ${
-                          active
-                            ? 'bg-white text-brand-600 shadow-sm'
-                            : 'text-slate-500 hover:text-slate-700'
-                        }`}
-                      >
-                        <Icon size={16} />
-                        {PICKUP_REQUEST_TYPE_LABELS[type]}
-                      </button>
-                    );
-                  },
-                )}
-              </div>
-            </div>
+            <h2 className="text-2xl font-bold text-neutral-950 sm:text-3xl">
+              {content.heading}
+            </h2>
+            <p className="mt-2 text-sm text-slate-500">{content.subheading}</p>
 
             <form onSubmit={handleSubmit} noValidate className="mt-6">
               <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
@@ -209,7 +155,7 @@ const PublicPickupRequestForm = ({
                   label={content.email}
                   field="email"
                   type="email"
-                  required={isBusiness}
+                  required
                   placeholder={content.emailPlaceholder}
                   formData={formData}
                   errors={errors}

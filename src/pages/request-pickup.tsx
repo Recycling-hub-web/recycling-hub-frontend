@@ -6,7 +6,6 @@ import {
   PublicPickupRequestForm,
   QuickPickupRequestForm,
 } from '../components/features/pickups/components';
-import type { PickupRequestType } from '../components/features/pickups/types';
 import { Meta } from '../components/layout/Meta';
 import { ReusableHero } from '../components/ui/hero';
 import { useDictionary } from '../hooks/useDictionary';
@@ -17,31 +16,21 @@ const RequestPickupPage: NextPageWithLayout = () => {
   const {
     pickupRequest: { hero },
   } = useDictionary();
-  // Full-form choices stay on this same page/flow — the form has its
-  // own type toggle (same icon+label design as PickupTypeSelector) that
-  // switches this directly, no need to clear back to the selector to
-  // change it. The quick (type+phone only) path is a separate, third
-  // view — null means "still on the selector".
-  const [requestType, setRequestType] = useState<PickupRequestType | null>(
-    null,
-  );
-  const [quick, setQuick] = useState(false);
+  // The public site offers two paths only: a callback (phone number
+  // only) or a business/bulk request (the full form). null means
+  // "still on the selector".
+  const [choice, setChoice] = useState<'callback' | 'business' | null>(null);
 
   let content: ReactNode;
-  if (quick) {
+  if (choice === 'callback') {
     content = <QuickPickupRequestForm />;
-  } else if (requestType) {
-    content = (
-      <PublicPickupRequestForm
-        requestType={requestType}
-        onSelectType={setRequestType}
-      />
-    );
+  } else if (choice === 'business') {
+    content = <PublicPickupRequestForm />;
   } else {
     content = (
       <PickupTypeSelector
-        onSelect={setRequestType}
-        onSelectQuick={() => setQuick(true)}
+        onSelectCallback={() => setChoice('callback')}
+        onSelectBusiness={() => setChoice('business')}
       />
     );
   }

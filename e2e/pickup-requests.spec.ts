@@ -60,12 +60,26 @@ const createOrderViaApi = async (
 };
 
 test.describe('Public pickup request form', () => {
+  test('offers only a callback or a business/bulk request', async ({
+    page,
+  }) => {
+    await page.goto('/request-pickup');
+    await expect(page.getByText('Individual / Household')).toHaveCount(0);
+    await expect(page.getByText('Business / Bulk')).toBeVisible();
+
+    await page.getByRole('button', { name: /Request a Callback/ }).click();
+    await expect(
+      page.locator('[data-field="phone_local"] input'),
+    ).toBeVisible();
+    await expect(page.locator('[data-field="full_name"]')).toHaveCount(0);
+  });
+
   test('submits with only contact info, address, and a pickup date/time — no items, no photo', async ({
     page,
   }) => {
-    const fullName = uniqueName('PublicIndividual');
+    const fullName = uniqueName('PublicBulk');
     await page.goto('/request-pickup');
-    await page.getByText('Individual / Household').click();
+    await page.getByText('Business / Bulk').click();
 
     // The items repeater and photo uploader are both gone from this form.
     await expect(page.locator('[data-field="category"]')).toHaveCount(0);
@@ -74,6 +88,7 @@ test.describe('Public pickup request form', () => {
     await expect(page.locator('[data-field="photos"]')).toHaveCount(0);
 
     await page.locator('[data-field="full_name"] input').fill(fullName);
+    await page.locator('[data-field="email"] input').fill('bulk@example.com');
     await page.locator('[data-field="phone_local"] input').fill('123456789');
     const addressField = page.locator('[data-field="pickup_address"] input');
     await expect(addressField).toHaveCount(1);
@@ -303,8 +318,9 @@ test('full lifecycle: public submission through to the request showing fulfilled
 
   // 1. Public submission — date/time only, no items/photo.
   await page.goto('/request-pickup');
-  await page.getByText('Individual / Household').click();
+  await page.getByText('Business / Bulk').click();
   await page.locator('[data-field="full_name"] input').fill(fullName);
+  await page.locator('[data-field="email"] input').fill('bulk@example.com');
   await page.locator('[data-field="phone_local"] input').fill('123456789');
   await page
     .locator('[data-field="pickup_address"] input')

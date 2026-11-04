@@ -33,7 +33,7 @@ const mockGeoapify = (page: Page) =>
 test.describe('Public pickup request form', () => {
   test('rejects an invalid phone number', async ({ page }) => {
     await page.goto('/request-pickup');
-    await page.getByText('Individual / Household').click();
+    await page.getByText('Business / Bulk').click();
     await page.locator('[data-field="full_name"] input').fill('Bad Phone');
     await page.locator('[data-field="phone_local"] input').fill('123');
     await page
@@ -52,7 +52,7 @@ test.describe('Public pickup request form', () => {
   }) => {
     await mockGeoapify(page);
     await page.goto('/request-pickup');
-    await page.getByText('Individual / Household').click();
+    await page.getByText('Business / Bulk').click();
 
     const address = page.locator('[data-field="pickup_address"] input');
     await expect(address).toHaveAttribute('role', 'combobox');

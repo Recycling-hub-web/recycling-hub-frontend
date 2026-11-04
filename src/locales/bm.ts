@@ -1277,17 +1277,16 @@ const bm: Dictionary = {
     typeSelector: {
       heading: 'Apa yang anda ingin kitar semula?',
       subheading: 'Pilih opsyen yang sesuai, dan kami akan uruskan selebihnya.',
-      individual: {
-        title: 'Individu / Isi Rumah',
+      callback: {
+        title: 'Minta Panggilan Balik',
         description:
-          'Kutipan percuma ke rumah untuk telefon, laptop, dan gajet lama anda.',
+          'Tinggalkan nombor anda dan kami akan hubungi anda untuk uruskan selebihnya.',
       },
       business: {
         title: 'Perniagaan / Pukal',
         description:
           'Dapatkan sebut harga untuk penutupan pejabat, gudang, atau kilang.',
       },
-      quickLinkText: 'Hanya mahu panggilan balik? Tinggalkan nombor anda',
     },
     quickForm: {
       heading: 'Minta Panggilan Balik',
