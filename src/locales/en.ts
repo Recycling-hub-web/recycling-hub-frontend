@@ -1287,6 +1287,7 @@ const en = {
         "Tell us what you have and where to collect it — we'll schedule a free doorstep pickup and confirm by email.",
     },
     typeSelector: {
+      changeOption: 'Change request type',
       heading: 'What are you recycling?',
       subheading: "Choose the option that fits, and we'll take it from there.",
       callback: {

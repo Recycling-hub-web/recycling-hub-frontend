@@ -1275,6 +1275,7 @@ const bm: Dictionary = {
         'Beritahu kami apa yang anda ada dan lokasi kutipan — kami akan jadualkan kutipan percuma ke rumah anda dan sahkan melalui e-mel.',
     },
     typeSelector: {
+      changeOption: 'Tukar jenis permintaan',
       heading: 'Apa yang anda ingin kitar semula?',
       subheading: 'Pilih opsyen yang sesuai, dan kami akan uruskan selebihnya.',
       callback: {

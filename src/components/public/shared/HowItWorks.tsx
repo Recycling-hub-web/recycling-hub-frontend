@@ -126,7 +126,10 @@ const HowItWorks = () => {
   const lineScaleY = useTransform(scrollYProgress, [0, 1], [0, 1]);
 
   return (
-    <section id="how-it-works" className="bg-white py-20 md:py-32">
+    <section
+      id="how-it-works"
+      className="overflow-hidden bg-white py-20 md:py-32"
+    >
       <div className="mx-auto max-w-7xl rounded-3xl bg-slate-100 p-5 md:rounded-[2rem] md:p-8">
         {/* Heading */}
         <div className="mb-20 text-center md:mb-28">

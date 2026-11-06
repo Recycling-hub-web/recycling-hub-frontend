@@ -2,13 +2,8 @@ import type { ReactElement } from 'react';
 
 import { QuickPickupRequestForm } from '../components/features/pickups/components';
 import { Meta } from '../components/layout/Meta';
-import { B2BSection } from '../components/public/home/B2BSection';
-import { ComparisonSection } from '../components/public/home/ComparisonSection';
-import { ConnectorsStrip } from '../components/public/home/ConnectorsStrip';
 import { HeroBlobSection } from '../components/public/home/HeroBlobSection';
 import { LatestBlogSection } from '../components/public/home/LatestBlogSection';
-import { ProblemIllustration } from '../components/public/home/ProblemIllustration';
-import { SplitHeroSection } from '../components/public/home/SplitHeroSection';
 import { TrustStrip } from '../components/public/home/TrustStrip';
 import { WhyRecyclingHub } from '../components/public/home/WhyRecyclingHub';
 import { FaqSection } from '../components/public/shared/FaqSection';
@@ -21,15 +16,10 @@ const HomePage: NextPageWithLayout = () => (
   <>
     <Meta title={AppConfig.title} description={AppConfig.description} />
     <HeroBlobSection />
-    <SplitHeroSection />
     <TrustStrip />
     <QuickPickupRequestForm />
-    <ProblemIllustration />
     <WhyRecyclingHub />
-    <ComparisonSection />
     <HowItWorks />
-    <B2BSection />
-    <ConnectorsStrip />
     <LatestBlogSection />
     <FaqSection />
   </>

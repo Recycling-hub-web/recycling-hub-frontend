@@ -115,8 +115,6 @@ const Navbar = ({ variant = 'dark' }: NavbarProps) => {
     light
       ? 'text-slate-600 hover:bg-neutral-100 hover:text-neutral-950'
       : 'text-white hover:bg-white/10';
-  const getWhatsappVariant = () =>
-    (light ? 'secondary' : 'outline-white') as 'secondary' | 'outline-white';
 
   return (
     <motion.nav
@@ -171,7 +169,7 @@ const Navbar = ({ variant = 'dark' }: NavbarProps) => {
 
         {/* Desktop nav */}
         <div
-          className="hidden flex-1 items-center justify-center gap-1 md:flex lg:gap-1"
+          className="hidden flex-1 items-center justify-center gap-1 lg:gap-1 xl:flex"
           onMouseLeave={() => setHoveredHref(null)}
         >
           {navLinks.slice(0, 1).map((link) => {
@@ -235,23 +233,28 @@ const Navbar = ({ variant = 'dark' }: NavbarProps) => {
         </div>
 
         {/* CTA — desktop only */}
-        <div className="hidden shrink-0 items-center gap-3 md:flex">
+        <div className="hidden shrink-0 items-center gap-3 xl:flex">
           <LanguageSwitcher light={light} />
           <PublicButton
-            href={BRAND.whatsapp}
-            variant={getWhatsappVariant()}
-            className="hidden lg:inline-flex"
+            href="/request-pickup"
+            variant="primary"
+            className="whitespace-nowrap"
           >
-            {dict.nav.whatsapp}
+            {dict.nav.requestPickup}
           </PublicButton>
         </div>
 
         {/* Mobile toggle */}
         <button
           type="button"
+          aria-expanded={menuOpen}
+          aria-controls="public-mobile-menu"
           aria-label={menuOpen ? 'Close menu' : 'Open menu'}
           onClick={() => setMenuOpen((o) => !o)}
-          className={`flex size-9 items-center justify-center rounded-lg transition-colors duration-150 md:hidden ${getToggleCls()}`}
+          onKeyDown={(event) => {
+            if (event.key === 'Escape') setMenuOpen(false);
+          }}
+          className={`flex size-11 items-center justify-center rounded-lg transition-colors duration-150 xl:hidden ${getToggleCls()}`}
         >
           {menuOpen ? <CloseIcon /> : <MenuIcon />}
         </button>
@@ -262,8 +265,9 @@ const Navbar = ({ variant = 'dark' }: NavbarProps) => {
         {menuOpen && (
           <motion.div
             key="mobile-menu"
+            id="public-mobile-menu"
             {...slideDown}
-            className="overflow-hidden border-t border-slate-100 bg-white md:hidden"
+            className="overflow-hidden border-t border-slate-100 bg-white xl:hidden"
           >
             <div className="flex flex-col gap-1 p-4">
               {navLinks.slice(0, 1).map((link) => {
@@ -335,11 +339,11 @@ const Navbar = ({ variant = 'dark' }: NavbarProps) => {
                   {dict.nav.whatsapp}
                 </PublicButton>
                 <PublicButton
-                  href="/request-quote"
+                  href="/request-pickup"
                   variant="primary"
                   className="w-full"
                 >
-                  {dict.nav.requestQuote}
+                  {dict.nav.requestPickup}
                 </PublicButton>
               </div>
             </div>
