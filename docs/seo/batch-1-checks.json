@@ -1,0 +1,90 @@
+[
+  {
+    "lang": "en",
+    "route": "/",
+    "title": "E-waste recycling Malaysia | Free pickup | Recycling Hub",
+    "titleLength": 56,
+    "description": "E-waste recycling Malaysia: free pickup in Klang Valley, a minimum of 3 devices and instant DuitNow payment for households. Request your collection today.",
+    "descriptionLength": 154,
+    "h1": "E-waste recycling Malaysia",
+    "canonical": "https://recyclinghub.eco/",
+    "schemas": ["LocalBusiness"]
+  },
+  {
+    "lang": "en",
+    "route": "/services",
+    "title": "E-waste collection services | Recycling Hub",
+    "titleLength": 43,
+    "description": "E-waste collection services in Klang Valley: free household pickup for 3+ devices, bulk collection and certified data destruction. Request a quote.",
+    "descriptionLength": 147,
+    "h1": "E-waste collection services",
+    "canonical": "https://recyclinghub.eco/services",
+    "schemas": ["BreadcrumbList", "ItemList"]
+  },
+  {
+    "lang": "en",
+    "route": "/faq",
+    "title": "E-waste recycling FAQ | Recycling Hub",
+    "titleLength": 37,
+    "description": "E-waste recycling FAQ: accepted devices, free pickup for at least 3 devices and instant DuitNow payment in Klang Valley. Read answers and request pickup.",
+    "descriptionLength": 153,
+    "h1": "E-waste recycling FAQ",
+    "canonical": "https://recyclinghub.eco/faq",
+    "schemas": ["BreadcrumbList", "FAQPage"]
+  },
+  {
+    "lang": "en",
+    "route": "/request-quote",
+    "title": "E-waste pickup quote | Recycling Hub",
+    "titleLength": 36,
+    "description": "Get an e-waste pickup quote for bulk collection and certified data destruction in Klang Valley. Household pickup is free for 3+ devices. WhatsApp us.",
+    "descriptionLength": 149,
+    "h1": "E-waste pickup quote",
+    "canonical": "https://recyclinghub.eco/request-quote",
+    "schemas": ["BreadcrumbList"]
+  },
+  {
+    "lang": "bm",
+    "route": "/",
+    "title": "Kitar semula sisa elektronik | Recycling Hub",
+    "titleLength": 44,
+    "description": "Kitar semula sisa elektronik di Lembah Klang: pickup percuma dengan minimum 3 peranti untuk isi rumah, bayaran DuitNow serta-merta. Minta kutipan hari ini.",
+    "descriptionLength": 155,
+    "h1": "Kitar semula sisa elektronik",
+    "canonical": "https://recyclinghub.eco/bm",
+    "schemas": ["LocalBusiness"]
+  },
+  {
+    "lang": "bm",
+    "route": "/services",
+    "title": "Perkhidmatan kutipan e-waste | Recycling Hub",
+    "titleLength": 44,
+    "description": "Perkhidmatan kutipan e-waste di Lembah Klang: pickup rumah percuma untuk 3+ peranti, kutipan pukal dan pemusnahan data. Hubungi kami untuk sebut harga.",
+    "descriptionLength": 151,
+    "h1": "Perkhidmatan kutipan e-waste",
+    "canonical": "https://recyclinghub.eco/bm/services",
+    "schemas": ["BreadcrumbList", "ItemList"]
+  },
+  {
+    "lang": "bm",
+    "route": "/faq",
+    "title": "Soalan lazim kitar semula e-waste | Recycling Hub",
+    "titleLength": 49,
+    "description": "Soalan lazim kitar semula e-waste: peranti diterima, pickup rumah percuma minimum 3 peranti dan bayaran DuitNow di Lembah Klang. Baca dan minta kutipan.",
+    "descriptionLength": 152,
+    "h1": "Soalan lazim kitar semula e-waste",
+    "canonical": "https://recyclinghub.eco/bm/faq",
+    "schemas": ["BreadcrumbList", "FAQPage"]
+  },
+  {
+    "lang": "bm",
+    "route": "/request-quote",
+    "title": "Sebut harga pickup e-waste | Recycling Hub",
+    "titleLength": 42,
+    "description": "Minta sebut harga pickup e-waste untuk kutipan pukal di Lembah Klang. Pickup rumah percuma untuk 3+ peranti. Hubungi pasukan kami melalui WhatsApp.",
+    "descriptionLength": 147,
+    "h1": "Sebut harga pickup e-waste",
+    "canonical": "https://recyclinghub.eco/bm/request-quote",
+    "schemas": ["BreadcrumbList"]
+  }
+]

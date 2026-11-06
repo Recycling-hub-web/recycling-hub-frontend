@@ -22,11 +22,13 @@ const Meta = (props: IMetaProps) => {
       ? rawPath.slice(3) || '/'
       : rawPath;
 
-  const canonical = props.canonical ?? `${SITE_URL}${path}`;
+  const enUrl = `${SITE_URL}${path}`;
+  const bmUrl = `${SITE_URL}/bm${path === '/' ? '' : path}`;
+  const canonical = props.canonical ?? (router.locale === 'bm' ? bmUrl : enUrl);
   const languageAlternates = [
-    { hrefLang: 'en', href: `${SITE_URL}${path}` },
-    { hrefLang: 'ms', href: `${SITE_URL}/bm${path}` },
-    { hrefLang: 'x-default', href: `${SITE_URL}${path}` },
+    { hrefLang: 'en-MY', href: enUrl },
+    { hrefLang: 'ms-MY', href: bmUrl },
+    { hrefLang: 'x-default', href: enUrl },
   ];
 
   return (

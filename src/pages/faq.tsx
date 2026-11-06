@@ -1,128 +1,58 @@
-import { AnimatePresence, motion } from 'framer-motion';
+import Link from 'next/link';
 import type { ReactElement } from 'react';
-import { useState } from 'react';
 
 import { Meta } from '../components/layout/Meta';
+import { PublicSeoSchema } from '../components/layout/PublicSeoSchema';
 import { ReusableHero } from '../components/ui/hero';
 import { useDictionary } from '../hooks/useDictionary';
 import { PublicLayout } from '../layouts/PublicLayout';
 import type { NextPageWithLayout } from '../types/next';
 
-const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
-
-const ChevronIcon = ({ open }: { open: boolean }) => (
-  <motion.svg
-    animate={{ rotate: open ? 180 : 0 }}
-    transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-    width="18"
-    height="18"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className={`shrink-0 transition-colors duration-200 ${open ? 'text-brand-600' : 'text-slate-400'}`}
-  >
-    <polyline points="6 9 12 15 18 9" />
-  </motion.svg>
-);
-
-const CategoryFaq = ({
-  name,
-  items,
-}: {
-  name: string;
-  items: { question: string; answer: string }[];
-}) => {
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
-  const toggle = (i: number) => setOpenIndex(openIndex === i ? null : i);
-
-  return (
-    <div>
-      <h2 className="mb-5 font-montserrat text-lg font-extrabold text-neutral-950 md:text-xl">
-        {name}
-      </h2>
-      <div className="flex flex-col gap-3">
-        {items.map((item, i) => {
-          const isOpen = openIndex === i;
-          return (
-            <div
-              key={item.question}
-              className={`rounded-xl border transition-colors duration-200 ${
-                isOpen
-                  ? 'border-slate-200 bg-neutral-50'
-                  : 'border-slate-200 bg-white'
-              }`}
-            >
-              <button
-                type="button"
-                onClick={() => toggle(i)}
-                className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
-              >
-                <span
-                  className={`text-base font-medium leading-snug transition-colors duration-200 ${
-                    isOpen ? 'text-brand-600' : 'text-slate-700'
-                  }`}
-                >
-                  {item.question}
-                </span>
-                <ChevronIcon open={isOpen} />
-              </button>
-
-              <AnimatePresence initial={false}>
-                {isOpen && (
-                  <motion.div
-                    key="answer"
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.28, ease: EASE }}
-                    className="overflow-hidden"
-                  >
-                    <div className="border-t border-slate-100 px-6 pb-6 pt-4">
-                      <p className="text-sm leading-relaxed text-slate-600">
-                        {item.answer}
-                      </p>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-};
-
 const FaqPage: NextPageWithLayout = () => {
-  const { faqPage } = useDictionary();
-
+  const { faqPage, seo, nav } = useDictionary();
   return (
     <>
-      <Meta
-        title="FAQ — Recycling Hub"
-        description="Answers to common questions about individual pickup, bulk and enterprise collection, certified data destruction, and certificate requests."
-      />
-
+      <Meta {...seo.faq} />
+      <PublicSeoSchema page="faq" />
       <ReusableHero
         eyebrow={faqPage.eyebrow}
         headline={faqPage.headline}
         headlineAccent={faqPage.headlineAccent}
         description={faqPage.subtext}
       />
-
       <section className="bg-white py-16 md:py-20">
         <div className="mx-auto max-w-3xl px-5 md:px-8">
           <div className="flex flex-col gap-14">
             {faqPage.categories.map((category) => (
-              <CategoryFaq
-                key={category.name}
-                name={category.name}
-                items={category.items}
-              />
+              <div key={category.name}>
+                <h2 className="mb-5 text-xl font-bold text-neutral-950">
+                  {category.name}
+                </h2>
+                <div className="flex flex-col gap-3">
+                  {category.items.map((item, index) => (
+                    <details
+                      key={item.question}
+                      open={index === 0}
+                      className="rounded-xl border border-slate-200 bg-white"
+                    >
+                      <summary className="cursor-pointer px-6 py-5 font-medium text-slate-800 focus-visible:outline-brand-600">
+                        {item.question}
+                      </summary>
+                      <p className="border-t border-slate-100 px-6 py-5 text-sm leading-relaxed text-slate-600">
+                        {item.answer}
+                      </p>
+                    </details>
+                  ))}
+                </div>
+              </div>
             ))}
+          </div>
+          <div className="mt-10 flex flex-wrap gap-6 text-brand-700 underline underline-offset-4">
+            <Link href="/request-pickup">{nav.requestPickup}</Link>
+            <Link href="/request-quote">{nav.requestQuote}</Link>
+            <Link href="/track-trace">
+              {faqPage.categories[3]!.items[0]!.question}
+            </Link>
           </div>
         </div>
       </section>
@@ -133,5 +63,4 @@ const FaqPage: NextPageWithLayout = () => {
 FaqPage.getLayout = (page: ReactElement) => (
   <PublicLayout navVariant="light">{page}</PublicLayout>
 );
-
 export default FaqPage;

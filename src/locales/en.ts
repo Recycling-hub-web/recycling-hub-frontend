@@ -31,6 +31,29 @@ import {
 import type { LegalSection } from '../types/legal';
 
 const en = {
+  seo: {
+    home: {
+      title: 'E-waste recycling Malaysia | Free pickup | Recycling Hub',
+      description:
+        'E-waste recycling Malaysia: free pickup in Klang Valley, a minimum of 3 devices and instant DuitNow payment for households. Request your collection today.',
+    },
+    services: {
+      title: 'E-waste collection services | Recycling Hub',
+      description:
+        'E-waste collection services in Klang Valley: free household pickup for 3+ devices, bulk collection and certified data destruction. Request a quote.',
+    },
+    faq: {
+      title: 'E-waste recycling FAQ | Recycling Hub',
+      description:
+        'E-waste recycling FAQ: accepted devices, free pickup for at least 3 devices and instant DuitNow payment in Klang Valley. Read answers and request pickup.',
+    },
+    quote: {
+      title: 'E-waste pickup quote | Recycling Hub',
+      description:
+        'Get an e-waste pickup quote for bulk collection and certified data destruction in Klang Valley. Household pickup is free for 3+ devices. WhatsApp us.',
+    },
+  },
+
   nav: {
     home: 'Home',
     pricing: 'Pricing',
@@ -47,12 +70,15 @@ const en = {
   },
 
   footer: {
-    tagline: 'Certified E-Waste Collection & Disposal for Malaysia.',
+    generalEnquiries: 'General enquiries',
+    partnerships: 'Partnerships',
+
+    tagline: 'Doorstep e-waste pickup in Klang Valley.',
     servicesHeading: 'Services',
     companyHeading: 'Company',
     legalHeading: 'Legal',
     services: [
-      { label: 'Recycle & Get Paid', href: '/contact' },
+      { label: 'Recycle & Get Paid', href: '/request-pickup' },
       {
         label: 'Bulk & Enterprise Collection',
         href: '/services/bulk-industrial-collection',
@@ -63,7 +89,6 @@ const en = {
     ],
     company: [
       { label: 'About Us', href: '/about' },
-      { label: 'Meet the Team', href: '/about#team' },
       { label: 'Services', href: '/services' },
       { label: 'Resources', href: '/resources' },
       { label: 'Blog', href: '/resources/blog' },
@@ -78,12 +103,22 @@ const en = {
   },
 
   home: {
+    serviceArea: {
+      heading: 'E-waste pickup in Klang Valley',
+      description:
+        'Ask about pickup in Kuala Lumpur, Petaling Jaya, Shah Alam, Subang Jaya, Klang, Puchong, Cheras, Cyberjaya and Putrajaya. Share your address so we can confirm collection access and timing.',
+      householdLink: 'Explore doorstep e-waste collection',
+      businessLink: 'Arrange bulk e-waste collection',
+      quoteLink: 'Request an e-waste pickup quote',
+    },
+
     hero: {
-      headlinePrefix: 'Registered',
-      headlinePill: 'E-Waste',
-      headlineSuffix: 'Recycling in Klang Valley, Malaysia',
+      headlinePrefix: 'E-waste recycling',
+      headlinePill: 'Malaysia',
+      headlineSuffix: '',
+      imageAlt: 'Old televisions and electronic equipment on shelves',
       subheadline:
-        'Recycling Hub picks up old electronics for free across the Klang Valley — for households clearing out a drawer of devices and for businesses decommissioning a whole office. Every collection is DOE-registered and fully documented.',
+        'E-waste recycling Malaysia starts at your doorstep. Recycling Hub offers free e-waste pickup in Klang Valley with a minimum of 3 devices and instant DuitNow payment for households. Businesses can arrange bulk collection, certified data destruction and compliance documents.',
       cta: 'Book Pickup',
       // TODO: replace with a real figure once available
       statCardLabel: 'Coming soon',
@@ -93,12 +128,24 @@ const en = {
     },
 
     trustStrip: {
-      label: 'Why Malaysian households and businesses choose Recycling Hub',
+      label: 'Pickup options for households and businesses',
       stats: [
-        { value: 'DOE', label: 'Registered E-Waste Collector' },
-        { value: 'Free', label: 'Doorstep Pickup in Klang Valley' },
-        { value: 'Instant', label: 'DuitNow Payment on Collection' },
-        { value: 'SW110', label: 'Compliant Enterprise Collection' },
+        {
+          value: 'Free',
+          label: 'Household pickup in Klang Valley',
+        },
+        {
+          value: '3 devices',
+          label: 'Minimum per household pickup',
+        },
+        {
+          value: 'DuitNow',
+          label: 'Instant household payment',
+        },
+        {
+          value: 'Business',
+          label: 'Bulk collection by quotation',
+        },
       ],
     },
 
@@ -144,25 +191,25 @@ const en = {
     },
 
     whyRecyclingHub: {
-      eyebrow: 'Why Recycling Hub',
-      headline: 'The Compliant Way to Get Rid of Old Electronics',
+      eyebrow: 'Old electronics, a clear next step',
+      headline: 'Free e-waste pickup for homes. Bulk collection for offices.',
       subtext:
-        "A scrap dealer or a storage room won't wipe your data, document the collection, or keep it out of a landfill. Recycling Hub handles the entire process — licensed, certified, and documented — for individuals and businesses alike.",
+        'Whether you want to recycle old electronics for cash or arrange an office clear-out, choose the collection option that fits your needs.',
       features: [
         {
-          icon: 'shield',
-          title: 'Licensed Under DOE & SW110 — Every Collection Documented',
-          body: 'Recycling Hub collects and processes e-waste under a registered DOE license and SW110 scheduled-waste compliance. Every pickup is logged, tracked, and backed by paperwork you can hand to an auditor.',
+          icon: 'plug',
+          title: 'Clearing out a phone or laptop?',
+          body: 'Request collection for your old electronics with a minimum of 3 devices. Share the device type and condition so the team can discuss what you have before pickup.',
         },
         {
-          icon: 'plug',
-          title: 'One Partner, Whether It’s One Phone or a Whole Office',
-          body: "A single old laptop or a full office decommission — Recycling Hub runs the same licensed, documented process either way. You don't need a separate vendor for personal and enterprise volumes.",
+          icon: 'shield',
+          title: 'Retiring office equipment?',
+          body: 'Tell us your equipment types, estimated volume and collection address. Business pickup is quoted separately from free household collection.',
         },
         {
           icon: 'lock',
-          title: 'Certified Destruction. Zero Data Recovery.',
-          body: 'Every device carrying data goes through certified destruction with a serialized certificate. Recycling Hub does not resell or retain your data-bearing devices — destruction is verified, not assumed.',
+          title: 'Need certified data destruction?',
+          body: 'Businesses can request certified data destruction and compliance documents. Discuss the data-bearing devices and records you need when requesting a quote.',
         },
       ],
     },
@@ -208,7 +255,7 @@ const en = {
         {
           label: 'Book & Schedule',
           headline:
-            'Book a pickup in under a minute — for one device or a hundred.',
+            'Book a pickup in under a minute — for 3 devices or a hundred.',
           checklist: [
             'Online form or WhatsApp booking',
             'Flexible slots for households and offices',
@@ -287,7 +334,7 @@ const en = {
             'No waiting period or manual payout request',
             'Payment confirmed before our team leaves',
             'No hidden deductions',
-            'Works for one device or a full clear-out',
+            'Works for 3 devices or a full clear-out',
           ],
           // TODO: replace with real client quote
           quote:
@@ -361,7 +408,7 @@ const en = {
         {
           number: '02',
           title: 'We Collect',
-          subtitle: 'Free, No Minimums',
+          subtitle: 'Free, minimum 3 devices',
           bullets: [
             { bold: 'Our team comes to you', rest: ' at the scheduled time' },
             {
@@ -400,7 +447,7 @@ const en = {
           'Free doorstep pickup in Klang Valley',
           'Instant DuitNow payment',
           'DOE-registered and fully documented',
-          'No minimums, no paperwork',
+          'Minimum 3 devices, no paperwork',
         ],
         cta: 'Book Pickup',
         ctaHref: '/request-pickup',
@@ -436,7 +483,7 @@ const en = {
             '$0 to you — always free for individuals',
             'Paid instantly via DuitNow at collection',
             'No hidden fees or deductions',
-            'No minimum device count required',
+            'Minimum 3 devices per pickup',
           ],
           cta: 'Recycle & Get Paid',
           ctaHref: '/contact',
@@ -509,26 +556,26 @@ const en = {
     },
 
     faq: {
-      headline: 'Frequently Asked',
-      headlineAccent: 'Questions',
+      headline: 'Before you request',
+      headlineAccent: 'a pickup',
       items: [
         {
-          question: 'Is there a minimum number of devices for a free pickup?',
+          question: 'How many devices do I need for pickup?',
           answer:
-            "No — whether it's a single old phone or a drawer full of devices, individual pickup is free across Klang Valley and comes with instant DuitNow payment. There's no account or contract required.",
+            'Household pickup in Klang Valley is free when you have at least 3 devices. Have fewer? Contact the team to discuss your options.',
         },
         {
-          question: 'How do I get paid for my old devices?',
+          question: 'When is household payment made?',
           answer:
-            'Individual pickups are paid instantly via DuitNow, at the moment your devices are collected — no waiting period, no manual payout request. Bulk and enterprise collection is quote-based rather than paid, since the focus there is compliant disposal and documentation.',
+            'Payment is made instantly via DuitNow when we collect your household electronics. Discuss your devices with the team before pickup; business collections are quote-based.',
         },
         {
-          question: 'Is Recycling Hub actually licensed to handle e-waste?',
+          question: 'Unsure whether your electronics can be collected?',
           answer:
-            'Yes — collection and processing is carried out under a registered DOE license and SW110 scheduled-waste compliance, not an informal or unlicensed setup.',
+            'Share the device types and condition with the team. Our full FAQ explains accepted devices, collection arrangements and business documentation.',
         },
       ],
-      seeMoreLabel: 'See Full FAQ',
+      seeMoreLabel: 'See all e-waste recycling FAQs',
       seeMoreHref: '/faq',
     },
 
@@ -536,7 +583,7 @@ const en = {
       eyebrow: 'Ready When You Are',
       headline: 'Free Pickup for You. Certified Disposal for Your Business.',
       subtext:
-        "Whether it's one old phone or a warehouse of retired equipment, Recycling Hub handles the collection, the certificates, and the paperwork. Request a bulk quote or WhatsApp us — either way, you'll have an answer within 24 hours.",
+        "Whether it's 3 old devices or a warehouse of retired equipment, Recycling Hub handles the collection, the certificates, and the paperwork. Request a bulk quote or WhatsApp us — either way, you'll have an answer within 24 hours.",
       cta: 'Request Bulk Quote',
       ctaHref: '/request-quote?service=bulk-industrial-collection',
       whatsapp: 'WhatsApp Us',
@@ -545,27 +592,42 @@ const en = {
   },
 
   services: {
-    hero: {
-      eyebrow: 'What We Do',
-      headline: 'Every Stage of the E-Waste Lifecycle,',
-      headlineAccent: 'Handled Under One License.',
+    pickupMeta: {
+      title: 'Doorstep e-waste pickup | Recycling Hub',
       description:
-        'From the moment a device leaves your hands to the certificate that proves it was destroyed and recycled responsibly, Recycling Hub manages collection, certified destruction, material recovery, and compliance reporting — end to end.',
+        'Arrange doorstep e-waste pickup in Klang Valley for at least 3 household devices. Collection is free with instant DuitNow payment. Request a callback now.',
+    },
+
+    intent: {
+      heading: 'E-waste disposal for households and businesses',
+      description:
+        'For a household clear-out, tell us about your old laptop, phone, computer or monitor. Ask about chargers and cables when booking. Business collections need a quote based on the equipment and volume.',
+      dataLink: 'Certified data destruction in Malaysia',
+      bulkLink: 'Bulk e-waste collection for businesses',
+      quoteLink: 'Request an e-waste pickup quote',
+    },
+
+    hero: {
+      eyebrow: 'What we do',
+      headline: 'E-waste collection services',
+      headlineAccent: '',
+      description:
+        'Our e-waste collection services cover doorstep pickup in Klang Valley and bulk collection for businesses. Household pickup is free with a minimum of 3 devices. For office equipment, ask about certified data destruction, material recovery and compliance documents.',
     },
     // TODO: replace with the actual DOE (JAS) registration number once issued
     trustBar: [
-      'DOE-Registered E-Waste Collector',
-      'Certified Data Destruction on Every Collection',
+      'Free household pickup in Klang Valley',
+      'Certified data destruction for businesses',
     ],
     crossLink: {
-      text: 'Looking for the right fit by sector instead?',
-      cta: 'Browse Solutions',
+      text: 'Services explain what we do. Find the right approach for your organisation:',
+      cta: 'Explore e-waste solutions by sector',
       href: '/solutions',
     },
     gridHeading: {
       ourServices: {
-        eyebrow: 'Our Services',
-        headline: 'Six Services. One License.',
+        eyebrow: 'Our services',
+        headline: 'Collection, data destruction and documentation',
       },
       exploreMore: { eyebrow: 'Explore More', headline: 'Other Services' },
     },
@@ -573,7 +635,7 @@ const en = {
     learnMore: 'Learn more',
     freeIndividualNote: {
       prefix:
-        'Just clearing out a personal device? Individual pickup is free across Klang Valley — ',
+        'Clearing out at least 3 personal devices? Individual pickup is free across Klang Valley — ',
       linkText: 'book directly via WhatsApp',
       suffix: ', no quote required.',
     },
@@ -596,22 +658,22 @@ const en = {
       'certified-data-destruction': {
         title: 'Certified Data Destruction',
         summary:
-          'Physical destruction of data-bearing devices with a serialized certificate and full chain-of-custody tracking.',
+          'Certified data destruction for business data-bearing devices. Discuss your storage media and documentation requirements before collection.',
       },
       'esg-reporting': {
         title: 'ESG & Sustainability Reporting',
         summary:
-          'Diversion and impact reporting — tonnage recycled, materials recovered, and estimated carbon impact — for your ESG disclosures.',
+          'Reporting options for your organisation’s e-waste records. Ask which collection and material information is available for your reporting needs.',
       },
       'material-recovery': {
         title: 'Recycling & Material Recovery',
         summary:
-          'Licensed downstream processing that recovers reusable materials and diverts the rest from landfill.',
+          'Processing old electronics to recover reusable materials. Discuss the equipment types and recovery options with our team.',
       },
       'compliance-documentation': {
         title: 'Compliance Documentation',
         summary:
-          'Consignment notes and DOE-compliant paperwork issued for every collection, ready for audit.',
+          'Compliance documents for business e-waste disposal. Confirm the records your organisation needs when requesting a quote.',
       },
     } satisfies Record<ServiceSlug, { title: string; summary: string }>,
     detail: {
@@ -619,7 +681,7 @@ const en = {
         description:
           'Recycling Hub collects end-of-life phones, laptops, tablets, monitors, and small IT peripherals directly from your home or office across Klang Valley. Every pickup is scheduled in advance and confirmed before our team arrives, so collection happens on your terms, not as an unannounced drop-in.',
         included: [
-          'Doorstep collection for individual and household electronics in Klang Valley — no minimum device count',
+          'Doorstep collection for individual and household electronics in Klang Valley — minimum 3 devices',
           'Accepted categories: phones & tablets, laptops & computers, monitors & displays, and small office IT peripherals',
           'Currently available across Klang Valley — other areas coming soon',
           'Standard pickup is sized for individual and household quantities — higher-volume collection is handled under Bulk & Industrial Collection instead',
@@ -865,6 +927,11 @@ const en = {
   },
 
   solutions: {
+    householdMeta: {
+      title: 'Household electronics recycling | Recycling Hub',
+      description:
+        'Recycle household electronics in Klang Valley with free pickup for at least 3 devices and instant DuitNow payment. Contact Recycling Hub to arrange pickup.',
+    },
     hero: {
       eyebrow: 'Who We Serve',
       headline: 'Tailored E-Waste Solutions,',
@@ -896,7 +963,7 @@ const en = {
       'individuals-households': {
         title: 'Individuals & Households',
         summary:
-          'Free doorstep pickup in Klang Valley and instant DuitNow payment for personal electronics — no minimums, no paperwork.',
+          'Free doorstep pickup in Klang Valley and instant DuitNow payment for personal electronics — minimum 3 devices, no paperwork.',
       },
       'government-glc': {
         title: 'Government & GLC',
@@ -937,7 +1004,7 @@ const en = {
         framing:
           "Clearing out an old phone, laptop, or a drawer full of dead chargers shouldn't take more effort than throwing it in the bin — but the bin isn't where it should go. Recycling Hub picks up your old electronics for free across Klang Valley, and pays you instantly the moment they're collected.",
         whyUs: [
-          'Free doorstep pickup in Klang Valley — no minimum device count, no account or contract needed',
+          'Free doorstep pickup in Klang Valley — minimum 3 devices, no account or contract needed',
           'Instant DuitNow payment the moment your devices are collected',
           'All personal devices accepted — phones, laptops, tablets, monitors, and more',
           'Certified data destruction included on every data-bearing device, with no extra step for you',
@@ -995,7 +1062,7 @@ const en = {
         framing:
           "Nonprofits and community groups don't always generate e-waste on a predictable schedule or in bulk quantities — and budget is almost always a real constraint. Recycling Hub scales down to fit, without treating a smaller organization as a lower priority.",
         whyUs: [
-          'Flexible collection sized to lower, irregular volumes — no bulk minimum required',
+          'Flexible collection sized to lower, irregular volumes — minimum 3 devices per pickup',
           // TODO: confirm the actual partnership/CSR discount structure (if any)
           // before publishing a specific pricing claim
           'Partnership-rate pricing available for registered nonprofits — ask when you get in touch',
@@ -1082,7 +1149,7 @@ const en = {
       sidePanel: {
         heading: "Hi! We're always here to help you.",
         hotlineLabel: 'Hotline',
-        whatsappLabel: 'SMS / WhatsApp',
+        whatsappLabel: 'WhatsApp',
         emailLabel: 'Email',
         connectHeading: 'Connect with us',
       },
@@ -1091,86 +1158,75 @@ const en = {
 
   faqPage: {
     eyebrow: 'FAQ',
-    headline: 'Questions,',
-    headlineAccent: 'Answered.',
+    headline: 'E-waste recycling FAQ',
+    headlineAccent: '',
     subtext:
-      "Everything we're asked most — from booking a free pickup to requesting a certificate for a past collection. Can't find what you need? Reach out and we'll answer directly.",
+      'This e-waste recycling FAQ covers household pickup in Klang Valley, business collection and the documents you may need. Household pickup is free with a minimum of 3 devices and instant DuitNow payment.',
     categories: [
       {
-        name: 'Getting Started',
+        name: 'Devices and collection areas',
         items: [
           {
-            question: 'What devices do you accept?',
+            question: 'What e-waste is accepted?',
             answer:
-              "Phones, tablets, laptops, desktops, monitors, and office IT equipment like servers, printers, and routers, plus hard drives, SSDs, and other storage devices. Get in touch if you're unsure whether a specific item — especially large appliances — is covered.",
+              'Contact us about phones, tablets, laptops, computers, monitors and office IT equipment. Share a list or photos first, especially for appliances or unusual items, so the team can confirm acceptance.',
           },
           {
-            question: 'How do I book a pickup?',
+            question: 'Where is pickup available?',
             answer:
-              'Book online or over WhatsApp — it takes under a minute. Tell us roughly what you have and where, and we confirm a collection time.',
-          },
-          {
-            question: 'Which areas do you serve?',
-            answer:
-              "Free individual pickup is currently available across Klang Valley. If you're outside that area, get in touch and we'll let you know when coverage expands. Bulk and enterprise collection is assessed by location — request a quote and we'll confirm whether we can serve you.",
-          },
-          {
-            question:
-              "What's the difference between individual and business collection?",
-            answer:
-              "Individual pickup is for households clearing out personal devices — it's free across Klang Valley, with instant payment, no minimums. Business or bulk collection is for offices, warehouses, and factories, and is scheduled around your operations with a custom quote based on volume, device types, and location. Both are collected under the same DOE-registered, SW110-compliant process.",
+              'Our service area is Klang Valley. Share your collection address when enquiring so we can confirm access and collection arrangements. No specific pickup window is guaranteed before confirmation.',
           },
         ],
       },
       {
-        name: 'Individual Pickup',
+        name: 'Household pickup and payment',
         items: [
           {
-            question: 'Is there a minimum number of devices for a free pickup?',
+            question:
+              'Is e-waste pickup free, and is there a minimum quantity?',
             answer:
-              "No — whether it's a single old phone or a drawer full of devices, individual pickup is free across Klang Valley and comes with instant DuitNow payment. There's no account or contract required.",
+              'Household e-waste pickup in Klang Valley is free for at least 3 devices per pickup. Business or bulk collections are quoted separately.',
           },
           {
-            question: 'How do I get paid for my old devices?',
+            question: 'How do I get paid for old electronics?',
             answer:
-              'Individual pickups are paid instantly via DuitNow, at the moment your devices are collected — no waiting period, no manual payout request.',
+              'Household payment is made instantly via DuitNow on collection. Tell the team what devices you have and their condition before pickup. We do not publish fixed prices for individual devices.',
+          },
+          {
+            question: 'How do I request a pickup?',
+            answer:
+              'Use Request a Pickup or contact the team on WhatsApp. Share the device types and collection address. The team will confirm the collection arrangements with you.',
           },
         ],
       },
       {
-        name: 'Business & Bulk Collection',
+        name: 'Business collection and data',
         items: [
           {
-            question: 'Do you charge for bulk or enterprise collection?',
+            question: 'How is bulk e-waste collection priced?',
             answer:
-              "Individual pickup is always free. Bulk and enterprise collection is quoted based on volume and device types — request a quote and we'll confirm pricing before anything is scheduled.",
+              'Business collection is quote-based. Share the device types, estimated quantity and pickup location. Tell us if you need certified data destruction or compliance documents so the quote can reflect those requirements.',
           },
           {
-            question:
-              'What documentation do we get for compliance or audit purposes?',
+            question: 'Can businesses request certified data destruction?',
             answer:
-              'Business and bulk collections come with full chain-of-custody records, a serialized certificate of destruction for every data-bearing asset, and an ESG-ready diversion report covering tonnage recycled and landfill diverted — all retrievable on request.',
+              'Yes. Certified data destruction is available for business collections. Discuss your data-bearing devices and documentation requirements with the team before scheduling collection.',
+          },
+          {
+            question: 'What compliance documents can I request?',
+            answer:
+              'Tell us which collection, data destruction and compliance records your organisation requires. The team will confirm the documents included in your quoted service before collection.',
           },
         ],
       },
       {
-        name: 'Data, Certificates & Compliance',
+        name: 'Collection records',
         items: [
           {
-            question: 'What happens to my data before a device is recycled?',
-            answer:
-              "Any data-bearing device — phones, laptops, hard drives, servers — goes through certified destruction before it's recycled. For individuals, that's included in every pickup. For businesses, you receive a serialized certificate of destruction per asset, so you have proof it happened.",
-          },
-          {
-            question: 'Is Recycling Hub actually licensed to handle e-waste?',
-            answer:
-              'Yes — collection and processing is carried out under a registered DOE license and SW110 scheduled-waste compliance, not an informal or unlicensed setup.',
-          },
-          {
             question:
-              'How do I request a certificate or check my collection status?',
+              'How can I check my collection status or request a certificate?',
             answer:
-              "Use our Track & Trace / Certificate Request page — submit your booking reference if you have one, or just describe the collection, and we'll email you what you need.",
+              'Use Track & Trace with your collection reference, if available. Otherwise, describe the collection so the team can locate the record and confirm what documentation is available.',
           },
         ],
       },
@@ -1243,14 +1299,21 @@ const en = {
   },
 
   requestQuote: {
-    hero: {
-      eyebrow: 'Get a Quote',
-      headline: 'Request a',
-      headlineAccent: 'Quote.',
+    help: {
+      heading: 'Need an IT asset disposal quote?',
       description:
-        'Tell us what you need collected and we’ll confirm pricing and a collection window — usually within 24 hours.',
+        'List your device types, approximate quantity and collection location below. Continue to WhatsApp, review the prepared message and send it to our general enquiries team.',
+    },
+    hero: {
+      eyebrow: 'Business and bulk collection',
+      headline: 'E-waste pickup quote',
+      headlineAccent: '',
+      description:
+        'Request an e-waste pickup quote for office or bulk electronics in Klang Valley. Share your equipment types and estimated volume, and mention any certified data destruction or compliance documents you need. Household pickup for at least 3 devices is free and does not need a bulk e-waste quote.',
     },
     form: {
+      emailPlaceholder: 'you@example.com',
+
       fullName: 'Full name',
       fullNamePlaceholder: 'Your name',
       email: 'Email',
@@ -1264,16 +1327,17 @@ const en = {
         'E.g. ~40 desktops and monitors from a single office, one-off decommission',
       errorNameRequired: 'Please enter your full name.',
       errorEmailInvalid: 'Enter a valid email address.',
-      submitButton: 'Submit Request',
-      submittedButton: 'Request Sent',
+      submitButton: 'Continue on WhatsApp',
+      submittedButton: 'Open WhatsApp again',
       successMessage:
-        "Request received — we'll confirm pricing and a collection window within 24 hours.",
-      whatsappNote: 'Prefer to talk it through? WhatsApp us instead.',
+        'Your enquiry is prepared in WhatsApp. Send the message there to request a quote; this website has not submitted it.',
+      whatsappNote:
+        'This form prepares a WhatsApp message. You must send it there.',
     },
     footerNote: {
       prefix:
-        "Individual pickup is always free across Klang Valley and doesn't need a quote — ",
-      linkText: 'book it directly via WhatsApp',
+        'Household pickup in Klang Valley is free for at least 3 devices and does not need a quote — ',
+      linkText: 'request free household pickup via WhatsApp',
       suffix: '.',
     },
   },
@@ -1284,7 +1348,7 @@ const en = {
       headline: 'Request a',
       headlineAccent: 'Pickup.',
       description:
-        "Tell us what you have and where to collect it — we'll schedule a free doorstep pickup and confirm by email.",
+        'Tell us what you have and where to collect it. Free household pickup requires at least 3 devices; the team will confirm the arrangements.',
     },
     typeSelector: {
       changeOption: 'Change request type',
@@ -1293,7 +1357,7 @@ const en = {
       callback: {
         title: 'Request a Callback',
         description:
-          "Leave your number and we'll call you back to sort out the rest.",
+          "Leave your number and we'll call you back. Household pickup requires at least 3 devices.",
       },
       business: {
         title: 'Business / Bulk',
@@ -1304,7 +1368,7 @@ const en = {
     quickForm: {
       heading: 'Request a Callback',
       subheading:
-        "Leave your number and we'll call you back to sort out the rest.",
+        "Leave your number and we'll call you back. Household pickup requires at least 3 devices.",
       phone: 'Phone',
       phonePlaceholder: 'Enter your contact number',
       errorPhoneRequired: 'Please enter your contact number.',

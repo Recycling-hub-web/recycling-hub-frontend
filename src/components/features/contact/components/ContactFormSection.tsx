@@ -1,7 +1,12 @@
 'use client';
 
 import { type FormEvent, type ReactNode, useState } from 'react';
-import { LuFacebook, LuHeadset, LuInstagram, LuLinkedin } from 'react-icons/lu';
+import {
+  LuFacebook,
+  LuInstagram,
+  LuMail,
+  LuMessageCircle,
+} from 'react-icons/lu';
 
 import { BRAND } from '../../../../constants/content';
 import {
@@ -136,15 +141,21 @@ const ContactFormSection = () => {
 
   const CONTACT_CARDS = [
     {
-      icon: <LuHeadset className="size-5" />,
-      label: content.sidePanel.hotlineLabel,
+      icon: <LuMessageCircle className="size-5" />,
+      label: content.sidePanel.whatsappLabel,
       value: BRAND.phone,
-      href: `tel:${BRAND.phone.replace(/\s+/g, '')}`,
+      href: BRAND.whatsapp,
+    },
+    {
+      icon: <LuMail className="size-5" />,
+      label: content.sidePanel.emailLabel,
+      value: BRAND.email,
+      href: `mailto:${BRAND.email}`,
     },
   ];
 
-  // Only accounts with an `href` link out; the rest show as icons only.
-  const SOCIALS: { icon: ReactNode; label: string; href?: string }[] = [
+  // Use configured company profiles; do not invent platform URLs.
+  const SOCIALS: { icon: ReactNode; label: string; href: string }[] = [
     {
       icon: <LuFacebook className="size-5" />,
       label: 'Facebook',
@@ -155,7 +166,6 @@ const ContactFormSection = () => {
       label: 'Instagram',
       href: BRAND.social.instagram,
     },
-    { icon: <LuLinkedin className="size-5" />, label: 'LinkedIn' },
   ];
 
   return (
@@ -300,29 +310,19 @@ const ContactFormSection = () => {
                   <p className="text-xs font-semibold uppercase tracking-widest text-white/50">
                     {content.sidePanel.connectHeading}
                   </p>
-                  <div className="mt-3 flex gap-2.5">
-                    {SOCIALS.map((s) =>
-                      s.href ? (
-                        <a
-                          key={s.label}
-                          href={s.href}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          aria-label={s.label}
-                          className="flex size-9 items-center justify-center rounded-full bg-white/10 transition hover:bg-white/20"
-                        >
-                          {s.icon}
-                        </a>
-                      ) : (
-                        <span
-                          key={s.label}
-                          aria-label={s.label}
-                          className="flex size-9 items-center justify-center rounded-full bg-white/10"
-                        >
-                          {s.icon}
-                        </span>
-                      ),
-                    )}
+                  <div className="mt-3 flex flex-wrap gap-2.5">
+                    {SOCIALS.map((social) => (
+                      <a
+                        key={social.label}
+                        href={social.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex min-h-11 items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm transition hover:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                      >
+                        {social.icon}
+                        <span>{social.label}</span>
+                      </a>
+                    ))}
                   </div>
                 </div>
               </div>

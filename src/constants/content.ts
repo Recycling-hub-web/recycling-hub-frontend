@@ -23,13 +23,13 @@ export const ASSETS = {
 
 export const BRAND = {
   name: 'Recycling Hub',
-  legalName: 'Recycling Hub Sdn. Bhd.',
+  legalName: 'RECYCLING HUB SDN. BHD.',
   tagline: 'Certified E-Waste Collection & Disposal for Malaysia.',
-  email: 'contact@recyclinghub.eco',
-  phone: '+60 11-6766 3035',
+  email: 'info@recyclinghub.eco',
+  phone: '+60 11-6080 3604',
   website: 'recyclinghub.eco',
   whatsapp:
-    'https://wa.me/601167663035?text=Hi%20Recycling%20Hub%2C%20I%27m%20interested%20in%20your%20e-waste%20collection%20service.%20Could%20you%20please%20share%20more%20details%3F%20Thank%20you.',
+    'https://wa.me/601160803604?text=Hi%20Recycling%20Hub%2C%20I%27m%20interested%20in%20your%20e-waste%20collection%20service.%20Could%20you%20please%20share%20more%20details%3F%20Thank%20you.',
   businessHours: 'Mon–Fri 9am–6pm · Sat 9am–1pm (MYT)',
   social: {
     linkedin: 'https://linkedin.com/company/recyclinghub',
@@ -118,7 +118,7 @@ export const HOW_IT_WORKS = {
       number: '02',
       title: 'We Collect',
       description:
-        // TODO: confirm minimum device count/value (if any) and actual service coverage area
+        // Household pickup requires at least 3 devices; confirm the collection address.
         'Our team retrieves your devices at your doorstep, free of charge.',
     },
     {
@@ -188,7 +188,7 @@ export const ABOUT_VALUES = [
   {
     title: 'Simplicity',
     description:
-      'Free doorstep pickup for individuals in Klang Valley, no minimums, no paperwork. Transparent quoting for bulk and enterprise collection. We eliminate the uncertainty that makes disposal feel complicated.',
+      'Free doorstep pickup for individuals in Klang Valley, minimum 3 devices, no paperwork. Transparent quoting for bulk and enterprise collection. We eliminate the uncertainty that makes disposal feel complicated.',
     icon: 'zap',
   },
   {
@@ -243,7 +243,7 @@ export const ABOUT_WHO_WE_WORK_WITH = {
     {
       label: 'Individuals & Households',
       description:
-        'Anyone clearing out old phones, laptops, or a drawer of dead electronics in Klang Valley — free doorstep pickup, no minimums, instant DuitNow payment.',
+        'Anyone clearing out old phones, laptops, or a drawer of dead electronics in Klang Valley — free doorstep pickup, minimum 3 devices, instant DuitNow payment.',
     },
     {
       label: 'Corporate & Enterprise',
@@ -312,7 +312,7 @@ export const DELIVERY_MODELS = {
       price: 'Free',
       period: 'pickup + instant payout',
       description:
-        'Clearing out old phones, laptops, or gadgets? Book a free doorstep pickup and get paid instantly via DuitNow — no minimums, no paperwork.',
+        'Clearing out old phones, laptops, or gadgets? Book a free doorstep pickup and get paid instantly via DuitNow — minimum 3 devices, no paperwork.',
       features: [
         'Free doorstep pickup',
         'Instant DuitNow payment',
@@ -391,7 +391,7 @@ export const FAQ = {
     {
       question: 'Is there a minimum number of devices for a free pickup?',
       answer:
-        "No — whether it's a single old phone or a drawer full of devices, individual pickup is free and comes with instant DuitNow payment. There's no account or contract required.",
+        "Yes — when you have at least 3 old devices, individual pickup is free and comes with instant DuitNow payment. There's no account or contract required.",
     },
     {
       question: 'What happens to my data before a device is recycled?',
@@ -407,7 +407,7 @@ export const FAQ = {
       question:
         "What's the difference between individual and business collection?",
       answer:
-        "Individual pickup is for households clearing out personal devices — it's free, with instant payment, no minimums. Business or bulk collection is for offices, warehouses, and factories, and is scheduled around your operations with a custom quote based on volume and device types. Both are collected under the same DOE-registered, SW110-compliant process.",
+        "Individual pickup is for households clearing out personal devices — it's free, with instant payment, minimum 3 devices. Business or bulk collection is for offices, warehouses, and factories, and is scheduled around your operations with a custom quote based on volume and device types. Both are collected under the same DOE-registered, SW110-compliant process.",
     },
     {
       question:
@@ -598,7 +598,7 @@ export const PRICING_FAQ = [
 
 export const FOOTER = {
   services: [
-    { label: 'Recycle & Get Paid', href: '/contact' },
+    { label: 'Recycle & Get Paid', href: '/request-pickup' },
     {
       label: 'Bulk & Enterprise Collection',
       href: '/services/bulk-industrial-collection',
@@ -610,7 +610,6 @@ export const FOOTER = {
   ],
   company: [
     { label: 'About Us', href: '/about' },
-    { label: 'Meet the Team', href: '/about#team' },
     { label: 'Services', href: '/services' },
     { label: 'FAQ', href: '/faq' },
     { label: 'Contact', href: '/contact' },
@@ -752,7 +751,7 @@ export const SOLUTIONS = [
     icon: 'house',
     title: 'Individuals & Households',
     summary:
-      'Free doorstep pickup and instant DuitNow payment for personal electronics — no minimums, no paperwork.',
+      'Free doorstep pickup and instant DuitNow payment for personal electronics — minimum 3 devices, no paperwork.',
     priority: true,
   },
   {

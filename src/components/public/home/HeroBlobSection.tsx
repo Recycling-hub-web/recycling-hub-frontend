@@ -43,7 +43,7 @@ const HeroBlobSection = () => {
         <div className="relative aspect-[4/3] overflow-hidden rounded-3xl bg-brand-100">
           <Image
             src="/assets/img/E-Wast-Recycler/E-Wast-Recycler-7.png"
-            alt=""
+            alt={content.imageAlt}
             fill
             priority
             sizes="(min-width: 768px) 45vw, 100vw"

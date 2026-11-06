@@ -2,6 +2,7 @@ import { useRouter } from 'next/router';
 import { type FormEvent, type ReactElement, useEffect, useState } from 'react';
 
 import { Meta } from '../components/layout/Meta';
+import { PublicSeoSchema } from '../components/layout/PublicSeoSchema';
 import { FadeIn } from '../components/ui/FadeIn';
 import { ReusableHero } from '../components/ui/hero';
 import { BRAND, SERVICES } from '../constants/content';
@@ -13,7 +14,7 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const RequestQuotePage: NextPageWithLayout = () => {
   const router = useRouter();
-  const { services, requestQuote: content } = useDictionary();
+  const { services, requestQuote: content, seo } = useDictionary();
 
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
@@ -45,18 +46,25 @@ const RequestQuotePage: NextPageWithLayout = () => {
       return;
     }
     setError('');
-    // TODO: wire this up to a real CRM/quoting workflow (e.g. a helpdesk inbox
-    // or internal sales pipeline). This only simulates success client-side —
-    // no request is actually stored or routed yet.
+    const message = [
+      content.hero.headline,
+      `${content.form.fullName}: ${fullName.trim()}`,
+      `${content.form.email}: ${email.trim()}`,
+      `${content.form.phone}: ${phone.trim()}`,
+      `${content.form.company}: ${company.trim()}`,
+      `${content.form.serviceLabel}: ${services.cards[service as keyof typeof services.cards].title}`,
+      `${content.form.detailsLabel}: ${details.trim()}`,
+    ].join('\n');
     setSubmitted(true);
+    window.location.assign(
+      `https://wa.me/${BRAND.phone.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`,
+    );
   };
 
   return (
     <>
-      <Meta
-        title="Request a Quote — Recycling Hub"
-        description="Request a quote for bulk or industrial e-waste collection, certified data destruction, or compliance reporting."
-      />
+      <Meta {...seo.quote} />
+      <PublicSeoSchema page="quote" />
 
       <ReusableHero
         eyebrow={content.hero.eyebrow}
@@ -68,6 +76,12 @@ const RequestQuotePage: NextPageWithLayout = () => {
       <section className="bg-white pb-16 md:pb-20">
         <div className="mx-auto max-w-2xl px-5 md:px-8">
           <FadeIn>
+            <h2 className="mb-4 text-2xl font-bold text-neutral-950">
+              {content.help.heading}
+            </h2>
+            <p className="mb-6 leading-relaxed text-slate-600">
+              {content.help.description}
+            </p>
             <form
               onSubmit={handleSubmit}
               noValidate
@@ -89,7 +103,6 @@ const RequestQuotePage: NextPageWithLayout = () => {
                       setFullName(e.target.value);
                       if (error) setError('');
                     }}
-                    disabled={submitted}
                     placeholder={content.form.fullNamePlaceholder}
                     className="rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-neutral-950 placeholder:text-slate-400 focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20 disabled:bg-slate-50 disabled:text-slate-400"
                   />
@@ -110,8 +123,7 @@ const RequestQuotePage: NextPageWithLayout = () => {
                       setEmail(e.target.value);
                       if (error) setError('');
                     }}
-                    disabled={submitted}
-                    placeholder="you@example.com"
+                    placeholder={content.form.emailPlaceholder}
                     className="rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-neutral-950 placeholder:text-slate-400 focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20 disabled:bg-slate-50 disabled:text-slate-400"
                   />
                 </div>
@@ -128,7 +140,6 @@ const RequestQuotePage: NextPageWithLayout = () => {
                     type="tel"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    disabled={submitted}
                     placeholder={content.form.phonePlaceholder}
                     className="rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-neutral-950 placeholder:text-slate-400 focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20 disabled:bg-slate-50 disabled:text-slate-400"
                   />
@@ -146,7 +157,6 @@ const RequestQuotePage: NextPageWithLayout = () => {
                     type="text"
                     value={company}
                     onChange={(e) => setCompany(e.target.value)}
-                    disabled={submitted}
                     placeholder={content.form.companyPlaceholder}
                     className="rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-neutral-950 placeholder:text-slate-400 focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20 disabled:bg-slate-50 disabled:text-slate-400"
                   />
@@ -163,7 +173,6 @@ const RequestQuotePage: NextPageWithLayout = () => {
                     id="service"
                     value={service}
                     onChange={(e) => setService(e.target.value)}
-                    disabled={submitted}
                     className="rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-neutral-950 focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20 disabled:bg-slate-50 disabled:text-slate-400"
                   >
                     {SERVICES.map((s) => (
@@ -185,7 +194,6 @@ const RequestQuotePage: NextPageWithLayout = () => {
                     id="details"
                     value={details}
                     onChange={(e) => setDetails(e.target.value)}
-                    disabled={submitted}
                     rows={4}
                     placeholder={content.form.detailsPlaceholder}
                     className="resize-none rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-neutral-950 placeholder:text-slate-400 focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20 disabled:bg-slate-50 disabled:text-slate-400"
@@ -206,7 +214,6 @@ const RequestQuotePage: NextPageWithLayout = () => {
                 </p>
                 <button
                   type="submit"
-                  disabled={submitted}
                   className="inline-flex w-full items-center justify-center rounded-full bg-brand-600 px-6 py-3 text-sm font-semibold text-white ring-2 ring-brand-600 ring-offset-2 transition-all duration-300 ease-out hover:bg-brand-700 hover:ring-brand-700 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
                 >
                   {submitted
