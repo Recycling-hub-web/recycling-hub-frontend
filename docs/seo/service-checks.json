@@ -1,0 +1,110 @@
+[
+  {
+    "lang": "en",
+    "slug": "collection-pickup",
+    "title": "Household e-waste pickup | Recycling Hub",
+    "description": "Free household e-waste pickup in Klang Valley for at least 3 devices, with instant DuitNow payment. Share a device list on WhatsApp to arrange collection.",
+    "h1": "Household e-waste pickup",
+    "canonical": "https://recyclinghub.eco/services/collection-pickup",
+    "schemas": ["BreadcrumbList", "Service"]
+  },
+  {
+    "lang": "en",
+    "slug": "bulk-industrial-collection",
+    "title": "Bulk e-waste collection Malaysia | Recycling Hub",
+    "description": "Arrange bulk e-waste collection in Klang Valley for office IT equipment. Discuss data destruction and documents with the team. Request a quote on WhatsApp.",
+    "h1": "Business & bulk e-waste collection",
+    "canonical": "https://recyclinghub.eco/services/bulk-industrial-collection",
+    "schemas": ["BreadcrumbList", "Service"]
+  },
+  {
+    "lang": "en",
+    "slug": "certified-data-destruction",
+    "title": "Certified data destruction Malaysia | Recycling Hub",
+    "description": "Request certified data destruction for business devices in Klang Valley. Confirm handling and documentation before collection. Contact us on WhatsApp.",
+    "h1": "Certified data destruction",
+    "canonical": "https://recyclinghub.eco/services/certified-data-destruction",
+    "schemas": ["BreadcrumbList", "Service"]
+  },
+  {
+    "lang": "en",
+    "slug": "esg-reporting",
+    "title": "E-waste collection records | Recycling Hub",
+    "description": "Ask about e-waste collection records for your business sustainability reporting. Confirm available information and document formats with us on WhatsApp.",
+    "h1": "Collection & sustainability records",
+    "canonical": "https://recyclinghub.eco/services/esg-reporting",
+    "schemas": ["BreadcrumbList", "Service"]
+  },
+  {
+    "lang": "en",
+    "slug": "material-recovery",
+    "title": "Electronics recycling Klang Valley | Recycling Hub",
+    "description": "Arrange electronics recycling in Klang Valley with free household pickup for at least 3 devices and instant DuitNow payment. Discuss your devices today.",
+    "h1": "Electronics recycling",
+    "canonical": "https://recyclinghub.eco/services/material-recovery",
+    "schemas": ["BreadcrumbList", "Service"]
+  },
+  {
+    "lang": "en",
+    "slug": "compliance-documentation",
+    "title": "Business collection documents | Recycling Hub",
+    "description": "Request business collection documents for e-waste pickup in Klang Valley. Confirm your record requirements before collection. Ask for a quote on WhatsApp.",
+    "h1": "Business collection documentation",
+    "canonical": "https://recyclinghub.eco/services/compliance-documentation",
+    "schemas": ["BreadcrumbList", "Service"]
+  },
+  {
+    "lang": "bm",
+    "slug": "collection-pickup",
+    "title": "Pickup e-waste rumah | Recycling Hub",
+    "description": "Pickup e-waste rumah percuma di Lembah Klang untuk minimum 3 peranti, dengan bayaran DuitNow serta-merta. Kongsi senarai peranti anda melalui WhatsApp.",
+    "h1": "Pickup e-waste rumah",
+    "canonical": "https://recyclinghub.eco/bm/services/collection-pickup",
+    "schemas": ["BreadcrumbList", "Service"]
+  },
+  {
+    "lang": "bm",
+    "slug": "bulk-industrial-collection",
+    "title": "Kutipan e-waste pukal | Recycling Hub",
+    "description": "Aturkan kutipan e-waste pukal untuk peralatan IT pejabat di Lembah Klang. Bincangkan pemusnahan data dan dokumen. Minta sebut harga melalui WhatsApp.",
+    "h1": "Kutipan e-waste perniagaan & pukal",
+    "canonical": "https://recyclinghub.eco/bm/services/bulk-industrial-collection",
+    "schemas": ["BreadcrumbList", "Service"]
+  },
+  {
+    "lang": "bm",
+    "slug": "certified-data-destruction",
+    "title": "Pemusnahan data bertauliah | Recycling Hub",
+    "description": "Minta pemusnahan data bertauliah untuk peranti perniagaan di Lembah Klang. Sahkan kaedah dan dokumentasi sebelum kutipan. Hubungi kami melalui WhatsApp.",
+    "h1": "Pemusnahan data bertauliah",
+    "canonical": "https://recyclinghub.eco/bm/services/certified-data-destruction",
+    "schemas": ["BreadcrumbList", "Service"]
+  },
+  {
+    "lang": "bm",
+    "slug": "esg-reporting",
+    "title": "Rekod kutipan e-waste | Recycling Hub",
+    "description": "Tanya tentang rekod kutipan e-waste untuk pelaporan kelestarian perniagaan anda. Sahkan maklumat dan format dokumen yang tersedia melalui WhatsApp kami.",
+    "h1": "Rekod kutipan & kelestarian",
+    "canonical": "https://recyclinghub.eco/bm/services/esg-reporting",
+    "schemas": ["BreadcrumbList", "Service"]
+  },
+  {
+    "lang": "bm",
+    "slug": "material-recovery",
+    "title": "Kitar semula elektronik | Recycling Hub",
+    "description": "Aturkan kitar semula elektronik di Lembah Klang dengan pickup rumah percuma untuk minimum 3 peranti dan bayaran DuitNow. Hubungi kami melalui WhatsApp.",
+    "h1": "Kitar semula elektronik",
+    "canonical": "https://recyclinghub.eco/bm/services/material-recovery",
+    "schemas": ["BreadcrumbList", "Service"]
+  },
+  {
+    "lang": "bm",
+    "slug": "compliance-documentation",
+    "title": "Dokumentasi kutipan perniagaan | Recycling Hub",
+    "description": "Minta dokumentasi kutipan e-waste perniagaan di Lembah Klang. Sahkan keperluan rekod organisasi anda sebelum kutipan. Minta sebut harga melalui WhatsApp.",
+    "h1": "Dokumentasi kutipan perniagaan",
+    "canonical": "https://recyclinghub.eco/bm/services/compliance-documentation",
+    "schemas": ["BreadcrumbList", "Service"]
+  }
+]

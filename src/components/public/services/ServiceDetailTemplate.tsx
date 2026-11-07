@@ -1,13 +1,10 @@
 import { motion } from 'framer-motion';
-import { LuCamera, LuCheck, LuFileText } from 'react-icons/lu';
+import Link from 'next/link';
+import { LuCheck } from 'react-icons/lu';
 
-import {
-  BRAND,
-  SERVICE_DETAILS,
-  SERVICES,
-  type ServiceSlug,
-} from '../../../constants/content';
+import { BRAND, SERVICES, type ServiceSlug } from '../../../constants/content';
 import { useDictionary } from '../../../hooks/useDictionary';
+import { PublicSeoSchema } from '../../layout/PublicSeoSchema';
 import { PublicButton } from '../../ui/buttons/PublicButton';
 import { FadeIn } from '../../ui/FadeIn';
 import { ReusableHero } from '../../ui/hero';
@@ -19,27 +16,16 @@ type ServiceDetailTemplateProps = {
   slug: ServiceSlug;
 };
 
-const VISUAL_ICONS = {
-  photos: LuCamera,
-  certificate: LuFileText,
-};
-
 const ServiceDetailTemplate = ({ slug }: ServiceDetailTemplateProps) => {
   const { nav, services: dictServices } = useDictionary();
   const service = SERVICES.find((s) => s.slug === slug)!;
-  const structural = SERVICE_DETAILS[slug];
   const { title } = dictServices.cards[slug];
   const details = dictServices.detail[slug];
   const Icon = SERVICE_ICONS[service.icon];
-  const visual = structural.visual
-    ? {
-        Icon: VISUAL_ICONS[structural.visual],
-        label: dictServices.visualPlaceholders[structural.visual],
-      }
-    : null;
 
   return (
     <>
+      <PublicSeoSchema page="services" serviceSlug={slug} />
       <ReusableHero
         eyebrow={nav.services}
         headline={title}
@@ -91,15 +77,6 @@ const ServiceDetailTemplate = ({ slug }: ServiceDetailTemplateProps) => {
               <p className="mt-3 text-sm leading-relaxed text-slate-500">
                 {details.trust.description}
               </p>
-
-              {visual && (
-                <div className="mt-6 flex items-center gap-3 rounded-xl border border-dashed border-slate-300 bg-neutral-50 px-5 py-4 text-slate-400">
-                  <visual.Icon size={18} className="shrink-0" />
-                  <span className="text-xs leading-relaxed">
-                    {visual.label}
-                  </span>
-                </div>
-              )}
             </div>
           </FadeIn>
         </div>
@@ -110,10 +87,6 @@ const ServiceDetailTemplate = ({ slug }: ServiceDetailTemplateProps) => {
         <div className="mx-auto max-w-3xl px-5 text-center md:px-8">
           <FadeIn>
             {slug === 'collection-pickup' ? (
-              // Individual pickup is a real, trackable request (the
-              // CollectionRequest backend model), not a sales quote —
-              // /request-quote never actually stores anything (see its
-              // own TODO), so this one service skips it entirely.
               <PublicButton href="/request-pickup">
                 {nav.requestPickup}
               </PublicButton>
@@ -123,6 +96,17 @@ const ServiceDetailTemplate = ({ slug }: ServiceDetailTemplateProps) => {
               </PublicButton>
             )}
           </FadeIn>
+
+          {slug === 'collection-pickup' && (
+            <p className="mt-4 text-sm">
+              <Link
+                href="/request-quote?service=bulk-industrial-collection"
+                className="font-semibold text-brand-700 underline underline-offset-4"
+              >
+                {dictServices.intent.quoteLink}
+              </Link>
+            </p>
+          )}
 
           {slug === 'collection-pickup' && (
             <FadeIn delay={0.1}>

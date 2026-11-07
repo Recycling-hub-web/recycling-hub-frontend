@@ -10,7 +10,7 @@ const IndividualsHouseholdsPage: NextPageWithLayout = () => {
   const { solutions } = useDictionary();
   return (
     <>
-      <Meta {...solutions.householdMeta} />
+      <Meta {...solutions.pageMeta['individuals-households']} />
       <SolutionDetailTemplate slug="individuals-households" />
     </>
   );

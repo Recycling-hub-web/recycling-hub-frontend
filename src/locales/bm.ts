@@ -43,11 +43,14 @@ const bm: Dictionary = {
     quote: {
       title: 'Sebut harga pickup e-waste | Recycling Hub',
       description:
-        'Minta sebut harga pickup e-waste untuk kutipan pukal di Lembah Klang. Pickup rumah percuma untuk 3+ peranti. Hubungi pasukan kami melalui WhatsApp.',
+        'Minta sebut harga pickup e-waste untuk kutipan pukal di Lembah Klang. Pickup rumah percuma untuk 3+ peranti. Hubungi kami melalui WhatsApp.',
     },
   },
 
   nav: {
+    whoWeHelp: 'Siapa yang kami bantu',
+    serviceGroupMain: 'Kutipan & kitar semula',
+    serviceGroupSupport: 'Sokongan perniagaan',
     home: 'Laman Utama',
     pricing: 'Harga',
     about: 'Tentang Kami',
@@ -595,6 +598,43 @@ const bm: Dictionary = {
   },
 
   services: {
+    pageMeta: {
+      'collection-pickup': {
+        title: 'Pickup e-waste rumah | Recycling Hub',
+        description:
+          'Pickup e-waste rumah percuma di Lembah Klang untuk minimum 3 peranti, dengan bayaran DuitNow serta-merta. Kongsi senarai peranti anda melalui WhatsApp.',
+      },
+      'bulk-industrial-collection': {
+        title: 'Kutipan e-waste pukal | Recycling Hub',
+        description:
+          'Aturkan kutipan e-waste pukal untuk peralatan IT pejabat di Lembah Klang. Bincangkan pemusnahan data dan dokumen. Minta sebut harga melalui WhatsApp.',
+      },
+      'certified-data-destruction': {
+        title: 'Pemusnahan data bertauliah | Recycling Hub',
+        description:
+          'Minta pemusnahan data bertauliah untuk peranti perniagaan di Lembah Klang. Sahkan kaedah dan dokumentasi sebelum kutipan. Hubungi kami melalui WhatsApp.',
+      },
+      'esg-reporting': {
+        title: 'Rekod kutipan e-waste | Recycling Hub',
+        description:
+          'Tanya tentang rekod kutipan e-waste untuk pelaporan kelestarian perniagaan anda. Sahkan maklumat dan format dokumen yang tersedia melalui WhatsApp kami.',
+      },
+      'material-recovery': {
+        title: 'Kitar semula elektronik | Recycling Hub',
+        description:
+          'Aturkan kitar semula elektronik di Lembah Klang dengan pickup rumah percuma untuk minimum 3 peranti dan bayaran DuitNow. Hubungi kami melalui WhatsApp.',
+      },
+      'compliance-documentation': {
+        title: 'Dokumentasi kutipan perniagaan | Recycling Hub',
+        description:
+          'Minta dokumentasi kutipan e-waste perniagaan di Lembah Klang. Sahkan keperluan rekod organisasi anda sebelum kutipan. Minta sebut harga melalui WhatsApp.',
+      },
+    },
+    supportHeading: {
+      eyebrow: 'Sokongan kutipan perniagaan',
+      headline: 'Dokumentasi dan rekod pelaporan',
+    },
+
     pickupMeta: {
       title: 'Pickup e-waste di rumah | Recycling Hub',
       description:
@@ -648,131 +688,122 @@ const bm: Dictionary = {
     },
     cards: {
       'collection-pickup': {
-        title: 'Kutipan & Pengumpulan E-Sisa',
+        title: 'Pickup e-waste rumah',
         summary:
-          'Kutipan berjadual di rumah untuk peranti individu dan jumlah isi rumah, secara percuma di seluruh Klang Valley.',
+          'Pickup rumah percuma di Lembah Klang untuk minimum 3 peranti, dengan bayaran DuitNow serta-merta.',
       },
       'bulk-industrial-collection': {
-        title: 'Pengumpulan Pukal & Industri',
+        title: 'Kutipan e-waste perniagaan & pukal',
         summary:
-          'Kutipan berulang dan berasaskan jumlah untuk pejabat, gudang, dan kilang — disebut harga dan dijadualkan mengikut operasi anda.',
+          'Kutipan mengikut sebut harga untuk pejabat dan organisasi yang melupuskan komputer, monitor dan peralatan IT.',
       },
       'certified-data-destruction': {
-        title: 'Pemusnahan Data Bertauliah',
+        title: 'Pemusnahan data bertauliah',
         summary:
-          'Pemusnahan data bertauliah untuk peranti perniagaan yang menyimpan data. Bincangkan media storan dan keperluan dokumentasi sebelum kutipan.',
+          'Pemusnahan data peranti perniagaan, dengan kaedah pengendalian dan keperluan dokumentasi disahkan sebelum kutipan.',
       },
       'esg-reporting': {
-        title: 'Pelaporan ESG & Kelestarian',
+        title: 'Rekod kutipan & kelestarian',
         summary:
-          'Pilihan laporan untuk rekod e-waste organisasi anda. Tanya maklumat kutipan dan bahan yang tersedia bagi keperluan pelaporan anda.',
+          'Bincangkan rekod kutipan yang tersedia untuk pelaporan kelestarian dalaman organisasi anda.',
       },
       'material-recovery': {
-        title: 'Kitar Semula & Pemulihan Bahan',
+        title: 'Kitar semula elektronik',
         summary:
-          'Pemprosesan peranti elektronik lama untuk mendapatkan semula bahan yang boleh digunakan. Bincangkan jenis peralatan dan pilihan pemulihan dengan pasukan kami.',
+          'Aturkan kitar semula peranti elektronik lama dan bincangkan keperluan pengendalian mengikut jenis peranti.',
       },
       'compliance-documentation': {
-        title: 'Dokumentasi Pematuhan',
+        title: 'Dokumentasi kutipan perniagaan',
         summary:
-          'Dokumen pematuhan bagi pelupusan e-waste perniagaan. Sahkan rekod yang organisasi anda perlukan semasa meminta sebut harga.',
+          'Sahkan dokumen kutipan dan pemusnahan data yang organisasi anda perlukan sebelum mengatur pickup.',
       },
     } satisfies Record<ServiceSlug, { title: string; summary: string }>,
     detail: {
       'collection-pickup': {
         description:
-          'Recycling Hub mengutip telefon, komputer riba, tablet, monitor, dan peralatan IT kecil yang telah bersara terus dari rumah atau pejabat anda di seluruh Klang Valley. Setiap kutipan dijadualkan terlebih dahulu dan disahkan sebelum pasukan kami tiba, jadi kutipan berlaku mengikut syarat anda, bukan lawatan tanpa notis.',
+          'Aturkan kutipan telefon, laptop, komputer dan peranti elektronik lama anda di Lembah Klang. Pickup rumah percuma untuk minimum 3 peranti. Kongsi jenis peranti dan alamat melalui WhatsApp supaya pasukan kami boleh mengesahkan penerimaan dan urusan kutipan.',
         included: [
-          'Kutipan di rumah untuk peranti elektronik individu dan isi rumah di Klang Valley — minimum 3 peranti',
-          'Kategori diterima: telefon & tablet, komputer riba & komputer, monitor & paparan, dan peralatan IT pejabat kecil',
-          'Kini tersedia di seluruh Klang Valley — kawasan lain akan datang',
-          'Kutipan standard direka untuk jumlah individu dan isi rumah — kutipan jumlah lebih tinggi dikendalikan di bawah Pengumpulan Pukal & Industri',
-          'Bayaran DuitNow segera untuk peranti peribadi yang layak semasa kutipan',
+          'Minimum 3 peranti untuk pickup rumah percuma',
+          'Kongsi jenis, keadaan peranti dan alamat kutipan',
+          'Bayaran DuitNow serta-merta semasa kutipan',
+          'Masa kutipan disahkan bersama pasukan kami',
         ],
         trust: {
-          title: 'Kutipan Berdaftar DOE',
+          title: 'Sebelum pickup',
           description:
-            'Setiap kutipan — individu atau pukal — dijalankan di bawah status pengumpul e-sisa berdaftar DOE kami, bukan pusingan kutipan tidak formal.',
+            'Tanya tentang penerimaan terlebih dahulu untuk barang luar biasa, perkakas atau peranti yang rosak.',
         },
       },
       'bulk-industrial-collection': {
         description:
-          'Untuk pejabat, gudang, dan kilang yang menjana e-sisa secara berterusan, Recycling Hub menjalankan kutipan berjadual dan berulang berbanding kutipan sekali sahaja. Logistik dibina mengikut waktu operasi dan jumlah anda, bukan sebaliknya.',
+          'Rancang kutipan e-waste perniagaan mengikut peralatan yang hendak dilupuskan. Kongsi inventori, anggaran kuantiti dan alamat kutipan di Lembah Klang. Pasukan kami akan mengesahkan skop, akses dan harga sebelum kutipan.',
         included: [
-          'Kutipan berulang dijadualkan mengikut kadar yang sepadan dengan jumlah anda',
-          'Logistik khusus untuk kutipan pelbagai unit — satu tapak atau pelbagai cawangan/gudang dalam satu penglibatan',
-          'Sebut harga berasaskan jumlah mengikut jenis dan bilangan peranti, disahkan sebelum sebarang kutipan dijadualkan',
-          'Pemusnahan data bertauliah dan dokumentasi pematuhan yang sama seperti setiap peringkat kutipan lain',
-          'Berbeza daripada kutipan individu — dibina untuk jumlah berulang dan berjadual, bukan satu laci peranti sekali sahaja',
+          'Sahkan inventori komputer, monitor dan peralatan IT pejabat',
+          'Sebut harga mengikut peralatan, kuantiti dan keperluan kutipan',
+          'Bincangkan akses bangunan dan urusan pemuatan',
+          'Minta pemusnahan data dan dokumentasi bersama sebut harga',
         ],
         trust: {
-          title: 'Pematuhan Sisa Terjadual SW110',
+          title: 'Sahkan skop kutipan',
           description:
-            'Kutipan pukal dan industri dijalankan di bawah klasifikasi sisa terjadual SW110, di bawah Akta Kualiti Alam Sekeliling 1974 Malaysia dan peraturan sampingannya.',
+            'Keperluan kutipan sekali atau berulang boleh dibincangkan melalui WhatsApp. Jadual berulang hanya ditetapkan selepas persetujuan.',
         },
       },
       'certified-data-destruction': {
         description:
-          'Sebarang peranti membawa data yang kami kutip — telefon, komputer riba, cakera keras, pelayan — melalui pemusnahan bertauliah sebelum dikitar semula. Kami tidak menjual semula atau membaik pulih peranti yang masih membawa data anda, dan setiap peristiwa pemusnahan direkod dan disahkan.',
+          'Perniagaan boleh meminta pemusnahan data bertauliah apabila melupuskan peralatan yang menyimpan data. Nyatakan peranti atau media storan yang terlibat dan bukti yang organisasi anda perlukan. Sahkan kaedah pengendalian, skop dan dokumentasi sebelum kutipan.',
         included: [
-          'Pemusnahan fizikal media storan, bukan pemadaman perisian yang boleh diterbalikkan',
-          'Sijil pemusnahan bersiri dikeluarkan bagi setiap aset atau kelompok',
-          'Penjejakan rantaian jagaan dari kutipan hingga pemusnahan, jadi tiada peranti tidak direkodkan di antaranya',
-          'Tersedia sebagai permintaan berasingan untuk peranti atau kelompok tertentu, atau digabungkan dalam mana-mana kutipan',
-          'Sijil boleh diperoleh semula atas permintaan melalui Jejak & Kesan',
+          'Senaraikan peranti dan media storan yang terlibat',
+          'Terangkan keperluan pengendalian data organisasi anda',
+          'Sahkan kaedah pemusnahan sebelum penyerahan',
+          'Persetujui dokumentasi yang diperlukan dalam sebut harga',
         ],
         trust: {
-          title: 'Sijil Pemusnahan',
+          title: 'Persetujui bukti yang diperlukan',
           description:
-            'Setiap sijil bersiri dan dikaitkan dengan aset khusus yang dimusnahkan — bukan kenyataan kelompok generik.',
+            'Sahkan format sijil, butiran setiap aset dan standard yang diminta dengan pasukan kami sebelum kutipan.',
         },
       },
       'esg-reporting': {
         description:
-          'Perniagaan yang mengutip bersama Recycling Hub menerima laporan pengalihan yang meringkaskan apa yang dikutip dan apa yang berlaku kepadanya — diformat supaya pasukan kelestarian atau pematuhan anda boleh menggunakannya terus dalam pendedahan ESG, tanpa memformat semula.',
+          'Jika organisasi anda memerlukan rekod untuk pelaporan kelestarian dalaman, nyatakan maklumat yang diperlukan semasa meminta kutipan perniagaan. Pasukan kami akan mengesahkan rekod kutipan dan maklumat sokongan yang boleh disediakan.',
         included: [
-          'Jumlah berat dikutip dan dikitar semula, mengikut kategori peranti',
-          'Pecahan bahan dipulihkan berbanding pengalihan daripada tapak pelupusan',
-          'Anggaran kesan karbon bagi kutipan',
-          'Diberikan bagi setiap kutipan, atau digabungkan sepanjang tempoh pelaporan (contohnya suku tahunan, tahunan) atas permintaan',
-          'Diformat untuk kegunaan terus dalam audit ESG dan pendedahan kelestarian',
+          'Terangkan tujuan dan tempoh pelaporan',
+          'Tanya butiran peranti atau kutipan yang tersedia',
+          'Sahkan format dan skop sebelum kutipan',
         ],
         trust: {
-          title: 'Pelaporan Sedia ESG',
+          title: 'Sokongan rekod yang dipersetujui',
           description:
-            'Setiap kutipan pukal dan perusahaan layak mendapat laporan pengalihan — minta satu bersama sebut harga seterusnya anda.',
+            'Sahkan maklumat yang tersedia untuk kutipan anda dan cara pasukan anda akan menggunakannya dalam rekod kelestarian dalaman.',
         },
       },
       'material-recovery': {
         description:
-          'Setelah dikutip, e-sisa diproses melalui rakan kongsi muara bawah berlesen yang memulihkan bahan boleh guna semula — logam, plastik, dan komponen — dan memastikan apa-apa yang tidak boleh dipulihkan dilupuskan mematuhi peraturan sisa terjadual Malaysia, bukan dihantar ke tapak pelupusan.',
+          'Aturkan kitar semula elektronik sebagai sebahagian daripada kutipan rumah atau perniagaan. Kongsi jenis, keadaan peranti dan keperluan pengendalian sebelum pickup. Bincangkan laluan kitar semula dengan pasukan kami tanpa menganggap semua peranti digunakan semula atau semua bahan dipulihkan.',
         included: [
-          'Penyusunan dan pembongkaran peranti dikutip mengikut aliran bahan',
-          'Bahan boleh pulih — logam, plastik, kaca, komponen papan litar — dihalakan kepada pemproses berlesen',
-          'Sisa baki tidak boleh pulih dilupuskan mematuhi SW110, tidak pernah dihantar ke tapak pelupusan tanpa rawatan',
-          'Tiada peraih besi buruk tidak berlesen atau pengitar semula tidak formal dalam rantaian pada mana-mana peringkat',
-          'Hasil pemprosesan dicerminkan dalam laporan pengalihan ESG anda jika anda pelanggan perniagaan',
+          'Sahkan penerimaan peranti elektronik anda',
+          'Maklumkan bateri, barang rosak atau keperluan pengendalian lain',
+          'Bincangkan urusan kitar semula dengan pasukan kutipan',
         ],
         trust: {
-          title: 'Pemprosesan Muara Bawah Berlesen',
+          title: 'Tanya tentang laluan kitar semula',
           description:
-            'Pemulihan bahan dijalankan hanya melalui pemproses berlesen — tidak pernah melalui saluran besi buruk tidak formal atau tidak berdaftar.',
+            'Tanya tentang urusan kitar semula bagi kutipan anda, termasuk peralatan yang memerlukan pengendalian berasingan.',
         },
       },
       'compliance-documentation': {
         description:
-          'Setiap kutipan — individu atau perniagaan — menjana rekod bertulis. Bagi perniagaan, ini bermakna nota konsainan dan dokumen mematuhi DOE yang boleh anda serahkan terus kepada juruaudit, tanpa perlu mengejar kami untuk rekod selepas itu.',
+          'Kutipan perniagaan boleh merangkumi dokumentasi yang dipersetujui untuk rekod organisasi anda. Terangkan keperluan perolehan, pemusnahan data atau dokumen pelupusan semasa meminta sebut harga supaya pasukan kami boleh mengesahkan dokumen yang tersedia.',
         included: [
-          'Nota konsainan dikeluarkan bagi setiap kutipan sisa terjadual',
-          'Dokumen kutipan dan pelupusan mematuhi DOE disimpan untuk rekod anda',
-          'Sijil pemusnahan disertakan bagi sebarang aset membawa data dalam kutipan',
-          'Dokumentasi diberikan pada masa kutipan atau sejurus selepasnya',
-          'Dokumentasi lampau boleh diperoleh semula bila-bila masa melalui Jejak & Kesan',
+          'Senaraikan dokumen yang organisasi anda perlukan',
+          'Sahkan rekod yang termasuk dalam sebut harga',
+          'Tanya cara meminta rekod selepas kutipan',
         ],
         trust: {
-          title: 'Dokumen Sedia Audit',
+          title: 'Sahkan dokumen sebelum tempahan',
           description:
-            'Dokumentasi dikeluarkan bagi setiap kutipan, tidak dikumpulkan pada penghujung tahun, jadi rekod anda kekal terkini sepanjang tahun.',
+            'Sahkan skop, format dan urusan penyerahan dokumen dengan pasukan kami sebelum tempahan.',
         },
       },
     } satisfies Record<
@@ -915,21 +946,62 @@ const bm: Dictionary = {
   },
 
   solutions: {
+    meta: {
+      title: 'Penyelesaian e-waste perniagaan | Recycling Hub',
+      description:
+        'Terokai penyelesaian e-waste untuk perniagaan dan isi rumah di Lembah Klang. Sediakan peranti, akses dan rekod kutipan. Hubungi kami melalui WhatsApp.',
+    },
+
+    relatedServiceHeading: 'Perkhidmatan berkaitan',
+
+    pageMeta: {
+      'corporate-enterprise': {
+        title: 'Pelupusan IT pejabat | Recycling Hub',
+        description:
+          'Rancang pelupusan IT pejabat di Lembah Klang dengan senarai aset dan butiran akses bangunan. Bincangkan skop dan harga kutipan melalui WhatsApp kami.',
+      },
+      'individuals-households': {
+        title: 'Kitar semula elektronik rumah | Recycling Hub',
+        description:
+          'Sedia untuk kitar semula elektronik rumah di Lembah Klang: minimum 3 peranti, pickup percuma dan bayaran DuitNow. Aturkan kutipan melalui WhatsApp kami.',
+      },
+      'government-glc': {
+        title: 'Persediaan pelupusan IT sektor awam | Recycling Hub',
+        description:
+          'Sediakan pelupusan IT sektor awam dengan kelulusan aset dan keperluan dokumen. Sahkan skop kutipan di Lembah Klang. Hubungi kami melalui WhatsApp hari ini.',
+      },
+      education: {
+        title: 'Pengosongan elektronik sekolah | Recycling Hub',
+        description:
+          'Rancang pengosongan elektronik sekolah di Lembah Klang dengan inventori bilik dan masa akses. Bincangkan kutipan serta keperluan data melalui WhatsApp.',
+      },
+      healthcare: {
+        title: 'Pelupusan IT kesihatan | Recycling Hub',
+        description:
+          'Rancang pelupusan IT kesihatan di Lembah Klang dengan kelulusan dalaman, semakan peranti dan keperluan data. Bincangkan skop kutipan melalui WhatsApp kami.',
+      },
+      ngo: {
+        title: 'Pengosongan elektronik NGO | Recycling Hub',
+        description:
+          'Urus pengosongan elektronik NGO di Lembah Klang dengan penyelaras, senarai peranti dan lokasi penyerahan. Sahkan harga dan masa melalui WhatsApp kami.',
+      },
+    },
+
     householdMeta: {
       title: 'Kitar semula elektronik rumah | Recycling Hub',
       description:
         'Kitar semula elektronik rumah di Lembah Klang dengan pickup percuma untuk minimum 3 peranti dan bayaran DuitNow serta-merta. Hubungi kami untuk kutipan.',
     },
     hero: {
-      eyebrow: 'Siapa Yang Kami Khidmati',
-      headline: 'Penyelesaian E-Sisa Disesuaikan,',
-      headlineAccent: 'Sektor demi Sektor.',
+      eyebrow: 'Siapa yang kami bantu',
+      headline: 'Penyelesaian e-waste untuk perniagaan',
+      headlineAccent: 'dan isi rumah',
       description:
-        'Dari sebuah isi rumah tunggal yang melupuskan peranti lama hingga sebuah perusahaan yang menutup pusat data, Recycling Hub menyesuaikan proses berdaftar DOE dan bertauliah yang sama mengikut keperluan sebenar setiap sektor.',
+        'Pilih panduan yang sesuai untuk organisasi atau rumah anda. Setiap penyelesaian menerangkan persediaan, pegawai yang perlu dilibatkan dan perkhidmatan untuk dibincangkan sebelum kutipan di Lembah Klang.',
     },
     crossLink: {
-      text: 'Mencari pilihan mengikut jenis perkhidmatan pula?',
-      cta: 'Lihat Perkhidmatan',
+      text: 'Bersedia memilih keperluan anda?',
+      cta: 'Bandingkan perkhidmatan kutipan e-waste',
       href: '/services',
     },
     gridHeading: {
@@ -939,119 +1011,119 @@ const bm: Dictionary = {
       },
       exploreMore: { eyebrow: 'Terokai Lagi', headline: 'Penyelesaian Lain' },
     },
-    whyUsHeadingPrefix: 'Mengapa',
-    whyUsHeadingSuffix: 'Memilih Recycling Hub',
+    whyUsHeadingPrefix: 'Persediaan untuk',
+    whyUsHeadingSuffix: '',
     learnMore: 'Ketahui lebih lanjut',
     cards: {
       'corporate-enterprise': {
-        title: 'Korporat & Perusahaan',
+        title: 'Pelupusan IT pejabat',
         summary:
-          'Kutipan pukal berulang, pemusnahan data bertauliah, dan pelaporan ESG untuk pejabat, IT korporat, dan kilang.',
+          'Rancang pengosongan peralatan pejabat dengan inventori, pegawai bertanggungjawab dan urusan akses yang dipersetujui.',
       },
       'individuals-households': {
-        title: 'Individu & Isi Rumah',
+        title: 'Kitar semula elektronik rumah',
         summary:
-          'Kutipan percuma di rumah di Klang Valley dan bayaran DuitNow segera untuk peranti elektronik peribadi — minimum 3 peranti, tiada dokumen.',
+          'Sediakan minimum 3 peranti rumah lama untuk pickup dan bincangkan keadaan peranti sebelum kutipan.',
       },
       'government-glc': {
-        title: 'Kerajaan & GLC',
+        title: 'Persediaan pelupusan IT sektor awam',
         summary:
-          'Pematuhan sedia perolehan dan dokumentasi telus untuk agensi sektor awam dan syarikat berkaitan kerajaan.',
+          'Urus kelulusan aset dan keperluan dokumen sebelum meminta kutipan peralatan sektor awam.',
       },
       education: {
-        title: 'Pendidikan',
+        title: 'Pengosongan elektronik sekolah & kampus',
         summary:
-          'Kutipan pukal untuk naik taraf makmal komputer dan pertukaran peralatan sepanjang kampus, dengan pemusnahan bertauliah data pelajar dan staf.',
+          'Sediakan peralatan kelas dan pejabat yang dilupuskan untuk kutipan tanpa mengganggu ruang pembelajaran aktif.',
       },
       healthcare: {
-        title: 'Penjagaan Kesihatan',
+        title: 'Pelupusan IT klinik & hospital',
         summary:
-          'Kutipan dijejaki rantaian jagaan dan pemusnahan bertauliah untuk peralatan IT hospital dan klinik yang telah bersara.',
+          'Rancang penyerahan IT yang dilupuskan mengikut kawalan data dalaman dan keperluan akses premis.',
       },
       ngo: {
-        title: 'NGO & Bukan Untung',
+        title: 'Pengosongan peranti komuniti & NGO',
         summary:
-          'Kutipan fleksibel dan berjumlah rendah pada kadar perkongsian untuk badan bukan untung dan organisasi komuniti.',
+          'Selaraskan senarai peranti, penyelaras dan lokasi kutipan untuk peranti elektronik lama organisasi anda.',
       },
     } satisfies Record<SolutionSlug, { title: string; summary: string }>,
     detail: {
       'corporate-enterprise': {
         framing:
-          'Pejabat korporat, jabatan IT, dan kilang menjana e-sisa secara berterusan — dan setiap peranti yang keluar tanpa dokumentasi yang betul adalah soalan pematuhan dan keselamatan data yang akhirnya akan ditanya oleh lembaga pengarah anda. Recycling Hub menggantikan ketidakpastian itu dengan kutipan pukal berjadual, pemusnahan bertauliah, dan pelaporan sedia audit yang terbina dalam setiap kutipan.',
+          'Apabila menggantikan IT pejabat, mulakan dengan peranti yang organisasi anda telah luluskan untuk dilupuskan. Sediakan senarai aset, asingkan peralatan yang masih digunakan dan kenal pasti pegawai yang akan membenarkan penyerahan. Kongsi butiran lokasi di Lembah Klang untuk membincangkan keperluan kutipan.',
         whyUs: [
-          'Kutipan pukal berulang dijadualkan mengikut operasi anda, bukan operasi kami',
-          'Pemusnahan data bertauliah dengan sijil bersiri bagi setiap aset membawa data yang bersara',
-          'Laporan pengalihan ESG diformat untuk kegunaan terus dalam pendedahan kelestarian dan audit',
-          'Dokumentasi pematuhan — nota konsainan, dokumen mematuhi DOE — dikeluarkan bagi setiap kutipan, tidak dikumpulkan pada penghujung tahun',
+          'Senaraikan jenis, kuantiti dan rujukan aset',
+          'Sahkan kelulusan dalaman dan pegawai penyerahan',
+          'Semak akses pemuatan, lif dan sekatan bangunan',
+          'Nyatakan keperluan data dan rekod sebelum meminta sebut harga',
         ],
-        ctaLabel: 'Minta Sebut Harga Pukal',
-        testimonialNote:
-          'Kajian kes/testimoni korporat — akan ditambah apabila rujukan pelanggan tersedia. Jangan diterbitkan tanpa persetujuan pelanggan sebenar.',
+        serviceSlug: 'bulk-industrial-collection',
+        serviceLabel: 'Kutipan e-waste perniagaan & pukal',
+        ctaLabel: 'Minta sebut harga kutipan pejabat',
       },
       'individuals-households': {
         framing:
-          'Melupuskan telefon lama, komputer riba, atau satu laci penuh pengecas mati tidak sepatutnya mengambil lebih usaha daripada membuangnya ke tong sampah — tetapi tong sampah bukan tempat ia patut pergi. Recycling Hub mengutip peranti elektronik lama anda secara percuma di seluruh Klang Valley, dan membayar anda segera sejurus ia dikutip.',
+          'Kumpulkan peranti elektronik lama yang hendak dikeluarkan dari rumah dan pastikan sekurang-kurangnya 3 peranti tersedia untuk pickup rumah percuma di Lembah Klang. Beritahu pasukan kami jenis peranti dan alamat anda. Sandarkan fail peribadi dan log keluar daripada akaun sebelum menyerahkan peranti.',
         whyUs: [
-          'Kutipan percuma di rumah di Klang Valley — minimum 3 peranti, tiada akaun atau kontrak diperlukan',
-          'Bayaran DuitNow segera sejurus peranti anda dikutip',
-          'Semua peranti peribadi diterima — telefon, komputer riba, tablet, monitor, dan banyak lagi',
-          'Pemusnahan data bertauliah disertakan pada setiap peranti membawa data, tanpa langkah tambahan untuk anda',
+          'Sahkan penerimaan dan keadaan peranti dengan pasukan kami',
+          'Sediakan minimum 3 peranti rumah untuk pickup',
+          'Keluarkan kad SIM dan sandarkan fail yang ingin disimpan',
+          'Maklumkan akses kondominium atau peraturan kutipan bangunan',
         ],
-        ctaLabel: 'Tempah Kutipan',
-        testimonialNote:
-          'Testimoni isi rumah — akan ditambah apabila maklum balas pelanggan sebenar tersedia. Jangan terbitkan petikan rekaan.',
+        serviceSlug: 'collection-pickup',
+        serviceLabel: 'Pickup e-waste rumah',
+        ctaLabel: 'Aturkan pickup rumah',
       },
       'government-glc': {
         framing:
-          'Agensi sektor awam dan syarikat berkaitan kerajaan memerlukan vendor yang dapat menahan penelitian perolehan — pematuhan kawal selia penuh, dokumentasi telus, dan rekod bertulis yang kukuh dalam semakan tender, bukan sekadar resit kutipan.',
+          'Agensi awam dan syarikat berkaitan kerajaan mungkin memerlukan kelulusan pelupusan aset sebelum peralatan boleh keluar dari premis. Kenal pasti pegawai pelulus, rujukan inventori dan maklumat vendor yang diperlukan. Minta pasukan kami mengesahkan sama ada skop kutipan dan keperluan dokumen boleh dipenuhi.',
         whyUs: [
-          'Kutipan berdaftar DOE dan pematuhan sisa terjadual SW110, sedia untuk usaha wajar perolehan',
-          'Dokumentasi telus bagi setiap kutipan — nota konsainan dan dokumen pematuhan, bukan diringkaskan selepas fakta',
-          'Pemusnahan data bertauliah dengan penjejakan rantaian jagaan, untuk agensi yang mengendalikan rekod sensitif',
-          'Kutipan pukal dijadualkan mengikut kitaran perolehan dan belanjawan standard',
+          'Ikut proses kelulusan pelupusan aset organisasi anda',
+          'Sediakan inventori dan kenal pasti pegawai yang diberi kuasa',
+          'Nyatakan maklumat vendor dan dokumen yang diminta',
+          'Persetujui akses premis dan urusan penyerahan sebelum kutipan',
         ],
-        ctaLabel: 'Minta Maklumat Vendor',
-        testimonialNote:
-          'Kajian kes atau rujukan kerajaan/GLC — akan ditambah apabila tersedia dan diluluskan untuk pendedahan awam.',
+        serviceSlug: 'compliance-documentation',
+        serviceLabel: 'Dokumentasi kutipan perniagaan',
+        ctaLabel: 'Bincangkan kutipan sektor awam',
       },
       education: {
         framing:
-          'Naik taraf makmal komputer dan pertukaran peralatan sepanjang kampus menjana e-sisa secara berkelompok, bukan satu peranti pada satu masa — dan peranti pelajar dan staf yang bersara sering masih menyimpan data peribadi yang menjadi tanggungjawab sekolah untuk melindungi. Recycling Hub menguruskan kedua-dua jumlah dan data.',
+          'Untuk pengosongan sekolah atau kampus, asingkan peralatan yang dilupuskan daripada peranti yang masih digunakan oleh pelajar dan kakitangan. Sediakan inventori mengikut bilik atau jabatan, kenal pasti pegawai sekolah dan cadangkan masa kutipan yang tidak mengganggu kelas. Pasukan kami akan mengesahkan ketersediaan sebelum tarikh dipersetujui.',
         whyUs: [
-          'Kutipan pukal yang boleh dijadualkan mengikut cuti semester dan kitaran naik taraf',
-          'Pemusnahan data bertauliah pada setiap peranti bersara, melindungi data pelajar dan staf sebelum dijual semula atau dikitar semula',
-          'Dokumentasi merangkumi keseluruhan kelompok dikutip, berguna untuk hapus kira aset dan rekod inventori',
-          'Proses berdaftar DOE dan mematuhi SW110 yang sama seperti mana-mana kutipan pukal lain',
+          'Asingkan peralatan yang dilupuskan daripada peranti kelas aktif',
+          'Rekod peralatan mengikut bilik, makmal atau jabatan',
+          'Kenal pasti peranti yang mungkin menyimpan rekod pelajar atau kakitangan',
+          'Cadangkan masa akses dan sahkan ketersediaan',
         ],
-        ctaLabel: 'Minta Sebut Harga Kutipan Kampus',
-        testimonialNote:
-          'Kajian kes atau testimoni sekolah/universiti — akan ditambah apabila rujukan pelanggan tersedia.',
+        serviceSlug: 'bulk-industrial-collection',
+        serviceLabel: 'Kutipan e-waste perniagaan & pukal',
+        ctaLabel: 'Minta sebut harga kutipan kampus',
       },
       healthcare: {
         framing:
-          'Peralatan IT hospital dan klinik yang telah bersara — stesen kerja, pelayan, sistem pengimejan, pemacu storan — boleh membawa data pesakit lama selepas ia ditarik daripada perkhidmatan. Recycling Hub melayan setiap kutipan penjagaan kesihatan sebagai peristiwa rantaian jagaan, bukan sekadar kutipan.',
+          'Apabila melupuskan IT klinik atau hospital, libatkan pegawai IT dan perlindungan data organisasi sebelum mengatur kutipan. Kenal pasti peralatan yang menyimpan data dan sahkan peranti yang diluluskan untuk penyerahan. Kongsi jenis peralatan terlebih dahulu; penerimaan peralatan perubatan atau khusus perlu disahkan secara berasingan.',
         whyUs: [
-          'Pemusnahan data bertauliah bagi sebarang peranti yang mungkin menyimpan rekod pesakit atau klinikal',
-          'Rantaian jagaan didokumenkan dari kutipan hingga pemusnahan, untuk semakan audit dan pematuhan dalaman',
-          'Kutipan dijadualkan mengikut waktu operasi fasiliti, bukan kutipan tanpa temujanji',
-          'Sijil pemusnahan bersiri dikeluarkan bagi setiap aset, bukan kenyataan kelompok generik',
+          'Sahkan kelulusan dalaman bagi setiap aset IT',
+          'Kenal pasti media storan yang mungkin menyimpan rekod pesakit',
+          'Bincangkan keperluan pemusnahan data sebelum penyerahan',
+          'Sahkan penerimaan peralatan, akses premis dan pegawai penyerahan',
         ],
-        ctaLabel: 'Minta Sebut Harga Penyelesaian Penjagaan Kesihatan',
-        testimonialNote:
-          'Kajian kes atau testimoni fasiliti penjagaan kesihatan — akan ditambah apabila rujukan pelanggan tersedia dan diluluskan untuk pendedahan.',
+        serviceSlug: 'certified-data-destruction',
+        serviceLabel: 'Pemusnahan data bertauliah',
+        ctaLabel: 'Bincangkan kutipan IT kesihatan',
       },
       ngo: {
         framing:
-          'Badan bukan untung dan kumpulan komuniti tidak sentiasa menjana e-sisa mengikut jadual yang boleh diramal atau dalam jumlah pukal — dan belanjawan hampir selalu menjadi kekangan sebenar. Recycling Hub menyesuaikan skala untuk memadankan, tanpa melayan organisasi lebih kecil sebagai keutamaan lebih rendah.',
+          'Untuk pengosongan peranti NGO atau komuniti, pilih penyelaras yang boleh mengesahkan peralatan yang termasuk dalam kutipan. Asingkan barang untuk sumbangan daripada barang yang dilupuskan, dan tanya tentang penerimaan serta harga sebelum mengumumkan tarikh kutipan.',
         whyUs: [
-          'Kutipan fleksibel disesuaikan dengan jumlah rendah dan tidak tetap — minimum 3 peranti setiap kutipan',
-          'Harga kadar perkongsian tersedia untuk badan bukan untung berdaftar — tanya semasa anda menghubungi kami',
-          'Pemusnahan data bertauliah dan dokumentasi pematuhan disertakan, sama seperti mana-mana kutipan lain',
-          'Pelaporan pengalihan ESG tersedia atas permintaan, untuk pelaporan penderma atau geran',
+          'Pilih penyelaras dan lokasi penyerahan yang dipersetujui',
+          'Sediakan jenis peranti dan anggaran kuantiti',
+          'Asingkan barang sumbangan daripada peralatan yang dilupuskan',
+          'Sahkan harga dan masa sebelum berkongsi butiran kutipan',
         ],
-        ctaLabel: 'Hubungi Kami Mengenai Kadar Perkongsian',
-        testimonialNote:
-          'Kajian kes atau testimoni rakan kongsi bukan untung — akan ditambah apabila tersedia dan diluluskan untuk kegunaan awam.',
+        serviceSlug: 'bulk-industrial-collection',
+        serviceLabel: 'Kutipan e-waste perniagaan & pukal',
+        ctaLabel: 'Bincangkan kutipan komuniti',
       },
     } satisfies Record<
       SolutionSlug,
@@ -1059,7 +1131,8 @@ const bm: Dictionary = {
         framing: string;
         whyUs: string[];
         ctaLabel: string;
-        testimonialNote: string;
+        serviceSlug: string;
+        serviceLabel: string;
       }
     >,
   },

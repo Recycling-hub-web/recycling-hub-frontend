@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 
-import { BRAND, SERVICES } from '../../constants/content';
+import { BRAND, SERVICES, type ServiceSlug } from '../../constants/content';
 import { useDictionary } from '../../hooks/useDictionary';
 
 const SITE_URL = `https://${BRAND.website}`;
@@ -23,14 +23,19 @@ const PATHS = {
   quote: '/request-quote',
 };
 
-type PublicSeoSchemaProps = { page: keyof typeof PATHS };
+type PublicSeoSchemaProps = {
+  page: keyof typeof PATHS;
+  serviceSlug?: ServiceSlug;
+};
 
-const PublicSeoSchema = ({ page }: PublicSeoSchemaProps) => {
+const PublicSeoSchema = ({ page, serviceSlug }: PublicSeoSchemaProps) => {
   const { locale } = useRouter();
   const { seo, nav, footer, services, faqPage } = useDictionary();
   const localizedUrl = (path: string) =>
     `${SITE_URL}${locale === 'bm' ? '/bm' : ''}${path === '/' && locale === 'bm' ? '' : path}`;
-  const url = localizedUrl(PATHS[page]);
+  const url = localizedUrl(
+    serviceSlug ? `/services/${serviceSlug}` : PATHS[page],
+  );
   const businessId = `${SITE_URL}/#business`;
   const graph: Record<string, unknown>[] = [];
 
@@ -66,14 +71,36 @@ const PublicSeoSchema = ({ page }: PublicSeoSchemaProps) => {
         {
           '@type': 'ListItem',
           position: 2,
-          name: seo[page].title.split(' | ')[0],
-          item: url,
+          name: serviceSlug ? nav.services : seo[page].title.split(' | ')[0],
+          item: serviceSlug ? localizedUrl('/services') : url,
         },
+        ...(serviceSlug
+          ? [
+              {
+                '@type': 'ListItem',
+                position: 3,
+                name: services.cards[serviceSlug].title,
+                item: url,
+              },
+            ]
+          : []),
       ],
     });
   }
 
-  if (page === 'services') {
+  if (page === 'services' && serviceSlug) {
+    graph.push({
+      '@type': 'Service',
+      '@id': `${url}#service`,
+      url,
+      name: services.cards[serviceSlug].title,
+      description: services.detail[serviceSlug].description,
+      provider: { '@id': businessId },
+      areaServed: { '@type': 'Place', name: 'Klang Valley' },
+    });
+  }
+
+  if (page === 'services' && !serviceSlug) {
     graph.push({
       '@type': 'ItemList',
       '@id': `${url}#services`,

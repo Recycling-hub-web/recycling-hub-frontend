@@ -55,6 +55,9 @@ const en = {
   },
 
   nav: {
+    whoWeHelp: 'Who we help',
+    serviceGroupMain: 'Collection & recycling',
+    serviceGroupSupport: 'Business support',
     home: 'Home',
     pricing: 'Pricing',
     about: 'About',
@@ -592,6 +595,43 @@ const en = {
   },
 
   services: {
+    pageMeta: {
+      'collection-pickup': {
+        title: 'Household e-waste pickup | Recycling Hub',
+        description:
+          'Free household e-waste pickup in Klang Valley for at least 3 devices, with instant DuitNow payment. Share a device list on WhatsApp to arrange collection.',
+      },
+      'bulk-industrial-collection': {
+        title: 'Bulk e-waste collection Malaysia | Recycling Hub',
+        description:
+          'Arrange bulk e-waste collection in Klang Valley for office IT equipment. Discuss data destruction and documents with the team. Request a quote on WhatsApp.',
+      },
+      'certified-data-destruction': {
+        title: 'Certified data destruction Malaysia | Recycling Hub',
+        description:
+          'Request certified data destruction for business devices in Klang Valley. Confirm handling and documentation before collection. Contact us on WhatsApp.',
+      },
+      'esg-reporting': {
+        title: 'E-waste collection records | Recycling Hub',
+        description:
+          'Ask about e-waste collection records for your business sustainability reporting. Confirm available information and document formats with us on WhatsApp.',
+      },
+      'material-recovery': {
+        title: 'Electronics recycling Klang Valley | Recycling Hub',
+        description:
+          'Arrange electronics recycling in Klang Valley with free household pickup for at least 3 devices and instant DuitNow payment. Discuss your devices today.',
+      },
+      'compliance-documentation': {
+        title: 'Business collection documents | Recycling Hub',
+        description:
+          'Request business collection documents for e-waste pickup in Klang Valley. Confirm your record requirements before collection. Ask for a quote on WhatsApp.',
+      },
+    },
+    supportHeading: {
+      eyebrow: 'Business collection support',
+      headline: 'Documentation and reporting records',
+    },
+
     pickupMeta: {
       title: 'Doorstep e-waste pickup | Recycling Hub',
       description:
@@ -646,146 +686,122 @@ const en = {
     },
     cards: {
       'collection-pickup': {
-        title: 'E-Waste Collection & Pickup',
+        title: 'Household e-waste pickup',
         summary:
-          'Scheduled doorstep collection for individual devices and household quantities, free of charge across Klang Valley.',
+          'Free doorstep pickup in Klang Valley for at least 3 household devices, with instant DuitNow payment.',
       },
       'bulk-industrial-collection': {
-        title: 'Bulk & Industrial Collection',
+        title: 'Business & bulk e-waste collection',
         summary:
-          'Recurring, volume-based collection for offices, warehouses, and factories — quoted and scheduled around your operations.',
+          'Quote-based collection for offices and organisations retiring computers, monitors and other IT equipment.',
       },
       'certified-data-destruction': {
-        title: 'Certified Data Destruction',
+        title: 'Certified data destruction',
         summary:
-          'Certified data destruction for business data-bearing devices. Discuss your storage media and documentation requirements before collection.',
+          'Data destruction for business devices, with the handling method and required documentation confirmed before collection.',
       },
       'esg-reporting': {
-        title: 'ESG & Sustainability Reporting',
+        title: 'Collection & sustainability records',
         summary:
-          'Reporting options for your organisation’s e-waste records. Ask which collection and material information is available for your reporting needs.',
+          'Discuss the collection records available for your organisation’s internal sustainability reporting.',
       },
       'material-recovery': {
-        title: 'Recycling & Material Recovery',
+        title: 'Electronics recycling',
         summary:
-          'Processing old electronics to recover reusable materials. Discuss the equipment types and recovery options with our team.',
+          'Arrange recycling for old electronics and discuss the handling requirements for your device types.',
       },
       'compliance-documentation': {
-        title: 'Compliance Documentation',
+        title: 'Business collection documentation',
         summary:
-          'Compliance documents for business e-waste disposal. Confirm the records your organisation needs when requesting a quote.',
+          'Confirm the collection and data-destruction documents your organisation needs before arranging pickup.',
       },
     } satisfies Record<ServiceSlug, { title: string; summary: string }>,
     detail: {
       'collection-pickup': {
         description:
-          'Recycling Hub collects end-of-life phones, laptops, tablets, monitors, and small IT peripherals directly from your home or office across Klang Valley. Every pickup is scheduled in advance and confirmed before our team arrives, so collection happens on your terms, not as an unannounced drop-in.',
+          'Arrange collection for your old phones, laptops, computers and other electronics in Klang Valley. Household pickup is free for a minimum of 3 devices. Share the device types and address on WhatsApp so the team can confirm acceptance and collection arrangements.',
         included: [
-          'Doorstep collection for individual and household electronics in Klang Valley — minimum 3 devices',
-          'Accepted categories: phones & tablets, laptops & computers, monitors & displays, and small office IT peripherals',
-          'Currently available across Klang Valley — other areas coming soon',
-          'Standard pickup is sized for individual and household quantities — higher-volume collection is handled under Bulk & Industrial Collection instead',
-          'Instant DuitNow payment for eligible personal devices at the point of collection',
+          'Minimum 3 devices for free household pickup',
+          'Share device types, condition and collection address',
+          'Instant DuitNow payment on collection',
+          'Collection timing confirmed with the team',
         ],
         trust: {
-          title: 'DOE-Registered Collection',
+          title: 'Before pickup',
           description:
-            'Every pickup — individual or bulk — is carried out under our registered DOE e-waste collector status, not an informal collection round.',
+            'Ask about acceptance before handing over unusual items, appliances or damaged devices.',
         },
       },
       'bulk-industrial-collection': {
         description:
-          'For offices, warehouses, and factories generating e-waste on an ongoing basis, Recycling Hub runs scheduled, recurring collection rather than one-off pickups. Logistics are built around your operating hours and volume, not the other way around.',
+          'Plan a business e-waste collection around the equipment you are retiring. Share an inventory, estimated quantities and your Klang Valley collection address. The team will confirm the scope, access arrangements and pricing before collection.',
         included: [
-          // TODO: confirm the actual cadence/volume tiers offered (e.g. monthly vs. quarterly minimums)
-          'Recurring collection scheduled on a cadence that matches your volume',
-          'Dedicated logistics for multi-unit collections — a single site or multiple branches/warehouses under one engagement',
-          'Volume-based quoting by device type and count, confirmed before any collection is scheduled',
-          'Same certified data destruction and compliance documentation as every other collection tier',
-          'Distinct from individual pickup — built for recurring, scheduled volume rather than a one-off drawer of devices',
+          'Office computers, monitors and IT equipment: confirm your inventory',
+          'Quote based on equipment, volume and collection requirements',
+          'Discuss building access and loading arrangements',
+          'Request data destruction and documentation with your quote',
         ],
         trust: {
-          title: 'SW110 Scheduled Waste Compliance',
+          title: 'Confirm the collection scope',
           description:
-            "Bulk and industrial collection is carried out under SW110 scheduled-waste classification, under Malaysia's Environmental Quality Act 1974 and its subsidiary regulations.",
-          // TODO: confirm whether additional SW sub-codes apply to specific
-          // material streams collected (e.g. batteries, CRT glass) before publishing
+            'One-off or repeat collection requirements can be discussed on WhatsApp. No recurring schedule is promised before agreement.',
         },
       },
       'certified-data-destruction': {
         description:
-          'Any data-bearing device we collect — phones, laptops, hard drives, servers — goes through certified destruction before it is recycled. We do not resell or refurbish devices that still hold your data, and every destruction event is logged and certified.',
+          'Businesses can request certified data destruction when retiring data-bearing equipment. Tell the team which devices or storage media are involved and what evidence your organisation needs. Confirm the handling method, scope and documentation before collection.',
         included: [
-          // TODO: confirm exact destruction method(s) and standard referenced
-          // (e.g. physical shredding, degaussing, NIST 800-88) before publishing
-          'Physical destruction of storage media, not a reversible software wipe',
-          'Serialized certificate of destruction issued per asset or per batch',
-          'Chain-of-custody tracking from collection to destruction, so no device sits unaccounted for in between',
-          'Available as a standalone request for a specific device or batch, or bundled into any collection',
-          'Certificates retrievable on request via Track & Trace',
+          'List the devices and storage media involved',
+          'Explain your organisation’s data-handling requirements',
+          'Confirm the destruction method before handover',
+          'Agree the required documentation as part of the quote',
         ],
         trust: {
-          title: 'Certificate of Destruction',
+          title: 'Agree the evidence you need',
           description:
-            'Every certificate is serialized and tied to the specific assets destroyed — not a generic batch statement.',
-          // TODO: attach a redacted sample certificate image once the template is finalized
+            'Confirm certificate format, asset-level details and any requested standards with the team before collection.',
         },
       },
       'esg-reporting': {
         description:
-          'Businesses collecting under Recycling Hub receive a diversion report summarizing what was collected and what happened to it — formatted so your sustainability or compliance team can use it directly in ESG disclosures, without reformatting.',
+          'If your organisation needs records for internal sustainability reporting, describe the information you require when requesting business collection. The team will confirm which collection records and supporting information can be provided.',
         included: [
-          'Total weight collected and recycled, by device category',
-          // TODO: confirm the exact recovery-rate methodology/data source before
-          // publishing specific recovery percentages
-          'Materials-recovered vs. landfill-diverted breakdown',
-          // TODO: confirm the carbon-estimation methodology/emission factors used
-          'Estimated carbon impact of the collection',
-          'Delivered per collection, or aggregated over a reporting period (e.g. quarterly, annually) on request',
-          'Formatted for direct use in ESG audits and sustainability disclosures',
+          'Explain the purpose and reporting period',
+          'Ask which device or collection details are available',
+          'Confirm the format and scope before collection',
         ],
         trust: {
-          title: 'ESG-Ready Reporting',
+          title: 'Reporting support, agreed in advance',
           description:
-            'Every bulk and enterprise collection is eligible for a diversion report — request one with your next quote.',
+            'Confirm the information available for your collection and how your team plans to use it in internal sustainability records.',
         },
       },
       'material-recovery': {
         description:
-          "Once collected, e-waste is processed through licensed downstream partners who recover reusable materials — metals, plastics, and components — and ensure anything unrecoverable is disposed of in compliance with Malaysia's scheduled-waste regulations, not sent to landfill.",
+          'Arrange electronics recycling as part of your household or business collection. Share the device types, condition and any handling concerns before pickup. Discuss the intended recycling route with the team rather than assuming every device is reused or every material is recovered.',
         included: [
-          'Sorting and dismantling of collected devices by material stream',
-          // TODO: name the actual licensed downstream processing partner(s) once
-          // confirmed for public disclosure
-          'Recoverable materials — metals, plastics, glass, circuit-board components — routed to licensed processors',
-          'Non-recoverable residual waste disposed of under SW110 scheduled-waste compliance, never landfilled untreated',
-          'No unlicensed scrap dealers or informal recyclers in the chain at any stage',
-          'Processing outcomes reflected in your ESG diversion report if you’re a business client',
+          'Confirm acceptance for your electronics',
+          'Mention batteries, damaged items or other handling concerns',
+          'Discuss recycling arrangements with the collection team',
         ],
         trust: {
-          title: 'Licensed Downstream Processing',
+          title: 'Ask about the recycling route',
           description:
-            'Material recovery is carried out only through licensed processors — never informal or unregistered scrap channels.',
-          // TODO: reference the specific processor license/registration number
-          // once confirmed for disclosure
+            'Ask the team about the recycling arrangements relevant to your collection, including any equipment that needs separate handling.',
         },
       },
       'compliance-documentation': {
         description:
-          'Every collection — individual or business — generates a paper trail. For businesses, that means consignment notes and DOE-compliant documentation you can hand straight to an auditor, without having to chase us for records afterward.',
+          'Business collections can include agreed documentation for your organisation’s records. Explain your procurement, data destruction or disposal-document requirements when asking for a quote, so the team can confirm what is available for that service.',
         included: [
-          // TODO: confirm the consignment note numbering/format convention used
-          'Consignment note issued for every scheduled waste collection',
-          'DOE-compliant collection and disposal paperwork retained for your records',
-          'Certificate of destruction included for any data-bearing assets in the collection',
-          // TODO: confirm the actual standard delivery turnaround (e.g. within N business days)
-          'Documentation delivered at the time of collection or shortly after',
-          'Past documentation retrievable anytime via Track & Trace',
+          'List the documents your organisation requires',
+          'Confirm the records included in your quote',
+          'Ask how to request records after collection',
         ],
         trust: {
-          title: 'Audit-Ready Paperwork',
+          title: 'Confirm documents before booking',
           description:
-            'Documentation is issued per collection, not batched at year-end, so your records stay current throughout the year.',
+            'Confirm the document scope, format and delivery arrangements with the team before booking.',
         },
       },
     } satisfies Record<
@@ -927,21 +943,62 @@ const en = {
   },
 
   solutions: {
+    meta: {
+      title: 'E-waste solutions for businesses | Recycling Hub',
+      description:
+        'Explore e-waste solutions for businesses and households in Klang Valley. Prepare devices, access and records for collection. Discuss needs on WhatsApp.',
+    },
+
+    relatedServiceHeading: 'Relevant service',
+
+    pageMeta: {
+      'corporate-enterprise': {
+        title: 'Office IT retirement | Recycling Hub',
+        description:
+          'Plan office IT retirement in Klang Valley with an approved asset list and building access details. Discuss collection scope and pricing on WhatsApp.',
+      },
+      'individuals-households': {
+        title: 'Household electronics recycling | Recycling Hub',
+        description:
+          'Prepare for household electronics recycling in Klang Valley: minimum 3 devices, free pickup and instant DuitNow payment. Arrange collection on WhatsApp.',
+      },
+      'government-glc': {
+        title: 'Public-sector IT disposal preparation | Recycling Hub',
+        description:
+          'Prepare public-sector IT disposal with asset approvals and document requirements. Ask us to confirm collection scope in Klang Valley. Enquire on WhatsApp.',
+      },
+      education: {
+        title: 'School electronics clear-outs | Recycling Hub',
+        description:
+          'Plan school electronics clear-outs in Klang Valley with room-by-room inventories and access times. Discuss collection and data needs with us on WhatsApp.',
+      },
+      healthcare: {
+        title: 'Healthcare IT retirement | Recycling Hub',
+        description:
+          'Plan healthcare IT retirement in Klang Valley with internal approval, device checks and data-handling requirements. Discuss collection scope on WhatsApp.',
+      },
+      ngo: {
+        title: 'NGO electronics clear-outs | Recycling Hub',
+        description:
+          'Organise NGO electronics clear-outs in Klang Valley with an organiser, device list and handover location. Confirm pricing and timing with us on WhatsApp.',
+      },
+    },
+
     householdMeta: {
       title: 'Household electronics recycling | Recycling Hub',
       description:
         'Recycle household electronics in Klang Valley with free pickup for at least 3 devices and instant DuitNow payment. Contact Recycling Hub to arrange pickup.',
     },
     hero: {
-      eyebrow: 'Who We Serve',
-      headline: 'Tailored E-Waste Solutions,',
-      headlineAccent: 'Sector by Sector.',
+      eyebrow: 'Who we help',
+      headline: 'E-waste solutions for businesses',
+      headlineAccent: 'and households',
       description:
-        'From a single household clearing out old devices to an enterprise retiring a data center, Recycling Hub adapts the same DOE-registered, certified process to what each sector actually needs.',
+        'Choose the guidance that matches your organisation or home. Each solution explains what to prepare, who to involve and which service to discuss before arranging collection in Klang Valley.',
     },
     crossLink: {
-      text: 'Looking for the right fit by service type instead?',
-      cta: 'Browse Services',
+      text: 'Ready to choose what you need?',
+      cta: 'Compare e-waste collection services',
       href: '/services',
     },
     gridHeading: {
@@ -951,127 +1008,119 @@ const en = {
       },
       exploreMore: { eyebrow: 'Explore More', headline: 'Other Solutions' },
     },
-    whyUsHeadingPrefix: 'Why',
-    whyUsHeadingSuffix: 'Chooses Recycling Hub',
+    whyUsHeadingPrefix: 'Preparing for',
+    whyUsHeadingSuffix: '',
     learnMore: 'Learn more',
     cards: {
       'corporate-enterprise': {
-        title: 'Corporate & Enterprise',
+        title: 'Office IT retirement',
         summary:
-          'Recurring bulk collection, certified data destruction, and ESG reporting for offices, corporate IT, and manufacturing facilities.',
+          'Plan an office equipment clear-out with an inventory, an internal owner and agreed access arrangements.',
       },
       'individuals-households': {
-        title: 'Individuals & Households',
+        title: 'Household electronics recycling',
         summary:
-          'Free doorstep pickup in Klang Valley and instant DuitNow payment for personal electronics — minimum 3 devices, no paperwork.',
+          'Prepare at least 3 old household devices for pickup and discuss device condition before collection.',
       },
       'government-glc': {
-        title: 'Government & GLC',
+        title: 'Public-sector IT disposal preparation',
         summary:
-          'Procurement-ready compliance and transparent documentation for public sector agencies and government-linked companies.',
+          'Organise asset approvals and document requirements before requesting a public-sector equipment collection.',
       },
       education: {
-        title: 'Education',
+        title: 'School & campus electronics clear-outs',
         summary:
-          'Bulk collection for computer lab upgrades and campus-wide IT refresh cycles, with certified destruction of student and staff data.',
+          'Prepare retired classroom and office equipment for collection without disrupting active teaching spaces.',
       },
       healthcare: {
-        title: 'Healthcare',
+        title: 'Clinic & hospital IT retirement',
         summary:
-          'Chain-of-custody-tracked collection and certified destruction for retired hospital and clinic IT equipment.',
+          'Plan the handover of retired IT equipment around internal data controls and site access requirements.',
       },
       ngo: {
-        title: 'NGO & Non-Profit',
+        title: 'Community & NGO device clear-outs',
         summary:
-          'Flexible, lower-volume collection at partnership rates for nonprofits and community organizations.',
+          'Coordinate a device list, an organiser and a collection location for your organisation’s retired electronics.',
       },
     } satisfies Record<SolutionSlug, { title: string; summary: string }>,
     detail: {
       'corporate-enterprise': {
         framing:
-          'Corporate offices, IT departments, and manufacturing facilities generate e-waste on an ongoing basis — and every device that leaves without proper documentation is a compliance and data-security question your board will eventually ask. Recycling Hub replaces that uncertainty with scheduled bulk collection, certified destruction, and audit-ready reporting built into every pickup.',
+          'When replacing office IT, start with the devices your organisation has approved for retirement. Prepare an asset list, separate equipment still in use and identify who will authorise the handover. Share your Klang Valley site details so the team can discuss collection requirements.',
         whyUs: [
-          'Recurring bulk collection scheduled around your operations, not ours',
-          'Certified data destruction with a serialized certificate for every data-bearing asset retired',
-          'ESG diversion reports formatted for direct use in sustainability disclosures and audits',
-          'Compliance documentation — consignment notes, DOE-compliant paperwork — issued per collection, not batched at year-end',
+          'List equipment types, quantities and asset references',
+          'Confirm internal approval and a handover contact',
+          'Check loading-bay access, lifts and building restrictions',
+          'Identify data-handling and record requirements before requesting a quote',
         ],
-        ctaLabel: 'Request a Bulk Quote',
-        testimonialNote:
-          'Corporate case study/testimonial — to be added once a client reference is available. Do not publish without real client sign-off.',
+        serviceSlug: 'bulk-industrial-collection',
+        serviceLabel: 'Business & bulk e-waste collection',
+        ctaLabel: 'Request an office collection quote',
       },
       'individuals-households': {
         framing:
-          "Clearing out an old phone, laptop, or a drawer full of dead chargers shouldn't take more effort than throwing it in the bin — but the bin isn't where it should go. Recycling Hub picks up your old electronics for free across Klang Valley, and pays you instantly the moment they're collected.",
+          'Gather the old electronics you want to clear from your home and check that you have at least 3 devices for free household pickup in Klang Valley. Tell the team what you have and where you live. Back up personal files and sign out of accounts before handing over your devices.',
         whyUs: [
-          'Free doorstep pickup in Klang Valley — minimum 3 devices, no account or contract needed',
-          'Instant DuitNow payment the moment your devices are collected',
-          'All personal devices accepted — phones, laptops, tablets, monitors, and more',
-          'Certified data destruction included on every data-bearing device, with no extra step for you',
+          'Check device acceptance and condition with the team',
+          'Have at least 3 household devices ready for pickup',
+          'Remove SIM cards and back up files you want to keep',
+          'Mention condo access or building collection rules',
         ],
-        ctaLabel: 'Book a Pickup',
-        testimonialNote:
-          'Household testimonial — to be added once real customer feedback is available. Do not publish an invented quote.',
+        serviceSlug: 'collection-pickup',
+        serviceLabel: 'Household e-waste pickup',
+        ctaLabel: 'Arrange household pickup',
       },
       'government-glc': {
         framing:
-          'Public sector agencies and government-linked companies need a vendor who can withstand procurement scrutiny — full regulatory compliance, transparent documentation, and a paper trail that holds up in a tender review, not just a collection receipt.',
+          'Public agencies and government-linked companies may need internal asset-disposal approval before equipment can leave a site. Identify your approving officer, inventory references and required vendor information first. Ask the team to confirm whether the collection scope and document requirements can be met.',
         whyUs: [
-          'DOE-registered collection and SW110 scheduled-waste compliance, ready for procurement due diligence',
-          'Transparent, per-collection documentation — consignment notes and compliance paperwork, not summarized after the fact',
-          'Certified data destruction with chain-of-custody tracking, for agencies handling sensitive records',
-          // TODO: confirm whether we formally support tender/RFP submissions and
-          // standard government payment terms before publishing this claim
-          'Bulk collection scheduled to fit standard procurement and budgeting cycles',
+          'Follow your organisation’s asset-disposal approval process',
+          'Prepare an inventory and identify the authorised contact',
+          'Specify requested vendor information and documents',
+          'Agree site access and handover arrangements before collection',
         ],
-        ctaLabel: 'Request Vendor Information',
-        testimonialNote:
-          'Government/GLC case study or reference — to be added once available and cleared for public disclosure.',
+        serviceSlug: 'compliance-documentation',
+        serviceLabel: 'Business collection documentation',
+        ctaLabel: 'Discuss public-sector collection',
       },
       education: {
         framing:
-          'Computer lab upgrades and campus-wide equipment turnover generate e-waste in batches, not one device at a time — and retired student and staff devices often still hold personal data a school has a duty to protect. Recycling Hub handles both the volume and the data.',
+          'For a school or campus clear-out, separate retired equipment from devices still used by students and staff. Prepare an inventory by room or department, identify the school’s contact person and suggest collection times that avoid lessons. The team will confirm availability before a date is agreed.',
         whyUs: [
-          // TODO: confirm scheduling flexibility around semester breaks/academic
-          // calendars before publishing this as a standing commitment
-          'Bulk collection that can be scheduled around semester breaks and refresh cycles',
-          'Certified data destruction on every retired device, protecting student and staff data before resale or recycling',
-          'Documentation covering the full batch collected, useful for asset write-off and inventory records',
-          'Same DOE-registered, SW110-compliant process used for any other bulk collection',
+          'Separate retired equipment from active classroom devices',
+          'Record equipment by room, lab or department',
+          'Identify devices that may contain student or staff records',
+          'Suggest suitable access times and confirm availability',
         ],
-        ctaLabel: 'Request a Campus Collection Quote',
-        testimonialNote:
-          'School/university case study or testimonial — to be added once a client reference is available.',
+        serviceSlug: 'bulk-industrial-collection',
+        serviceLabel: 'Business & bulk e-waste collection',
+        ctaLabel: 'Request a campus collection quote',
       },
       healthcare: {
         framing:
-          "Retired hospital and clinic IT equipment — workstations, servers, imaging systems, storage drives — can carry patient data long after it's taken out of service. Recycling Hub treats every healthcare collection as a chain-of-custody event, not just a pickup.",
+          'When retiring clinic or hospital IT, involve your organisation’s IT and data-protection contacts before arranging collection. Identify data-bearing equipment and confirm which devices are approved for handover. Share equipment types with the team first; acceptance of specialist or medical equipment must be confirmed separately.',
         whyUs: [
-          'Certified data destruction for any device that may have held patient or clinical records',
-          // TODO: confirm any healthcare-specific data regulation (e.g. Ministry of
-          // Health guidelines) we explicitly comply with before publishing
-          'Documented chain-of-custody from collection through destruction, for internal audit and compliance review',
-          'Collection scheduled around facility operating hours, not a walk-in pickup',
-          'Serialized certificate of destruction issued per asset, not a generic batch statement',
+          'Confirm internal approval for each retired IT asset',
+          'Identify storage media that may contain patient records',
+          'Discuss data destruction requirements before handover',
+          'Confirm equipment acceptance, site access and handover contacts',
         ],
-        ctaLabel: 'Request a Healthcare Solutions Quote',
-        testimonialNote:
-          'Healthcare facility case study or testimonial — to be added once a client reference is available and cleared for disclosure.',
+        serviceSlug: 'certified-data-destruction',
+        serviceLabel: 'Certified data destruction',
+        ctaLabel: 'Discuss healthcare IT collection',
       },
       ngo: {
         framing:
-          "Nonprofits and community groups don't always generate e-waste on a predictable schedule or in bulk quantities — and budget is almost always a real constraint. Recycling Hub scales down to fit, without treating a smaller organization as a lower priority.",
+          'For an NGO or community device clear-out, choose an organiser who can confirm which equipment belongs to the collection. Keep items intended for donation separate from items being retired, and ask the team about acceptance and pricing before announcing a collection date.',
         whyUs: [
-          'Flexible collection sized to lower, irregular volumes — minimum 3 devices per pickup',
-          // TODO: confirm the actual partnership/CSR discount structure (if any)
-          // before publishing a specific pricing claim
-          'Partnership-rate pricing available for registered nonprofits — ask when you get in touch',
-          'Certified data destruction and compliance documentation included, same as any other collection',
-          'ESG diversion reporting available on request, for donor or grant reporting',
+          'Choose an organiser and an agreed handover location',
+          'Prepare device types and estimated quantities',
+          'Separate donation items from equipment being retired',
+          'Confirm pricing and timing before sharing collection details',
         ],
-        ctaLabel: 'Contact Us About Partnership Rates',
-        testimonialNote:
-          'Nonprofit partner case study or testimonial — to be added once available and cleared for public use.',
+        serviceSlug: 'bulk-industrial-collection',
+        serviceLabel: 'Business & bulk e-waste collection',
+        ctaLabel: 'Discuss a community collection',
       },
     } satisfies Record<
       SolutionSlug,
@@ -1079,7 +1128,8 @@ const en = {
         framing: string;
         whyUs: string[];
         ctaLabel: string;
-        testimonialNote: string;
+        serviceSlug: string;
+        serviceLabel: string;
       }
     >,
   },

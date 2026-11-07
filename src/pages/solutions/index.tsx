@@ -3,6 +3,7 @@ import type { ReactElement } from 'react';
 import { LuArrowRight } from 'react-icons/lu';
 
 import { Meta } from '../../components/layout/Meta';
+import { SolutionBreadcrumbs } from '../../components/layout/SolutionBreadcrumbs';
 import { SolutionsGrid } from '../../components/public/solutions/SolutionsGrid';
 import { ReusableHero } from '../../components/ui/hero';
 import { useDictionary } from '../../hooks/useDictionary';
@@ -11,15 +12,13 @@ import type { NextPageWithLayout } from '../../types/next';
 
 const SolutionsPage: NextPageWithLayout = () => {
   const {
-    solutions: { hero, crossLink },
+    solutions: { hero, crossLink, meta },
   } = useDictionary();
 
   return (
     <>
-      <Meta
-        title="Solutions — Recycling Hub E-Waste Collection"
-        description="Tailored e-waste collection, certified data destruction, and compliance reporting for corporate, household, government, education, healthcare, and nonprofit sectors."
-      />
+      <Meta {...meta} />
+      <SolutionBreadcrumbs />
       <ReusableHero
         eyebrow={hero.eyebrow}
         headline={hero.headline}

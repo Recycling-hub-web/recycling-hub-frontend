@@ -10,7 +10,7 @@ const CollectionPickupPage: NextPageWithLayout = () => {
   const { services } = useDictionary();
   return (
     <>
-      <Meta {...services.pickupMeta} />
+      <Meta {...services.pageMeta['collection-pickup']} />
       <ServiceDetailTemplate slug="collection-pickup" />
     </>
   );

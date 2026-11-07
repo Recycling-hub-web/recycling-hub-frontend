@@ -20,7 +20,7 @@ const RequestQuotePage: NextPageWithLayout = () => {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [company, setCompany] = useState('');
-  const [service, setService] = useState<string>(SERVICES[0].slug);
+  const [service, setService] = useState<string>('bulk-industrial-collection');
   const [details, setDetails] = useState('');
   const [error, setError] = useState('');
   const [submitted, setSubmitted] = useState(false);

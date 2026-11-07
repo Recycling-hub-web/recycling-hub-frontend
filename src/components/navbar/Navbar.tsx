@@ -9,10 +9,6 @@ import { useDictionary } from '../../hooks/useDictionary';
 import { PublicButton } from '../ui/buttons/PublicButton';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { ServicesDropdown, ServicesMobileAccordion } from './ServicesDropdown';
-import {
-  SolutionsDropdown,
-  SolutionsMobileAccordion,
-} from './SolutionsDropdown';
 
 type NavbarProps = {
   variant?: 'dark' | 'light';
@@ -201,7 +197,6 @@ const Navbar = ({ variant = 'dark' }: NavbarProps) => {
           })}
 
           <ServicesDropdown light={light} />
-          <SolutionsDropdown light={light} />
 
           {navLinks.slice(1).map((link) => {
             const active = isActive(link.href);
@@ -267,7 +262,7 @@ const Navbar = ({ variant = 'dark' }: NavbarProps) => {
             key="mobile-menu"
             id="public-mobile-menu"
             {...slideDown}
-            className="overflow-hidden border-t border-slate-100 bg-white xl:hidden"
+            className="max-h-[calc(100dvh-70px)] overflow-y-auto border-t border-slate-100 bg-white xl:hidden"
           >
             <div className="flex flex-col gap-1 p-4">
               {navLinks.slice(0, 1).map((link) => {
@@ -299,7 +294,6 @@ const Navbar = ({ variant = 'dark' }: NavbarProps) => {
               })}
 
               <ServicesMobileAccordion />
-              <SolutionsMobileAccordion />
 
               {navLinks.slice(1).map((link) => {
                 const active = isActive(link.href);
