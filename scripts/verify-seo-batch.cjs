@@ -104,10 +104,10 @@ const { chromium } = require('@playwright/test');
         ['ms-MY', bmUrl],
         ['x-default', enUrl],
       ]);
-      assert(d.body.includes('+60 11-6080 3604'));
+      assert(d.body.includes('+60 11-6766 3035'));
       assert(!d.body.includes('+60 11-2850 3845'));
       assert.equal(await p.locator('a[href^="tel:"]').count(), 0);
-      assert((await p.locator('a[href*="wa.me/601160803604"]').count()) > 0);
+      assert((await p.locator('a[href*="wa.me/601167663035"]').count()) > 0);
       assert(d.body.includes('info@recyclinghub.eco'));
       const faq = d.graphs.find((g) => g['@type'] === 'FAQPage');
       if (route === '/faq') {
@@ -175,7 +175,7 @@ const { chromium } = require('@playwright/test');
   });
   await p.getByRole('button', { name: 'Continue on WhatsApp' }).click();
   await p.waitForURL('https://wa.me/**');
-  assert(handoff.includes('/601160803604?'));
+  assert(handoff.includes('/601167663035?'));
   assert(
     new URL(handoff).searchParams
       .get('text')

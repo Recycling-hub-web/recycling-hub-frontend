@@ -26,10 +26,10 @@ export const BRAND = {
   legalName: 'RECYCLING HUB SDN. BHD.',
   tagline: 'Certified E-Waste Collection & Disposal for Malaysia.',
   email: 'info@recyclinghub.eco',
-  phone: '+60 11-6080 3604',
+  phone: '+60 11-6766 3035',
   website: 'recyclinghub.eco',
   whatsapp:
-    'https://wa.me/601160803604?text=Hi%20Recycling%20Hub%2C%20I%27m%20interested%20in%20your%20e-waste%20collection%20service.%20Could%20you%20please%20share%20more%20details%3F%20Thank%20you.',
+    'https://wa.me/601167663035?text=Hi%20Recycling%20Hub%2C%20I%27m%20interested%20in%20your%20e-waste%20collection%20service.%20Could%20you%20please%20share%20more%20details%3F%20Thank%20you.',
   businessHours: 'Mon–Fri 9am–6pm · Sat 9am–1pm (MYT)',
   social: {
     linkedin: 'https://linkedin.com/company/recyclinghub',
