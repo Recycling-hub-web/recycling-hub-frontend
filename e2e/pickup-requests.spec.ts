@@ -2,6 +2,8 @@ import type { APIRequestContext } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 
 import { loginAs } from './helpers/auth';
+import { E_WASTE_CATEGORY_ID } from './helpers/categories';
+import { attachPhoto, E2E_PHOTO, mockStorageUploads } from './helpers/storage';
 
 /**
  * Pickup Requests — the customer's ask (PickupRequest), new in the
@@ -15,8 +17,6 @@ import { loginAs } from './helpers/auth';
  * cancel-cascades-to-every-Order, the driver's confirm-schedule step,
  * and a full lifecycle walk ending in the request showing `fulfilled`.
  */
-
-const E_WASTE_CATEGORY_ID = '89067cc7-38ef-4752-9cd4-3ea29975abcb';
 
 const uniqueName = (label: string) => `E2E Request ${label} ${Date.now()}`;
 
@@ -49,31 +49,55 @@ const createPickupRequestViaApi = async (
 const createOrderViaApi = async (
   request: APIRequestContext,
   pickupRequestId: string,
-  items: { category: string; estimated_quantity?: string }[] = [],
+  items: {
+    category: string;
+    estimated_quantity?: string;
+    quantity_unit?: string;
+  }[] = [],
 ): Promise<{ id: string; code: string }> => {
   const res = await request.post(
     `/api/v1/pickup-requests/${pickupRequestId}/orders/`,
-    { data: { items } },
+    { data: { items, photos: [E2E_PHOTO] } },
   );
   expect(res.ok()).toBe(true);
   return res.json();
 };
 
+// Uploads go to a faked storage — see helpers/storage.ts.
+test.beforeEach(async ({ page }) => {
+  await mockStorageUploads(page);
+});
+
 test.describe('Public pickup request form', () => {
-  test('submits with only contact info, address, and a pickup date/time — no items, no photo', async ({
+  test('offers only a callback or a business/bulk request', async ({
     page,
   }) => {
-    const fullName = uniqueName('PublicIndividual');
     await page.goto('/request-pickup');
-    await page.getByText('Individual / Household').click();
+    await expect(page.getByText('Individual / Household')).toHaveCount(0);
+    await expect(page.getByText('Business / Bulk')).toBeVisible();
 
-    // The items repeater and photo uploader are both gone from this form.
+    await page.getByRole('button', { name: /Request a Callback/ }).click();
+    await expect(
+      page.locator('[data-field="phone_local"] input'),
+    ).toBeVisible();
+    await expect(page.locator('[data-field="full_name"]')).toHaveCount(0);
+  });
+
+  test('submits contact info, address, a pickup date/time and at least one photo — no items', async ({
+    page,
+  }) => {
+    const fullName = uniqueName('PublicBulk');
+    await page.goto('/request-pickup');
+    await page.getByText('Business / Bulk').click();
+
+    // No items repeater; 1–4 photos of what to collect are required.
     await expect(page.locator('[data-field="category"]')).toHaveCount(0);
     await expect(page.getByText(/add another item/i)).toHaveCount(0);
-    await expect(page.locator('#pickup-photo-input')).toHaveCount(0);
-    await expect(page.locator('[data-field="photos"]')).toHaveCount(0);
+    const photos = page.locator('[data-field="photos"]');
+    await expect(photos).toBeVisible();
 
     await page.locator('[data-field="full_name"] input').fill(fullName);
+    await page.locator('[data-field="email"] input').fill('bulk@example.com');
     await page.locator('[data-field="phone_local"] input').fill('123456789');
     const addressField = page.locator('[data-field="pickup_address"] input');
     await expect(addressField).toHaveCount(1);
@@ -82,6 +106,13 @@ test.describe('Public pickup request form', () => {
     await page.getByRole('button', { name: 'Submit Request' }).click();
     await expect(
       page.getByText(/choose a pickup date and time/i),
+    ).toBeVisible();
+    await expect(
+      page.getByText('Please add at least one photo.'),
+    ).toBeVisible();
+    await attachPhoto(photos);
+    await expect(
+      photos.getByRole('button', { name: /Remove photo 1/ }),
     ).toBeVisible();
 
     await page
@@ -109,6 +140,7 @@ test.describe('Public pickup request form', () => {
     await page
       .locator('[data-field="requested_at"] input')
       .fill(toDateTimeLocalValue(futureIso(48)));
+    await attachPhoto(page.locator('[data-field="photos"]'));
 
     await page.getByRole('button', { name: 'Submit Request' }).click();
     await expect(
@@ -150,7 +182,7 @@ test.describe('Admin/staff Pickup Requests', () => {
     await expect(page.getByText('0 orders')).toBeVisible();
   });
 
-  test('create order view has optional items, creating with zero items succeeds', async ({
+  test('create order view has optional items but needs a photo; zero items succeeds', async ({
     page,
   }) => {
     await loginAs(page, 'admin');
@@ -166,11 +198,15 @@ test.describe('Admin/staff Pickup Requests', () => {
       `/admin/pickup-requests/${pickupRequestId}/orders/create`,
     );
 
-    // No pre-existing material row, and the multi-photo uploader is
-    // present (up to 4).
+    // No pre-existing material row; 1–4 photos are required.
     await expect(page.locator('[data-field="category"]')).toHaveCount(0);
-    await expect(page.getByText(/up to 4/i)).toBeVisible();
+    await page.getByRole('button', { name: 'Create order' }).click();
+    await expect(
+      page.getByText('Add at least one photo of the materials.'),
+    ).toBeVisible();
+    await expect(page).toHaveURL(/\/orders\/create$/);
 
+    await attachPhoto(page.locator('[data-field="photos"]'));
     await page.getByRole('button', { name: 'Create order' }).click();
     await expect(page).toHaveURL(/\/admin\/pickups\/[^/]+$/);
 
@@ -208,7 +244,7 @@ test.describe('Admin/staff Pickup Requests', () => {
     // hidden button here).
     const res = await page.request.post(
       `/api/v1/pickup-requests/${pickupRequestId}/orders/`,
-      { data: { items: [] } },
+      { data: { items: [], photos: [E2E_PHOTO] } },
     );
     expect(res.ok()).toBe(false);
 
@@ -259,10 +295,10 @@ test.describe('Admin/staff Pickup Requests', () => {
       fullName,
     );
     const orderA = await createOrderViaApi(page.request, pickupRequestId, [
-      { category: E_WASTE_CATEGORY_ID },
+      { category: E_WASTE_CATEGORY_ID, quantity_unit: 'kg' },
     ]);
     const orderB = await createOrderViaApi(page.request, pickupRequestId, [
-      { category: E_WASTE_CATEGORY_ID },
+      { category: E_WASTE_CATEGORY_ID, quantity_unit: 'kg' },
     ]);
 
     await page.goto(`/admin/pickup-requests/${pickupRequestId}`);
@@ -301,10 +337,11 @@ test('full lifecycle: public submission through to the request showing fulfilled
 }) => {
   const fullName = uniqueName('FullLifecycle');
 
-  // 1. Public submission — date/time only, no items/photo.
+  // 1. Public submission — date/time and a photo, no items.
   await page.goto('/request-pickup');
-  await page.getByText('Individual / Household').click();
+  await page.getByText('Business / Bulk').click();
   await page.locator('[data-field="full_name"] input').fill(fullName);
+  await page.locator('[data-field="email"] input').fill('bulk@example.com');
   await page.locator('[data-field="phone_local"] input').fill('123456789');
   await page
     .locator('[data-field="pickup_address"] input')
@@ -312,6 +349,7 @@ test('full lifecycle: public submission through to the request showing fulfilled
   await page
     .locator('[data-field="requested_at"] input')
     .fill(toDateTimeLocalValue(futureIso(48)));
+  await attachPhoto(page.locator('[data-field="photos"]'));
   await page.getByRole('button', { name: 'Submit Request' }).click();
   await expect(page.getByText(/request received/i)).toBeVisible();
 
@@ -330,11 +368,13 @@ test('full lifecycle: public submission through to the request showing fulfilled
   await page
     .locator('[data-field="category"] select')
     .selectOption(E_WASTE_CATEGORY_ID);
+  await page.locator('[data-field="quantity_unit"] select').selectOption('kg');
   await page.locator('[data-field="estimated_quantity"] input').fill('5');
+  await attachPhoto(page.locator('[data-field="photos"]'));
   await page.getByRole('button', { name: 'Create order' }).click();
   await expect(page).toHaveURL(/\/admin\/pickups\/[^/]+$/);
   const orderId = page.url().split('/').pop() as string;
-  await expect(page.getByText('E-waste — 5.00 kg')).toBeVisible();
+  await expect(page.getByText('E-waste — 5 kg')).toBeVisible();
 
   // 4. Evaluate -> approve with a price. UI-driven (same EvaluateModal
   // e2e/pickups.spec.ts already covers in isolation) — asserted here
@@ -383,8 +423,7 @@ test('full lifecycle: public submission through to the request showing fulfilled
   await page.goto('/driver/pickups');
   await page.getByRole('button', { name: 'My Pickups' }).click();
   await page
-    .locator('tr', { hasText: 'E-waste' })
-    .getByRole('button', { name: /mark pickup for .+ as collected/i })
+    .getByRole('button', { name: `Mark pickup for ${fullName} as collected` })
     .click();
   const collectDialog = page.getByRole('dialog');
   await collectDialog
@@ -398,21 +437,26 @@ test('full lifecycle: public submission through to the request showing fulfilled
     .locator('[data-field="category"] select')
     .selectOption(E_WASTE_CATEGORY_ID);
   await collectDialog
+    .locator('[data-field="quantity_unit"] select')
+    .selectOption('kg');
+  await collectDialog
     .locator('[data-field="collected_quantity"] input')
     .fill('2');
   await collectDialog
     .locator('[data-field="payment_method"] select')
     .selectOption('cash');
+  await attachPhoto(collectDialog.locator('[data-field="proof_of_payment"]'));
   await collectDialog.getByRole('button', { name: 'Mark collected' }).click();
   await expect(page.getByText(/marked as collected/i)).toBeVisible();
 
   // 8. Driver drops off the route at a store.
   await page.goto('/driver/drop-off');
-  const dropOffRow = page.locator('tr', { hasText: 'E-waste' });
+  const dropOffRow = page.locator('tr', { hasText: fullName });
   await dropOffRow.locator('input[type="checkbox"]').check();
   await page
     .locator('[data-field="collection_point"] select')
     .selectOption({ index: 1 });
+  await attachPhoto(page);
   await page.getByRole('button', { name: /drop off to store/i }).click();
   await expect(page.getByText(/dropped off to store/i)).toBeVisible();
 
@@ -420,7 +464,7 @@ test('full lifecycle: public submission through to the request showing fulfilled
   await loginAs(page, 'qaReceivingOfficer');
   await page.goto('/receiving/deliveries');
   await page
-    .locator('tr', { hasText: 'E-waste' })
+    .locator('tr', { hasText: fullName })
     .getByRole('button', { name: /verify and close delivery/i })
     .click();
   await expect(page.getByText(/verified and closed/i)).toBeVisible();

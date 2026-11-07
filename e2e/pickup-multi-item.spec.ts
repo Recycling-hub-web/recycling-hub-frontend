@@ -2,6 +2,8 @@ import type { APIRequestContext, Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 
 import { loginAs } from './helpers/auth';
+import { E_WASTE_CATEGORY_ID, GLASS_CATEGORY_ID } from './helpers/categories';
+import { attachPhoto, E2E_PHOTO, mockStorageUploads } from './helpers/storage';
 
 /**
  * Multi-item Orders — an Order can hold several materials in one
@@ -13,9 +15,6 @@ import { loginAs } from './helpers/auth';
  * by staff — see e2e/pickup-requests.spec.ts for that flow and
  * e2e/pickups.spec.ts's table-row "+N more" assertion coverage).
  */
-
-const E_WASTE_CATEGORY_ID = '89067cc7-38ef-4752-9cd4-3ea29975abcb';
-const GLASS_CATEGORY_ID = '7a1216d1-4f9a-4e29-8da8-9e897e7e43f8';
 
 const uniqueName = (label: string) => `E2E MultiItem ${label} ${Date.now()}`;
 
@@ -40,9 +39,18 @@ const seedMultiItemOrder = async (
     `/api/v1/pickup-requests/${pickupRequestId}/orders/`,
     {
       data: {
+        photos: [E2E_PHOTO],
         items: [
-          { category: E_WASTE_CATEGORY_ID, estimated_quantity: '10' },
-          { category: GLASS_CATEGORY_ID, estimated_quantity: '3' },
+          {
+            category: E_WASTE_CATEGORY_ID,
+            estimated_quantity: '10',
+            quantity_unit: 'kg',
+          },
+          {
+            category: GLASS_CATEGORY_ID,
+            estimated_quantity: '3',
+            quantity_unit: 'kg',
+          },
         ],
       },
     },
@@ -62,6 +70,11 @@ const getDriverId = async (request: APIRequestContext): Promise<string> => {
 
 const deleteOrder = (page: Page, id: string) =>
   page.request.delete(`/api/v1/pickups/${id}/`);
+
+// Uploads go to a faked storage — see helpers/storage.ts.
+test.beforeEach(async ({ page }) => {
+  await mockStorageUploads(page);
+});
 
 test('evaluator can price a multi-item order as one lump total', async ({
   page,
@@ -170,6 +183,7 @@ test('driver collecting a multi-item order confirms a quantity per item, and can
   await page
     .locator('[data-field="payment_method"] select')
     .selectOption('cash');
+  await attachPhoto(dialog.locator('[data-field="proof_of_payment"]'));
   await dialog.getByRole('button', { name: 'Mark collected' }).click();
 
   await expect(page.getByText('Marked as collected')).toBeVisible();
@@ -179,8 +193,8 @@ test('driver collecting a multi-item order confirms a quantity per item, and can
   // E-waste's collected quantity (9) differs from its estimate (10), so
   // it's unambiguous; Glass's collected and estimated quantities are
   // both 3, so it legitimately appears in both lists on the page.
-  await expect(page.getByText('E-waste — 9.00 kg')).toBeVisible();
-  await expect(page.getByText('Glass — 3.00 kg').first()).toBeVisible();
+  await expect(page.getByText('E-waste — 9 kg')).toBeVisible();
+  await expect(page.getByText('Glass — 3 kg').first()).toBeVisible();
 
   await deleteOrder(page, orderId);
 });

@@ -23,9 +23,9 @@ export const ASSETS = {
 
 export const BRAND = {
   name: 'Recycling Hub',
-  legalName: 'Recycling Hub Sdn. Bhd.',
+  legalName: 'RECYCLING HUB SDN. BHD.',
   tagline: 'Certified E-Waste Collection & Disposal for Malaysia.',
-  email: 'contact@recyclinghub.eco',
+  email: 'info@recyclinghub.eco',
   phone: '+60 11-6766 3035',
   website: 'recyclinghub.eco',
   whatsapp:
@@ -118,7 +118,7 @@ export const HOW_IT_WORKS = {
       number: '02',
       title: 'We Collect',
       description:
-        // TODO: confirm minimum device count/value (if any) and actual service coverage area
+        // Household pickup requires at least 3 devices; confirm the collection address.
         'Our team retrieves your devices at your doorstep, free of charge.',
     },
     {
@@ -188,7 +188,7 @@ export const ABOUT_VALUES = [
   {
     title: 'Simplicity',
     description:
-      'Free doorstep pickup for individuals in Klang Valley, no minimums, no paperwork. Transparent quoting for bulk and enterprise collection. We eliminate the uncertainty that makes disposal feel complicated.',
+      'Free doorstep pickup for individuals in Klang Valley, minimum 3 devices, no paperwork. Transparent quoting for bulk and enterprise collection. We eliminate the uncertainty that makes disposal feel complicated.',
     icon: 'zap',
   },
   {
@@ -243,7 +243,7 @@ export const ABOUT_WHO_WE_WORK_WITH = {
     {
       label: 'Individuals & Households',
       description:
-        'Anyone clearing out old phones, laptops, or a drawer of dead electronics in Klang Valley — free doorstep pickup, no minimums, instant DuitNow payment.',
+        'Anyone clearing out old phones, laptops, or a drawer of dead electronics in Klang Valley — free doorstep pickup, minimum 3 devices, instant DuitNow payment.',
     },
     {
       label: 'Corporate & Enterprise',
@@ -312,7 +312,7 @@ export const DELIVERY_MODELS = {
       price: 'Free',
       period: 'pickup + instant payout',
       description:
-        'Clearing out old phones, laptops, or gadgets? Book a free doorstep pickup and get paid instantly via DuitNow — no minimums, no paperwork.',
+        'Clearing out old phones, laptops, or gadgets? Book a free doorstep pickup and get paid instantly via DuitNow — minimum 3 devices, no paperwork.',
       features: [
         'Free doorstep pickup',
         'Instant DuitNow payment',
@@ -391,7 +391,7 @@ export const FAQ = {
     {
       question: 'Is there a minimum number of devices for a free pickup?',
       answer:
-        "No — whether it's a single old phone or a drawer full of devices, individual pickup is free and comes with instant DuitNow payment. There's no account or contract required.",
+        "Yes — when you have at least 3 old devices, individual pickup is free and comes with instant DuitNow payment. There's no account or contract required.",
     },
     {
       question: 'What happens to my data before a device is recycled?',
@@ -407,7 +407,7 @@ export const FAQ = {
       question:
         "What's the difference between individual and business collection?",
       answer:
-        "Individual pickup is for households clearing out personal devices — it's free, with instant payment, no minimums. Business or bulk collection is for offices, warehouses, and factories, and is scheduled around your operations with a custom quote based on volume and device types. Both are collected under the same DOE-registered, SW110-compliant process.",
+        "Individual pickup is for households clearing out personal devices — it's free, with instant payment, minimum 3 devices. Business or bulk collection is for offices, warehouses, and factories, and is scheduled around your operations with a custom quote based on volume and device types. Both are collected under the same DOE-registered, SW110-compliant process.",
     },
     {
       question:
@@ -598,7 +598,7 @@ export const PRICING_FAQ = [
 
 export const FOOTER = {
   services: [
-    { label: 'Recycle & Get Paid', href: '/contact' },
+    { label: 'Recycle & Get Paid', href: '/request-pickup' },
     {
       label: 'Bulk & Enterprise Collection',
       href: '/services/bulk-industrial-collection',
@@ -610,7 +610,6 @@ export const FOOTER = {
   ],
   company: [
     { label: 'About Us', href: '/about' },
-    { label: 'Meet the Team', href: '/about#team' },
     { label: 'Services', href: '/services' },
     { label: 'FAQ', href: '/faq' },
     { label: 'Contact', href: '/contact' },
@@ -630,48 +629,63 @@ export const SERVICES = [
   {
     slug: 'collection-pickup',
     icon: 'truck',
-    title: 'E-Waste Collection & Pickup',
+    title: 'Household e-waste pickup',
     summary:
-      'Scheduled doorstep collection for individual devices and household quantities, free of charge.',
+      'Free doorstep pickup in Klang Valley for at least 3 household devices, with instant DuitNow payment.',
   },
   {
     slug: 'bulk-industrial-collection',
     icon: 'factory',
-    title: 'Bulk & Industrial Collection',
+    title: 'Business & bulk e-waste collection',
     summary:
-      'Recurring, volume-based collection for offices, warehouses, and factories — quoted and scheduled around your operations.',
+      'Quote-based collection for offices and organisations retiring computers, monitors and other IT equipment.',
   },
   {
     slug: 'certified-data-destruction',
     icon: 'shield',
-    title: 'Certified Data Destruction',
+    title: 'Certified data destruction',
     summary:
-      'Physical destruction of data-bearing devices with a serialized certificate and full chain-of-custody tracking.',
+      'Data destruction for business devices, with the handling method and required documentation confirmed before collection.',
   },
   {
     slug: 'esg-reporting',
     icon: 'leaf',
-    title: 'ESG & Sustainability Reporting',
+    title: 'Collection & sustainability records',
     summary:
-      'Diversion and impact reporting — tonnage recycled, materials recovered, and estimated carbon impact — for your ESG disclosures.',
+      'Discuss the collection records available for your organisation\u2019s internal sustainability reporting.',
   },
   {
     slug: 'material-recovery',
     icon: 'recycle',
-    title: 'Recycling & Material Recovery',
+    title: 'Electronics recycling',
     summary:
-      'Licensed downstream processing that recovers reusable materials and diverts the rest from landfill.',
+      'Arrange recycling for old electronics and discuss the handling requirements for your device types.',
   },
   {
     slug: 'compliance-documentation',
     icon: 'file-check',
-    title: 'Compliance Documentation',
+    title: 'Business collection documentation',
     summary:
-      'Consignment notes and DOE-compliant paperwork issued for every collection, ready for audit.',
+      'Confirm the collection and data-destruction documents your organisation needs before arranging pickup.',
   },
 ] as const;
 
 export type ServiceSlug = (typeof SERVICES)[number]['slug'];
+
+const SUPPORT_SERVICE_SLUGS = new Set([
+  'esg-reporting',
+  'compliance-documentation',
+]);
+export const SERVICE_GROUPS = [
+  {
+    key: 'main',
+    items: SERVICES.filter(({ slug }) => !SUPPORT_SERVICE_SLUGS.has(slug)),
+  },
+  {
+    key: 'support',
+    items: SERVICES.filter(({ slug }) => SUPPORT_SERVICE_SLUGS.has(slug)),
+  },
+] as const;
 
 // ─── Resources Section ────────────────────────────────────────────────────────
 // Educational guides grounded in facts already established under /services —
@@ -742,49 +756,49 @@ export const SOLUTIONS = [
   {
     slug: 'corporate-enterprise',
     icon: 'building',
-    title: 'Corporate & Enterprise',
+    title: 'Office IT retirement',
     summary:
-      'Recurring bulk collection, certified data destruction, and ESG reporting for offices, corporate IT, and manufacturing facilities.',
+      'Plan an office equipment clear-out with an inventory, an internal owner and agreed access arrangements.',
     priority: true,
   },
   {
     slug: 'individuals-households',
     icon: 'house',
-    title: 'Individuals & Households',
+    title: 'Household electronics recycling',
     summary:
-      'Free doorstep pickup and instant DuitNow payment for personal electronics — no minimums, no paperwork.',
+      'Prepare at least 3 old household devices for pickup and discuss device condition before collection.',
     priority: true,
   },
   {
     slug: 'government-glc',
     icon: 'landmark',
-    title: 'Government & GLC',
+    title: 'Public-sector IT disposal preparation',
     summary:
-      'Procurement-ready compliance and transparent documentation for public sector agencies and government-linked companies.',
+      'Organise asset approvals and document requirements before requesting a public-sector equipment collection.',
     priority: false,
   },
   {
     slug: 'education',
     icon: 'graduation-cap',
-    title: 'Education',
+    title: 'School & campus electronics clear-outs',
     summary:
-      'Bulk collection for computer lab upgrades and campus-wide IT refresh cycles, with certified destruction of student and staff data.',
+      'Prepare retired classroom and office equipment for collection without disrupting active teaching spaces.',
     priority: false,
   },
   {
     slug: 'healthcare',
     icon: 'stethoscope',
-    title: 'Healthcare',
+    title: 'Clinic & hospital IT retirement',
     summary:
-      'Chain-of-custody-tracked collection and certified destruction for retired hospital and clinic IT equipment.',
+      'Plan the handover of retired IT equipment around internal data controls and site access requirements.',
     priority: false,
   },
   {
     slug: 'ngo',
     icon: 'heart',
-    title: 'NGO & Non-Profit',
+    title: 'Community & NGO device clear-outs',
     summary:
-      'Flexible, lower-volume collection at partnership rates for nonprofits and community organizations.',
+      'Coordinate a device list, an organiser and a collection location for your organisation\u2019s retired electronics.',
     priority: false,
   },
 ] as const;

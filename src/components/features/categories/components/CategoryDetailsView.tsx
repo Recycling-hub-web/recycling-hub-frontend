@@ -145,6 +145,14 @@ const CategoryDetailsView = ({
       </div>
 
       <Card className="p-5">
+        {category.image?.public_url && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={category.image.public_url}
+            alt={category.name}
+            className="mb-5 h-40 w-full rounded-lg object-cover sm:w-64"
+          />
+        )}
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <InfoRow
             icon={

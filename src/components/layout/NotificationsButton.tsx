@@ -39,7 +39,7 @@ const NotificationsButton = () => {
         >
           <LuBell className="size-5" />
           {count > 0 && (
-            <span className="absolute right-1.5 top-1.5 flex size-2 rounded-full bg-red-500" />
+            <span className="system-notification-dot absolute right-1.5 top-1.5 flex size-2 rounded-full bg-red-500" />
           )}
         </button>
       }

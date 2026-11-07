@@ -30,6 +30,8 @@ type CategoryListItem = {
   is_active: boolean;
   /** ["kg"], ["unit"] or ["kg", "unit"]. */
   allowed_quantity_units: QuantityUnit[];
+  /** Optional picture of the material (StorageFileField). */
+  image: { file_key: string; public_url: string | null } | null;
 };
 
 // Detail adds nested children — only present on the retrieve endpoint.

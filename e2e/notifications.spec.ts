@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 import { loginAs } from './helpers/auth';
+import { E_WASTE_CATEGORY_ID } from './helpers/categories';
 
 /**
  * Notifications — covers the two anonymous-create exceptions in the
@@ -12,7 +13,6 @@ import { loginAs } from './helpers/auth';
 
 // A real materials-module category id from the seeded dev DB — see
 // e2e/pickups.spec.ts, which requires the same fixture.
-const E_WASTE_CATEGORY_ID = '89067cc7-38ef-4752-9cd4-3ea29975abcb';
 
 const uniquePhone = () => `+6019${Date.now().toString().slice(-7)}`;
 
@@ -67,7 +67,7 @@ test('submitting the full pickup request form notifies staff', async ({
       full_name: fullName,
       email: 'e2e-notif@example.com',
       phone_number: '+60123456789',
-      items: [{ category: E_WASTE_CATEGORY_ID }],
+      items: [{ category: E_WASTE_CATEGORY_ID, quantity_unit: 'kg' }],
       pickup_address: '1 Jalan Test, 50000 Kuala Lumpur',
     },
   });

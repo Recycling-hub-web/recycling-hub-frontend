@@ -2,6 +2,7 @@ import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 
 import { loginAs } from './helpers/auth';
+import { E_WASTE_CATEGORY_ID, GLASS_CATEGORY_ID } from './helpers/categories';
 
 /**
  * The "Evaluate now" section on the quick-lead follow-up form
@@ -16,9 +17,6 @@ import { loginAs } from './helpers/auth';
  * `leadId`. Covers all three choices: left at its default, approved
  * with a price, rejected with a reason.
  */
-
-const E_WASTE_CATEGORY_ID = '89067cc7-38ef-4752-9cd4-3ea29975abcb';
-const GLASS_CATEGORY_ID = '7a1216d1-4f9a-4e29-8da8-9e897e7e43f8';
 
 // An order's details page — not /admin/pickups/create itself, which a
 // plain [^/]+ would also match while the form is still submitting.

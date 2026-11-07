@@ -8,7 +8,7 @@ import {
   LuTruck,
 } from 'react-icons/lu';
 
-import { SERVICES } from '../../../constants/content';
+import { SERVICE_GROUPS, SERVICES } from '../../../constants/content';
 import { useDictionary } from '../../../hooks/useDictionary';
 import { ContentGrid } from '../shared/ContentGrid';
 
@@ -39,15 +39,30 @@ const ServicesGrid = ({
       ? content.gridHeading.ourServices
       : content.gridHeading.exploreMore;
 
-  return (
+  const renderGrid = (items: typeof services, gridHeading: typeof heading) => (
     <ContentGrid
-      items={services}
+      items={items}
       icons={SERVICE_ICONS}
       cards={content.cards}
       basePath="/services"
-      heading={heading}
+      heading={gridHeading}
       learnMoreLabel={content.learnMore}
     />
+  );
+
+  if (variant === 'compact') return renderGrid(services, heading);
+
+  return (
+    <>
+      {SERVICE_GROUPS.map(({ key, items }) => (
+        <div key={key}>
+          {renderGrid(
+            items.filter(({ slug }) => slug !== excludeSlug),
+            key === 'main' ? heading : content.supportHeading,
+          )}
+        </div>
+      ))}
+    </>
   );
 };
 

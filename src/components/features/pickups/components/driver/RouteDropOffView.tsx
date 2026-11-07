@@ -114,13 +114,17 @@ const RouteDropOffView = () => {
       setApiError('Choose the store you are dropping off at.');
       return;
     }
+    if (!proofKey) {
+      setApiError('Upload a photo of the drop-off.');
+      return;
+    }
     try {
       await dropOff({
         items: Array.from(selected).map((id) => ({
           id,
           delivered_quantity: deliveredQuantities[id] || undefined,
         })),
-        proof: proofKey || undefined,
+        proof: proofKey,
         collection_point: store.collection_point,
       });
       toast.success('Dropped off to store');
@@ -344,6 +348,9 @@ const RouteDropOffView = () => {
             disabled={uploading}
             onChange={(e) => handleProofChange(e.target.files?.[0])}
           />
+          <span className="text-xs text-slate-500">
+            Drop-off photo <span className="text-red-600">*</span>
+          </span>
         </div>
 
         <Button

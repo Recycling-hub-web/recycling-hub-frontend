@@ -2,6 +2,7 @@ import type { APIRequestContext } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 
 import { loginAs } from './helpers/auth';
+import { E2E_PHOTO } from './helpers/storage';
 
 /**
  * The assigned driver confirms the pickup day and time straight from the
@@ -29,7 +30,12 @@ const seedApprovedOrder = async (
   const pickupRequestId = (await requestRes.json()).id as string;
   const orderRes = await request.post(
     `/api/v1/pickup-requests/${pickupRequestId}/orders/`,
-    { data: { items: [{ category: category.id }] } },
+    {
+      data: {
+        items: [{ category: category.id, quantity_unit: 'kg' }],
+        photos: [E2E_PHOTO],
+      },
+    },
   );
   const orderId = (await orderRes.json()).id as string;
   await request.post(`/api/v1/pickups/${orderId}/evaluate/`, {
@@ -101,7 +107,12 @@ test('driver confirms the pickup date and time from the table', async ({
 
   const orderRes = await page.request.post(
     `/api/v1/pickup-requests/${pickupRequestId}/orders/`,
-    { data: { items: [{ category: category.id }] } },
+    {
+      data: {
+        items: [{ category: category.id, quantity_unit: 'kg' }],
+        photos: [E2E_PHOTO],
+      },
+    },
   );
   expect(orderRes.ok()).toBe(true);
   const orderId = (await orderRes.json()).id as string;

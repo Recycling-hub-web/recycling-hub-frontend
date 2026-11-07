@@ -2,6 +2,8 @@ import type { APIRequestContext } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 
 import { loginAs } from './helpers/auth';
+import { E_WASTE_CATEGORY_ID } from './helpers/categories';
+import { E2E_PHOTO } from './helpers/storage';
 
 /**
  * Orders — covers the admin/staff lifecycle built for this module
@@ -23,7 +25,6 @@ import { loginAs } from './helpers/auth';
 // A real materials-module category id from the seeded dev DB
 // (apps.categories — Category.Module.MATERIALS). Orders require a
 // valid category FK when items are given.
-const E_WASTE_CATEGORY_ID = '89067cc7-38ef-4752-9cd4-3ea29975abcb';
 
 const uniqueName = (label: string) => `E2E Pickup ${label} ${Date.now()}`;
 
@@ -52,7 +53,14 @@ const seedOrder = async (
     `/api/v1/pickup-requests/${pickupRequestId}/orders/`,
     {
       data: {
-        items: [{ category: E_WASTE_CATEGORY_ID, estimated_quantity: '5.5' }],
+        photos: [E2E_PHOTO],
+        items: [
+          {
+            category: E_WASTE_CATEGORY_ID,
+            estimated_quantity: '5.5',
+            quantity_unit: 'kg',
+          },
+        ],
       },
     },
   );

@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 import { loginAs } from './helpers/auth';
+import { E_WASTE_CATEGORY_ID } from './helpers/categories';
 
 /**
  * Driver navigation links — per-stop, icon-only Google Maps/Waze deep
@@ -9,8 +10,6 @@ import { loginAs } from './helpers/auth';
  * for both apps — see OptimizeRouteModal for the actual multi-stop
  * flow). See features/pickups/utils/navigationLinks.ts.
  */
-
-const E_WASTE_CATEGORY_ID = '89067cc7-38ef-4752-9cd4-3ea29975abcb';
 
 test('driver can open Google Maps or Waze directions to an assigned pickup', async ({
   page,
@@ -24,7 +23,7 @@ test('driver can open Google Maps or Waze directions to an assigned pickup', asy
       full_name: fullName,
       email: 'e2e-nav@example.com',
       phone_number: '+60123456789',
-      items: [{ category: E_WASTE_CATEGORY_ID }],
+      items: [{ category: E_WASTE_CATEGORY_ID, quantity_unit: 'kg' }],
       pickup_address: address,
     },
   });

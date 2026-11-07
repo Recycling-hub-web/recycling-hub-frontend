@@ -1,7 +1,6 @@
 'use client';
 
 import { type FormEvent, useState } from 'react';
-import { LuBuilding2, LuSmartphone } from 'react-icons/lu';
 
 import {
   joinPhoneNumber,
@@ -18,15 +17,11 @@ import { PublicButton } from '../../../../ui/buttons/PublicButton';
 import { FadeIn } from '../../../../ui/FadeIn';
 import { useToast } from '../../../../ui/toast/ToastContext';
 import { useCreatePickupRequest } from '../../hooks';
+import { uploadPublicPickupPhoto } from '../../services/pickupService';
 import {
-  PICKUP_REQUEST_TYPE_LABELS,
-  type PickupRequestType,
-} from '../../types';
-
-const REQUEST_TYPE_ICONS = {
-  individual: LuSmartphone,
-  business: LuBuilding2,
-} as const;
+  type OrderPhoto,
+  PickupPhotosUploader,
+} from '../shared/PickupPhotosUploader';
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -53,28 +48,17 @@ const INITIAL_STATE: FormState = {
   note: '',
 };
 
-type PublicPickupRequestFormProps = {
-  requestType: PickupRequestType;
-  onSelectType: (type: PickupRequestType) => void;
-};
-
-/** Public, anonymous pickup-request form — posts straight to the real
- * PickupRequest endpoint (AllowAny on create, same as
+/** Public, anonymous business/bulk pickup-request form — posts straight
+ * to the real PickupRequest endpoint (AllowAny on create, same as
  * ContactFormSection), no account required. The customer's ask only:
- * contact info, address, and a chosen pickup date/time — no items, no
- * photo at submission time any more (those now belong to an Order,
- * created later by staff once this request has been reviewed — see
- * CreateOrderView). Same useCreatePickupRequest hook as the admin/
- * staff "New pickup request" action. Shared by both PickupTypeSelector
- * choices — `requestType` is the only thing that differs between an
- * individual and a business submission. The type toggle below reuses
- * the same icon+label design as PickupTypeSelector so switching reads
- * as the same choice, not a different control — and switches
- * instantly, no separate step. */
-const PublicPickupRequestForm = ({
-  requestType,
-  onSelectType,
-}: PublicPickupRequestFormProps) => {
+ * contact info, address, a chosen pickup date/time and 1–4 photos of
+ * what to collect (uploaded anonymously via uploadPublicPickupPhoto).
+ * No items — those belong to an Order, created later by staff once
+ * this request has been reviewed (see CreateOrderView). Same
+ * useCreatePickupRequest hook as the admin/staff "New pickup request"
+ * action. Always `request_type: 'business'` — the public site has no
+ * individual/household option; individuals use the callback form. */
+const PublicPickupRequestForm = () => {
   const {
     pickupRequest: { form: content },
   } = useDictionary();
@@ -87,8 +71,7 @@ const PublicPickupRequestForm = ({
   const [selectedLocation, setSelectedLocation] =
     useState<SelectedAddress | null>(null);
   const [apiError, setApiError] = useState('');
-
-  const isBusiness = requestType === 'business';
+  const [photos, setPhotos] = useState<OrderPhoto[]>([]);
 
   const updateField = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -100,7 +83,7 @@ const PublicPickupRequestForm = ({
     const nextErrors: Record<string, string> = {};
     if (!formData.full_name.trim())
       nextErrors.full_name = content.errorFullNameRequired;
-    if (isBusiness && !formData.email.trim()) {
+    if (!formData.email.trim()) {
       nextErrors.email = content.errorEmailRequired;
     } else if (formData.email.trim() && !EMAIL_PATTERN.test(formData.email)) {
       nextErrors.email = content.errorEmailInvalid;
@@ -120,6 +103,7 @@ const PublicPickupRequestForm = ({
       nextErrors.pickup_address = content.errorAddressRequired;
     if (!formData.requested_at)
       nextErrors.requested_at = content.errorRequestedAtRequired;
+    if (!photos.length) nextErrors.photos = content.errorPhotosRequired;
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
   };
@@ -137,15 +121,17 @@ const PublicPickupRequestForm = ({
           formData.phone_dial_code,
           formData.phone_local.trim(),
         ),
-        request_type: requestType,
+        request_type: 'business',
         pickup_address: formData.pickup_address.trim(),
         requested_at: new Date(formData.requested_at).toISOString(),
         note: formData.note.trim() || undefined,
+        photos: photos.map((p) => p.file_key),
       });
       // Create action a visitor could plausibly repeat (another address,
       // another batch) — stay on the page and reset in place, same as
       // ContactFormSection, rather than navigating or freezing the form.
       setFormData(INITIAL_STATE);
+      setPhotos([]);
       setSelectedLocation(null);
       setErrors({});
       toast.success(content.successMessage);
@@ -159,40 +145,10 @@ const PublicPickupRequestForm = ({
       <div className="mx-auto max-w-4xl px-5 md:px-8">
         <FadeIn>
           <div className="rounded-3xl border border-slate-200 p-6 shadow-sm md:p-10">
-            <div className="flex flex-wrap items-start justify-between gap-4">
-              <div>
-                <h2 className="text-2xl font-bold text-neutral-950 sm:text-3xl">
-                  {content.heading}
-                </h2>
-                <p className="mt-2 text-sm text-slate-500">
-                  {content.subheading}
-                </p>
-              </div>
-              <div className="inline-flex shrink-0 rounded-full border border-slate-200 bg-slate-50 p-1">
-                {(Object.keys(REQUEST_TYPE_ICONS) as PickupRequestType[]).map(
-                  (type) => {
-                    const Icon = REQUEST_TYPE_ICONS[type];
-                    const active = type === requestType;
-                    return (
-                      <button
-                        key={type}
-                        type="button"
-                        onClick={() => onSelectType(type)}
-                        aria-pressed={active}
-                        className={`flex items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-medium transition ${
-                          active
-                            ? 'bg-white text-brand-600 shadow-sm'
-                            : 'text-slate-500 hover:text-slate-700'
-                        }`}
-                      >
-                        <Icon size={16} />
-                        {PICKUP_REQUEST_TYPE_LABELS[type]}
-                      </button>
-                    );
-                  },
-                )}
-              </div>
-            </div>
+            <h2 className="text-2xl font-bold text-neutral-950 sm:text-3xl">
+              {content.heading}
+            </h2>
+            <p className="mt-2 text-sm text-slate-500">{content.subheading}</p>
 
             <form onSubmit={handleSubmit} noValidate className="mt-6">
               <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
@@ -209,7 +165,7 @@ const PublicPickupRequestForm = ({
                   label={content.email}
                   field="email"
                   type="email"
-                  required={isBusiness}
+                  required
                   placeholder={content.emailPlaceholder}
                   formData={formData}
                   errors={errors}
@@ -258,6 +214,23 @@ const PublicPickupRequestForm = ({
                       {selectedLocation.longitude.toFixed(5)}
                     </p>
                   )}
+                </div>
+                <div className="sm:col-span-2">
+                  <PickupPhotosUploader
+                    value={photos}
+                    onChange={(next) => {
+                      setPhotos(next);
+                      if (next.length) {
+                        setErrors((prev) => ({ ...prev, photos: '' }));
+                      }
+                    }}
+                    upload={uploadPublicPickupPhoto}
+                    disabled={submitting}
+                    label={content.photos}
+                    helperText={content.photosHelper}
+                    addLabel={content.photosAdd}
+                    error={errors.photos}
+                  />
                 </div>
                 <div className="sm:col-span-2">
                   <TextareaField

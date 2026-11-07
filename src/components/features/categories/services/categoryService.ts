@@ -41,6 +41,8 @@ type CreateCategoryPayload = {
   description?: string;
   parent?: string | null;
   allowed_quantity_units?: QuantityUnit[];
+  /** Storage key from the upload; omit for no image. */
+  image?: string;
 };
 
 const createCategory = (
@@ -57,6 +59,8 @@ type UpdateCategoryPayload = Partial<{
   parent: string | null;
   is_active: boolean;
   allowed_quantity_units: QuantityUnit[];
+  /** Storage key, or '' to remove the image. */
+  image: string;
 }>;
 
 const updateCategory = (

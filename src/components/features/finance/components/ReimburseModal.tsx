@@ -18,11 +18,10 @@ type ReimburseModalProps = {
   onReimbursed: () => void;
 };
 
-/** Verify & Reimburse, with an optional proof upload — one file for
+/** Verify & Reimburse, with a required proof upload — one file for
  * the whole batch, not per record (same "one proof for the batch"
- * shape as the driver's own RouteDropOffView). Proof stays optional
- * here, same as CollectModal's own proof_of_payment — not required
- * client- or server-side. */
+ * shape as the driver's own RouteDropOffView). The API refuses a
+ * reimbursement without it. */
 const ReimburseModal = ({
   ids,
   open,
@@ -61,8 +60,12 @@ const ReimburseModal = ({
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setApiError('');
+    if (!proofKey) {
+      setApiError('Upload the proof of payment before reimbursing.');
+      return;
+    }
     try {
-      await verifyReimburse(ids, proofKey || undefined);
+      await verifyReimburse(ids, proofKey);
       onReimbursed();
       handleClose();
     } catch {
@@ -113,12 +116,12 @@ const ReimburseModal = ({
 
         <div className="mb-4" data-field="reimbursement_proof">
           <label className="block text-sm font-medium text-slate-900">
-            Reimbursement proof
+            Reimbursement proof <span className="text-red-600">*</span>
           </label>
           <p className="mt-0.5 text-xs text-slate-500">
             {count === 1
-              ? 'Optional — a bank transfer receipt proving the driver was paid back.'
-              : `Optional — one receipt for all ${count} records, not one per record.`}
+              ? 'A bank transfer receipt proving the driver was paid back.'
+              : `One receipt for all ${count} records, not one per record.`}
           </p>
           <div className="mt-2 flex items-center gap-4">
             {proofPreview ? (

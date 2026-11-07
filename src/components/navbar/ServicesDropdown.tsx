@@ -1,154 +1,177 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { LuArrowRight, LuChevronDown } from 'react-icons/lu';
 
-import { SERVICES } from '../../constants/content';
+import { SERVICE_GROUPS } from '../../constants/content';
 import { useDictionary } from '../../hooks/useDictionary';
 import { SERVICE_ICONS } from '../public/services/ServicesGrid';
 
-const DOT_SPRING = { type: 'spring', stiffness: 600, damping: 25 } as const;
-
-const NavDot = () => (
-  <svg width="7" height="7" viewBox="0 0 7 7" fill="currentColor">
-    <circle cx="3.5" cy="3.5" r="3.5" />
-  </svg>
-);
-
-// ── Desktop dropdown ──────────────────────────────────────────────────────────
-
-type ServicesDropdownProps = {
-  light: boolean;
+const ServiceMenuLinks = ({
+  compact = false,
+  onNavigate,
+}: {
+  compact?: boolean;
+  onNavigate: () => void;
+}) => {
+  const dict = useDictionary();
+  const { pathname } = useRouter();
+  return (
+    <>
+      {SERVICE_GROUPS.filter(({ key }) => key === 'main').map(
+        ({ key, items }) => (
+          <div
+            key={key}
+            className={
+              key === 'support' ? 'mt-2 border-t border-slate-100 pt-3' : ''
+            }
+          >
+            <p className="px-3 pb-2 pt-1 text-xs font-semibold text-slate-500">
+              {key === 'main'
+                ? dict.nav.serviceGroupMain
+                : dict.nav.serviceGroupSupport}
+            </p>
+            <div
+              className={
+                compact ? 'flex flex-col gap-1' : 'grid grid-cols-2 gap-1'
+              }
+            >
+              {items.map(({ slug, icon }) => {
+                const href = `/services/${slug}`;
+                const active = pathname === href;
+                const Icon = SERVICE_ICONS[icon];
+                const { title, summary } = dict.services.cards[slug];
+                return (
+                  <Link
+                    key={slug}
+                    href={href}
+                    onClick={onNavigate}
+                    aria-current={active ? 'page' : undefined}
+                    className={`flex min-h-11 items-start gap-3 rounded-xl p-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-600 ${active ? 'bg-brand-50 text-brand-700' : 'text-slate-700 hover:bg-slate-50 hover:text-brand-700'}`}
+                  >
+                    <Icon
+                      size={18}
+                      className="mt-0.5 shrink-0"
+                      aria-hidden="true"
+                    />
+                    <span className="min-w-0">
+                      <span className="block text-sm font-semibold">
+                        {title}
+                      </span>
+                      {!compact && (
+                        <span className="mt-1 line-clamp-2 block text-xs leading-relaxed text-slate-500">
+                          {summary}
+                        </span>
+                      )}
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        ),
+      )}
+      <Link
+        href="/services"
+        onClick={onNavigate}
+        className="mt-3 flex min-h-11 items-center justify-between rounded-xl border-t border-slate-100 p-3 text-sm font-semibold text-brand-700 hover:bg-brand-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-600"
+      >
+        {dict.nav.viewAllServices}
+        <LuArrowRight size={16} aria-hidden="true" />
+      </Link>
+      <Link
+        href="/solutions"
+        onClick={onNavigate}
+        className="flex min-h-11 items-center justify-between rounded-xl p-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-600"
+      >
+        {dict.nav.whoWeHelp}
+        <LuArrowRight size={16} aria-hidden="true" />
+      </Link>
+    </>
+  );
 };
 
-const ServicesDropdown = ({ light }: ServicesDropdownProps) => {
+const ServicesDropdown = ({ light }: { light: boolean }) => {
   const [open, setOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const router = useRouter();
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const panelId = useId();
+  const { pathname, locale } = useRouter();
   const dict = useDictionary();
-
-  const isActiveServices = router.pathname.startsWith('/services');
-  const showDot = isActiveServices || open;
-
-  // Close on outside click
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (
-        wrapperRef.current &&
-        !wrapperRef.current.contains(e.target as Node)
-      ) {
-        setOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, []);
-
-  // Close on route change
+  const active = pathname.startsWith('/services');
+  let triggerColor = 'text-white hover:text-white/80';
+  if (light) {
+    triggerColor = active
+      ? 'text-brand-700'
+      : 'text-slate-600 hover:text-neutral-950';
+  }
   useEffect(() => {
     setOpen(false);
-  }, [router.pathname]);
-
-  const triggerActiveCls = light ? 'text-brand-600' : 'text-white';
-  const triggerIdleCls = light
-    ? 'text-slate-500 hover:text-neutral-950'
-    : 'text-white/75 hover:text-white';
-  const triggerCls = isActiveServices ? triggerActiveCls : triggerIdleCls;
-
+  }, [pathname, locale]);
+  useEffect(() => {
+    const outside = (event: PointerEvent) => {
+      if (!wrapperRef.current?.contains(event.target as Node)) setOpen(false);
+    };
+    document.addEventListener('pointerdown', outside);
+    return () => document.removeEventListener('pointerdown', outside);
+  }, []);
   return (
     <div
       ref={wrapperRef}
       className="relative"
       onMouseEnter={() => setOpen(true)}
       onMouseLeave={() => setOpen(false)}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node))
+          setOpen(false);
+      }}
+      onKeyDown={(event) => {
+        if (event.key === 'Escape') {
+          setOpen(false);
+          triggerRef.current?.focus();
+        }
+      }}
     >
-      {/* Trigger */}
       <button
+        ref={triggerRef}
         type="button"
-        onClick={() => setOpen((o) => !o)}
-        className={`group flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-xs font-medium transition-colors duration-200 lg:text-sm ${triggerCls}`}
+        aria-expanded={open}
+        aria-controls={panelId}
+        onClick={() => setOpen(true)}
+        onKeyDown={(event) => {
+          if (event.key === 'ArrowDown') {
+            event.preventDefault();
+            setOpen(true);
+            requestAnimationFrame(() =>
+              wrapperRef.current?.querySelector('a')?.focus(),
+            );
+          }
+        }}
+        className={`flex min-h-11 items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-600 ${triggerColor}`}
       >
-        <motion.span
-          className="shrink-0"
-          initial={false}
-          animate={{ scale: showDot ? 1 : 0, opacity: showDot ? 1 : 0 }}
-          whileHover={{ scale: 1.5 }}
-          transition={DOT_SPRING}
-          style={{ display: 'inline-flex' }}
-        >
-          <NavDot />
-        </motion.span>
         {dict.nav.services}
-        <motion.span
-          animate={{ rotate: open ? 180 : 0 }}
-          transition={{ duration: 0.2, ease: 'easeOut' }}
-          style={{ display: 'inline-flex' }}
-        >
-          <LuChevronDown size={13} strokeWidth={2.5} />
-        </motion.span>
+        <LuChevronDown
+          size={14}
+          aria-hidden="true"
+          className={
+            open ? 'rotate-180 transition-transform' : 'transition-transform'
+          }
+        />
       </button>
-
-      {/* Panel */}
       <AnimatePresence>
         {open && (
           <motion.div
-            initial={{ opacity: 0, y: 6 }}
+            id={panelId}
+            initial={{ opacity: 0, y: 4 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 6 }}
-            transition={{ duration: 0.15, ease: 'easeOut' }}
-            className="absolute left-1/2 top-[calc(100%+8px)] z-50 w-[38rem] -translate-x-1/2 rounded-2xl border border-slate-200 bg-white p-2 shadow-[0_8px_30px_rgba(0,0,0,0.08)]"
+            exit={{ opacity: 0, y: 4 }}
+            transition={{ duration: 0.15 }}
+            className="absolute left-1/2 top-full z-50 w-[38rem] max-w-[calc(100vw-2rem)] -translate-x-1/2 pt-2"
           >
-            <div className="grid grid-cols-2 gap-0.5">
-              {SERVICES.map(({ slug, icon, title, summary }) => {
-                const href = `/services/${slug}`;
-                const Icon = SERVICE_ICONS[icon];
-                const active = router.pathname === href;
-                return (
-                  <Link
-                    key={slug}
-                    href={href}
-                    className={`group flex w-full items-start gap-3 rounded-xl p-4 transition-colors duration-150 ${
-                      active
-                        ? 'border border-slate-200 bg-neutral-100'
-                        : 'border border-transparent hover:border-slate-200 hover:bg-neutral-100'
-                    }`}
-                  >
-                    <Icon
-                      size={20}
-                      strokeWidth={1.75}
-                      className={`mt-0.5 shrink-0 transition-colors duration-150 ${
-                        active
-                          ? 'text-neutral-700'
-                          : 'text-slate-400 group-hover:text-neutral-700'
-                      }`}
-                    />
-                    <div className="min-w-0">
-                      <p
-                        className={`text-sm font-semibold leading-snug transition-colors duration-150 ${
-                          active
-                            ? 'text-neutral-950'
-                            : 'text-neutral-900 group-hover:text-neutral-950'
-                        }`}
-                      >
-                        {title}
-                      </p>
-                      <p className="mt-0.5 line-clamp-2 text-xs leading-relaxed text-slate-500">
-                        {summary}
-                      </p>
-                    </div>
-                  </Link>
-                );
-              })}
+            <div className="max-h-[calc(100dvh-110px)] overflow-y-auto rounded-2xl border border-slate-200 bg-white p-3 shadow-xl">
+              <ServiceMenuLinks onNavigate={() => setOpen(false)} />
             </div>
-
-            <Link
-              href="/services"
-              className="mt-1 flex items-center justify-between rounded-xl border-t border-slate-100 px-4 py-3 text-sm font-semibold text-brand-600 transition-colors duration-150 hover:bg-neutral-100"
-            >
-              {dict.nav.viewAllServices}
-              <LuArrowRight size={15} />
-            </Link>
           </motion.div>
         )}
       </AnimatePresence>
@@ -156,93 +179,46 @@ const ServicesDropdown = ({ light }: ServicesDropdownProps) => {
   );
 };
 
-// ── Mobile accordion ──────────────────────────────────────────────────────────
-
 const ServicesMobileAccordion = () => {
   const [open, setOpen] = useState(false);
-  const router = useRouter();
+  const { pathname, locale } = useRouter();
   const dict = useDictionary();
-
-  const isActiveServices = router.pathname.startsWith('/services');
-
+  const panelId = useId();
+  const triggerRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     setOpen(false);
-  }, [router.pathname]);
-
+  }, [pathname, locale]);
   return (
-    <div>
+    <div
+      onKeyDown={(event) => {
+        if (event.key === 'Escape') {
+          setOpen(false);
+          triggerRef.current?.focus();
+        }
+      }}
+    >
       <button
+        ref={triggerRef}
         type="button"
-        onClick={() => setOpen((o) => !o)}
-        className={`flex w-full items-center justify-between rounded-lg px-3.5 py-2.5 text-sm font-medium transition-colors duration-150 ${
-          isActiveServices
-            ? 'bg-brand-50 text-brand-600'
-            : 'text-slate-500 hover:bg-neutral-100 hover:text-neutral-950'
-        }`}
+        aria-expanded={open}
+        aria-controls={panelId}
+        onClick={() => setOpen((value) => !value)}
+        className={`flex min-h-11 w-full items-center justify-between rounded-lg px-3.5 py-2.5 text-sm font-medium ${pathname.startsWith('/services') ? 'bg-brand-50 text-brand-700' : 'text-slate-600 hover:bg-slate-50'}`}
       >
-        <span className="flex items-center gap-2">
-          {isActiveServices && (
-            <motion.span
-              className="shrink-0 text-brand-600"
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={DOT_SPRING}
-              style={{ display: 'inline-flex' }}
-            >
-              <NavDot />
-            </motion.span>
-          )}
-          {dict.nav.services}
-        </span>
-
-        <motion.span
-          animate={{ rotate: open ? 180 : 0 }}
-          transition={{ duration: 0.2, ease: 'easeOut' }}
-          style={{ display: 'inline-flex' }}
-        >
-          <LuChevronDown size={16} strokeWidth={2} />
-        </motion.span>
+        {dict.nav.services}
+        <LuChevronDown
+          size={16}
+          aria-hidden="true"
+          className={
+            open ? 'rotate-180 transition-transform' : 'transition-transform'
+          }
+        />
       </button>
-
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.2, ease: 'easeInOut' }}
-            className="overflow-hidden"
-          >
-            <div className="ml-4 mt-1 flex flex-col gap-0.5 border-l border-slate-200 pl-3">
-              {SERVICES.map(({ slug, icon, title }) => {
-                const href = `/services/${slug}`;
-                const Icon = SERVICE_ICONS[icon];
-                const active = router.pathname === href;
-                return (
-                  <Link
-                    key={slug}
-                    href={href}
-                    className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors duration-150 ${
-                      active
-                        ? 'font-semibold text-brand-600'
-                        : 'text-slate-500 hover:bg-neutral-100 hover:text-neutral-950'
-                    }`}
-                  >
-                    <Icon size={16} strokeWidth={1.75} className="shrink-0" />
-                    {title}
-                  </Link>
-                );
-              })}
-              <Link
-                href="/services"
-                className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-semibold text-brand-600 transition-colors hover:bg-neutral-100"
-              >
-                {dict.nav.viewAllServices}
-              </Link>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {open && (
+        <div id={panelId} className="ml-3 border-l border-slate-200 pl-2">
+          <ServiceMenuLinks compact onNavigate={() => setOpen(false)} />
+        </div>
+      )}
     </div>
   );
 };

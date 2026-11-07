@@ -3,7 +3,7 @@ import type { ReactElement } from 'react';
 import { LuArrowRight } from 'react-icons/lu';
 
 import { Meta } from '../../components/layout/Meta';
-import { FeatureTabs } from '../../components/public/home/FeatureTabs';
+import { PublicSeoSchema } from '../../components/layout/PublicSeoSchema';
 import { ServicesGrid } from '../../components/public/services/ServicesGrid';
 import { ServicesTrustBar } from '../../components/public/services/ServicesTrustBar';
 import { ReusableHero } from '../../components/ui/hero';
@@ -13,15 +13,14 @@ import type { NextPageWithLayout } from '../../types/next';
 
 const ServicesPage: NextPageWithLayout = () => {
   const {
-    services: { hero, crossLink },
+    services: { hero, crossLink, intent },
+    seo,
   } = useDictionary();
 
   return (
     <>
-      <Meta
-        title="Services — Recycling Hub E-Waste Collection & Disposal"
-        description="Licensed e-waste collection, certified data destruction, material recovery, and compliance reporting — Recycling Hub's full service lineup."
-      />
+      <Meta {...seo.services} />
+      <PublicSeoSchema page="services" />
       <ReusableHero
         eyebrow={hero.eyebrow}
         headline={hero.headline}
@@ -30,7 +29,25 @@ const ServicesPage: NextPageWithLayout = () => {
       />
       <ServicesTrustBar />
       <ServicesGrid />
-      <FeatureTabs />
+      <section className="bg-white px-5 pb-16 md:px-8">
+        <div className="mx-auto max-w-3xl">
+          <h2 className="text-2xl font-bold text-neutral-950">
+            {intent.heading}
+          </h2>
+          <p className="mt-4 leading-relaxed text-slate-600">
+            {intent.description}
+          </p>
+          <div className="mt-6 flex flex-col gap-4 text-brand-700 underline underline-offset-4">
+            <Link href="/services/certified-data-destruction">
+              {intent.dataLink}
+            </Link>
+            <Link href="/services/bulk-industrial-collection">
+              {intent.bulkLink}
+            </Link>
+            <Link href="/request-quote">{intent.quoteLink}</Link>
+          </div>
+        </div>
+      </section>
       <div className="bg-white pb-16 text-center md:pb-20">
         <Link
           href={crossLink.href}

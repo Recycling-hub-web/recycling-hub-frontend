@@ -43,6 +43,8 @@ type NewOrdersFieldArrayProps = {
   disabled?: boolean;
   /** Per order, per item — the same shape PickupItemsFieldArray takes. */
   itemErrors?: Record<string, string>[][];
+  /** Per order: its photo error, '' when fine. */
+  photoErrors?: string[];
 };
 
 /** Orders to create together with a new pickup request — each with its
@@ -57,6 +59,7 @@ const NewOrdersFieldArray = ({
   loadingCategories,
   disabled,
   itemErrors = [],
+  photoErrors = [],
 }: NewOrdersFieldArrayProps) => {
   const update = (key: string, patch: Partial<DraftOrder>) =>
     onChange((current) =>
@@ -69,7 +72,8 @@ const NewOrdersFieldArray = ({
         <div>
           <p className="text-sm font-medium text-slate-900">Orders</p>
           <p className="text-xs text-slate-500">
-            Optional — add the materials now, or later from the request.
+            Optional — add orders now, or later from the request. Each order
+            needs its materials and at least one photo.
           </p>
         </div>
         {orders.length < MAX_ORDERS && (
@@ -135,6 +139,7 @@ const NewOrdersFieldArray = ({
                   value={order.photos}
                   onChange={(photos) => update(order.key, { photos })}
                   disabled={disabled}
+                  error={order.photos.length ? '' : photoErrors[index]}
                 />
               </div>
             </div>

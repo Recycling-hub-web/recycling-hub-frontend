@@ -1,11 +1,13 @@
 import { motion } from 'framer-motion';
-import { LuCheck, LuMessageSquareQuote } from 'react-icons/lu';
+import Link from 'next/link';
+import { LuCheck } from 'react-icons/lu';
 
 import {
   SOLUTION_DETAILS,
   type SolutionSlug,
 } from '../../../constants/content';
 import { useDictionary } from '../../../hooks/useDictionary';
+import { SolutionBreadcrumbs } from '../../layout/SolutionBreadcrumbs';
 import { PublicButton } from '../../ui/buttons/PublicButton';
 import { FadeIn } from '../../ui/FadeIn';
 import { ReusableHero } from '../../ui/hero';
@@ -25,6 +27,7 @@ const SolutionDetailTemplate = ({ slug }: SolutionDetailTemplateProps) => {
 
   return (
     <>
+      <SolutionBreadcrumbs slug={slug} />
       <ReusableHero
         eyebrow={nav.solutions}
         headline={title}
@@ -63,17 +66,17 @@ const SolutionDetailTemplate = ({ slug }: SolutionDetailTemplateProps) => {
         </div>
       </section>
 
-      {/* Testimonial / case study placeholder */}
-      <section className="bg-neutral-50 py-16 md:py-20">
-        <div className="mx-auto max-w-3xl px-5 md:px-8">
-          <FadeIn>
-            <div className="flex items-start gap-3 rounded-2xl border border-dashed border-slate-300 bg-white p-6 text-slate-400 md:p-8">
-              <LuMessageSquareQuote size={20} className="mt-0.5 shrink-0" />
-              <p className="text-sm leading-relaxed">
-                {details.testimonialNote}
-              </p>
-            </div>
-          </FadeIn>
+      <section className="bg-brand-50 px-5 py-12 md:px-8">
+        <div className="mx-auto max-w-3xl">
+          <h2 className="text-xl font-bold text-neutral-950">
+            {dictSolutions.relatedServiceHeading}
+          </h2>
+          <Link
+            href={`/services/${details.serviceSlug}`}
+            className="mt-4 inline-flex min-h-11 items-center font-semibold text-brand-700 underline underline-offset-4"
+          >
+            {details.serviceLabel}
+          </Link>
         </div>
       </section>
 

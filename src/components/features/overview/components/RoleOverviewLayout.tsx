@@ -5,6 +5,7 @@ import { ROLE_LABELS } from '../../../../types/auth';
 import { PageContainer } from '../../../layout/PageContainer';
 import type { NavItem } from '../../../layout/Sidebar';
 import { PageHeader } from '../../../ui/PageHeader';
+import { MobileCommandCard } from './MobileCommandCard';
 import { OverviewQuickLinks } from './OverviewQuickLinks';
 import { ProfileSummaryCard } from './ProfileSummaryCard';
 
@@ -47,6 +48,8 @@ const RoleOverviewLayout = ({
         title={`Welcome, ${user.full_name.split(' ')[0]}`}
         subtitle={ROLE_LABELS[user.role]}
       />
+
+      <MobileCommandCard navItems={navItems} />
 
       {/* One consistent gap between every section below the header —
        * works whether `extra` is a single block or (Staff/Driver/

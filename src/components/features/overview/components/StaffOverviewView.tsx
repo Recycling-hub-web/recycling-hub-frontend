@@ -11,7 +11,7 @@ import {
 
 import { OPERATIONAL_ROLES } from '../../../../layouts/operationalRoles';
 import { SectionContainer } from '../../../ui/card/SectionContainer';
-import { BarChart, DonutChart } from '../../../ui/charts';
+import { DonutChart } from '../../../ui/charts';
 import { STATUS_BADGE_VARIANT as FINANCE_STATUS_BADGE_VARIANT } from '../../finance/constants';
 import { FINANCE_STATUS_LABELS } from '../../finance/types';
 import { QuickLeadTable } from '../../pickups/components/admin/QuickLeadTable';
@@ -20,11 +20,14 @@ import {
   useQuickPickupRequests,
 } from '../../pickups/hooks';
 import type { PickupQuickRequestListItem } from '../../pickups/types';
-import { PICKUP_STATUS_LABELS } from '../../pickups/types';
-import { useStaffOverviewStats } from '../hooks';
+import { usePickupWeek, useStaffOverviewStats } from '../hooks';
+import { OrderStatusGaugeCard } from './OrderStatusGaugeCard';
 import { OverviewStatCard } from './OverviewStatCard';
 import { OverviewStatGrid } from './OverviewStatGrid';
+import { PickupHeatmapCard } from './PickupHeatmapCard';
+import { PickupsThisWeekCard } from './PickupsThisWeekCard';
 import { PickupVolumeChart } from './PickupVolumeChart';
+import { RequestsThisWeekStat } from './RequestsThisWeekStat';
 import { RoleOverviewLayout } from './RoleOverviewLayout';
 
 const LEADS_PREVIEW_SIZE = 5;
@@ -45,6 +48,7 @@ const LEADS_PREVIEW_SIZE = 5;
  * same stats endpoint, and the shared PickupVolumeChart. */
 const StaffOverviewView = () => {
   const stats = useStaffOverviewStats();
+  const week = usePickupWeek();
   const {
     requests: newLeads,
     count: newLeadsCount,
@@ -67,17 +71,6 @@ const StaffOverviewView = () => {
     }
   };
 
-  const pickupStatusData = stats.pickupStatusCounts
-    ? (
-        Object.keys(
-          PICKUP_STATUS_LABELS,
-        ) as (keyof typeof PICKUP_STATUS_LABELS)[]
-      ).map((s) => ({
-        label: PICKUP_STATUS_LABELS[s],
-        count: stats.pickupStatusCounts![s],
-      }))
-    : [];
-
   const financeStatusData = stats.financeStatusCounts
     ? (
         Object.keys(
@@ -97,6 +90,11 @@ const StaffOverviewView = () => {
       ownHref="/staff"
       statGrid={
         <OverviewStatGrid>
+          <RequestsThisWeekStat
+            href="/staff/pickup-requests"
+            week={week}
+            className="col-span-2 lg:col-span-1 lg:row-span-2"
+          />
           <OverviewStatCard
             icon={LuTruck}
             label="Pending pickups"
@@ -126,24 +124,11 @@ const StaffOverviewView = () => {
       extra={
         <>
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-            <PickupVolumeChart />
-            <SectionContainer>
-              <h2 className="mb-4 text-sm font-semibold text-slate-900">
-                Pickup requests by status
-              </h2>
-              <BarChart
-                data={pickupStatusData}
-                xKey="label"
-                series={[
-                  {
-                    key: 'count',
-                    label: 'Requests',
-                    color: '#007535',
-                  },
-                ]}
-                loading={!stats.pickupStatusCounts}
-              />
-            </SectionContainer>
+            <PickupsThisWeekCard
+              requestsHref="/staff/pickup-requests"
+              week={week}
+            />
+            <OrderStatusGaugeCard counts={stats.pickupStatusCounts} />
             <SectionContainer>
               <h2 className="mb-4 text-sm font-semibold text-slate-900">
                 Finance records by status
@@ -153,6 +138,8 @@ const StaffOverviewView = () => {
                 loading={!stats.financeStatusCounts}
               />
             </SectionContainer>
+            <PickupHeatmapCard />
+            <PickupVolumeChart />
           </div>
 
           {(loadingLeads || newLeadsCount > 0) && (

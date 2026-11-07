@@ -6,7 +6,6 @@ import {
   PublicPickupRequestForm,
   QuickPickupRequestForm,
 } from '../components/features/pickups/components';
-import type { PickupRequestType } from '../components/features/pickups/types';
 import { Meta } from '../components/layout/Meta';
 import { ReusableHero } from '../components/ui/hero';
 import { useDictionary } from '../hooks/useDictionary';
@@ -15,33 +14,23 @@ import type { NextPageWithLayout } from '../types/next';
 
 const RequestPickupPage: NextPageWithLayout = () => {
   const {
-    pickupRequest: { hero },
+    pickupRequest: { hero, typeSelector },
   } = useDictionary();
-  // Full-form choices stay on this same page/flow — the form has its
-  // own type toggle (same icon+label design as PickupTypeSelector) that
-  // switches this directly, no need to clear back to the selector to
-  // change it. The quick (type+phone only) path is a separate, third
-  // view — null means "still on the selector".
-  const [requestType, setRequestType] = useState<PickupRequestType | null>(
-    null,
-  );
-  const [quick, setQuick] = useState(false);
+  // The public site offers two paths only: a callback (phone number
+  // only) or a business/bulk request (the full form). null means
+  // "still on the selector".
+  const [choice, setChoice] = useState<'callback' | 'business' | null>(null);
 
   let content: ReactNode;
-  if (quick) {
+  if (choice === 'callback') {
     content = <QuickPickupRequestForm />;
-  } else if (requestType) {
-    content = (
-      <PublicPickupRequestForm
-        requestType={requestType}
-        onSelectType={setRequestType}
-      />
-    );
+  } else if (choice === 'business') {
+    content = <PublicPickupRequestForm />;
   } else {
     content = (
       <PickupTypeSelector
-        onSelect={setRequestType}
-        onSelectQuick={() => setQuick(true)}
+        onSelectCallback={() => setChoice('callback')}
+        onSelectBusiness={() => setChoice('business')}
       />
     );
   }
@@ -58,6 +47,22 @@ const RequestPickupPage: NextPageWithLayout = () => {
         headlineAccent={hero.headlineAccent}
         description={hero.description}
       />
+      {choice && (
+        <div className="mx-auto max-w-2xl px-5 md:px-8">
+          <button
+            type="button"
+            onClick={() => setChoice(null)}
+            className="min-h-11 rounded-lg px-3 py-2 text-sm font-semibold text-brand-700 hover:bg-brand-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+          >
+            ← {typeSelector.changeOption}
+          </button>
+          <p className="mt-3 text-sm leading-relaxed text-slate-600">
+            {choice === 'callback'
+              ? typeSelector.callback.description
+              : typeSelector.business.description}
+          </p>
+        </div>
+      )}
       {content}
     </>
   );

@@ -1,18 +1,19 @@
-import type { ReactNode } from 'react';
+import { Children, type ReactNode } from 'react';
 
-/** Responsive wrapper around a row of OverviewStatCards — 2 columns on
- * mobile, one per card up to 4 wide on desktop. Plain layout only, no
- * assumption about how many cards are passed; spacing to whatever
- * comes next is the caller's job (RoleOverviewLayout's space-y-6, or
- * AdministratorsPanel's own explicit margin on the element after
- * it). */
-const OverviewStatGrid = ({ children }: { children: ReactNode }) => (
-  <div
-    className="grid grid-cols-2 gap-3 lg:grid-cols-4"
-    data-testid="overview-stat-grid"
-  >
-    {children}
-  </div>
-);
+/** Responsive wrapper around a row of stat cards — 2 columns on mobile,
+ * one per card on wide screens. With five cards it's three columns:
+ * the solid lead card spans two rows, the other four sit beside it. Spacing to whatever comes next
+ * is the caller's job. */
+const OverviewStatGrid = ({ children }: { children: ReactNode }) => {
+  const count = Children.count(children);
+  return (
+    <div
+      className={`grid grid-cols-2 gap-3 ${count >= 5 ? 'lg:grid-cols-3' : 'lg:grid-cols-4'}`}
+      data-testid="overview-stat-grid"
+    >
+      {children}
+    </div>
+  );
+};
 
 export { OverviewStatGrid };

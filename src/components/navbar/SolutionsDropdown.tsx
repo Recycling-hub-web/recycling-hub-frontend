@@ -8,11 +8,7 @@ import { SOLUTIONS } from '../../constants/content';
 import { useDictionary } from '../../hooks/useDictionary';
 import { SOLUTION_ICONS } from '../public/solutions/SolutionsGrid';
 
-// Only the two active primary markets are linked directly from the nav —
-// the other four segments are built and live at /solutions/<slug>, just not
-// surfaced here yet. Reachable via "View All Solutions" below until the
-// business is ready to actively market to those segments.
-const NAV_SOLUTIONS = SOLUTIONS.filter((s) => s.priority);
+const NAV_SOLUTIONS = SOLUTIONS;
 
 const DOT_SPRING = { type: 'spring', stiffness: 600, damping: 25 } as const;
 
@@ -64,6 +60,16 @@ const SolutionsDropdown = ({ light }: SolutionsDropdownProps) => {
 
   return (
     <div
+      onKeyDown={(event) => {
+        if (event.key === 'Escape') {
+          setOpen(false);
+          wrapperRef.current?.querySelector('button')?.focus();
+        }
+      }}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node))
+          setOpen(false);
+      }}
       ref={wrapperRef}
       className="relative"
       onMouseEnter={() => setOpen(true)}
@@ -72,7 +78,9 @@ const SolutionsDropdown = ({ light }: SolutionsDropdownProps) => {
       {/* Trigger */}
       <button
         type="button"
-        onClick={() => setOpen((o) => !o)}
+        aria-expanded={open}
+        aria-controls="solutions-desktop-panel"
+        onClick={() => setOpen(true)}
         className={`group flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-xs font-medium transition-colors duration-200 lg:text-sm ${triggerCls}`}
       >
         <motion.span
@@ -99,13 +107,15 @@ const SolutionsDropdown = ({ light }: SolutionsDropdownProps) => {
       <AnimatePresence>
         {open && (
           <motion.div
+            id="solutions-desktop-panel"
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 6 }}
             transition={{ duration: 0.15, ease: 'easeOut' }}
-            className="absolute left-1/2 top-[calc(100%+8px)] z-50 w-80 -translate-x-1/2 rounded-2xl border border-slate-200 bg-white p-2 shadow-[0_8px_30px_rgba(0,0,0,0.08)]"
+            className="absolute left-1/2 top-full z-50 w-80 -translate-x-1/2 rounded-2xl border border-slate-200 bg-white p-2 shadow-[0_8px_30px_rgba(0,0,0,0.08)]"
           >
-            {NAV_SOLUTIONS.map(({ slug, icon, title, summary }) => {
+            {NAV_SOLUTIONS.map(({ slug, icon }) => {
+              const { title, summary } = dict.solutions.cards[slug];
               const href = `/solutions/${slug}`;
               const Icon = SOLUTION_ICONS[icon];
               const active = router.pathname === href;
@@ -177,6 +187,8 @@ const SolutionsMobileAccordion = () => {
     <div>
       <button
         type="button"
+        aria-expanded={open}
+        aria-controls="solutions-mobile-panel"
         onClick={() => setOpen((o) => !o)}
         className={`flex w-full items-center justify-between rounded-lg px-3.5 py-2.5 text-sm font-medium transition-colors duration-150 ${
           isActiveSolutions
@@ -211,6 +223,7 @@ const SolutionsMobileAccordion = () => {
       <AnimatePresence>
         {open && (
           <motion.div
+            id="solutions-mobile-panel"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
@@ -218,7 +231,8 @@ const SolutionsMobileAccordion = () => {
             className="overflow-hidden"
           >
             <div className="ml-4 mt-1 flex flex-col gap-0.5 border-l border-slate-200 pl-3">
-              {NAV_SOLUTIONS.map(({ slug, icon, title }) => {
+              {NAV_SOLUTIONS.map(({ slug, icon }) => {
+                const { title } = dict.solutions.cards[slug];
                 const href = `/solutions/${slug}`;
                 const Icon = SOLUTION_ICONS[icon];
                 const active = router.pathname === href;

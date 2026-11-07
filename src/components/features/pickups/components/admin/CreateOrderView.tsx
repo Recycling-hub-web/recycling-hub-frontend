@@ -66,11 +66,16 @@ const CreateOrderView = ({
   const [items, setItems] = useState<PickupRequestItemInput[]>([]);
   const [itemErrors, setItemErrors] = useState<Record<string, string>[]>([]);
   const [photos, setPhotos] = useState<OrderPhoto[]>([]);
+  const [photoError, setPhotoError] = useState('');
 
   const validate = (): boolean => {
     const nextItemErrors = validateItems(items, unitsByCategory);
     setItemErrors(nextItemErrors);
-    return !hasItemErrors(nextItemErrors);
+    const nextPhotoError = photos.length
+      ? ''
+      : 'Add at least one photo of the materials.';
+    setPhotoError(nextPhotoError);
+    return !hasItemErrors(nextItemErrors) && !nextPhotoError;
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -86,7 +91,7 @@ const CreateOrderView = ({
               quantity_unit: item.quantity_unit?.trim() || undefined,
             }))
           : undefined,
-        photos: photos.length ? photos.map((p) => p.file_key) : undefined,
+        photos: photos.map((p) => p.file_key),
       });
       toast.success('Order created', `Order ${order.code} has been created.`);
       router.push(`${ordersBasePath}/${order.id}`);
@@ -149,8 +154,12 @@ const CreateOrderView = ({
             <div className="sm:col-span-2">
               <PickupPhotosUploader
                 value={photos}
-                onChange={setPhotos}
+                onChange={(next) => {
+                  setPhotos(next);
+                  if (next.length) setPhotoError('');
+                }}
                 disabled={submitting}
+                error={photoError}
               />
             </div>
           </div>

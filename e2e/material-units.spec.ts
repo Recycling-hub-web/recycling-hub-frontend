@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 import { loginAs } from './helpers/auth';
+import { attachPhoto, mockStorageUploads } from './helpers/storage';
 
 /**
  * Materials are measured by KG, Unit, or both (a category's "Measured
@@ -9,6 +10,7 @@ import { loginAs } from './helpers/auth';
  */
 
 test.beforeEach(async ({ page }) => {
+  await mockStorageUploads(page);
   // No live address suggestions — their dropdown would cover the form.
   await page.route(
     'https://api.geoapify.com/v1/geocode/autocomplete**',
@@ -56,6 +58,7 @@ test('a unit-only material only takes whole-number counts', async ({
   await expect(unit).toHaveValue('unit');
   await expect(unit).toBeDisabled();
 
+  await attachPhoto(order);
   await order.locator('[data-field="estimated_quantity"] input').fill('2.5');
   await page.getByRole('button', { name: 'Create request' }).click();
   await expect(

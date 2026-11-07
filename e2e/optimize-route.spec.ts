@@ -2,6 +2,7 @@ import type { APIRequestContext } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 
 import { loginAs } from './helpers/auth';
+import { E_WASTE_CATEGORY_ID } from './helpers/categories';
 
 /**
  * Driver route optimization (simple version, v1) — select some of the
@@ -13,8 +14,6 @@ import { loginAs } from './helpers/auth';
  * choices — plus the geocoding-failure path for an address that can't
  * be located at all.
  */
-
-const E_WASTE_CATEGORY_ID = '89067cc7-38ef-4752-9cd4-3ea29975abcb';
 
 const uniqueName = (label: string) =>
   `E2E OptimizeRoute ${label} ${Date.now()}`;
@@ -33,7 +32,7 @@ const seedScheduledForDriver = async (
       full_name: fullName,
       email: 'e2e-optimize@example.com',
       phone_number: '+60123456789',
-      items: [{ category: E_WASTE_CATEGORY_ID }],
+      items: [{ category: E_WASTE_CATEGORY_ID, quantity_unit: 'kg' }],
       pickup_address: pickupAddress,
     },
   });

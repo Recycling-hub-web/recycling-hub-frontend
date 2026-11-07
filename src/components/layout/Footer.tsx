@@ -41,11 +41,20 @@ const Footer = () => {
 
             <div className="flex flex-col gap-1.5 text-sm">
               <a
-                href={`tel:${BRAND.phone.replace(/[\s-]+/g, '')}`}
+                href={BRAND.whatsapp}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-fit text-neutral-950 transition-colors hover:text-brand-600"
               >
-                {BRAND.phone}
+                {dict.contact.form.sidePanel.whatsappLabel}: {BRAND.phone}
               </a>
+              <a
+                href={`mailto:${BRAND.email}`}
+                className="w-fit text-neutral-950 hover:text-brand-600"
+              >
+                {BRAND.email}
+              </a>
+              <span className="text-xs text-slate-500">{BRAND.legalName}</span>
               <span className="text-xs text-slate-400">
                 {BRAND.businessHours}
               </span>

@@ -43,7 +43,7 @@ const OverviewQuickLinks = ({ navItems, ownHref }: OverviewQuickLinksProps) => {
           <Link
             key={href}
             href={href}
-            className="flex flex-col items-start gap-2.5 rounded-2xl border border-slate-100 bg-white p-4 transition-colors hover:border-brand-200"
+            className="system-action-card flex flex-col items-start gap-2.5 rounded-2xl border border-slate-100 bg-white p-4 transition-colors hover:border-brand-200"
           >
             <span className="flex size-9 items-center justify-center rounded-xl bg-slate-50 text-slate-500">
               <Icon className="size-4" />

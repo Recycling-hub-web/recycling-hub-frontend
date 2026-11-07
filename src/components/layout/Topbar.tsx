@@ -1,6 +1,8 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import { LuChevronDown, LuMenu, LuUserRound } from 'react-icons/lu';
 
+import { ASSETS } from '../../constants/content';
 import { useAuth } from '../../contexts/AuthContext';
 import { Dropdown } from '../ui/dropdown/Dropdown';
 import { NotificationsButton } from './NotificationsButton';
@@ -29,16 +31,30 @@ const Topbar = ({ onMenuClick }: TopbarProps) => {
   const { user } = useAuth();
 
   return (
-    <header className="flex h-16 shrink-0 items-center rounded-xl bg-white px-4 shadow-sm lg:px-6">
+    <header className="system-app-header flex h-16 shrink-0 items-center bg-white px-4 shadow-sm lg:rounded-xl lg:px-6">
+      <Link
+        href="/dashboard"
+        aria-label="Recycling Hub dashboard"
+        className="mr-auto lg:hidden"
+      >
+        <Image
+          src={ASSETS.logo.combinedColor}
+          alt="Recycling Hub"
+          width={3100}
+          height={700}
+          className="h-6 w-auto"
+          priority
+        />
+      </Link>
       <button
         type="button"
         onClick={onMenuClick}
         aria-label="Open menu"
-        className="flex size-9 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 lg:hidden"
+        className="order-last ml-2 flex size-11 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 lg:hidden"
       >
         <LuMenu className="size-5" />
       </button>
-      <div className="ms-auto flex items-center gap-3">
+      <div className="ms-auto flex items-center gap-1 lg:gap-3">
         <NotificationsButton />
         {user && (
           <Dropdown
@@ -48,7 +64,7 @@ const Topbar = ({ onMenuClick }: TopbarProps) => {
               <button
                 type="button"
                 aria-label="Account menu"
-                className="flex items-center gap-2 rounded-full p-0.5 pe-2 transition-colors hover:bg-slate-50"
+                className="system-profile-trigger flex min-h-11 min-w-11 items-center gap-2 rounded-full p-0.5 pe-2 transition-colors hover:bg-slate-50"
               >
                 <span className="flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-slate-100 bg-slate-50 text-xs font-bold text-slate-600">
                   {user.profile_photo?.public_url ? (
@@ -62,11 +78,11 @@ const Topbar = ({ onMenuClick }: TopbarProps) => {
                     getInitials(user.full_name)
                   )}
                 </span>
-                <span className="hidden max-w-40 truncate text-sm font-medium text-slate-700 sm:block">
+                <span className="hidden max-w-40 truncate text-sm font-medium text-slate-700 lg:block">
                   {user.full_name}
                 </span>
                 <LuChevronDown
-                  className="size-4 text-slate-400"
+                  className="hidden size-4 text-slate-400 lg:block"
                   aria-hidden="true"
                 />
               </button>

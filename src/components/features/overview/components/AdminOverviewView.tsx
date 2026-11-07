@@ -5,14 +5,17 @@ import { LuMail, LuNewspaper, LuTruck, LuUsers } from 'react-icons/lu';
 import { useAuth } from '../../../../contexts/AuthContext';
 import { adminNavItemsFor } from '../../../../layouts/navigation';
 import { SectionContainer } from '../../../ui/card/SectionContainer';
-import { BarChart, DonutChart } from '../../../ui/charts';
+import { DonutChart } from '../../../ui/charts';
 import { STATUS_BADGE_VARIANT as FINANCE_STATUS_BADGE_VARIANT } from '../../finance/constants';
 import { FINANCE_STATUS_LABELS } from '../../finance/types';
-import { PICKUP_STATUS_LABELS } from '../../pickups/types';
-import { useAdminOverviewStats } from '../hooks';
+import { useAdminOverviewStats, usePickupWeek } from '../hooks';
+import { OrderStatusGaugeCard } from './OrderStatusGaugeCard';
 import { OverviewStatCard } from './OverviewStatCard';
 import { OverviewStatGrid } from './OverviewStatGrid';
+import { PickupHeatmapCard } from './PickupHeatmapCard';
+import { PickupsThisWeekCard } from './PickupsThisWeekCard';
 import { PickupVolumeChart } from './PickupVolumeChart';
+import { RequestsThisWeekStat } from './RequestsThisWeekStat';
 import { RoleOverviewLayout } from './RoleOverviewLayout';
 
 /** Replaces the old `redirect('/admin/users')` — /admin is now a real
@@ -27,17 +30,7 @@ import { RoleOverviewLayout } from './RoleOverviewLayout';
 const AdminOverviewView = () => {
   const { user } = useAuth();
   const stats = useAdminOverviewStats();
-
-  const pickupStatusData = stats.pickupStatusCounts
-    ? (
-        Object.keys(
-          PICKUP_STATUS_LABELS,
-        ) as (keyof typeof PICKUP_STATUS_LABELS)[]
-      ).map((s) => ({
-        label: PICKUP_STATUS_LABELS[s],
-        count: stats.pickupStatusCounts![s],
-      }))
-    : [];
+  const week = usePickupWeek();
 
   const financeStatusData = stats.financeStatusCounts
     ? (
@@ -58,6 +51,11 @@ const AdminOverviewView = () => {
       ownHref="/admin"
       statGrid={
         <OverviewStatGrid>
+          <RequestsThisWeekStat
+            href="/admin/pickup-requests"
+            week={week}
+            className="col-span-2 lg:col-span-1 lg:row-span-2"
+          />
           <OverviewStatCard
             icon={LuUsers}
             label="Total users"
@@ -86,24 +84,11 @@ const AdminOverviewView = () => {
       }
       extra={
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-          <PickupVolumeChart />
-          <SectionContainer>
-            <h2 className="mb-4 text-sm font-semibold text-slate-900">
-              Pickup requests by status
-            </h2>
-            <BarChart
-              data={pickupStatusData}
-              xKey="label"
-              series={[
-                {
-                  key: 'count',
-                  label: 'Requests',
-                  color: '#007535',
-                },
-              ]}
-              loading={!stats.pickupStatusCounts}
-            />
-          </SectionContainer>
+          <PickupsThisWeekCard
+            requestsHref="/admin/pickup-requests"
+            week={week}
+          />
+          <OrderStatusGaugeCard counts={stats.pickupStatusCounts} />
           <SectionContainer>
             <h2 className="mb-4 text-sm font-semibold text-slate-900">
               Finance records by status
@@ -113,6 +98,8 @@ const AdminOverviewView = () => {
               loading={!stats.financeStatusCounts}
             />
           </SectionContainer>
+          <PickupHeatmapCard />
+          <PickupVolumeChart />
         </div>
       }
     />

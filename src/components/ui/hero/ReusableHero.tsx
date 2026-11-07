@@ -26,7 +26,7 @@ const ReusableHero = ({
 
     {/* Line grid */}
     <div
-      className="pointer-events-none absolute inset-0 opacity-[0.05]"
+      className="pointer-events-none absolute inset-0 opacity-5"
       style={{
         backgroundImage:
           'linear-gradient(rgba(0,0,0,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.6) 1px, transparent 1px)',
