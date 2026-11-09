@@ -107,7 +107,9 @@ const PublicPickupRequestForm = () => {
     if (!heading) return;
     heading.scrollIntoView({
       behavior: prefersReducedMotion() ? 'auto' : 'smooth',
-      block: 'center',
+      // 'start', not 'center' — see PickupRequestCreateView's copy of
+      // this same effect for why.
+      block: 'start',
     });
     heading.focus({ preventScroll: true });
   }, [stepIndex]);

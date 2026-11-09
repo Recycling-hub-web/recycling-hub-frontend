@@ -75,7 +75,11 @@ const PickupRequestCreateView = ({
     if (!heading) return;
     heading.scrollIntoView({
       behavior: prefersReducedMotion() ? 'auto' : 'smooth',
-      block: 'center',
+      // 'start', not 'center' — on short mobile viewports (address bar +
+      // this form's sticky footer + the dashboard's bottom tab bar all
+      // eating vertical space), centering the heading pushed the step
+      // indicator and card header mostly off-screen.
+      block: 'start',
     });
     heading.focus({ preventScroll: true });
   }, [stepIndex]);
