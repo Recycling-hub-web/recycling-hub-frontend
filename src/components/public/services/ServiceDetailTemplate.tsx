@@ -86,15 +86,9 @@ const ServiceDetailTemplate = ({ slug }: ServiceDetailTemplateProps) => {
       <section className="bg-white py-16 md:py-20">
         <div className="mx-auto max-w-3xl px-5 text-center md:px-8">
           <FadeIn>
-            {slug === 'collection-pickup' ? (
-              <PublicButton href="/request-pickup">
-                {nav.requestPickup}
-              </PublicButton>
-            ) : (
-              <PublicButton href={`/request-quote?service=${slug}`}>
-                {nav.requestQuote}
-              </PublicButton>
-            )}
+            <PublicButton href="/request-pickup">
+              {nav.requestPickup}
+            </PublicButton>
           </FadeIn>
 
           {slug === 'collection-pickup' && (

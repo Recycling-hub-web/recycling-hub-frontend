@@ -49,8 +49,11 @@ const NAV_MODULES = {
     icon: LuShieldCheck,
   },
   // The customer's ask — PickupRequest (the restructure's new parent
-  // concept, up to 7 Orders each) — distinct from `pickups` below,
-  // which is the Orders queue (materials/pricing/driver workflow).
+  // concept, up to 7 Orders each). Admin/staff/super-admin browse and
+  // manage Orders only through a request's own details page now (its
+  // nested Orders table) — there's no separate Orders list/sidebar
+  // entry for them. `pickups` below still exists purely for the
+  // driver's own, differently-scoped page at the same URL segment.
   pickupRequests: {
     segment: 'pickup-requests',
     label: 'Pickup Requests',
@@ -105,11 +108,6 @@ type NavModule = keyof typeof NAV_MODULES;
 
 /** Menu entries that group several pages under one expandable item. */
 const NAV_GROUPS = {
-  pickupsMenu: {
-    label: 'Pickups',
-    icon: LuTruck,
-    modules: ['pickupRequests', 'pickups'],
-  },
   financeMenu: {
     label: 'Finance',
     icon: LuWallet,
@@ -194,7 +192,7 @@ const adminNavItemsFor = (role: UserRole | undefined): NavItem[] => [
     { title: 'Main', entries: ['overview', 'notifications'] },
     {
       title: 'Operations',
-      entries: ['pickupsMenu', 'collectionPoints', 'vehicles'],
+      entries: ['pickupRequests', 'collectionPoints', 'vehicles'],
     },
     { title: 'Finance', entries: ['financeMenu'] },
     {
@@ -223,7 +221,7 @@ const adminNavItemsFor = (role: UserRole | undefined): NavItem[] => [
 // by direct URL.
 const SUPER_ADMIN_NAV_ITEMS: NavItem[] = buildNavSections('/super-admin', [
   { title: 'Main', entries: ['overview'] },
-  { title: 'Operations', entries: ['pickupsMenu', 'collectionPoints'] },
+  { title: 'Operations', entries: ['pickupRequests', 'collectionPoints'] },
   { title: 'Finance', entries: ['financeMenu'] },
   {
     title: 'Content',

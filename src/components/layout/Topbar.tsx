@@ -1,15 +1,11 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { LuChevronDown, LuMenu, LuUserRound } from 'react-icons/lu';
+import { LuChevronDown, LuUserRound } from 'react-icons/lu';
 
 import { ASSETS } from '../../constants/content';
 import { useAuth } from '../../contexts/AuthContext';
 import { Dropdown } from '../ui/dropdown/Dropdown';
 import { NotificationsButton } from './NotificationsButton';
-
-type TopbarProps = {
-  onMenuClick: () => void;
-};
 
 // Same initials fallback as Sidebar's own account card — kept as a
 // small local copy rather than a shared export, since the two avatars
@@ -23,11 +19,12 @@ const getInitials = (name: string) =>
     .join('')
     .toUpperCase() || '?';
 
-/** Reusable topbar for every sidebar layout: the mobile menu trigger
- * (hidden at lg, where Sidebar is always visible), notifications, and the
+/** Reusable topbar for every sidebar layout: notifications and the
  * signed-in user's avatar + name, which opens a small account menu
- * ("My Profile"). Full identity + sign out still live in Sidebar. */
-const Topbar = ({ onMenuClick }: TopbarProps) => {
+ * ("My Profile"). Full identity + sign out still live in Sidebar; the
+ * mobile menu trigger lives in SystemMobileNavigation's "Menu" tab now,
+ * not here. */
+const Topbar = () => {
   const { user } = useAuth();
 
   return (
@@ -46,14 +43,6 @@ const Topbar = ({ onMenuClick }: TopbarProps) => {
           priority
         />
       </Link>
-      <button
-        type="button"
-        onClick={onMenuClick}
-        aria-label="Open menu"
-        className="order-last ml-2 flex size-11 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 lg:hidden"
-      >
-        <LuMenu className="size-5" />
-      </button>
       <div className="ms-auto flex items-center gap-1 lg:gap-3">
         <NotificationsButton />
         {user && (

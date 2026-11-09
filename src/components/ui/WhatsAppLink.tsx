@@ -1,5 +1,3 @@
-import { FaWhatsapp } from 'react-icons/fa';
-
 /** wa.me wants the full international number as digits only — the stored
  * E.164 "+60123456789" becomes https://wa.me/60123456789. */
 const whatsAppUrl = (phoneNumber: string) =>
@@ -22,9 +20,8 @@ const WhatsAppLink = ({ phoneNumber, className = '' }: WhatsAppLinkProps) => {
       rel="noopener noreferrer"
       onClick={(e) => e.stopPropagation()}
       aria-label={`Message ${phoneNumber} on WhatsApp`}
-      className={`inline-flex items-center gap-1.5 whitespace-nowrap text-slate-700 transition hover:text-brand-600 hover:underline ${className}`}
+      className={`whitespace-nowrap text-slate-700 transition hover:text-brand-600 hover:underline ${className}`}
     >
-      <FaWhatsapp className="size-4 shrink-0 text-[#25D366]" />
       {phoneNumber}
     </a>
   );

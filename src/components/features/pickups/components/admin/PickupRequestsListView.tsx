@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { LuClipboardList, LuPlus } from 'react-icons/lu';
@@ -21,6 +22,7 @@ import {
 } from '../../../../ui/table';
 import { Tabs } from '../../../../ui/tabs';
 import { useToast } from '../../../../ui/toast/ToastContext';
+import { WhatsAppLink } from '../../../../ui/WhatsAppLink';
 import {
   PICKUP_REQUEST_STATUS_BADGE_VARIANT,
   PICKUP_REQUEST_STATUS_FILTER_OPTIONS,
@@ -59,12 +61,13 @@ type PickupRequestsListViewProps = {
     | '/super-admin/pickup-requests';
 };
 
-/** Admin/staff list of the customer's own asks — distinct from the
- * Orders queue (OrdersView, still at .../pickups): this shows contact/
- * status/order-count, with a "New request" action that starts the
- * two-step flow (create the request here, then an Order under it from
- * its details page). Admin and staff share identical permissions on
- * this module, same as Orders. */
+/** Admin/staff list of the customer's own asks — shows contact/status/
+ * order-count, with a "New request" action that starts the two-step
+ * flow (create the request here, then an Order under it from its
+ * details page). There's no separate Orders list — every Order is
+ * only ever browsed via its parent request's own details page (its
+ * nested Orders table). Admin and staff share identical permissions
+ * on this module. */
 const PickupRequestsListView = ({ basePath }: PickupRequestsListViewProps) => {
   const router = useRouter();
   const toast = useToast();
@@ -159,8 +162,8 @@ const PickupRequestsListView = ({ basePath }: PickupRequestsListViewProps) => {
         <td className="max-w-[180px] truncate px-6 py-4 font-medium text-slate-900">
           {r.full_name}
         </td>
-        <td className="max-w-[200px] truncate px-6 py-4 text-slate-500">
-          {r.email || r.phone_number}
+        <td className="px-6 py-4">
+          <WhatsAppLink phoneNumber={r.phone_number} />
         </td>
         <td className="px-6 py-4">
           <StatusBadge variant={REQUEST_TYPE_BADGE_VARIANT[r.request_type]}>
@@ -172,8 +175,25 @@ const PickupRequestsListView = ({ basePath }: PickupRequestsListViewProps) => {
             {PICKUP_REQUEST_STATUS_LABELS[r.status]}
           </StatusBadge>
         </td>
-        <td className="px-6 py-4 text-slate-700">
-          {r.orders.length} order{r.orders.length === 1 ? '' : 's'}
+        <td
+          className="max-w-[180px] px-6 py-4 text-slate-700"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {r.orders.length === 0 ? (
+            <span className="text-slate-400">No orders yet</span>
+          ) : (
+            <div className="flex flex-wrap gap-x-2 gap-y-1">
+              {r.orders.map((order) => (
+                <Link
+                  key={order.id}
+                  href={`${ordersBasePath}/${order.id}`}
+                  className="font-medium text-slate-900 hover:text-brand-600 hover:underline"
+                >
+                  {order.code}
+                </Link>
+              ))}
+            </div>
+          )}
         </td>
         <td className="px-6 py-4 text-slate-500">
           <AppDate value={r.requested_at} format="short" />

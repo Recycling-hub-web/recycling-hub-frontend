@@ -6,8 +6,6 @@ export { ConvertQuickLeadView } from './admin/ConvertQuickLeadView';
 export { EditOrderView } from './admin/EditOrderView';
 export { EvaluateModal } from './admin/EvaluateModal';
 export { OrderDetailsView } from './admin/OrderDetailsView';
-export { OrdersView } from './admin/OrdersView';
-export { OrderTable, PAGE_SIZE } from './admin/OrderTable';
 export { QuickLeadTable } from './admin/QuickLeadTable';
 
 // PickupRequest-level (admin/staff) — the customer's ask, parent of

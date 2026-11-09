@@ -1,6 +1,12 @@
 import { expect, test } from '@playwright/test';
 
 import { loginAs } from './helpers/auth';
+import {
+  createRequest,
+  fillCustomer,
+  fillPickup,
+  finishOrders,
+} from './helpers/pickupRequestForm';
 import { attachPhoto, mockStorageUploads } from './helpers/storage';
 
 /**
@@ -17,9 +23,6 @@ test.beforeEach(async ({ page }) => {
     (route) => route.fulfill({ json: { results: [] } }),
   );
 });
-
-const futureLocal = () =>
-  new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString().slice(0, 16);
 
 test('a unit-only material only takes whole-number counts', async ({
   page,
@@ -40,12 +43,8 @@ test('a unit-only material only takes whole-number counts', async ({
   // A pickup request with one order for it.
   await page.goto('/admin/pickup-requests/create');
   const fullName = `E2E Units ${Date.now()}`;
-  await page.locator('[data-field="full_name"] input').fill(fullName);
-  await page.locator('[data-field="phone_local"] input').fill('123456789');
-  await page
-    .locator('[data-field="pickup_address"] input')
-    .fill('1 Jalan Test, 50000 Kuala Lumpur');
-  await page.locator('[data-field="requested_at"] input').fill(futureLocal());
+  await fillCustomer(page, { fullName });
+  await fillPickup(page);
   await page.getByRole('button', { name: 'Add order' }).click();
   const order = page.getByTestId('new-order');
   await order.getByRole('button', { name: 'Add another item' }).click();
@@ -60,13 +59,15 @@ test('a unit-only material only takes whole-number counts', async ({
 
   await attachPhoto(order);
   await order.locator('[data-field="estimated_quantity"] input').fill('2.5');
-  await page.getByRole('button', { name: 'Create request' }).click();
+  // The Orders step checks its materials on Continue.
+  await page.getByRole('button', { name: 'Continue' }).click();
   await expect(
     page.getByText('A count in units must be a whole number.'),
   ).toBeVisible();
 
   await order.locator('[data-field="estimated_quantity"] input').fill('3');
-  await page.getByRole('button', { name: 'Create request' }).click();
+  await finishOrders(page);
+  await createRequest(page);
   await expect(page).toHaveURL(/\/admin\/pickup-requests\/(?!create)[^/]+$/);
 
   const id = page.url().split('/').pop();

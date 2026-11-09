@@ -1,5 +1,4 @@
 import Image from 'next/image';
-import Link from 'next/link';
 import { LuArrowUpRight } from 'react-icons/lu';
 
 import { useDictionary } from '../../../hooks/useDictionary';
@@ -31,13 +30,6 @@ const HeroBlobSection = () => {
               {nav.requestPickup}
               <LuArrowUpRight className="ml-2" size={18} />
             </PublicButton>
-            <Link
-              href="/request-quote?service=bulk-industrial-collection"
-              className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-brand-700 underline-offset-4 hover:underline"
-            >
-              {nav.requestQuote}
-              <LuArrowUpRight size={16} />
-            </Link>
           </div>
         </div>
         <div className="relative aspect-[4/3] overflow-hidden rounded-3xl bg-brand-100">

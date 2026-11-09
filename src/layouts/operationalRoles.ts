@@ -66,7 +66,7 @@ const OPERATIONAL_ROLES: Record<OperationalRole, OperationalRoleConfig> = {
       { title: 'Main', entries: ['overview', 'notifications'] },
       {
         title: 'Operations',
-        entries: ['pickupsMenu', 'collectionPoints', 'vehicles'],
+        entries: ['pickupRequests', 'collectionPoints', 'vehicles'],
       },
       { title: 'Finance', entries: ['financeMenu'] },
       {

@@ -606,7 +606,6 @@ export const FOOTER = {
     { label: 'How It Works', href: '/#how-it-works' },
     { label: 'Pricing', href: '/pricing' },
     { label: 'Track & Trace / Certificates', href: '/track-trace' },
-    { label: 'Request a Quote', href: '/request-quote' },
   ],
   company: [
     { label: 'About Us', href: '/about' },

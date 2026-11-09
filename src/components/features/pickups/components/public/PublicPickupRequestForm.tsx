@@ -1,265 +1,390 @@
 'use client';
 
-import { type FormEvent, useState } from 'react';
-
+import { type FormEvent, useEffect, useRef } from 'react';
 import {
-  joinPhoneNumber,
-  validatePhoneNumber,
-} from '../../../../../constants/dialCodes';
-import { useDictionary } from '../../../../../hooks/useDictionary';
-import { ApiError } from '../../../../../lib/api';
-import type { SelectedAddress } from '../../../../../lib/geoapify';
+  LuCircleAlert,
+  LuClipboardCheck,
+  LuClipboardList,
+  LuPencil,
+  LuPhoneCall,
+  LuTruck,
+} from 'react-icons/lu';
+
 import { AddressInput } from '../../../../form/fields/AddressInput';
 import { InputField } from '../../../../form/fields/InputField';
 import { PhoneInputField } from '../../../../form/fields/PhoneInputField';
 import { TextareaField } from '../../../../form/fields/TextareaField';
 import { PublicButton } from '../../../../ui/buttons/PublicButton';
+import { IconTile } from '../../../../ui/card/IconTile';
+import { SectionCard } from '../../../../ui/card/SectionCard';
+import { DescriptionList } from '../../../../ui/DescriptionList';
 import { FadeIn } from '../../../../ui/FadeIn';
-import { useToast } from '../../../../ui/toast/ToastContext';
-import { useCreatePickupRequest } from '../../hooks';
-import { uploadPublicPickupPhoto } from '../../services/pickupService';
-import {
-  type OrderPhoto,
-  PickupPhotosUploader,
-} from '../shared/PickupPhotosUploader';
+import { StepIndicator } from '../../../../ui/navigation/StepIndicator';
+import { usePublicPickupRequestForm } from '../../hooks/usePublicPickupRequestForm';
+import { fillTemplate } from '../../models/publicPickupRequestModel';
+import { PickupPhotosUploader } from '../shared/PickupPhotosUploader';
 
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-type FormState = {
-  full_name: string;
-  email: string;
-  // Split for PhoneInputField's own dialCodeField/numberField contract —
-  // joined back into the single `phone_number` string the backend
-  // actually stores only at submit time (see joinPhoneNumber).
-  phone_dial_code: string;
-  phone_local: string;
-  pickup_address: string;
-  requested_at: string;
-  note: string;
+type NextStepsProps = {
+  title: string;
+  steps: { title: string; body: string }[];
 };
 
-const INITIAL_STATE: FormState = {
-  full_name: '',
-  email: '',
-  phone_dial_code: '+60',
-  phone_local: '',
-  pickup_address: '',
-  requested_at: '',
-  note: '',
-};
+const STEP_ICONS = [LuClipboardCheck, LuPhoneCall, LuTruck];
 
-/** Public, anonymous business/bulk pickup-request form — posts straight
- * to the real PickupRequest endpoint (AllowAny on create, same as
- * ContactFormSection), no account required. The customer's ask only:
- * contact info, address, a chosen pickup date/time and 1–4 photos of
- * what to collect (uploaded anonymously via uploadPublicPickupPhoto).
- * No items — those belong to an Order, created later by staff once
- * this request has been reviewed (see CreateOrderView). Same
- * useCreatePickupRequest hook as the admin/staff "New pickup request"
- * action. Always `request_type: 'business'` — the public site has no
- * individual/household option; individuals use the callback form. */
+/** Beside the form on desktop, under it on mobile: what the customer
+ * can expect after submitting — there's no pickup time to choose here,
+ * staff agree one by phone. */
+const NextSteps = ({ title, steps }: NextStepsProps) => (
+  <aside className="rounded-3xl border border-brand-100 bg-brand-50/60 p-6 lg:sticky lg:top-28">
+    <h3 className="text-base font-semibold text-neutral-950">{title}</h3>
+    <ol className="mt-5 space-y-5">
+      {steps.map((item, i) => {
+        const Icon = STEP_ICONS[i] ?? LuClipboardCheck;
+        return (
+          <li key={item.title} className="relative flex gap-3">
+            {i < steps.length - 1 && (
+              <span
+                aria-hidden
+                className="absolute left-[1.125rem] top-10 h-[calc(100%-1.25rem)] w-px bg-brand-200"
+              />
+            )}
+            <span
+              aria-hidden
+              className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-brand-700 ring-1 ring-brand-200"
+            >
+              <Icon size={16} />
+            </span>
+            <span className="min-w-0 pt-1">
+              <span className="block text-sm font-semibold text-neutral-950">
+                {item.title}
+              </span>
+              <span className="mt-1 block text-sm leading-relaxed text-slate-600">
+                {item.body}
+              </span>
+            </span>
+          </li>
+        );
+      })}
+    </ol>
+  </aside>
+);
+
+const prefersReducedMotion = () =>
+  typeof window !== 'undefined' &&
+  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/** Public, anonymous Business / Bulk pickup request, as a step form:
+ * your details → what to collect → anything else → review. Same public
+ * POST /pickup-requests/ and payload as before (always `business`, 1–4
+ * photos uploaded anonymously, no items and no pickup time — staff
+ * agree one by phone). All state and rules live in
+ * usePublicPickupRequestForm and its model; copy in EN + BM. */
 const PublicPickupRequestForm = () => {
+  const form = usePublicPickupRequestForm();
   const {
-    pickupRequest: { form: content },
-  } = useDictionary();
-  const toast = useToast();
-  const { execute: createRequest, loading: submitting } =
-    useCreatePickupRequest();
+    copy,
+    steps,
+    stepId,
+    stepIndex,
+    isLastStep,
+    formData,
+    errors,
+    submitting,
+    updateField,
+    blurField,
+  } = form;
 
-  const [formData, setFormData] = useState<FormState>(INITIAL_STATE);
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [selectedLocation, setSelectedLocation] =
-    useState<SelectedAddress | null>(null);
-  const [apiError, setApiError] = useState('');
-  const [photos, setPhotos] = useState<OrderPhoto[]>([]);
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  const firstRender = useRef(true);
 
-  const updateField = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-    setErrors((prev) => ({ ...prev, [field]: '' }));
-  };
-
-  // Validated on submit, not proactively — same rule as ContactFormSection.
-  const validate = (): boolean => {
-    const nextErrors: Record<string, string> = {};
-    if (!formData.full_name.trim())
-      nextErrors.full_name = content.errorFullNameRequired;
-    if (!formData.email.trim()) {
-      nextErrors.email = content.errorEmailRequired;
-    } else if (formData.email.trim() && !EMAIL_PATTERN.test(formData.email)) {
-      nextErrors.email = content.errorEmailInvalid;
+  // After a step change: bring the step into view and move focus to it.
+  useEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false;
+      return;
     }
-    const phoneError = validatePhoneNumber(
-      formData.phone_dial_code,
-      formData.phone_local,
-      {
-        messages: {
-          required: content.errorPhoneRequired,
-          invalid: content.errorPhoneInvalid,
-        },
-      },
-    );
-    if (phoneError) nextErrors.phone_local = phoneError;
-    if (!formData.pickup_address.trim())
-      nextErrors.pickup_address = content.errorAddressRequired;
-    if (!formData.requested_at)
-      nextErrors.requested_at = content.errorRequestedAtRequired;
-    if (!photos.length) nextErrors.photos = content.errorPhotosRequired;
-    setErrors(nextErrors);
-    return Object.keys(nextErrors).length === 0;
-  };
+    const heading = headingRef.current;
+    if (!heading) return;
+    heading.scrollIntoView({
+      behavior: prefersReducedMotion() ? 'auto' : 'smooth',
+      // 'start', not 'center' — see PickupRequestCreateView's copy of
+      // this same effect for why.
+      block: 'start',
+    });
+    heading.focus({ preventScroll: true });
+  }, [stepIndex]);
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setApiError('');
-    if (!validate()) return;
-
-    try {
-      await createRequest({
-        full_name: formData.full_name.trim(),
-        email: formData.email.trim() || undefined,
-        phone_number: joinPhoneNumber(
-          formData.phone_dial_code,
-          formData.phone_local.trim(),
-        ),
-        request_type: 'business',
-        pickup_address: formData.pickup_address.trim(),
-        requested_at: new Date(formData.requested_at).toISOString(),
-        note: formData.note.trim() || undefined,
-        photos: photos.map((p) => p.file_key),
-      });
-      // Create action a visitor could plausibly repeat (another address,
-      // another batch) — stay on the page and reset in place, same as
-      // ContactFormSection, rather than navigating or freezing the form.
-      setFormData(INITIAL_STATE);
-      setPhotos([]);
-      setSelectedLocation(null);
-      setErrors({});
-      toast.success(content.successMessage);
-    } catch (err) {
-      setApiError(err instanceof ApiError ? err.message : content.errorMessage);
-    }
+    if (isLastStep) form.submit();
+    else form.next();
   };
+
+  const field = {
+    formData,
+    errors,
+    updateFormData: updateField,
+    disabled: submitting,
+  };
+
+  const step = steps[stepIndex]!;
+
+  const editButton = (index: number) => (
+    <button
+      type="button"
+      onClick={() => form.goTo(index)}
+      className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-slate-200 px-3 text-xs font-semibold text-neutral-950 transition hover:border-brand-600 hover:text-brand-700"
+    >
+      <LuPencil className="size-3.5" aria-hidden />
+      {copy.editButton}
+      <span className="sr-only"> {steps[index]!.label}</span>
+    </button>
+  );
 
   return (
     <section className="bg-white pb-16 md:pb-20">
-      <div className="mx-auto max-w-4xl px-5 md:px-8">
+      <div className="mx-auto max-w-6xl px-5 md:px-8">
         <FadeIn>
-          <div className="rounded-3xl border border-slate-200 p-6 shadow-sm md:p-10">
-            <h2 className="text-2xl font-bold text-neutral-950 sm:text-3xl">
-              {content.heading}
-            </h2>
-            <p className="mt-2 text-sm text-slate-500">{content.subheading}</p>
+          <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start">
+            <div className="rounded-3xl border border-slate-200 bg-white shadow-sm">
+              <header className="flex items-start gap-3 border-b border-slate-100 p-6 md:px-8">
+                <IconTile icon={<LuClipboardList />} size="sm" />
+                <div className="min-w-0">
+                  <h2 className="text-2xl font-bold text-neutral-950 sm:text-3xl">
+                    {copy.heading}
+                  </h2>
+                  <p className="mt-2 text-sm text-slate-500">
+                    {copy.requiredNote}
+                  </p>
+                </div>
+              </header>
 
-            <form onSubmit={handleSubmit} noValidate className="mt-6">
-              <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
-                <InputField
-                  label={content.fullName}
-                  field="full_name"
-                  placeholder={content.fullNamePlaceholder}
-                  formData={formData}
-                  errors={errors}
-                  updateFormData={updateField}
-                  disabled={submitting}
+              <div className="border-b border-slate-100 px-6 py-3 md:px-8">
+                <StepIndicator
+                  label={copy.stepsLabel}
+                  steps={steps}
+                  current={stepIndex}
+                  completed={form.completed}
+                  reached={form.reached}
+                  onStepClick={form.goTo}
                 />
-                <InputField
-                  label={content.email}
-                  field="email"
-                  type="email"
-                  required
-                  placeholder={content.emailPlaceholder}
-                  formData={formData}
-                  errors={errors}
-                  updateFormData={updateField}
-                  disabled={submitting}
-                />
-                <PhoneInputField
-                  label={content.phone}
-                  dialCodeField="phone_dial_code"
-                  numberField="phone_local"
-                  placeholder={content.phonePlaceholder}
-                  formData={formData}
-                  errors={errors}
-                  updateFormData={updateField}
-                  disabled={submitting}
-                />
-                <InputField
-                  label={content.requestedAt}
-                  field="requested_at"
-                  type="datetime-local"
-                  placeholder={content.requestedAtPlaceholder}
-                  formData={formData}
-                  errors={errors}
-                  updateFormData={updateField}
-                  disabled={submitting}
-                />
-                <div className="sm:col-span-2">
-                  {/* Same live-autocomplete address input as the admin
-                      create/edit forms. */}
-                  <AddressInput
-                    label={content.pickupAddress}
-                    field="pickup_address"
-                    placeholder={content.pickupAddressPlaceholder}
-                    formData={formData}
-                    errors={errors}
-                    updateFormData={updateField}
-                    disabled={submitting}
-                    countryRestrictions={['my']}
-                    onSelect={setSelectedLocation}
-                    onClear={() => setSelectedLocation(null)}
-                  />
-                  {selectedLocation && (
-                    <p className="-mt-3 mb-4 text-xs text-slate-400">
-                      {content.addressVerifiedAt}{' '}
-                      {selectedLocation.latitude.toFixed(5)},{' '}
-                      {selectedLocation.longitude.toFixed(5)}
-                    </p>
+              </div>
+
+              <form onSubmit={handleSubmit} noValidate>
+                <div
+                  key={stepId}
+                  className="p-6 motion-safe:animate-page-enter md:px-8"
+                  data-step={stepId}
+                >
+                  <h3
+                    ref={headingRef}
+                    tabIndex={-1}
+                    className="text-base font-semibold text-neutral-950 focus:outline-none"
+                  >
+                    {step.label}
+                  </h3>
+                  <p className="mb-5 mt-1 text-sm text-slate-500">
+                    {step.description}
+                  </p>
+
+                  {stepId === 'details' && (
+                    <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
+                      <div className="sm:col-span-2">
+                        <InputField
+                          label={copy.fullName}
+                          field="full_name"
+                          placeholder={copy.fullNamePlaceholder}
+                          onBlur={() => blurField('full_name')}
+                          {...field}
+                        />
+                      </div>
+                      <InputField
+                        label={copy.email}
+                        field="email"
+                        type="email"
+                        required
+                        placeholder={copy.emailPlaceholder}
+                        onBlur={() => blurField('email')}
+                        {...field}
+                      />
+                      <PhoneInputField
+                        label={copy.phone}
+                        dialCodeField="phone_dial_code"
+                        numberField="phone_local"
+                        placeholder={copy.phonePlaceholder}
+                        onBlur={() => blurField('phone_local')}
+                        {...field}
+                      />
+                    </div>
+                  )}
+
+                  {stepId === 'collect' && (
+                    <>
+                      {/* Same live-autocomplete address input as the admin
+                          create/edit forms. */}
+                      <AddressInput
+                        label={copy.pickupAddress}
+                        field="pickup_address"
+                        placeholder={copy.pickupAddressPlaceholder}
+                        countryRestrictions={['my']}
+                        onSelect={form.setSelectedLocation}
+                        onClear={() => form.setSelectedLocation(null)}
+                        onBlur={() => blurField('pickup_address')}
+                        {...field}
+                      />
+                      {form.selectedLocation && (
+                        <p className="-mt-3 mb-4 text-xs text-slate-400">
+                          {copy.addressVerifiedAt}{' '}
+                          {form.selectedLocation.latitude.toFixed(5)},{' '}
+                          {form.selectedLocation.longitude.toFixed(5)}
+                        </p>
+                      )}
+                      <PickupPhotosUploader
+                        value={form.photos}
+                        onChange={form.changePhotos}
+                        upload={form.upload}
+                        onUploadingChange={form.setUploading}
+                        disabled={submitting}
+                        label={copy.photos}
+                        helperText={copy.photosHelper}
+                        addLabel={copy.photosAdd}
+                        error={errors.photos}
+                      />
+                    </>
+                  )}
+
+                  {stepId === 'note' && (
+                    <TextareaField
+                      label={copy.note}
+                      field="note"
+                      required={false}
+                      placeholder={copy.notePlaceholder}
+                      {...field}
+                    />
+                  )}
+
+                  {stepId === 'review' && (
+                    <div className="space-y-4">
+                      {form.apiError && (
+                        <div
+                          role="alert"
+                          className="flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+                        >
+                          <LuCircleAlert className="mt-0.5 size-4 shrink-0" />
+                          <span>{form.apiError}</span>
+                        </div>
+                      )}
+                      <SectionCard
+                        title={steps[0]!.label}
+                        action={editButton(0)}
+                      >
+                        <DescriptionList
+                          items={[
+                            { label: copy.fullName, value: formData.full_name },
+                            { label: copy.email, value: formData.email },
+                            {
+                              label: copy.phone,
+                              value: formData.phone_local
+                                ? `${formData.phone_dial_code} ${formData.phone_local}`
+                                : '',
+                            },
+                          ]}
+                        />
+                      </SectionCard>
+                      <SectionCard
+                        title={steps[1]!.label}
+                        action={editButton(1)}
+                      >
+                        <DescriptionList
+                          items={[
+                            {
+                              label: copy.pickupAddress,
+                              value: formData.pickup_address,
+                            },
+                            {
+                              label: copy.photos,
+                              value: form.photos.length ? (
+                                <span className="flex flex-wrap items-center gap-2">
+                                  {form.photos.map((photo) =>
+                                    photo.public_url ? (
+                                      // eslint-disable-next-line @next/next/no-img-element -- remote/presigned URL, not a static asset
+                                      <img
+                                        key={photo.file_key}
+                                        src={photo.public_url}
+                                        alt=""
+                                        className="size-12 rounded-lg border border-slate-200 object-cover"
+                                      />
+                                    ) : null,
+                                  )}
+                                  <span className="text-slate-500">
+                                    {fillTemplate(copy.photoCount, {
+                                      count: form.photos.length,
+                                    })}
+                                  </span>
+                                </span>
+                              ) : (
+                                ''
+                              ),
+                            },
+                          ]}
+                        />
+                      </SectionCard>
+                      <SectionCard
+                        title={steps[2]!.label}
+                        action={editButton(2)}
+                      >
+                        <DescriptionList
+                          items={[{ label: copy.note, value: formData.note }]}
+                        />
+                      </SectionCard>
+                    </div>
                   )}
                 </div>
-                <div className="sm:col-span-2">
-                  <PickupPhotosUploader
-                    value={photos}
-                    onChange={(next) => {
-                      setPhotos(next);
-                      if (next.length) {
-                        setErrors((prev) => ({ ...prev, photos: '' }));
-                      }
-                    }}
-                    upload={uploadPublicPickupPhoto}
-                    disabled={submitting}
-                    label={content.photos}
-                    helperText={content.photosHelper}
-                    addLabel={content.photosAdd}
-                    error={errors.photos}
-                  />
-                </div>
-                <div className="sm:col-span-2">
-                  <TextareaField
-                    label={content.note}
-                    field="note"
-                    required={false}
-                    placeholder={content.notePlaceholder}
-                    formData={formData}
-                    errors={errors}
-                    updateFormData={updateField}
-                    disabled={submitting}
-                  />
-                </div>
-              </div>
 
-              {apiError && (
-                <p className="mt-4 text-sm text-red-500">{apiError}</p>
-              )}
+                {/* Sticky footer. On phones the right padding keeps the
+                    buttons clear of the floating WhatsApp button. */}
+                <div className="sticky bottom-0 z-10 flex flex-wrap items-center justify-between gap-3 rounded-b-3xl border-t border-slate-100 bg-white/95 px-6 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pe-[5.5rem] backdrop-blur sm:pe-6 md:px-8">
+                  <p className="text-sm text-slate-500" aria-live="polite">
+                    <span className="font-semibold text-neutral-950">
+                      {fillTemplate(copy.stepOf, {
+                        current: stepIndex + 1,
+                        total: steps.length,
+                      })}
+                    </span>
+                    <span className="hidden sm:inline">
+                      {' · '}
+                      {fillTemplate(copy.doneCount, {
+                        count: form.completed.size,
+                      })}
+                    </span>
+                  </p>
+                  <div className="flex w-full items-center gap-2 sm:w-auto">
+                    {stepIndex > 0 && (
+                      <PublicButton
+                        type="button"
+                        variant="secondary"
+                        onClick={form.back}
+                        disabled={submitting}
+                        className="flex-1 sm:flex-none"
+                      >
+                        {copy.backButton}
+                      </PublicButton>
+                    )}
+                    <PublicButton
+                      type="submit"
+                      disabled={submitting}
+                      className="flex-1 sm:flex-none"
+                    >
+                      {isLastStep && submitting && copy.submittingButton}
+                      {isLastStep && !submitting && copy.submitButton}
+                      {!isLastStep && copy.continueButton}
+                    </PublicButton>
+                  </div>
+                </div>
+              </form>
+            </div>
 
-              <div className="mt-6 flex justify-end">
-                <PublicButton
-                  type="submit"
-                  disabled={submitting}
-                  className="w-full sm:w-auto"
-                >
-                  {submitting ? content.submittingButton : content.submitButton}
-                </PublicButton>
-              </div>
-            </form>
+            <NextSteps title={copy.nextTitle} steps={copy.nextSteps} />
           </div>
         </FadeIn>
       </div>
