@@ -26,10 +26,10 @@ const AboutPage: NextPageWithLayout = () => (
     <div className="sticky top-20 z-[15] overflow-hidden rounded-t-3xl">
       <CoreInsightBanner />
     </div>
-    <div className="relative z-[20]">
+    <div className="relative z-20">
       <StatisticsSection />
     </div>
-    <div className="relative z-[30]">
+    <div className="relative z-30">
       <WhoWeWorkWith />
     </div>
   </>
