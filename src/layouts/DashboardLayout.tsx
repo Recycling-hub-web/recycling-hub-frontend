@@ -2,7 +2,6 @@
 
 import { ReactLenis } from 'lenis/react';
 import type { ReactNode } from 'react';
-import { useCallback, useState } from 'react';
 
 import { RequireAuth } from '../components/features/auth/components';
 import { AppFooter } from '../components/layout/AppFooter';
@@ -22,8 +21,9 @@ type DashboardLayoutProps = {
   children: ReactNode;
 };
 
-/** The one authenticated-app shell — role gate, Sidebar (with its own
- * mobile drawer state), Topbar, page content, footer. AdminLayout,
+/** The one authenticated-app shell — role gate, Sidebar (desktop only),
+ * Topbar, page content, footer, and SystemMobileNavigation (mobile only,
+ * self-contained — owns its own menu-sheet state). AdminLayout,
  * SuperAdminLayout and OperationalLayout are thin wrappers that only pick
  * the roles and the menu. */
 const DashboardLayout = ({
@@ -32,23 +32,15 @@ const DashboardLayout = ({
   contentPadding = 'py-6',
   children,
 }: DashboardLayoutProps) => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-
-  const closeMenu = useCallback(() => setSidebarOpen(false), []);
-
   return (
     <RequireAuth roles={roles}>
       <SystemExperienceContext.Provider value>
         <div className="system-app-shell flex h-dvh overflow-hidden bg-neutral-50 lg:gap-4 lg:px-6 lg:py-5">
           <div className="hidden lg:flex">
-            <Sidebar
-              navItems={navItems}
-              open={sidebarOpen}
-              onClose={() => setSidebarOpen(false)}
-            />
+            <Sidebar navItems={navItems} />
           </div>
           <div className="flex min-w-0 flex-1 flex-col">
-            <Topbar onMenuClick={() => setSidebarOpen(true)} />
+            <Topbar />
             <main className="flex-1 overflow-hidden">
               {/* Non-root — the global root ReactLenis in providers.tsx/_app.tsx
                * smooths window scroll for public/marketing pages, but this
@@ -67,11 +59,7 @@ const DashboardLayout = ({
             <div className="hidden lg:block">
               <AppFooter />
             </div>
-            <SystemMobileNavigation
-              navItems={navItems}
-              open={sidebarOpen}
-              onClose={closeMenu}
-            />
+            <SystemMobileNavigation navItems={navItems} />
           </div>
         </div>
       </SystemExperienceContext.Provider>

@@ -2,22 +2,35 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useRef } from 'react';
-import { LuPlus, LuUserRound, LuX } from 'react-icons/lu';
+import { useEffect, useRef, useState } from 'react';
+import { LuMenu, LuX } from 'react-icons/lu';
 
+import { useNotifications } from '../features/notifications/hooks';
 import type { NavItem } from '../ui/navigation';
 import { getActiveHref } from '../ui/navigation';
 import { SidebarUserCard } from './SidebarUserCard';
 
 type Props = {
   navItems: NavItem[];
-  open: boolean;
-  onClose: () => void;
 };
 
-const SystemMobileNavigation = ({ navItems, open, onClose }: Props) => {
+// Priority order for the one role-specific "main work" tab — the first
+// match wins, so this resolves to one sensible page per role: Pickup
+// Requests for admin/staff/super-admin, Pickups for driver, Deliveries
+// for receiving, Finance Records for accounting.
+const MAIN_WORK_PATTERN = /\/(pickup-requests|pickups|deliveries|finance)$/;
+
+/** The dashboard's mobile (<1024px) chrome: a 4-tab bottom bar — Home,
+ * Notifications, one role-specific "main work" page, and Menu (opens
+ * the "Your workspace" sheet listing every page) — plus that sheet
+ * itself. Self-contained: owns its own open/close state, since nothing
+ * outside it needs to open the sheet anymore (Topbar's old hamburger
+ * is gone, replaced by this Menu tab). */
+const SystemMobileNavigation = ({ navItems }: Props) => {
   const pathname = usePathname();
   const sheet = useRef<HTMLDialogElement>(null);
+  const [open, setOpen] = useState(false);
+  const { count: unreadCount } = useNotifications();
   const pages = navItems.flatMap((item) =>
     item.children?.length
       ? item.children.map((child) => ({
@@ -27,49 +40,34 @@ const SystemMobileNavigation = ({ navItems, open, onClose }: Props) => {
       : [item],
   );
   const home = pages[0];
-  const requests = pages.find((item) => item.href.endsWith('/pickup-requests'));
-  const work = pages.find((item) =>
-    /\/(pickups|deliveries|finance)$/.test(item.href),
+  const notifications = pages.find((item) =>
+    item.href.endsWith('/notifications'),
   );
-  const secondary = pages.find((item) =>
-    /\/(drop-off|claims|notifications)$/.test(item.href),
-  );
+  const mainWork = pages.find((item) => MAIN_WORK_PATTERN.test(item.href));
   const tabs = [
     ...(home ? [{ ...home, label: 'Home' }] : []),
-    ...(requests
-      ? [
-          {
-            ...requests,
-            href: `${requests.href}/create`,
-            label: 'Book',
-            icon: LuPlus,
-          },
-          { ...requests, label: 'Track' },
-        ]
-      : [work, secondary].filter((item): item is NonNullable<typeof item> =>
-          Boolean(item),
-        )),
-    { href: '/profile', label: 'You', icon: LuUserRound },
+    ...(notifications ? [{ ...notifications, label: 'Notifications' }] : []),
+    ...(mainWork ? [mainWork] : []),
   ];
   const activeHref = getActiveHref(tabs, pathname);
   const menuActiveHref = getActiveHref(navItems, pathname);
 
   useEffect(() => {
-    onClose();
-  }, [pathname, onClose]);
+    setOpen(false);
+  }, [pathname]);
   useEffect(() => {
     if (!open) return undefined;
     sheet.current?.showModal();
     const desktop = window.matchMedia('(min-width: 1024px)');
     const closeOnDesktop = () => {
-      if (desktop.matches) onClose();
+      if (desktop.matches) setOpen(false);
     };
     desktop.addEventListener('change', closeOnDesktop);
     return () => {
       sheet.current?.close();
       desktop.removeEventListener('change', closeOnDesktop);
     };
-  }, [open, onClose]);
+  }, [open]);
 
   return (
     <>
@@ -83,16 +81,29 @@ const SystemMobileNavigation = ({ navItems, open, onClose }: Props) => {
             href={href}
             aria-current={activeHref === href ? 'page' : undefined}
           >
-            <Icon aria-hidden="true" />
+            <span className="relative">
+              <Icon aria-hidden="true" />
+              {label === 'Notifications' && unreadCount > 0 && (
+                <span className="system-notification-dot absolute right-0 top-0 flex size-2 rounded-full bg-red-500" />
+              )}
+            </span>
             <span>{label}</span>
           </Link>
         ))}
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          aria-current={open ? 'page' : undefined}
+        >
+          <LuMenu aria-hidden="true" />
+          <span>Menu</span>
+        </button>
       </nav>
       <dialog
         ref={sheet}
         className="system-mobile-sheet"
         aria-labelledby="system-menu-title"
-        onClose={onClose}
+        onClose={() => setOpen(false)}
         onClick={(event) => {
           if (event.target === sheet.current) sheet.current?.close();
         }}
