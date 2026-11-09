@@ -2,6 +2,12 @@ import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 
 import { loginAs } from './helpers/auth';
+import {
+  createRequest,
+  fillCustomer,
+  fillPickup,
+  finishOrders,
+} from './helpers/pickupRequestForm';
 
 /**
  * Phone numbers are validated (constants/dialCodes.ts
@@ -9,9 +15,6 @@ import { loginAs } from './helpers/auth';
  * form uses the same Geoapify AddressInput as the admin forms. Geoapify is
  * mocked so the spec doesn't depend on a live third-party API.
  */
-
-const futureLocal = () =>
-  new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString().slice(0, 16);
 
 const mockGeoapify = (page: Page) =>
   page.route('https://api.geoapify.com/v1/geocode/autocomplete**', (route) =>
@@ -73,14 +76,8 @@ test.describe('Admin new pickup request', () => {
     await page.goto('/admin/pickup-requests/create');
 
     const fullName = `E2E Phone ${Date.now()}`;
-    await page.locator('[data-field="full_name"] input').fill(fullName);
-    await page.locator('[data-field="phone_local"] input').fill('12345');
-    await page
-      .locator('[data-field="pickup_address"] input')
-      .fill('1 Jalan Test, 50000 Kuala Lumpur');
-    await page.locator('[data-field="requested_at"] input').fill(futureLocal());
-
-    await page.getByRole('button', { name: 'Create request' }).click();
+    // The Customer step checks the number on Continue.
+    await fillCustomer(page, { fullName, phone: '12345' });
     await expect(
       page.getByText('Enter a valid Malaysian number, e.g. 12-345 6789.'),
     ).toBeVisible();
@@ -88,7 +85,10 @@ test.describe('Admin new pickup request', () => {
 
     // A leading 0, spaces and dashes are accepted and cleaned up.
     await page.locator('[data-field="phone_local"] input').fill('012-345 6789');
-    await page.getByRole('button', { name: 'Create request' }).click();
+    await page.getByRole('button', { name: 'Continue' }).click();
+    await fillPickup(page);
+    await finishOrders(page);
+    await createRequest(page);
     await expect(page).toHaveURL(/\/admin\/pickup-requests\/(?!create)[^/]+$/);
 
     const id = page.url().split('/').pop();

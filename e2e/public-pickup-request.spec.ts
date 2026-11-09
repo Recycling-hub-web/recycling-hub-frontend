@@ -1,6 +1,12 @@
 import { expect, test } from '@playwright/test';
 
 import { loginAs } from './helpers/auth';
+import {
+  createRequest,
+  fillCustomer,
+  fillPickup,
+  finishOrders,
+} from './helpers/pickupRequestForm';
 
 /**
  * Public pickup request form (features/pickups/components/public/
@@ -47,22 +53,18 @@ test.describe('Admin/staff New pickup request', () => {
     await loginAs(page, 'admin');
     await page.goto('/admin/pickup-requests/create');
 
+    // Default request type is individual — no email needed.
+    const fullName = `E2E Public Admin ${Date.now()}`;
+    await fillCustomer(page, { fullName });
+
     const addressField = page.locator('[data-field="pickup_address"] input');
     await expect(addressField).toHaveCount(1);
     await expect(
       page.locator('[data-field="pickup_address"] textarea'),
     ).toHaveCount(0);
-
-    const fullName = `E2E Public Admin ${Date.now()}`;
-    await page.locator('[data-field="full_name"] input').fill(fullName);
-    await page.locator('[data-field="phone_local"] input').fill('123456789');
-    await addressField.fill('1 Jalan Test, 50000 Kuala Lumpur');
-    await page
-      .locator('[data-field="requested_at"] input')
-      .fill(toDateTimeLocalValue(futureIso()));
-
-    // Default request type is individual — no email needed.
-    await page.getByRole('button', { name: 'Create request' }).click();
+    await fillPickup(page, { when: toDateTimeLocalValue(futureIso()) });
+    await finishOrders(page);
+    await createRequest(page);
     await expect(page).toHaveURL(/\/admin\/pickup-requests\/(?!create)[^/]+$/);
   });
 
@@ -73,25 +75,21 @@ test.describe('Admin/staff New pickup request', () => {
     await page.goto('/admin/pickup-requests/create');
 
     const fullName = `E2E Public AdminBusiness ${Date.now()}`;
-    await page.locator('[data-field="full_name"] input').fill(fullName);
-    await page.locator('[data-field="phone_local"] input').fill('123456789');
-    await page
-      .locator('[data-field="pickup_address"] input')
-      .fill('1 Jalan Test, 50000 Kuala Lumpur');
-    await page
-      .locator('[data-field="requested_at"] input')
-      .fill(toDateTimeLocalValue(futureIso()));
-    await page
-      .locator('[data-field="request_type"] select')
-      .selectOption('business');
-
-    await page.getByRole('button', { name: 'Create request' }).click();
+    await fillCustomer(
+      page,
+      { fullName, requestType: 'business' },
+      { submit: false },
+    );
+    await page.getByRole('button', { name: 'Continue' }).click();
     await expect(
       page.getByText(/email is required for business/i),
     ).toBeVisible();
 
     await page.locator('[data-field="email"] input').fill('biz@example.com');
-    await page.getByRole('button', { name: 'Create request' }).click();
+    await page.getByRole('button', { name: 'Continue' }).click();
+    await fillPickup(page, { when: toDateTimeLocalValue(futureIso()) });
+    await finishOrders(page);
+    await createRequest(page);
     await expect(page).toHaveURL(/\/admin\/pickup-requests\/(?!create)[^/]+$/);
   });
 });

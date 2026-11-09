@@ -25,6 +25,9 @@ type PickupPhotosUploaderProps = {
   /** How to upload one file. Defaults to the signed-in storage flow;
    * the public form passes its own anonymous upload. */
   upload?: (file: File) => Promise<OrderPhoto>;
+  /** Told when an upload starts and ends — lets a form refuse to submit
+   * while a photo is still on its way. */
+  onUploadingChange?: (uploading: boolean) => void;
 };
 
 /** 1–MAX_ORDER_PHOTOS photos: an Order's reference photos (CreateOrderView,
@@ -42,6 +45,7 @@ const PickupPhotosUploader = ({
   helperText,
   addLabel = 'Add photo',
   upload,
+  onUploadingChange,
 }: PickupPhotosUploaderProps) => {
   const inputId = useId();
   const { execute: storageUpload } = useUploadStorageFile();
@@ -53,6 +57,7 @@ const PickupPhotosUploader = ({
   const handleFileChange = async (file: File | undefined) => {
     if (!file || atCap) return;
     setUploading(true);
+    onUploadingChange?.(true);
     setUploadError('');
     try {
       const photo = upload
@@ -68,6 +73,7 @@ const PickupPhotosUploader = ({
       );
     } finally {
       setUploading(false);
+      onUploadingChange?.(false);
     }
   };
 

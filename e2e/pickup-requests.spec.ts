@@ -3,6 +3,12 @@ import { expect, test } from '@playwright/test';
 
 import { loginAs } from './helpers/auth';
 import { E_WASTE_CATEGORY_ID } from './helpers/categories';
+import {
+  createRequest,
+  fillCustomer,
+  fillPickup,
+  finishOrders,
+} from './helpers/pickupRequestForm';
 import { attachPhoto, E2E_PHOTO, mockStorageUploads } from './helpers/storage';
 
 /**
@@ -83,7 +89,7 @@ test.describe('Public pickup request form', () => {
     await expect(page.locator('[data-field="full_name"]')).toHaveCount(0);
   });
 
-  test('submits contact info, address, a pickup date/time and at least one photo — no items', async ({
+  test('submits contact info, address and at least one photo — no items, no pickup date', async ({
     page,
   }) => {
     const fullName = uniqueName('PublicBulk');
@@ -103,10 +109,10 @@ test.describe('Public pickup request form', () => {
     await expect(addressField).toHaveCount(1);
     await addressField.fill('1 Jalan Test, 50000 Kuala Lumpur');
 
+    // No pickup date on the public form — staff agree a time by phone.
+    await expect(page.locator('[data-field="requested_at"]')).toHaveCount(0);
+
     await page.getByRole('button', { name: 'Submit Request' }).click();
-    await expect(
-      page.getByText(/choose a pickup date and time/i),
-    ).toBeVisible();
     await expect(
       page.getByText('Please add at least one photo.'),
     ).toBeVisible();
@@ -115,9 +121,6 @@ test.describe('Public pickup request form', () => {
       photos.getByRole('button', { name: /Remove photo 1/ }),
     ).toBeVisible();
 
-    await page
-      .locator('[data-field="requested_at"] input')
-      .fill(toDateTimeLocalValue(futureIso(48)));
     await page.getByRole('button', { name: 'Submit Request' }).click();
     await expect(page.getByText(/request received/i)).toBeVisible();
 
@@ -137,9 +140,6 @@ test.describe('Public pickup request form', () => {
     await page
       .locator('[data-field="pickup_address"] input')
       .fill('1 Jalan Test, 50000 Kuala Lumpur');
-    await page
-      .locator('[data-field="requested_at"] input')
-      .fill(toDateTimeLocalValue(futureIso(48)));
     await attachPhoto(page.locator('[data-field="photos"]'));
 
     await page.getByRole('button', { name: 'Submit Request' }).click();
@@ -166,16 +166,10 @@ test.describe('Admin/staff Pickup Requests', () => {
     await expect(page.locator('[data-field="photos"]')).toHaveCount(0);
 
     const fullName = uniqueName('AdminCreate');
-    await page.locator('[data-field="full_name"] input').fill(fullName);
-    await page.locator('[data-field="phone_local"] input').fill('123456789');
-    await page
-      .locator('[data-field="pickup_address"] input')
-      .fill('1 Jalan Test, 50000 Kuala Lumpur');
-    await page
-      .locator('[data-field="requested_at"] input')
-      .fill(toDateTimeLocalValue(futureIso(48)));
-
-    await page.getByRole('button', { name: 'Create request' }).click();
+    await fillCustomer(page, { fullName });
+    await fillPickup(page, { when: toDateTimeLocalValue(futureIso(48)) });
+    await finishOrders(page);
+    await createRequest(page);
     await expect(page).toHaveURL(/\/admin\/pickup-requests\/[^/]+$/);
     await expect(page.getByRole('heading', { name: fullName })).toBeVisible();
     await expect(page.getByText('Open', { exact: true })).toBeVisible();
@@ -337,7 +331,7 @@ test('full lifecycle: public submission through to the request showing fulfilled
 }) => {
   const fullName = uniqueName('FullLifecycle');
 
-  // 1. Public submission — date/time and a photo, no items.
+  // 1. Public submission — a photo, no items and no pickup date.
   await page.goto('/request-pickup');
   await page.getByText('Business / Bulk').click();
   await page.locator('[data-field="full_name"] input').fill(fullName);
@@ -346,9 +340,6 @@ test('full lifecycle: public submission through to the request showing fulfilled
   await page
     .locator('[data-field="pickup_address"] input')
     .fill('1 Jalan Test, 50000 Kuala Lumpur');
-  await page
-    .locator('[data-field="requested_at"] input')
-    .fill(toDateTimeLocalValue(futureIso(48)));
   await attachPhoto(page.locator('[data-field="photos"]'));
   await page.getByRole('button', { name: 'Submit Request' }).click();
   await expect(page.getByText(/request received/i)).toBeVisible();

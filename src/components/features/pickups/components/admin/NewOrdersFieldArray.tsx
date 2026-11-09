@@ -45,6 +45,11 @@ type NewOrdersFieldArrayProps = {
   itemErrors?: Record<string, string>[][];
   /** Per order: its photo error, '' when fine. */
   photoErrors?: string[];
+  /** Told when an order's photo upload starts and ends. */
+  onUploadingChange?: (orderKey: string, uploading: boolean) => void;
+  /** The "Orders — optional…" title and hint. Off when the page already
+   * says it, e.g. the step form's Orders step. */
+  showIntro?: boolean;
 };
 
 /** Orders to create together with a new pickup request — each with its
@@ -60,6 +65,8 @@ const NewOrdersFieldArray = ({
   disabled,
   itemErrors = [],
   photoErrors = [],
+  onUploadingChange,
+  showIntro = true,
 }: NewOrdersFieldArrayProps) => {
   const update = (key: string, patch: Partial<DraftOrder>) =>
     onChange((current) =>
@@ -68,14 +75,18 @@ const NewOrdersFieldArray = ({
 
   return (
     <div className="sm:col-span-2">
-      <div className="mb-3 flex items-center justify-between gap-3">
-        <div>
-          <p className="text-sm font-medium text-slate-900">Orders</p>
-          <p className="text-xs text-slate-500">
-            Optional — add orders now, or later from the request. Each order
-            needs its materials and at least one photo.
-          </p>
-        </div>
+      <div
+        className={`mb-3 flex items-center gap-3 ${showIntro ? 'justify-between' : 'justify-end'}`}
+      >
+        {showIntro && (
+          <div>
+            <p className="text-sm font-medium text-slate-900">Orders</p>
+            <p className="text-xs text-slate-500">
+              Optional — add orders now, or later from the request. Each order
+              needs its materials and at least one photo.
+            </p>
+          </div>
+        )}
         {orders.length < MAX_ORDERS && (
           <Button
             variant="secondary"
@@ -140,6 +151,9 @@ const NewOrdersFieldArray = ({
                   onChange={(photos) => update(order.key, { photos })}
                   disabled={disabled}
                   error={order.photos.length ? '' : photoErrors[index]}
+                  onUploadingChange={(uploading) =>
+                    onUploadingChange?.(order.key, uploading)
+                  }
                 />
               </div>
             </div>

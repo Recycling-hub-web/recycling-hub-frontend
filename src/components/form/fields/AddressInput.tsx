@@ -35,6 +35,9 @@ type AddressInputProps = {
   /** Fires when a previously-selected address is cleared (either via the
    * clear button or by editing the text after a selection). */
   onClear?: () => void;
+  /** Fires when the text input loses focus — for validate-on-blur,
+   * same as InputField's own onBlur. */
+  onBlur?: () => void;
   /** Restrict suggestions to these countries, e.g. ["my"]. */
   countryRestrictions?: string[];
   /** Nudges ranking toward this point without excluding results
@@ -75,6 +78,7 @@ const AddressInput = ({
   disabled = false,
   onSelect,
   onClear,
+  onBlur,
   countryRestrictions,
   defaultLocation,
   className = '',
@@ -272,6 +276,7 @@ const AddressInput = ({
           onChange={(e) => handleChange(e.target.value)}
           onKeyDown={handleKeyDown}
           onFocus={() => suggestions.length > 0 && setOpen(true)}
+          onBlur={onBlur}
           placeholder={placeholder}
           disabled={disabled}
           className={`flex h-12 w-full items-center justify-start rounded-xl border p-3 py-2 ps-10 text-sm outline-none transition-colors focus:outline-none focus:ring-1 focus:ring-brand-500 ${

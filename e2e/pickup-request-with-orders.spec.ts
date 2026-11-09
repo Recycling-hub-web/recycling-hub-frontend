@@ -1,6 +1,12 @@
 import { expect, test } from '@playwright/test';
 
 import { loginAs } from './helpers/auth';
+import {
+  createRequest,
+  fillCustomer,
+  fillPickup,
+  finishOrders,
+} from './helpers/pickupRequestForm';
 import { attachPhoto, mockStorageUploads } from './helpers/storage';
 
 /**
@@ -17,9 +23,6 @@ test.beforeEach(async ({ page }) => {
   );
 });
 
-const futureLocal = () =>
-  new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString().slice(0, 16);
-
 test('admin creates a pickup request with two orders in one go', async ({
   page,
 }) => {
@@ -27,12 +30,8 @@ test('admin creates a pickup request with two orders in one go', async ({
   await page.goto('/admin/pickup-requests/create');
 
   const fullName = `E2E With Orders ${Date.now()}`;
-  await page.locator('[data-field="full_name"] input').fill(fullName);
-  await page.locator('[data-field="phone_local"] input').fill('123456789');
-  await page
-    .locator('[data-field="pickup_address"] input')
-    .fill('1 Jalan Test, 50000 Kuala Lumpur');
-  await page.locator('[data-field="requested_at"] input').fill(futureLocal());
+  await fillCustomer(page, { fullName });
+  await fillPickup(page);
 
   const addOrder = page.getByRole('button', { name: 'Add order' });
   await addOrder.click();
@@ -60,7 +59,8 @@ test('admin creates a pickup request with two orders in one go', async ({
   await addMaterial(0);
   await addMaterial(1);
 
-  await page.getByRole('button', { name: 'Create request' }).click();
+  await finishOrders(page);
+  await createRequest(page);
   await expect(page).toHaveURL(/\/admin\/pickup-requests\/(?!create)[^/]+$/);
 
   const id = page.url().split('/').pop();
@@ -81,19 +81,15 @@ test('an order with a material but no category is caught before saving', async (
 }) => {
   await loginAs(page, 'admin');
   await page.goto('/admin/pickup-requests/create');
+  await fillCustomer(page, { fullName: 'No Category' });
+  await fillPickup(page);
   await page.getByRole('button', { name: 'Add order' }).click();
   await page
     .getByTestId('new-order')
     .getByRole('button', { name: 'Add another item' })
     .click();
-
-  await page.locator('[data-field="full_name"] input').fill('No Category');
-  await page.locator('[data-field="phone_local"] input').fill('123456789');
-  await page
-    .locator('[data-field="pickup_address"] input')
-    .fill('1 Jalan Test, 50000 Kuala Lumpur');
-  await page.locator('[data-field="requested_at"] input').fill(futureLocal());
-  await page.getByRole('button', { name: 'Create request' }).click();
+  // The Orders step checks its orders on Continue.
+  await page.getByRole('button', { name: 'Continue' }).click();
 
   await expect(page.getByText('Category is required.')).toBeVisible();
   // Every order needs at least one photo too.
