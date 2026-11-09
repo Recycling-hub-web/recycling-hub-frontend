@@ -30,9 +30,8 @@ test.describe('Public pickup request form', () => {
       page.locator('[data-field="pickup_address"] textarea'),
     ).toHaveCount(0);
     await addressField.fill('1 Jalan Test, 50000 Kuala Lumpur');
-    await page
-      .locator('[data-field="requested_at"] input')
-      .fill(toDateTimeLocalValue(futureIso()));
+    // No pickup date on the public form — staff agree a time afterwards.
+    await expect(page.locator('[data-field="requested_at"]')).toHaveCount(0);
 
     await page.getByRole('button', { name: 'Submit Request' }).click();
     await expect(

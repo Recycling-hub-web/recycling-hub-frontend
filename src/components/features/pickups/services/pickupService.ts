@@ -71,9 +71,9 @@ type PickupRequestCreatePayload = {
    * doorstep pickup. */
   collection_point?: string;
   pickup_address: string;
-  /** The requester's own chosen pickup date/time — required, ISO
-   * datetime. */
-  requested_at: string;
+  /** Pickup date/time, ISO datetime. Staff forms set it; the public
+   * form leaves it out and staff agree a time with the customer. */
+  requested_at?: string;
   note?: string;
   /** Admin/staff only: orders to create together with the request (at
    * most 7) — see PickupRequestCreateSerializer.orders. */

@@ -98,7 +98,8 @@ type PickupRequestSummary = {
   phone_number: string;
   pickup_address: string;
   collection_point: PickupCollectionPoint;
-  requested_at: string;
+  /** Null until staff set a time — the public form doesn't ask. */
+  requested_at: string | null;
   note: string | null;
   status: PickupRequestStatus;
 };

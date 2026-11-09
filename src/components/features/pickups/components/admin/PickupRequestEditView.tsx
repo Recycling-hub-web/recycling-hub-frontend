@@ -39,7 +39,8 @@ type FormState = {
 
 // Converts an ISO datetime to the value a <input type="datetime-local">
 // needs — local time, no seconds/timezone.
-const toDateTimeLocal = (iso: string): string => {
+const toDateTimeLocal = (iso: string | null): string => {
+  if (!iso) return '';
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return '';
   const pad = (n: number) => String(n).padStart(2, '0');

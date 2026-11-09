@@ -39,7 +39,6 @@ test.describe('Public pickup request form', () => {
     await page
       .locator('[data-field="pickup_address"] input')
       .fill('1 Jalan Test, 50000 Kuala Lumpur');
-    await page.locator('[data-field="requested_at"] input').fill(futureLocal());
 
     await page.getByRole('button', { name: 'Submit Request' }).click();
     await expect(

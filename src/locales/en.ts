@@ -63,7 +63,6 @@ const en = {
     about: 'About',
     contact: 'Contact',
     whatsapp: 'WhatsApp Us',
-    requestQuote: 'Request a Quote',
     requestPickup: 'Request a Pickup',
     services: 'Services',
     solutions: 'Solutions',
@@ -88,7 +87,6 @@ const en = {
       },
       { label: 'How It Works', href: '/#how-it-works' },
       { label: 'Track & Trace / Certificates', href: '/track-trace' },
-      { label: 'Request a Quote', href: '/request-quote' },
     ],
     company: [
       { label: 'About Us', href: '/about' },
@@ -1432,6 +1430,24 @@ const en = {
       heading: 'Pickup Request Details',
       subheading:
         "Fill in your details and we'll be in touch to confirm a collection time.",
+      sectionDetails: 'Your details',
+      sectionPickup: 'What to collect',
+      sectionNote: 'Anything else?',
+      nextTitle: 'What happens next',
+      nextSteps: [
+        {
+          title: 'We review your request',
+          body: 'We look at your photos and address to plan the collection.',
+        },
+        {
+          title: 'We call to agree a time',
+          body: "We'll contact you on the number you give to confirm a pickup date and time.",
+        },
+        {
+          title: 'We collect',
+          body: 'Our team collects your items at the agreed time.',
+        },
+      ],
       fullName: 'Full name',
       fullNamePlaceholder: 'e.g. Fatima Ali',
       email: 'Email',
@@ -1441,8 +1457,6 @@ const en = {
       pickupAddress: 'Pickup address',
       pickupAddressPlaceholder: 'Address where materials should be collected',
       addressVerifiedAt: 'Verified at',
-      requestedAt: 'Pickup date & time',
-      requestedAtPlaceholder: 'Choose a date and time',
       note: 'Note',
       notePlaceholder: 'Anything else worth mentioning',
       photos: 'Photos',
@@ -1456,7 +1470,6 @@ const en = {
       errorPhoneRequired: 'Please enter your contact number.',
       errorPhoneInvalid: 'Please enter a valid phone number, e.g. 12-345 6789.',
       errorAddressRequired: 'Please enter a pickup address.',
-      errorRequestedAtRequired: 'Please choose a pickup date and time.',
       submitButton: 'Submit Request',
       submittingButton: 'Submitting…',
       successMessage:

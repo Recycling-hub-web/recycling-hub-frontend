@@ -56,7 +56,6 @@ const bm: Dictionary = {
     about: 'Tentang Kami',
     contact: 'Hubungi Kami',
     whatsapp: 'WhatsApp Kami',
-    requestQuote: 'Minta Sebut Harga',
     requestPickup: 'Minta Kutipan',
     services: 'Perkhidmatan',
     solutions: 'Penyelesaian',
@@ -81,7 +80,6 @@ const bm: Dictionary = {
       },
       { label: 'Cara Ia Berfungsi', href: '/#how-it-works' },
       { label: 'Jejak & Kesan / Sijil', href: '/track-trace' },
-      { label: 'Minta Sebut Harga', href: '/request-quote' },
     ],
     company: [
       { label: 'Tentang Kami', href: '/about' },
@@ -1436,6 +1434,24 @@ const bm: Dictionary = {
       heading: 'Butiran Permintaan Kutipan',
       subheading:
         'Isikan butiran anda dan kami akan hubungi anda untuk sahkan masa kutipan.',
+      sectionDetails: 'Maklumat anda',
+      sectionPickup: 'Apa yang perlu dikutip',
+      sectionNote: 'Ada lagi?',
+      nextTitle: 'Apa seterusnya',
+      nextSteps: [
+        {
+          title: 'Kami semak permintaan anda',
+          body: 'Kami lihat gambar dan alamat anda untuk merancang kutipan.',
+        },
+        {
+          title: 'Kami hubungi untuk tetapkan masa',
+          body: 'Kami akan menghubungi nombor yang anda berikan untuk mengesahkan tarikh dan masa kutipan.',
+        },
+        {
+          title: 'Kami kutip',
+          body: 'Pasukan kami akan mengutip barangan anda pada masa yang dipersetujui.',
+        },
+      ],
       fullName: 'Nama penuh',
       fullNamePlaceholder: 'cth. Fatima Ali',
       email: 'E-mel',
@@ -1445,8 +1461,6 @@ const bm: Dictionary = {
       pickupAddress: 'Alamat kutipan',
       pickupAddressPlaceholder: 'Alamat di mana bahan perlu dikutip',
       addressVerifiedAt: 'Disahkan di',
-      requestedAt: 'Tarikh & masa kutipan',
-      requestedAtPlaceholder: 'Pilih tarikh dan masa',
       note: 'Nota',
       notePlaceholder: 'Sebarang perkara lain yang perlu disebut',
       photos: 'Gambar',
@@ -1461,7 +1475,6 @@ const bm: Dictionary = {
       errorPhoneInvalid:
         'Sila masukkan nombor telefon yang sah, cth. 12-345 6789.',
       errorAddressRequired: 'Sila masukkan alamat kutipan.',
-      errorRequestedAtRequired: 'Sila pilih tarikh dan masa kutipan.',
       submitButton: 'Hantar Permintaan',
       submittingButton: 'Menghantar…',
       successMessage:

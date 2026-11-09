@@ -49,7 +49,6 @@ const FaqPage: NextPageWithLayout = () => {
           </div>
           <div className="mt-10 flex flex-wrap gap-6 text-brand-700 underline underline-offset-4">
             <Link href="/request-pickup">{nav.requestPickup}</Link>
-            <Link href="/request-quote">{nav.requestQuote}</Link>
             <Link href="/track-trace">
               {faqPage.categories[3]!.items[0]!.question}
             </Link>
