@@ -25,6 +25,7 @@ import { Loading } from '../../../../ui/loading/Loading';
 import { PageHeader } from '../../../../ui/PageHeader';
 import { TableEmptyRow, TableWrapper } from '../../../../ui/table';
 import { useToast } from '../../../../ui/toast/ToastContext';
+import { WhatsAppLink } from '../../../../ui/WhatsAppLink';
 import {
   PICKUP_REQUEST_STATUS_BADGE_VARIANT,
   PICKUP_STAGE_BADGE_VARIANT,
@@ -164,7 +165,7 @@ const PickupRequestDetailsView = ({
           <InfoRow
             icon={<LuPhone className="size-4" />}
             label="Phone"
-            value={request.phone_number || '—'}
+            value={<WhatsAppLink phoneNumber={request.phone_number} />}
           />
           <InfoRow
             icon={<LuCalendar className="size-4" />}
