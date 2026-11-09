@@ -14,7 +14,7 @@ import type { NextPageWithLayout } from '../types/next';
 
 const RequestPickupPage: NextPageWithLayout = () => {
   const {
-    pickupRequest: { hero, typeSelector },
+    pickupRequest: { hero },
   } = useDictionary();
   // The public site offers two paths only: a callback (phone number
   // only) or a business/bulk request (the full form). null means
@@ -47,22 +47,6 @@ const RequestPickupPage: NextPageWithLayout = () => {
         headlineAccent={hero.headlineAccent}
         description={hero.description}
       />
-      {choice && (
-        <div className="mx-auto max-w-2xl px-5 md:px-8">
-          <button
-            type="button"
-            onClick={() => setChoice(null)}
-            className="min-h-11 rounded-lg px-3 py-2 text-sm font-semibold text-brand-700 hover:bg-brand-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
-          >
-            ← {typeSelector.changeOption}
-          </button>
-          <p className="mt-3 text-sm leading-relaxed text-slate-600">
-            {choice === 'callback'
-              ? typeSelector.callback.description
-              : typeSelector.business.description}
-          </p>
-        </div>
-      )}
       {content}
     </>
   );
