@@ -63,9 +63,15 @@ const PickupRequestCreateView = ({
   } = form;
 
   const headingRef = useRef<HTMLHeadingElement>(null);
+  const stepTopRef = useRef<HTMLDivElement>(null);
   const firstRender = useRef(true);
 
   // After a step change: bring the step into view and move focus to it.
+  // Scrolls the step indicator row to the top, not the heading itself —
+  // on short mobile viewports (address bar + this form's sticky footer +
+  // the dashboard's bottom tab bar all eating vertical space), scrolling
+  // the heading to 'start' or 'center' both left the step indicator
+  // cropped or scrolled fully out of view above it.
   useEffect(() => {
     if (firstRender.current) {
       firstRender.current = false;
@@ -73,12 +79,8 @@ const PickupRequestCreateView = ({
     }
     const heading = headingRef.current;
     if (!heading) return;
-    heading.scrollIntoView({
+    stepTopRef.current?.scrollIntoView({
       behavior: prefersReducedMotion() ? 'auto' : 'smooth',
-      // 'start', not 'center' — on short mobile viewports (address bar +
-      // this form's sticky footer + the dashboard's bottom tab bar all
-      // eating vertical space), centering the heading pushed the step
-      // indicator and card header mostly off-screen.
       block: 'start',
     });
     heading.focus({ preventScroll: true });
@@ -132,7 +134,7 @@ const PickupRequestCreateView = ({
           </div>
         </header>
 
-        <div className="border-b border-slate-100 px-5 py-3">
+        <div ref={stepTopRef} className="border-b border-slate-100 px-5 py-3">
           <StepIndicator
             label="New pickup request steps"
             steps={STEPS}

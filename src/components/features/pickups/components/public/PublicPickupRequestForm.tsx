@@ -95,9 +95,12 @@ const PublicPickupRequestForm = () => {
   } = form;
 
   const headingRef = useRef<HTMLHeadingElement>(null);
+  const stepTopRef = useRef<HTMLDivElement>(null);
   const firstRender = useRef(true);
 
   // After a step change: bring the step into view and move focus to it.
+  // Scrolls the step indicator row to the top, not the heading — see
+  // PickupRequestCreateView's copy of this same effect for why.
   useEffect(() => {
     if (firstRender.current) {
       firstRender.current = false;
@@ -105,10 +108,8 @@ const PublicPickupRequestForm = () => {
     }
     const heading = headingRef.current;
     if (!heading) return;
-    heading.scrollIntoView({
+    stepTopRef.current?.scrollIntoView({
       behavior: prefersReducedMotion() ? 'auto' : 'smooth',
-      // 'start', not 'center' — see PickupRequestCreateView's copy of
-      // this same effect for why.
       block: 'start',
     });
     heading.focus({ preventScroll: true });
@@ -159,7 +160,10 @@ const PublicPickupRequestForm = () => {
                 </div>
               </header>
 
-              <div className="border-b border-slate-100 px-6 py-3 md:px-8">
+              <div
+                ref={stepTopRef}
+                className="border-b border-slate-100 px-6 py-3 md:px-8"
+              >
                 <StepIndicator
                   label={copy.stepsLabel}
                   steps={steps}
