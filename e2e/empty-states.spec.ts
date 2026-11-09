@@ -11,7 +11,7 @@ test('a table with no matches shows icon, title and description', async ({
   page,
 }) => {
   await loginAs(page, 'admin');
-  await page.goto('/admin/pickups');
+  await page.goto('/admin/pickup-requests');
 
   const term = `zz-no-match-${Date.now()}`;
   await page.getByPlaceholder('Search by name, email, or phone…').fill(term);

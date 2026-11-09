@@ -5,7 +5,6 @@ export { useClaimOrder } from './useClaimOrder';
 export { useCloseDelivery } from './useCloseDelivery';
 export { useCollectPickup } from './useCollectPickup';
 export { useConfirmSchedule } from './useConfirmSchedule';
-export { useDeleteOrder } from './useDeleteOrder';
 export { useEvaluatePickup } from './useEvaluatePickup';
 export { useOrder } from './useOrder';
 export { useOrders } from './useOrders';

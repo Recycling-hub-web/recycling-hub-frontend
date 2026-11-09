@@ -49,7 +49,7 @@ test('public and admin pages raise no CSP violations', async ({ page }) => {
   await visit(page, '/');
   await loginAs(page, 'admin');
   await visit(page, '/admin');
-  await visit(page, '/admin/pickups');
+  await visit(page, '/admin/pickup-requests');
   await visit(page, '/admin/blogs');
 
   expect(violations).toEqual([]);
