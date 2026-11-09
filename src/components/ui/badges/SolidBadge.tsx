@@ -16,7 +16,7 @@ const SolidBadge = ({ variant, children, className = '' }: SolidBadgeProps) => (
   <span
     className={`inline-flex items-center justify-center whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold ${SOLID_VARIANT_CLASSES[variant]} ${className}`}
   >
-    {children}
+    Welcome {children}
   </span>
 );
 
