@@ -13,6 +13,7 @@ import {
   TablePagination,
   TableWrapper,
 } from '../../../../ui/table';
+import { WhatsAppLink } from '../../../../ui/WhatsAppLink';
 import {
   PICKUP_STAGE_BADGE_VARIANT,
   REQUEST_TYPE_BADGE_VARIANT,
@@ -55,7 +56,7 @@ type OrderTableProps = {
   evaluatingId: string | null;
 };
 
-const columnCount = 9;
+const columnCount = 10;
 
 /** Pure presentational — every value it renders is a prop. Renamed
  * from PickupRequestTable now that this table lists Orders, not the
@@ -119,6 +120,9 @@ const OrderTable = ({
           </td>
           <td className="max-w-[160px] truncate px-6 py-4 text-slate-700">
             {r.pickup_request.full_name}
+          </td>
+          <td className="px-6 py-4">
+            <WhatsAppLink phoneNumber={r.pickup_request.phone_number} />
           </td>
           <td className="max-w-[160px] truncate px-6 py-4 text-slate-700">
             {itemsSummary(r.items)}
@@ -215,6 +219,9 @@ const OrderTable = ({
             </th>
             <th className="px-6 py-3 text-left font-semibold text-slate-500">
               Requester
+            </th>
+            <th className="px-6 py-3 text-left font-semibold text-slate-500">
+              WhatsApp
             </th>
             <th className="px-6 py-3 text-left font-semibold text-slate-500">
               Items
