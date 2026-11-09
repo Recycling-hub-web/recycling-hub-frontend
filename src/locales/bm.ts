@@ -1434,9 +1434,39 @@ const bm: Dictionary = {
       heading: 'Butiran Permintaan Kutipan',
       subheading:
         'Isikan butiran anda dan kami akan hubungi anda untuk sahkan masa kutipan.',
-      sectionDetails: 'Maklumat anda',
-      sectionPickup: 'Apa yang perlu dikutip',
-      sectionNote: 'Ada lagi?',
+      requiredNote:
+        'Medan bertanda * wajib diisi. Anda boleh semak semuanya sebelum menghantar.',
+      stepsLabel: 'Langkah permintaan kutipan',
+      steps: {
+        details: {
+          label: 'Maklumat anda',
+          description: 'Cara kami boleh menghubungi anda.',
+        },
+        collect: {
+          label: 'Apa yang perlu dikutip',
+          description: 'Lokasi kutipan, dan gambar barangan.',
+        },
+        note: {
+          label: 'Ada lagi?',
+          description:
+            'Pilihan. Apa-apa yang perlu diketahui oleh pasukan kami.',
+        },
+        review: {
+          label: 'Semak dan hantar',
+          description: 'Semak semuanya, kemudian hantar permintaan anda.',
+        },
+      },
+      stepOf: 'Langkah {current} daripada {total}',
+      doneCount: '{count} selesai',
+      continueButton: 'Teruskan',
+      backButton: 'Kembali',
+      editButton: 'Ubah',
+      photoCount: '{count} gambar',
+      uploadingTitle: 'Gambar masih dimuat naik',
+      uploadingBody:
+        'Tunggu sehingga gambar selesai dimuat naik, kemudian hantar.',
+      fixStepTitle: 'Semak langkah ini',
+      fixStepBody: '{step} ada perkara yang perlu dibetulkan.',
       nextTitle: 'Apa seterusnya',
       nextSteps: [
         {

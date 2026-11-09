@@ -1430,9 +1430,37 @@ const en = {
       heading: 'Pickup Request Details',
       subheading:
         "Fill in your details and we'll be in touch to confirm a collection time.",
-      sectionDetails: 'Your details',
-      sectionPickup: 'What to collect',
-      sectionNote: 'Anything else?',
+      requiredNote:
+        'Fields marked * are required. You can review everything before you submit.',
+      stepsLabel: 'Pickup request steps',
+      steps: {
+        details: {
+          label: 'Your details',
+          description: 'How we can reach you.',
+        },
+        collect: {
+          label: 'What to collect',
+          description: 'Where to collect, and photos of the items.',
+        },
+        note: {
+          label: 'Anything else?',
+          description: 'Optional. Anything our team should know.',
+        },
+        review: {
+          label: 'Review and submit',
+          description: 'Check everything, then send your request.',
+        },
+      },
+      stepOf: 'Step {current} of {total}',
+      doneCount: '{count} done',
+      continueButton: 'Continue',
+      backButton: 'Back',
+      editButton: 'Edit',
+      photoCount: '{count} photo(s)',
+      uploadingTitle: 'Photo still uploading',
+      uploadingBody: 'Wait for the photo to finish uploading, then submit.',
+      fixStepTitle: 'Check this step',
+      fixStepBody: '{step} has something to fix.',
       nextTitle: 'What happens next',
       nextSteps: [
         {
