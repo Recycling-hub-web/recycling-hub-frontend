@@ -81,6 +81,7 @@ const QUICK_REQUEST_STATUS_BADGE_VARIANT: Record<
   new: 'warning',
   contacted: 'info',
   converted: 'success',
+  cancelled: 'danger',
 };
 
 // The new Request-level concept (PickupRequest) — distinct from

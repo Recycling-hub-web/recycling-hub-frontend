@@ -451,6 +451,11 @@ const getQuickPickupRequest = (
 
 // Purely informational — doesn't block converting later. 400 if the
 // lead was already converted.
+const cancelQuickPickupRequest = (
+  id: string,
+): Promise<PickupQuickRequestListItem> =>
+  apiFetch(`/pickups/quick/${id}/cancel/`, { method: 'POST' });
+
 const markQuickPickupRequestContacted = (
   id: string,
 ): Promise<PickupQuickRequestListItem> =>
@@ -506,6 +511,7 @@ export {
   bulkAssignDriver,
   cancelOrder,
   cancelPickupRequest,
+  cancelQuickPickupRequest,
   claimOrder,
   closeDelivery,
   collectPickupRequest,

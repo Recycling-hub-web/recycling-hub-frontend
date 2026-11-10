@@ -192,7 +192,7 @@ type PickupRequestDetails = PickupRequestSummary & {
   updated_at: string;
 };
 
-type PickupQuickRequestStatus = 'new' | 'contacted' | 'converted';
+type PickupQuickRequestStatus = 'new' | 'contacted' | 'converted' | 'cancelled';
 
 /** Flat shape from GET /pickups/quick/ — the Quick Leads tab's list. */
 type PickupQuickRequestListItem = {
@@ -266,6 +266,7 @@ const PICKUP_QUICK_REQUEST_STATUS_LABELS: Record<
   new: 'New',
   contacted: 'Contacted',
   converted: 'Converted',
+  cancelled: 'Cancelled',
 };
 
 /** The single, glanceable "what's happening" value a table/badge should

@@ -343,6 +343,20 @@ const ConvertQuickLeadView = ({ basePath }: ConvertQuickLeadViewProps) => {
 
   if (loadingLead) return <Loading text="Loading lead…" />;
 
+  if (lead?.status === 'cancelled') {
+    return (
+      <PageContainer variant="form">
+        <AlertBanner message="This lead has been cancelled and cannot be converted." />
+        <Button
+          href={basePath.replace('/pickups', '/pickup-requests')}
+          variant="secondary"
+        >
+          Back to pickup requests
+        </Button>
+      </PageContainer>
+    );
+  }
+
   return (
     <PageContainer variant="form">
       <Link
