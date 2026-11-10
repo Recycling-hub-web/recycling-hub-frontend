@@ -163,7 +163,7 @@ const createOrder = (
 
 type ListOrdersParams = {
   page?: number;
-  status?: PickupStatus;
+  status?: PickupStatus | PickupStatus[];
   search?: string;
   requestType?: PickupRequestType;
   evaluationStatus?: PickupEvaluationStatus;
@@ -180,7 +180,8 @@ const listOrders = ({
   dropOffPoint,
 }: ListOrdersParams = {}): Promise<Paginated<CollectionRequestListItem>> => {
   const params = new URLSearchParams({ page: String(page) });
-  if (status) params.set('status', status);
+  if (status)
+    params.set('status', Array.isArray(status) ? status.join(',') : status);
   if (search) params.set('search', search);
   if (requestType) params.set('request_type', requestType);
   if (evaluationStatus) params.set('evaluation_status', evaluationStatus);

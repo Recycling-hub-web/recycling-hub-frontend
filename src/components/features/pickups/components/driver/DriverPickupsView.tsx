@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import {
   LuCalendarCheck,
+  LuEye,
   LuMapPin,
   LuNavigation,
   LuPackage,
@@ -13,6 +14,7 @@ import {
 } from 'react-icons/lu';
 
 import { PageContainer } from '../../../../layout/PageContainer';
+import { StatusBadge } from '../../../../ui/badges/StatusBadge';
 import { Button } from '../../../../ui/buttons/Button';
 import { IconButton } from '../../../../ui/buttons/IconButton';
 import { AppDate } from '../../../../ui/date/AppDate';
@@ -21,14 +23,21 @@ import {
   TableEmptyRow,
   TableErrorRow,
   TableLoadingRow,
+  TablePagination,
   TableWrapper,
 } from '../../../../ui/table';
 import { Tabs } from '../../../../ui/tabs';
 import { useToast } from '../../../../ui/toast/ToastContext';
 import { WhatsAppLink } from '../../../../ui/WhatsAppLink';
 import { usePendingReimbursementSummary } from '../../../finance/hooks';
+import { STATUS_BADGE_VARIANT } from '../../constants';
 import { useClaimOrder, useOrders } from '../../hooks';
-import { type CollectionRequestListItem, itemsSummary } from '../../types';
+import {
+  type CollectionRequestListItem,
+  itemsSummary,
+  PICKUP_STATUS_LABELS,
+  type PickupStatus,
+} from '../../types';
 import {
   googleMapsDirectionsUrl,
   wazeNavigateUrl,
@@ -38,7 +47,10 @@ import { ConfirmedPickupCell } from '../shared/ConfirmedPickupCell';
 import { ConfirmScheduleModal } from './ConfirmScheduleModal';
 import { OptimizeRouteModal } from './OptimizeRouteModal';
 
-type Tab = 'available' | 'mine';
+type Tab = 'available' | 'mine' | 'history';
+
+const HISTORY_STATUSES: PickupStatus[] = ['collected', 'delivered', 'closed'];
+const HISTORY_PAGE_SIZE = 12;
 
 // A larger batch stops being "a driver's one trip" and starts being a
 // planning problem of its own — kept small and frontend-only since
@@ -51,20 +63,20 @@ const MAX_OPTIMIZE_STOPS = 10;
 // DriverPickupDetailsView's own NAVIGABLE_STATUSES.
 const NAVIGABLE_STATUSES = ['pending', 'scheduled'];
 
-/** Driver's own scoped pickups view — not PickupRequestTable reused
- * (that's the full admin/staff CRUD view). A driver only ever sees two
- * slices of the same GET /pickups/ endpoint (server-scoped — see
- * CollectionRequestViewSet.get_queryset's driver branch): the open,
- * unclaimed pool (passing status=pending narrows to just that, since a
- * driver's own assignments are never pending — claiming/being assigned
- * immediately flips status to scheduled) and their own active
- * assignments (status=scheduled). No pagination UI (low expected
- * volume) — same choice QuickLeadTable already made for the Quick
- * Leads queue. */
+/** Driver-scoped available, active, and collected orders. History is
+ * filtered and paginated by the API, so older orders stay accessible. */
 const DriverPickupsView = () => {
   const router = useRouter();
   const toast = useToast();
   const [activeTab, setActiveTab] = useState<Tab>('mine');
+  const [historyPage, setHistoryPage] = useState(1);
+  const {
+    requests: history,
+    count: historyCount,
+    loading: loadingHistory,
+    error: historyError,
+    refetch: refetchHistory,
+  } = useOrders({ page: historyPage, status: HISTORY_STATUSES });
   const {
     requests: available,
     count: availableCount,
@@ -111,8 +123,11 @@ const DriverPickupsView = () => {
     {},
   );
 
-  const { count: pendingCount, total: pendingTotal } =
-    usePendingReimbursementSummary();
+  const {
+    count: pendingCount,
+    total: pendingTotal,
+    refetch: refetchPayments,
+  } = usePendingReimbursementSummary();
   const handleClaim = async (request: CollectionRequestListItem) => {
     setClaimingId(request.id);
     try {
@@ -130,6 +145,8 @@ const DriverPickupsView = () => {
   const handleCollected = () => {
     toast.success('Marked as collected');
     refetchMine();
+    refetchHistory();
+    refetchPayments();
   };
 
   const handleTabChange = (tab: Tab) => {
@@ -182,19 +199,51 @@ const DriverPickupsView = () => {
   // they open this page for most of the time.
   const tabItems: { key: Tab; label: string }[] = [
     { key: 'mine', label: 'My Pickups' },
+    { key: 'history', label: 'History' },
     {
       key: 'available',
       label: availableCount > 0 ? `Available (${availableCount})` : 'Available',
     },
   ];
 
-  const requests = activeTab === 'available' ? available : mine;
-  const loading = activeTab === 'available' ? loadingAvailable : loadingMine;
-  const error = activeTab === 'available' ? availableError : mineError;
-  const onRetry = activeTab === 'available' ? refetchAvailable : refetchMine;
-  // One extra leading column for the selection checkbox — only on
-  // "mine," where route optimization is meaningful.
-  const columnCount = activeTab === 'mine' ? 9 : 8;
+  const tabs = {
+    available: {
+      requests: available,
+      loading: loadingAvailable,
+      error: availableError,
+      onRetry: refetchAvailable,
+    },
+    mine: {
+      requests: mine,
+      loading: loadingMine,
+      error: mineError,
+      onRetry: refetchMine,
+    },
+    history: {
+      requests: history,
+      loading: loadingHistory,
+      error: historyError,
+      onRetry: refetchHistory,
+    },
+  };
+  const { requests, loading, error, onRetry } = tabs[activeTab];
+  const emptyMessages = {
+    available: {
+      title: 'No pickups available to claim right now',
+      subtitle: 'Approved requests open for drivers will show up here.',
+    },
+    mine: {
+      title: "You haven't claimed any pickups yet",
+      subtitle:
+        'Claim one from the Available tab, or wait for one to be assigned to you.',
+    },
+    history: {
+      title: 'No pickup history yet',
+      subtitle:
+        'Your collected, delivered, and closed orders will appear here.',
+    },
+  };
+  const columnCount = activeTab === 'available' ? 8 : 9;
   const selectedRequests = mine.filter((r) => selectedIds.has(r.id));
 
   const renderRows = () => {
@@ -213,16 +262,8 @@ const DriverPickupsView = () => {
         <TableEmptyRow
           colSpan={columnCount}
           icon={<LuTruck className="size-6" />}
-          title={
-            activeTab === 'available'
-              ? 'No pickups available to claim right now'
-              : "You haven't claimed any pickups yet"
-          }
-          subtitle={
-            activeTab === 'available'
-              ? 'Approved requests open for drivers will show up here.'
-              : 'Claim one from the Available tab, or wait for one to be assigned to you.'
-          }
+          title={emptyMessages[activeTab].title}
+          subtitle={emptyMessages[activeTab].subtitle}
         />
       );
     }
@@ -283,6 +324,13 @@ const DriverPickupsView = () => {
           <td className="px-6 py-4">
             <ConfirmedPickupCell order={r} />
           </td>
+          {activeTab === 'history' && (
+            <td className="px-6 py-4">
+              <StatusBadge variant={STATUS_BADGE_VARIANT[r.status]}>
+                {PICKUP_STATUS_LABELS[r.status]}
+              </StatusBadge>
+            </td>
+          )}
           <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-end gap-2">
               {canNavigate && (
@@ -325,6 +373,14 @@ const DriverPickupsView = () => {
                 />
               ) : (
                 <>
+                  {activeTab === 'history' && (
+                    <IconButton
+                      variant="ghost"
+                      onClick={() => router.push(`/driver/pickups/${r.id}`)}
+                      aria-label={`View order ${r.code}`}
+                      icon={<LuEye className="size-4" />}
+                    />
+                  )}
                   {r.status === 'scheduled' && !r.pickup_confirmed_at && (
                     <IconButton
                       variant="ghost"
@@ -334,12 +390,14 @@ const DriverPickupsView = () => {
                       icon={<LuCalendarCheck className="size-4" />}
                     />
                   )}
-                  <IconButton
-                    variant="ghost"
-                    onClick={() => setCollectTarget(r)}
-                    aria-label={`Mark pickup for ${r.pickup_request.full_name} as collected`}
-                    icon={<LuPackage className="size-4" />}
-                  />
+                  {r.status === 'scheduled' && (
+                    <IconButton
+                      variant="ghost"
+                      onClick={() => setCollectTarget(r)}
+                      aria-label={`Mark pickup for ${r.pickup_request.full_name} as collected`}
+                      icon={<LuPackage className="size-4" />}
+                    />
+                  )}
                 </>
               )}
             </div>
@@ -393,7 +451,21 @@ const DriverPickupsView = () => {
         </div>
       )}
 
-      <TableWrapper>
+      <TableWrapper
+        footer={
+          activeTab === 'history' ? (
+            <TablePagination
+              currentPage={historyPage}
+              onPageChange={setHistoryPage}
+              itemsPerPage={HISTORY_PAGE_SIZE}
+              itemCount={history.length}
+              totalCount={historyCount}
+              itemLabel="orders"
+              loading={loadingHistory}
+            />
+          ) : undefined
+        }
+      >
         <table className="min-w-full divide-y divide-slate-200 text-sm">
           <thead className="bg-slate-50">
             <tr>
@@ -436,6 +508,11 @@ const DriverPickupsView = () => {
               <th className="px-6 py-3 text-left font-semibold text-slate-500">
                 Confirmed pickup
               </th>
+              {activeTab === 'history' && (
+                <th className="px-6 py-3 text-left font-semibold text-slate-500">
+                  Status
+                </th>
+              )}
               <th className="px-6 py-3 text-right font-semibold text-slate-500">
                 Actions
               </th>

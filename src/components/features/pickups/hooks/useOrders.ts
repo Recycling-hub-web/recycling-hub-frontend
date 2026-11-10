@@ -11,7 +11,7 @@ import type {
 
 type UseOrdersParams = {
   page: number;
-  status?: PickupStatus;
+  status?: PickupStatus | PickupStatus[];
   search?: string;
   requestType?: PickupRequestType;
   evaluationStatus?: PickupEvaluationStatus;
