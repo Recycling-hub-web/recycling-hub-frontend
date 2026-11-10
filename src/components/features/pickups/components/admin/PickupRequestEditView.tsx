@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import type { FormEvent } from 'react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { LuArrowLeft } from 'react-icons/lu';
 
 import {
@@ -25,7 +25,18 @@ import { Card } from '../../../../ui/card/Card';
 import { Loading } from '../../../../ui/loading/Loading';
 import { PageHeader } from '../../../../ui/PageHeader';
 import { useToast } from '../../../../ui/toast/ToastContext';
-import { usePickupRequest, useUpdatePickupRequest } from '../../hooks';
+import { MAX_ORDERS_PER_PICKUP_REQUEST } from '../../constants';
+import {
+  useCreateOrder,
+  usePickupCategories,
+  usePickupRequest,
+  useUpdatePickupRequest,
+} from '../../hooks';
+import {
+  orderToPayload,
+  validateOrders,
+} from '../../models/pickupRequestCreateModel';
+import { type DraftOrder, NewOrdersFieldArray } from './NewOrdersFieldArray';
 
 type FormState = {
   full_name: string;
@@ -56,8 +67,10 @@ type PickupRequestEditViewProps = {
 };
 
 // Admin/staff correcting the requester's own details — contact info,
-// address, and the pickup date/time. See PickupRequestUpdateSerializer
-// on the backend; `status`/`request_type` aren't editable here.
+// address, and the pickup date/time (PickupRequestUpdateSerializer;
+// `status`/`request_type` aren't editable here) — and, while the request
+// is still open, adding new orders to it, the same inputs as the create
+// form. Existing orders are edited from their own pages.
 const PickupRequestEditView = ({
   requestId,
   basePath,
@@ -69,8 +82,25 @@ const PickupRequestEditView = ({
     loading: loadingRequest,
     error: loadError,
   } = usePickupRequest(requestId);
-  const { execute: updateRequest, loading: submitting } =
+  const { execute: updateRequest, loading: updating } =
     useUpdatePickupRequest();
+  const { execute: createOrder, loading: creatingOrder } = useCreateOrder();
+  const submitting = updating || creatingOrder;
+  const categories = usePickupCategories();
+  const [orders, setOrders] = useState<DraftOrder[]>([]);
+  const [orderItemErrors, setOrderItemErrors] = useState<
+    Record<string, string>[][]
+  >([]);
+  const [orderPhotoErrors, setOrderPhotoErrors] = useState<string[]>([]);
+  const [uploading, setUploading] = useState<Set<string>>(new Set());
+  const setUploadingFor = useCallback((key: string, isUploading: boolean) => {
+    setUploading((prev) => {
+      const next = new Set(prev);
+      if (isUploading) next.add(key);
+      else next.delete(key);
+      return next;
+    });
+  }, []);
   const [formData, setFormData] = useState<FormState | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [error, setError] = useState('');
@@ -100,7 +130,7 @@ const PickupRequestEditView = ({
     ? joinPhoneNumber(formData.phone_dial_code, formData.phone_local)
     : '';
 
-  const hasChanges =
+  const detailsChanged =
     Boolean(formData) &&
     Boolean(request) &&
     (formData!.full_name !== request!.full_name ||
@@ -109,6 +139,7 @@ const PickupRequestEditView = ({
       formData!.pickup_address !== request!.pickup_address ||
       formData!.requested_at !== toDateTimeLocal(request!.requested_at) ||
       formData!.note !== (request!.note ?? ''));
+  const hasChanges = detailsChanged || orders.length > 0;
 
   const validate = (data: FormState): boolean => {
     const nextErrors: Record<string, string> = {};
@@ -126,32 +157,71 @@ const PickupRequestEditView = ({
     if (!data.requested_at)
       nextErrors.requested_at = 'Pickup date and time is required.';
     setErrors(nextErrors);
-    return Object.keys(nextErrors).length === 0;
+    const orderCheck = validateOrders(orders, categories.unitsByCategory);
+    setOrderItemErrors(orderCheck.itemErrors);
+    setOrderPhotoErrors(orderCheck.photoErrors);
+    return Object.keys(nextErrors).length === 0 && orderCheck.valid;
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!formData || !request) return;
+    if (uploading.size > 0) {
+      toast.error(
+        'Photo still uploading',
+        'Wait for the photo to finish uploading, then save.',
+      );
+      return;
+    }
     if (!validate(formData)) return;
     setError('');
     try {
-      await updateRequest(request.id, {
-        full_name: formData.full_name.trim(),
-        email: formData.email.trim(),
-        phone_number: phoneNumber,
-        pickup_address: formData.pickup_address,
-        requested_at: new Date(formData.requested_at).toISOString(),
-        note: formData.note || undefined,
-      });
-      toast.success('Pickup request updated');
-      router.push(`${basePath}/${request.id}`);
+      if (detailsChanged) {
+        await updateRequest(request.id, {
+          full_name: formData.full_name.trim(),
+          email: formData.email.trim(),
+          phone_number: phoneNumber,
+          pickup_address: formData.pickup_address,
+          requested_at: new Date(formData.requested_at).toISOString(),
+          note: formData.note || undefined,
+        });
+      }
     } catch (err) {
       setError(
         err instanceof ApiError
           ? err.message
           : 'Could not update this pickup request.',
       );
+      return;
     }
+
+    // New orders one at a time; each one saved leaves the list, so a
+    // retry after a failure never creates the same order twice.
+    let added = 0;
+    for (const order of orders) {
+      try {
+        // eslint-disable-next-line no-await-in-loop -- in order, one at a time
+        await createOrder(request.id, orderToPayload(order));
+        added += 1;
+        setOrders((current) => current.filter((o) => o.key !== order.key));
+      } catch (err) {
+        const message =
+          err instanceof ApiError ? err.message : 'Could not create an order.';
+        setError(
+          added
+            ? `${added} order${added === 1 ? '' : 's'} added, then: ${message}`
+            : message,
+        );
+        toast.error('Some orders were not added', message);
+        return;
+      }
+    }
+
+    toast.success(
+      'Pickup request updated',
+      added ? `${added} new order${added === 1 ? '' : 's'} added.` : undefined,
+    );
+    router.push(`${basePath}/${request.id}`);
   };
 
   if (loadingRequest) return <Loading text="Loading pickup request…" />;
@@ -163,6 +233,14 @@ const PickupRequestEditView = ({
       </div>
     );
   }
+
+  // New orders only while the request is open (the backend blocks them
+  // otherwise), up to the per-request cap.
+  const ordersLeft = Math.max(
+    0,
+    MAX_ORDERS_PER_PICKUP_REQUEST - request.orders.length,
+  );
+  const canAddOrders = request.status === 'open' && ordersLeft > 0;
 
   return (
     <PageContainer variant="form">
@@ -250,6 +328,30 @@ const PickupRequestEditView = ({
                 disabled={submitting}
               />
             </div>
+            {canAddOrders && (
+              <div className="border-t border-slate-100 pt-4 sm:col-span-2">
+                <p className="text-sm font-medium text-slate-900">New orders</p>
+                <p className="mb-3 text-xs text-slate-500">
+                  This request has {request.orders.length} order
+                  {request.orders.length === 1 ? '' : 's'}. Optional: add up to{' '}
+                  {ordersLeft} more here, each with its materials and at least
+                  one photo. Existing orders are edited from their own pages.
+                </p>
+                <NewOrdersFieldArray
+                  orders={orders}
+                  onChange={setOrders}
+                  categoryOptions={categories.options}
+                  unitsByCategory={categories.unitsByCategory}
+                  loadingCategories={categories.loading}
+                  disabled={submitting}
+                  itemErrors={orderItemErrors}
+                  photoErrors={orderPhotoErrors}
+                  onUploadingChange={setUploadingFor}
+                  max={ordersLeft}
+                  showIntro={false}
+                />
+              </div>
+            )}
           </div>
 
           <FormActions className="pt-2">

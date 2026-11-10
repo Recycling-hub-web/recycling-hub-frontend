@@ -11,6 +11,7 @@ import {
   LuUsers,
 } from 'react-icons/lu';
 
+import { useAuth } from '../../../../contexts/AuthContext';
 import {
   ROLE_LABELS,
   type UserListItem,
@@ -25,6 +26,7 @@ import {
   TableWrapper,
 } from '../../../ui/table';
 import {
+  canManageUser,
   MAX_VERIFICATION_EMAILS,
   REGISTRATION_STATUS_BADGE_VARIANT,
   REGISTRATION_STATUS_LABELS,
@@ -83,6 +85,7 @@ const UserTable = ({
   resendLoading = false,
   variant = 'default',
 }: UserTableProps) => {
+  const { user: actor } = useAuth();
   const router = useRouter();
   const columnCount = variant === 'pending' ? 5 : 6;
 
@@ -183,6 +186,7 @@ const UserTable = ({
              * re-created, not resent; the backend enforces this too).
              * In the 'pending' variant every row already qualifies. */}
             {onResendInvite &&
+              canManageUser(actor, u) &&
               (variant === 'pending' ||
                 u.registration_status === 'pending') && (
                 <button
@@ -202,21 +206,27 @@ const UserTable = ({
             >
               <LuEye className="size-4" />
             </Link>
-            <Link
-              href={`/admin/users/${u.id}/edit`}
-              aria-label={`Edit ${u.full_name}`}
-              className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
-            >
-              <LuPencil className="size-4" />
-            </Link>
-            <button
-              type="button"
-              onClick={() => onDeleteRequest(u)}
-              aria-label={`Delete ${u.full_name}`}
-              className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-red-50 hover:text-red-600"
-            >
-              <LuTrash2 className="size-4" />
-            </button>
+            {/* An Admin can't change another Admin (backend
+                assert_can_manage_target) — view only for those rows. */}
+            {canManageUser(actor, u) && (
+              <>
+                <Link
+                  href={`/admin/users/${u.id}/edit`}
+                  aria-label={`Edit ${u.full_name}`}
+                  className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+                >
+                  <LuPencil className="size-4" />
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => onDeleteRequest(u)}
+                  aria-label={`Delete ${u.full_name}`}
+                  className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-red-50 hover:text-red-600"
+                >
+                  <LuTrash2 className="size-4" />
+                </button>
+              </>
+            )}
           </div>
         </td>
       </tr>

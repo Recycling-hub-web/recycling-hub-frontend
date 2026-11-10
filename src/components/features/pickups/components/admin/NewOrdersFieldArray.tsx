@@ -4,6 +4,7 @@ import type { ComponentProps, Dispatch, SetStateAction } from 'react';
 import { LuPlus } from 'react-icons/lu';
 
 import { Button } from '../../../../ui/buttons/Button';
+import { MAX_ORDERS_PER_PICKUP_REQUEST } from '../../constants';
 import type { PickupRequestItemInput } from '../../services/pickupService';
 import type { UnitsByCategory } from '../../units';
 import { PickupItemsFieldArray } from '../shared/PickupItemsFieldArray';
@@ -11,10 +12,6 @@ import {
   type OrderPhoto,
   PickupPhotosUploader,
 } from '../shared/PickupPhotosUploader';
-
-/** Same cap the backend enforces per pickup request
- * (MAX_ORDERS_PER_PICKUP_REQUEST). */
-const MAX_ORDERS = 7;
 
 type DraftOrder = {
   /** Stable React key only — never sent to the API. */
@@ -50,6 +47,9 @@ type NewOrdersFieldArrayProps = {
   /** The "Orders — optional…" title and hint. Off when the page already
    * says it, e.g. the step form's Orders step. */
   showIntro?: boolean;
+  /** How many more orders may be added — less than the per-request cap
+   * when the request already has some (the edit page). */
+  max?: number;
 };
 
 /** Orders to create together with a new pickup request — each with its
@@ -67,6 +67,7 @@ const NewOrdersFieldArray = ({
   photoErrors = [],
   onUploadingChange,
   showIntro = true,
+  max = MAX_ORDERS_PER_PICKUP_REQUEST,
 }: NewOrdersFieldArrayProps) => {
   const update = (key: string, patch: Partial<DraftOrder>) =>
     onChange((current) =>
@@ -87,7 +88,7 @@ const NewOrdersFieldArray = ({
             </p>
           </div>
         )}
-        {orders.length < MAX_ORDERS && (
+        {orders.length < max && (
           <Button
             variant="secondary"
             size="sm"

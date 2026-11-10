@@ -14,7 +14,7 @@ import { AddressInput } from '../../../../form/fields/AddressInput';
 import { InputField } from '../../../../form/fields/InputField';
 import { PhoneInputField } from '../../../../form/fields/PhoneInputField';
 import { TextareaField } from '../../../../form/fields/TextareaField';
-import { PublicButton } from '../../../../ui/buttons/PublicButton';
+import { Button } from '../../../../ui/buttons/Button';
 import { IconTile } from '../../../../ui/card/IconTile';
 import { SectionCard } from '../../../../ui/card/SectionCard';
 import { DescriptionList } from '../../../../ui/DescriptionList';
@@ -95,9 +95,12 @@ const PublicPickupRequestForm = () => {
   } = form;
 
   const headingRef = useRef<HTMLHeadingElement>(null);
+  const stepTopRef = useRef<HTMLDivElement>(null);
   const firstRender = useRef(true);
 
   // After a step change: bring the step into view and move focus to it.
+  // Scrolls the step indicator row to the top, not the heading — see
+  // PickupRequestCreateView's copy of this same effect for why.
   useEffect(() => {
     if (firstRender.current) {
       firstRender.current = false;
@@ -105,10 +108,8 @@ const PublicPickupRequestForm = () => {
     }
     const heading = headingRef.current;
     if (!heading) return;
-    heading.scrollIntoView({
+    stepTopRef.current?.scrollIntoView({
       behavior: prefersReducedMotion() ? 'auto' : 'smooth',
-      // 'start', not 'center' — see PickupRequestCreateView's copy of
-      // this same effect for why.
       block: 'start',
     });
     heading.focus({ preventScroll: true });
@@ -159,7 +160,10 @@ const PublicPickupRequestForm = () => {
                 </div>
               </header>
 
-              <div className="border-b border-slate-100 px-6 py-3 md:px-8">
+              <div
+                ref={stepTopRef}
+                className="border-b border-slate-100 px-6 py-3 md:px-8"
+              >
                 <StepIndicator
                   label={copy.stepsLabel}
                   steps={steps}
@@ -360,7 +364,7 @@ const PublicPickupRequestForm = () => {
                   </p>
                   <div className="flex w-full items-center gap-2 sm:w-auto">
                     {stepIndex > 0 && (
-                      <PublicButton
+                      <Button
                         type="button"
                         variant="secondary"
                         onClick={form.back}
@@ -368,9 +372,9 @@ const PublicPickupRequestForm = () => {
                         className="flex-1 sm:flex-none"
                       >
                         {copy.backButton}
-                      </PublicButton>
+                      </Button>
                     )}
-                    <PublicButton
+                    <Button
                       type="submit"
                       disabled={submitting}
                       className="flex-1 sm:flex-none"
@@ -378,7 +382,7 @@ const PublicPickupRequestForm = () => {
                       {isLastStep && submitting && copy.submittingButton}
                       {isLastStep && !submitting && copy.submitButton}
                       {!isLastStep && copy.continueButton}
-                    </PublicButton>
+                    </Button>
                   </div>
                 </div>
               </form>

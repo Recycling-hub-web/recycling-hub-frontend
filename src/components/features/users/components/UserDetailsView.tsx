@@ -16,6 +16,7 @@ import {
   LuUser,
 } from 'react-icons/lu';
 
+import { useAuth } from '../../../../contexts/AuthContext';
 import { ApiError } from '../../../../lib/api';
 import { ROLE_LABELS } from '../../../../types/auth';
 import { PageContainer } from '../../../layout/PageContainer';
@@ -31,6 +32,7 @@ import { PageHeader } from '../../../ui/PageHeader';
 import { useToast } from '../../../ui/toast/ToastContext';
 import { ActivityLog } from '../../activity/components';
 import {
+  canManageUser,
   REGISTRATION_STATUS_BADGE_VARIANT,
   REGISTRATION_STATUS_LABELS,
   ROLE_BADGE_VARIANT,
@@ -40,6 +42,7 @@ import { useDeleteUser, useResendInvite, useUser } from '../hooks';
 const UserDetailsView = ({ userId }: { userId: string }) => {
   const router = useRouter();
   const toast = useToast();
+  const { user: actor } = useAuth();
   const { user, loading, error, refetch } = useUser(userId);
   const { execute: deleteUser, loading: deleting } = useDeleteUser();
   const { execute: resendInvite, loading: resending } = useResendInvite();
@@ -76,34 +79,40 @@ const UserDetailsView = ({ userId }: { userId: string }) => {
     }
   };
 
-  const actionItems: DropdownItem[] = [
-    // Resending only makes sense pre-verification — same gate as
-    // UserTable's own icon, and the backend enforces it too (400 for an
-    // already-verified account).
-    ...(user?.registration_status === 'pending'
-      ? [
-          {
-            label: resending ? 'Sending…' : 'Resend invite',
-            icon: LuSend,
-            onClick: handleResendInvite,
-            color: 'neutral' as const,
-            disabled: resending,
-          },
-        ]
-      : []),
-    {
-      label: 'Edit',
-      icon: LuPencil,
-      onClick: () => router.push(`/admin/users/${userId}/edit`),
-      color: 'neutral',
-    },
-    {
-      label: 'Delete',
-      icon: LuTrash2,
-      onClick: () => setConfirmOpen(true),
-      color: 'danger',
-    },
-  ];
+  // An Admin can view another Admin but not change them (backend
+  // assert_can_manage_target) — so no actions at all on that page.
+  const canManage = !user || canManageUser(actor, user);
+
+  const actionItems: DropdownItem[] = !canManage
+    ? []
+    : [
+        // Resending only makes sense pre-verification — same gate as
+        // UserTable's own icon, and the backend enforces it too (400 for an
+        // already-verified account).
+        ...(user?.registration_status === 'pending'
+          ? [
+              {
+                label: resending ? 'Sending…' : 'Resend invite',
+                icon: LuSend,
+                onClick: handleResendInvite,
+                color: 'neutral' as const,
+                disabled: resending,
+              },
+            ]
+          : []),
+        {
+          label: 'Edit',
+          icon: LuPencil,
+          onClick: () => router.push(`/admin/users/${userId}/edit`),
+          color: 'neutral',
+        },
+        {
+          label: 'Delete',
+          icon: LuTrash2,
+          onClick: () => setConfirmOpen(true),
+          color: 'danger',
+        },
+      ];
 
   if (loading) return <Loading text="Loading user…" />;
 
@@ -135,7 +144,11 @@ const UserDetailsView = ({ userId }: { userId: string }) => {
       <PageHeader
         title={user.full_name}
         subtitle={user.email}
-        actions={<ActionsDropdown items={actionItems} />}
+        actions={
+          actionItems.length ? (
+            <ActionsDropdown items={actionItems} />
+          ) : undefined
+        }
       />
 
       <div className="mb-5 flex items-center gap-3">

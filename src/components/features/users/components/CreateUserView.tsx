@@ -10,6 +10,7 @@ import {
   joinPhoneNumber,
   validatePhoneNumber,
 } from '../../../../constants/dialCodes';
+import { PAYOUT_METHOD_OPTIONS } from '../../../../constants/payoutMethods';
 import { useAuth } from '../../../../contexts/AuthContext';
 import { ROLE_LABELS, type UserRole } from '../../../../types/auth';
 import { InputField } from '../../../form/fields/InputField';
@@ -59,12 +60,6 @@ const INITIAL_STATE: FormState = {
   payout_method: '',
   payout_account_details: '',
 };
-
-const PAYOUT_METHOD_OPTIONS = [
-  { value: 'duitnow', label: 'DuitNow' },
-  { value: 'cash', label: 'Cash' },
-  { value: 'bank_transfer', label: 'Bank transfer' },
-];
 
 // Full page, not a modal — the create flow gets the same footing as
 // view/edit (its own route, its own back link) instead of interrupting

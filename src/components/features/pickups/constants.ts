@@ -117,3 +117,7 @@ export {
   STATUS_BADGE_VARIANT,
   STATUS_FILTER_OPTIONS,
 };
+
+/** Most Orders one pickup request can hold — the backend's
+ * MAX_ORDERS_PER_PICKUP_REQUEST. */
+export const MAX_ORDERS_PER_PICKUP_REQUEST = 7;

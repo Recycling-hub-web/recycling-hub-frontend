@@ -1,5 +1,6 @@
 'use client';
 
+import { ReactLenis } from 'lenis/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -98,33 +99,44 @@ const Sidebar = ({ navItems, open, onClose }: SidebarProps) => {
           </button>
         </div>
 
-        <div className="flex flex-1 flex-col overflow-y-auto px-3 py-6">
-          {groupBySection(navItems).map(({ title, items }, index) => (
-            <div key={title} className={index > 0 ? 'mt-5' : ''}>
-              <p className="mb-2 px-4 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
-                {title}
-              </p>
-              <ul data-nav-section={title} className="flex flex-col gap-1">
-                {items.map(({ children, ...item }) =>
-                  children?.length ? (
-                    <SidebarNavGroup
-                      key={item.href}
-                      label={item.label}
-                      icon={item.icon}
-                      items={children}
-                      activeHref={activeHref}
-                    />
-                  ) : (
-                    <SidebarNavLink
-                      key={item.href}
-                      {...item}
-                      active={item.href === activeHref}
-                    />
-                  ),
-                )}
-              </ul>
+        <div className="relative flex min-h-0 flex-1 flex-col">
+          {/* Its own Lenis instance, same settings as the page content
+              (DashboardLayout's <main>), so the menu eases like the page
+              instead of jumping — and the site-wide Lenis no longer eats
+              wheel events over it. */}
+          <ReactLenis
+            className="flex min-h-0 flex-1 flex-col overflow-y-auto px-3 py-4"
+            options={{ lerp: 0.1, duration: 1.2, smoothWheel: true }}
+          >
+            <div>
+              {groupBySection(navItems).map(({ title, items }, index) => (
+                <div key={title} className={index > 0 ? 'mt-4' : ''}>
+                  <p className="mb-2 px-4 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+                    {title}
+                  </p>
+                  <ul data-nav-section={title} className="flex flex-col gap-1">
+                    {items.map(({ children, ...item }) =>
+                      children?.length ? (
+                        <SidebarNavGroup
+                          key={item.href}
+                          label={item.label}
+                          icon={item.icon}
+                          items={children}
+                          activeHref={activeHref}
+                        />
+                      ) : (
+                        <SidebarNavLink
+                          key={item.href}
+                          {...item}
+                          active={item.href === activeHref}
+                        />
+                      ),
+                    )}
+                  </ul>
+                </div>
+              ))}
             </div>
-          ))}
+          </ReactLenis>
         </div>
 
         <SidebarUserCard />
