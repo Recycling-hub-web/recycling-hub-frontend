@@ -33,11 +33,6 @@ const listFinanceRecords = ({
 const getFinanceRecord = (id: string): Promise<FinanceRecordListItem> =>
   apiFetch(`/finance/${id}/`);
 
-// POST /finance/claim-mine/ — driver only, one-click bulk claim of
-// every one of their own `pending` records.
-const claimMyReimbursements = (): Promise<FinanceRecordListItem[]> =>
-  apiFetch('/finance/claim-mine/', { method: 'POST' });
-
 // POST /finance/verify-reimburse/ — accounting/admin/staff, single or
 // bulk. `proof`, if given, is one file key applied to every id in the
 // batch (one reimbursement proof per action, not per record — same as
@@ -51,10 +46,5 @@ const verifyAndReimburse = (
     json: { ids, ...(proof && { proof }) },
   });
 
-export {
-  claimMyReimbursements,
-  getFinanceRecord,
-  listFinanceRecords,
-  verifyAndReimburse,
-};
+export { getFinanceRecord, listFinanceRecords, verifyAndReimburse };
 export type { ListFinanceRecordsParams, Paginated };

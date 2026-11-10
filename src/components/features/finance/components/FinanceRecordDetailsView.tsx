@@ -161,14 +161,16 @@ const FinanceRecordDetailsView = ({
         {record.proof_of_payment?.public_url && (
           <div className="mt-5 border-t border-slate-100 pt-5">
             <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
-              Proof of payment (customer → driver)
+              Proof of payment (driver → customer)
             </p>
-            {/* eslint-disable-next-line @next/next/no-img-element -- remote/presigned URL, not a static asset */}
-            <img
-              src={record.proof_of_payment.public_url}
-              alt=""
-              className="size-32 rounded-xl border border-slate-200 object-cover"
-            />
+            <a
+              href={record.proof_of_payment.public_url}
+              target="_blank"
+              rel="noreferrer"
+              className="text-sm font-semibold text-brand-600 underline"
+            >
+              View payment proof
+            </a>
           </div>
         )}
       </Card>
@@ -176,13 +178,13 @@ const FinanceRecordDetailsView = ({
       {record.status !== 'pending' && (
         <Card className="mt-4 p-5">
           <p className="mb-3 text-sm font-semibold text-slate-900">
-            Claim & reimbursement
+            Payment review & reimbursement
           </p>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {record.claimed_at && (
               <InfoRow
                 icon={<LuCalendar className="size-4" />}
-                label="Claimed at"
+                label="Payment recorded at"
                 value={<AppDate value={record.claimed_at} format="long" />}
               />
             )}
@@ -221,12 +223,14 @@ const FinanceRecordDetailsView = ({
               <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
                 Reimbursement proof (accounting → driver)
               </p>
-              {/* eslint-disable-next-line @next/next/no-img-element -- remote/presigned URL, not a static asset */}
-              <img
-                src={record.reimbursement_proof.public_url}
-                alt=""
-                className="size-32 rounded-xl border border-slate-200 object-cover"
-              />
+              <a
+                href={record.reimbursement_proof.public_url}
+                target="_blank"
+                rel="noreferrer"
+                className="text-sm font-semibold text-brand-600 underline"
+              >
+                View reimbursement proof
+              </a>
             </div>
           )}
         </Card>

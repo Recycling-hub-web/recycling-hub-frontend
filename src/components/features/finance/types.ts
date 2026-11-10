@@ -55,8 +55,8 @@ type FinanceRecordListItem = {
 };
 
 const FINANCE_STATUS_LABELS: Record<FinanceStatus, string> = {
-  pending: 'Pending',
-  claimed: 'Claimed',
+  pending: 'Pending collection',
+  claimed: 'Awaiting review',
   verified: 'Verified',
   reimbursed: 'Reimbursed',
 };

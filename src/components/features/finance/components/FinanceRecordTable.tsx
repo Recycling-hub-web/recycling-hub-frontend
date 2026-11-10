@@ -40,7 +40,7 @@ type FinanceRecordTableProps = {
   onToggleSelectAll: () => void;
   /** Opens the Verify & Reimburse modal for these ids — the table
    * never calls the API directly, since the modal also collects an
-   * optional reimbursement proof. */
+   * required reimbursement proof. */
   onRequestReimburse: (ids: string[]) => void;
   /** False on the driver's own read-only view — no checkboxes or
    * per-row action, since a driver can't Verify & Reimburse anyway
@@ -182,7 +182,7 @@ const FinanceRecordTable = ({
                     checked={allClaimedSelected}
                     onChange={onToggleSelectAll}
                     className="size-4 rounded border-slate-300"
-                    aria-label="Select all claimed records"
+                    aria-label="Select all records awaiting review"
                   />
                 )}
               </th>

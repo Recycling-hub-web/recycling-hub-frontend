@@ -81,7 +81,7 @@ const FinanceRecordsView = () => {
     <PageContainer variant="table">
       <PageHeader
         title="Finance Records"
-        subtitle="Priced pickup requests — claim, verify, and reimburse driver payments."
+        subtitle="Driver payments are recorded automatically — review and reimburse them here."
         actions={
           canManage && selectedIds.size > 0 ? (
             <button

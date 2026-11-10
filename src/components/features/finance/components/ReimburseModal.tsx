@@ -1,8 +1,8 @@
 'use client';
 
 import { type FormEvent, useState } from 'react';
-import { LuReceipt, LuUpload } from 'react-icons/lu';
 
+import { StatusFileUpload } from '../../../form/upload/StatusFileUpload';
 import { AlertBanner } from '../../../ui/AlertBanner';
 import { FormActions } from '../../../ui/buttons/FormActions';
 import { Modal } from '../../../ui/modal/Modal';
@@ -32,26 +32,25 @@ const ReimburseModal = ({
     useVerifyReimburse();
   const { execute: upload, loading: uploading } = useUploadStorageFile();
   const [proofKey, setProofKey] = useState('');
-  const [proofPreview, setProofPreview] = useState<string | null>(null);
+  const [proofFile, setProofFile] = useState<File | null>(null);
   const [apiError, setApiError] = useState('');
 
-  let uploadLabel = 'Upload';
-  if (uploading) uploadLabel = 'Uploading…';
-  else if (proofKey) uploadLabel = 'Replace';
-
   const handleClose = () => {
+    if (submitting || uploading) return;
     setProofKey('');
-    setProofPreview(null);
+    setProofFile(null);
     setApiError('');
     onClose();
   };
 
   const handleProofChange = async (file: File | undefined) => {
     if (!file) return;
+    setProofFile(file);
+    setProofKey('');
+    setApiError('');
     try {
       const result = await upload(file);
       setProofKey(result.file_key);
-      setProofPreview(URL.createObjectURL(file));
     } catch {
       setApiError('Could not upload the proof. Please try again.');
     }
@@ -60,6 +59,7 @@ const ReimburseModal = ({
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setApiError('');
+    if (submitting || uploading) return;
     if (!proofKey) {
       setApiError('Upload the proof of payment before reimbursing.');
       return;
@@ -90,7 +90,7 @@ const ReimburseModal = ({
           <button
             type="button"
             onClick={handleClose}
-            disabled={submitting}
+            disabled={submitting || uploading}
             className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Cancel
@@ -115,44 +115,26 @@ const ReimburseModal = ({
         <AlertBanner message={apiError} />
 
         <div className="mb-4" data-field="reimbursement_proof">
-          <label className="block text-sm font-medium text-slate-900">
-            Reimbursement proof <span className="text-red-600">*</span>
-          </label>
-          <p className="mt-0.5 text-xs text-slate-500">
-            {count === 1
-              ? 'A bank transfer receipt proving the driver was paid back.'
-              : `One receipt for all ${count} records, not one per record.`}
-          </p>
-          <div className="mt-2 flex items-center gap-4">
-            {proofPreview ? (
-              // eslint-disable-next-line @next/next/no-img-element -- local object URL preview, not a static asset
-              <img
-                src={proofPreview}
-                alt=""
-                className="size-16 shrink-0 rounded-xl border border-slate-200 object-cover"
-              />
-            ) : (
-              <span className="flex size-16 shrink-0 items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50 text-slate-400">
-                <LuReceipt className="size-6" />
-              </span>
-            )}
-            <label
-              htmlFor="reimburse-proof-input"
-              className={`flex cursor-pointer items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 transition hover:border-brand-300 hover:bg-slate-50 ${
-                uploading ? 'pointer-events-none opacity-50' : ''
-              }`}
-            >
-              <LuUpload className="size-4" />
-              {uploadLabel}
-            </label>
-          </div>
-          <input
+          <StatusFileUpload
             id="reimburse-proof-input"
-            type="file"
-            accept="image/*"
-            className="sr-only"
-            disabled={uploading}
-            onChange={(e) => handleProofChange(e.target.files?.[0])}
+            label="Reimbursement proof"
+            description={
+              count === 1
+                ? 'A receipt showing the driver was paid back.'
+                : `One receipt for all ${count} records.`
+            }
+            file={proofFile}
+            onFileChange={handleProofChange}
+            onRemove={() => {
+              if (submitting || uploading) return;
+              setProofFile(null);
+              setProofKey('');
+              setApiError('');
+            }}
+            onError={setApiError}
+            required
+            disabled={submitting || uploading}
+            uploading={uploading}
           />
         </div>
       </form>

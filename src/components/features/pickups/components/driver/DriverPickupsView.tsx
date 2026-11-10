@@ -26,10 +26,7 @@ import {
 import { Tabs } from '../../../../ui/tabs';
 import { useToast } from '../../../../ui/toast/ToastContext';
 import { WhatsAppLink } from '../../../../ui/WhatsAppLink';
-import {
-  useClaimReimbursements,
-  usePendingReimbursementSummary,
-} from '../../../finance/hooks';
+import { usePendingReimbursementSummary } from '../../../finance/hooks';
 import { useClaimOrder, useOrders } from '../../hooks';
 import { type CollectionRequestListItem, itemsSummary } from '../../types';
 import {
@@ -114,24 +111,8 @@ const DriverPickupsView = () => {
     {},
   );
 
-  const {
-    count: pendingCount,
-    total: pendingTotal,
-    refetch: refetchPendingSummary,
-  } = usePendingReimbursementSummary();
-  const { execute: claimReimbursements, loading: claimingReimbursement } =
-    useClaimReimbursements();
-
-  const handleClaimReimbursements = async () => {
-    try {
-      await claimReimbursements();
-      toast.success('Reimbursement claimed');
-      refetchPendingSummary();
-    } catch {
-      toast.error('Could not claim reimbursement. Please try again.');
-    }
-  };
-
+  const { count: pendingCount, total: pendingTotal } =
+    usePendingReimbursementSummary();
   const handleClaim = async (request: CollectionRequestListItem) => {
     setClaimingId(request.id);
     try {
@@ -379,16 +360,12 @@ const DriverPickupsView = () => {
         <div className="mb-4 flex flex-col items-start justify-between gap-3 rounded-xl border border-brand-200 bg-brand-50 p-4 sm:flex-row sm:items-center">
           <span className="inline-flex items-center gap-2 text-sm font-medium text-brand-900">
             <LuWallet className="size-4 shrink-0" />
-            You have {pendingCount} pending payment
+            You have {pendingCount} payment
             {pendingCount === 1 ? '' : 's'} totaling RM
-            {pendingTotal.toFixed(2)}
+            {pendingTotal.toFixed(2)} awaiting review
           </span>
-          <Button
-            size="sm"
-            onClick={handleClaimReimbursements}
-            disabled={claimingReimbursement}
-          >
-            {claimingReimbursement ? 'Claiming…' : 'Claim Reimbursement'}
+          <Button size="sm" href="/driver/finance">
+            View payments
           </Button>
         </div>
       )}

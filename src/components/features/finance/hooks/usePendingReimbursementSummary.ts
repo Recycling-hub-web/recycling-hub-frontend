@@ -7,7 +7,7 @@ type Summary = { count: number; total: number };
 const INITIAL: Summary = { count: 0, total: 0 };
 
 /** The driver's own pending-reimbursement count+total — powers the
- * "Claim Reimbursement" banner on the driver's pickups view. Capped at
+ * automatic payment-review banner on the driver's pickups view. Capped at
  * 200 (DefaultPagination's max_page_size) — a driver realistically
  * never has more pending records than that at once. */
 const usePendingReimbursementSummary = () => {
@@ -17,7 +17,7 @@ const usePendingReimbursementSummary = () => {
   const refetch = useCallback(async () => {
     try {
       const data = await listFinanceRecords({
-        status: 'pending',
+        status: 'claimed',
         pageSize: 200,
       });
       const total = data.results.reduce(

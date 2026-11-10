@@ -1,11 +1,12 @@
 'use client';
 
 import { type FormEvent, useEffect, useState } from 'react';
-import { LuPlus, LuReceipt, LuTrash2, LuUpload } from 'react-icons/lu';
+import { LuPlus, LuTrash2 } from 'react-icons/lu';
 
 import { InputField } from '../../../../form/fields/InputField';
 import { SelectField } from '../../../../form/fields/SelectField';
 import { TextareaField } from '../../../../form/fields/TextareaField';
+import { StatusFileUpload } from '../../../../form/upload/StatusFileUpload';
 import { AlertBanner } from '../../../../ui/AlertBanner';
 import { Button } from '../../../../ui/buttons/Button';
 import { FormActions } from '../../../../ui/buttons/FormActions';
@@ -95,7 +96,7 @@ const CollectModal = ({
     proof_of_payment: '',
   };
   const [formData, setFormData] = useState<FormState>(initialState);
-  const [proofPreview, setProofPreview] = useState<string | null>(null);
+  const [proofFile, setProofFile] = useState<File | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [apiError, setApiError] = useState('');
   const [itemQuantities, setItemQuantities] = useState<Record<string, string>>(
@@ -127,10 +128,6 @@ const CollectModal = ({
     );
     setNewItems([]);
   }, [open, items]);
-
-  let uploadLabel = 'Upload';
-  if (uploading) uploadLabel = 'Uploading…';
-  else if (formData.proof_of_payment) uploadLabel = 'Replace';
 
   const updateFormData = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -178,7 +175,7 @@ const CollectModal = ({
       nextErrors.payment_method = 'Select how the customer was paid.';
     }
     if (showPaymentFields && !formData.proof_of_payment) {
-      nextErrors.proof_of_payment = 'Upload a photo of the proof of payment.';
+      nextErrors.proof_of_payment = 'Upload proof of payment.';
     }
     setErrors(nextErrors);
 
@@ -230,8 +227,9 @@ const CollectModal = ({
   };
 
   const handleClose = () => {
+    if (submitting || uploading) return;
     setFormData(initialState);
-    setProofPreview(null);
+    setProofFile(null);
     setErrors({});
     setApiError('');
     setItemQuantities({});
@@ -244,10 +242,12 @@ const CollectModal = ({
 
   const handleProofChange = async (file: File | undefined) => {
     if (!file) return;
+    setProofFile(file);
+    updateFormData('proof_of_payment', '');
+    setApiError('');
     try {
       const result = await upload(file);
       updateFormData('proof_of_payment', result.file_key);
-      setProofPreview(URL.createObjectURL(file));
     } catch {
       setApiError('Could not upload the proof of payment. Please try again.');
     }
@@ -256,7 +256,7 @@ const CollectModal = ({
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setApiError('');
-    if (!validate()) return;
+    if (submitting || uploading || !validate()) return;
 
     const existingItemEntries = items.map((item) => {
       const categoryChanged = itemCategories[item.id] !== item.category.id;
@@ -484,43 +484,21 @@ const CollectModal = ({
             />
 
             <div className="mb-4" data-field="proof_of_payment">
-              <label className="block text-sm font-medium text-slate-900">
-                Proof of payment <span className="text-red-600">*</span>
-              </label>
-              <p className="mt-0.5 text-xs text-slate-500">
-                A receipt screenshot — distinct from the collection photo, this
-                proves the money moved.
-              </p>
-              <div className="mt-2 flex items-center gap-4">
-                {proofPreview ? (
-                  // eslint-disable-next-line @next/next/no-img-element -- local object URL preview, not a static asset
-                  <img
-                    src={proofPreview}
-                    alt=""
-                    className="size-16 shrink-0 rounded-xl border border-slate-200 object-cover"
-                  />
-                ) : (
-                  <span className="flex size-16 shrink-0 items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50 text-slate-400">
-                    <LuReceipt className="size-6" />
-                  </span>
-                )}
-                <label
-                  htmlFor="collect-proof-input"
-                  className={`flex cursor-pointer items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 transition hover:border-brand-300 hover:bg-slate-50 ${
-                    uploading ? 'pointer-events-none opacity-50' : ''
-                  }`}
-                >
-                  <LuUpload className="size-4" />
-                  {uploadLabel}
-                </label>
-              </div>
-              <input
+              <StatusFileUpload
                 id="collect-proof-input"
-                type="file"
-                accept="image/*"
-                className="sr-only"
-                disabled={uploading}
-                onChange={(e) => handleProofChange(e.target.files?.[0])}
+                label="Proof of payment"
+                description="Upload a receipt showing the customer was paid."
+                file={proofFile}
+                onFileChange={handleProofChange}
+                onRemove={() => {
+                  if (submitting || uploading) return;
+                  setProofFile(null);
+                  updateFormData('proof_of_payment', '');
+                }}
+                onError={setApiError}
+                required
+                disabled={submitting || uploading}
+                uploading={uploading}
               />
               {errors.proof_of_payment && (
                 <p className="mt-1 text-xs text-red-600">
