@@ -47,7 +47,7 @@ const FilterToggle = ({
         onClick={() => setOpen((prev) => !prev)}
         aria-expanded={open}
         aria-label={open ? `Hide ${label}` : `Show ${label}`}
-        className={`relative inline-flex size-10 shrink-0 items-center justify-center rounded-full text-white transition-colors sm:hidden ${
+        className={`relative inline-flex size-11 shrink-0 items-center justify-center rounded-full text-white transition-colors sm:hidden ${
           open ? 'bg-brand-800' : 'bg-brand-700 hover:bg-brand-800'
         } ${className}`}
       >

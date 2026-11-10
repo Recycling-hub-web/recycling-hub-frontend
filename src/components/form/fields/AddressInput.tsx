@@ -280,7 +280,7 @@ const AddressInput = ({
           placeholder={placeholder}
           disabled={disabled}
           className={`flex h-12 w-full items-center justify-start rounded-xl border p-3 py-2 ps-10 text-sm outline-none transition-colors focus:outline-none focus:ring-1 focus:ring-brand-500 ${
-            value ? 'pe-9' : ''
+            value ? 'pe-11' : ''
           } ${fieldStateClasses(disabled, Boolean(error))}`}
         />
         {verified && (
@@ -299,7 +299,7 @@ const AddressInput = ({
             type="button"
             onClick={handleClear}
             aria-label="Clear address"
-            className="absolute inset-y-0 end-0 flex w-9 items-center justify-center text-slate-400 transition-colors hover:text-slate-600"
+            className="absolute inset-y-0 end-0 flex w-11 items-center justify-center text-slate-400 transition-colors hover:text-slate-600"
           >
             <LuX className="size-4" />
           </button>

@@ -37,13 +37,13 @@ const PageHeader = ({
       )}
       <div className="min-w-0">
         <h1
-          className={`truncate font-bold text-slate-900 ${bordered ? 'text-base' : 'text-xl'}`}
+          className={`break-words font-bold text-slate-900 sm:truncate ${bordered ? 'text-base' : 'text-xl'}`}
         >
           {title}
         </h1>
         {subtitle && (
           <p
-            className={`truncate text-slate-400 ${bordered ? 'text-xs' : 'mt-0.5 text-sm'}`}
+            className={`break-words text-slate-400 sm:truncate ${bordered ? 'text-xs' : 'mt-0.5 text-sm'}`}
           >
             {subtitle}
           </p>

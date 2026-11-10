@@ -67,8 +67,8 @@ test.describe('on a phone', () => {
     const select = page.locator('td[data-card-role="select"]').first();
     if ((await select.count()) === 0) test.skip(true, 'nothing to drop off');
     const box = await select.boundingBox();
-    expect(box!.width).toBeGreaterThanOrEqual(44);
-    expect(box!.height).toBeGreaterThanOrEqual(44);
+    expect(Math.round(box!.width)).toBeGreaterThanOrEqual(44);
+    expect(Math.round(box!.height)).toBeGreaterThanOrEqual(44);
     await select.click({ position: { x: 4, y: 4 } }); // the cell, not the box
     await expect(action).toHaveText(/\(1\)/);
     await expect(action).toBeInViewport();

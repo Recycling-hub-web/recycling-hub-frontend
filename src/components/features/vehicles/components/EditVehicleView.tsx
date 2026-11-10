@@ -148,7 +148,7 @@ const EditVehicleView = ({ vehicleId, basePath }: EditVehicleViewProps) => {
     <PageContainer variant="form">
       <Link
         href={`${basePath}/${vehicle.id}`}
-        className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600"
+        className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600 lg:mb-4 lg:min-h-0"
       >
         <LuArrowLeft className="size-4" />
         Back to vehicle
@@ -160,7 +160,7 @@ const EditVehicleView = ({ vehicleId, basePath }: EditVehicleViewProps) => {
         <form onSubmit={handleSubmit}>
           <AlertBanner message={apiError} />
 
-          <div className="grid gap-x-4 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
             <InputField
               label="Plate number"
               field="plate_number"

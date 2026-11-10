@@ -96,7 +96,7 @@ const DriverPickupDetailsView = ({
     <PageContainer variant="form">
       <Link
         href="/driver/pickups"
-        className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600"
+        className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600 lg:mb-4 lg:min-h-0"
       >
         <LuArrowLeft className="size-4" />
         Back to pickups
