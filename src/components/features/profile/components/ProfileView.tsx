@@ -11,12 +11,15 @@ import {
   LuKeyRound,
   LuMail,
   LuMapPin,
+  LuMessageCircle,
   LuPencil,
   LuPhone,
   LuShieldCheck,
   LuUserRound,
+  LuWallet,
 } from 'react-icons/lu';
 
+import { PAYOUT_METHOD_LABELS } from '../../../../constants/payoutMethods';
 import { useAuth } from '../../../../contexts/AuthContext';
 import { ROLE_LABELS } from '../../../../types/auth';
 import { PageContainer } from '../../../layout/PageContainer';
@@ -26,6 +29,7 @@ import { Card } from '../../../ui/card/Card';
 import { InfoRow } from '../../../ui/InfoRow';
 import { Loading } from '../../../ui/loading/Loading';
 import { PageHeader } from '../../../ui/PageHeader';
+import { ChangeEmailModal } from './ChangeEmailModal';
 import { ChangePasswordModal } from './ChangePasswordModal';
 import { ProfileIdentity } from './ProfileIdentity';
 
@@ -60,12 +64,19 @@ const ProfileView = () => {
   const router = useRouter();
   const { user } = useAuth();
   const [passwordOpen, setPasswordOpen] = useState(false);
+  const [emailOpen, setEmailOpen] = useState(false);
 
   const actionItems: DropdownItem[] = [
     {
       label: 'Edit profile',
       icon: LuPencil,
       onClick: () => router.push('/profile/edit'),
+      color: 'neutral',
+    },
+    {
+      label: 'Change email',
+      icon: LuMail,
+      onClick: () => setEmailOpen(true),
       color: 'neutral',
     },
     {
@@ -110,11 +121,16 @@ const ProfileView = () => {
               label="Phone number"
               value={user.phone_number || <NotSet />}
             />
+            <InfoRow
+              icon={<LuMessageCircle className="size-4" />}
+              label="Contact on WhatsApp"
+              value={user.whatsapp_enabled ? 'Yes' : 'No'}
+            />
           </Section>
 
           <Section
             title="Account"
-            hint="Ask an administrator if any of these need to change."
+            hint="Change your email from Actions. Ask an administrator to change your role."
           >
             <InfoRow
               icon={<LuMail className="size-4" />}
@@ -162,6 +178,25 @@ const ProfileView = () => {
                 label="Joining date"
                 value={joiningDate ?? <NotSet />}
               />
+              {user.role === 'driver' && (
+                <>
+                  <InfoRow
+                    icon={<LuWallet className="size-4" />}
+                    label="Payout method"
+                    value={
+                      (profile.payout_method &&
+                        PAYOUT_METHOD_LABELS[profile.payout_method]) || (
+                        <NotSet />
+                      )
+                    }
+                  />
+                  <InfoRow
+                    icon={<LuHash className="size-4" />}
+                    label="Payout account"
+                    value={profile.payout_account_details || <NotSet />}
+                  />
+                </>
+              )}
             </Section>
           </div>
         )}
@@ -170,6 +205,11 @@ const ProfileView = () => {
       <ChangePasswordModal
         open={passwordOpen}
         onClose={() => setPasswordOpen(false)}
+      />
+      <ChangeEmailModal
+        open={emailOpen}
+        onClose={() => setEmailOpen(false)}
+        currentEmail={user.email}
       />
     </PageContainer>
   );

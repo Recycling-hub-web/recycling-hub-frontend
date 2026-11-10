@@ -1,3 +1,5 @@
+import type { PayoutMethod } from '../constants/payoutMethods';
+
 // Mirrors apps.accounts.models.user.User.Role on the backend. No
 // resident/end-user role — these six are the complete set. Super Admin
 // is deliberately separate from Django's own is_superuser/is_staff
@@ -39,6 +41,10 @@ type EmployeeProfile = {
   branch: string | null;
   branch_ar: string | null;
   joining_date: string | null;
+  /** Drivers only. */
+  payout_method?: PayoutMethod | '';
+  /** Drivers only. */
+  payout_account_details?: string;
   created_at: string;
   updated_at: string;
 };
