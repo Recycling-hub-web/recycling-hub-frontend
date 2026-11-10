@@ -18,10 +18,6 @@ import { Card } from '../../../ui/card/Card';
 import { Loading } from '../../../ui/loading/Loading';
 import { PageHeader } from '../../../ui/PageHeader';
 import { useToast } from '../../../ui/toast/ToastContext';
-import {
-  ImageFileUploader,
-  type StoredImage,
-} from '../../storageFiles/components/ImageFileUploader';
 import { NONE_PARENT, STATUS_OPTIONS } from '../constants';
 import { useCategory, useUpdateCategory } from '../hooks';
 import { listCategories } from '../services/categoryService';
@@ -34,7 +30,6 @@ type FormState = {
   parent: string;
   is_active: 'true' | 'false';
   allowed_quantity_units: QuantityUnit[];
-  image: StoredImage;
 };
 
 type EditCategoryViewProps = {
@@ -69,7 +64,6 @@ const EditCategoryView = ({ categoryId, basePath }: EditCategoryViewProps) => {
       parent: category.parent ?? NONE_PARENT,
       is_active: category.is_active ? 'true' : 'false',
       allowed_quantity_units: category.allowed_quantity_units ?? ['kg'],
-      image: category.image ?? null,
     });
   }, [category]);
 
@@ -117,7 +111,6 @@ const EditCategoryView = ({ categoryId, basePath }: EditCategoryViewProps) => {
         parent: formData.parent === NONE_PARENT ? null : formData.parent,
         is_active: formData.is_active === 'true',
         allowed_quantity_units: formData.allowed_quantity_units,
-        image: formData.image?.file_key ?? '',
       });
       toast.success('Category updated');
       router.push(`${basePath}/${category.id}`);
@@ -147,8 +140,7 @@ const EditCategoryView = ({ categoryId, basePath }: EditCategoryViewProps) => {
     formData.parent !== (category.parent ?? NONE_PARENT) ||
     formData.is_active !== (category.is_active ? 'true' : 'false') ||
     formData.allowed_quantity_units.join() !==
-      (category.allowed_quantity_units ?? ['kg']).join() ||
-    (formData.image?.file_key ?? '') !== (category.image?.file_key ?? '');
+      (category.allowed_quantity_units ?? ['kg']).join();
 
   return (
     <PageContainer variant="form">
@@ -208,18 +200,6 @@ const EditCategoryView = ({ categoryId, basePath }: EditCategoryViewProps) => {
                   }));
                 }}
                 error={errors.allowed_quantity_units}
-                disabled={submitting}
-              />
-            </div>
-            <div className="sm:col-span-2">
-              <ImageFileUploader
-                label="Image"
-                field="image"
-                helperText="Optional — a photo of the material."
-                value={formData.image}
-                onChange={(image) =>
-                  setFormData((prev) => (prev ? { ...prev, image } : prev))
-                }
                 disabled={submitting}
               />
             </div>
