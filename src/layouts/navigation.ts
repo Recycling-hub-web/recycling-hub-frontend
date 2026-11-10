@@ -215,12 +215,12 @@ const adminNavItemsFor = (role: UserRole | undefined): NavItem[] => [
 
 // Super Admin's own section: the Super-Admin-exclusive Administrators
 // screen plus the shared modules, mounted at /super-admin/*. Users, Staff
-// and Notifications stay on the Admin side, and there's no link into
+// stay on the Admin side, and there's no link into
 // /admin/* from here. System Settings (/super-admin/system) is hidden from
 // the menu for now — add 'system' back to show it; the page still works
 // by direct URL.
 const SUPER_ADMIN_NAV_ITEMS: NavItem[] = buildNavSections('/super-admin', [
-  { title: 'Main', entries: ['overview'] },
+  { title: 'Main', entries: ['overview', 'notifications'] },
   { title: 'Operations', entries: ['pickupRequests', 'collectionPoints'] },
   { title: 'Finance', entries: ['financeMenu'] },
   {

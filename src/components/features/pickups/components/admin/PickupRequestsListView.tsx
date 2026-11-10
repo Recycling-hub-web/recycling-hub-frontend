@@ -1,8 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense, useEffect, useState } from 'react';
 import { LuClipboardList, LuPlus, LuTruck } from 'react-icons/lu';
 
 import { SearchInput } from '../../../../form/filter/SearchInput';
@@ -69,10 +69,18 @@ type PickupRequestsListViewProps = {
  * only ever browsed via its parent request's own details page (its
  * nested Orders table). Admin and staff share identical permissions
  * on this module. */
-const PickupRequestsListView = ({ basePath }: PickupRequestsListViewProps) => {
+const PickupRequestsListContent = ({
+  basePath,
+}: PickupRequestsListViewProps) => {
   const router = useRouter();
   const toast = useToast();
-  const [activeTab, setActiveTab] = useState<Tab>('requests');
+  const searchParams = useSearchParams();
+  const [activeTab, setActiveTab] = useState<Tab>(
+    searchParams?.get('tab') === 'quick' ? 'quick' : 'requests',
+  );
+  useEffect(() => {
+    setActiveTab(searchParams?.get('tab') === 'quick' ? 'quick' : 'requests');
+  }, [searchParams]);
 
   // Quick leads — a customer asking to be called back. Following one up
   // creates a Pickup Request, so they're listed here. Their links (the
@@ -284,7 +292,16 @@ const PickupRequestsListView = ({ basePath }: PickupRequestsListViewProps) => {
       <Tabs
         tabs={TAB_ITEMS}
         active={activeTab}
-        onChange={setActiveTab}
+        onChange={(tab) => {
+          setActiveTab(tab);
+          const params = new URLSearchParams(searchParams?.toString());
+          if (tab === 'quick') params.set('tab', 'quick');
+          else params.delete('tab');
+          const query = params.toString();
+          router.replace(query ? `${basePath}?${query}` : basePath, {
+            scroll: false,
+          });
+        }}
         className="-mt-2 mb-4 px-0"
       />
 
@@ -406,5 +423,11 @@ const PickupRequestsListView = ({ basePath }: PickupRequestsListViewProps) => {
     </PageContainer>
   );
 };
+
+const PickupRequestsListView = (props: PickupRequestsListViewProps) => (
+  <Suspense fallback={<p role="status">Loading pickup requests…</p>}>
+    <PickupRequestsListContent {...props} />
+  </Suspense>
+);
 
 export { PickupRequestsListView };

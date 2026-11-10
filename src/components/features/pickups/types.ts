@@ -1,3 +1,5 @@
+import type { FinanceRecordListItem } from '../finance/types';
+
 type PickupStatus =
   | 'pending'
   | 'scheduled'
@@ -10,6 +12,7 @@ type PickupStatus =
  * backend, created implicitly when a request is first assigned to a
  * driver. */
 type RouteInfo = {
+  drop_off_proof?: { file_key: string; public_url: string | null } | null;
   id: string;
   status: 'open' | 'dropped_off';
   dropped_off_at: string | null;
@@ -138,6 +141,8 @@ type CollectionRequestListItem = {
  * display strings ("Full Name (email)"), not objects. */
 type CollectionRequestDetails = {
   id: string;
+  request_photos?: CollectionRequestPhoto[];
+  finance_record?: FinanceRecordListItem | null;
   code: string;
   pickup_request: PickupRequestSummary;
   items: PickupRequestItem[];
@@ -184,7 +189,7 @@ type PickupRequestDetails = PickupRequestSummary & {
   /** What the requester attached on the public form (1–4); staff-made
    * requests may have none. Same shape as an Order's photos. */
   photos: CollectionRequestPhoto[];
-  orders: CollectionRequestListItem[];
+  orders: CollectionRequestDetails[];
   cancelled_by: string | null;
   cancelled_at: string | null;
   cancellation_reason: string | null;

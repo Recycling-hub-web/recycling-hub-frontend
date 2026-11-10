@@ -13,6 +13,7 @@ import {
   TableWrapper,
 } from '../../../ui/table';
 import { STATUS_BADGE_VARIANT } from '../constants';
+import { reimbursementBlocker } from '../eligibility';
 import type { FinanceRecordListItem } from '../types';
 import { FINANCE_PAYMENT_METHOD_LABELS, FINANCE_STATUS_LABELS } from '../types';
 
@@ -72,7 +73,7 @@ const FinanceRecordTable = ({
 }: FinanceRecordTableProps) => {
   const router = useRouter();
   const columnCount = canManage ? 9 : 7;
-  const claimedRecords = records.filter((r) => r.status === 'claimed');
+  const claimedRecords = records.filter((r) => !reimbursementBlocker(r));
   const allClaimedSelected =
     claimedRecords.length > 0 &&
     claimedRecords.every((r) => selectedIds.has(r.id));
@@ -106,7 +107,7 @@ const FinanceRecordTable = ({
       >
         {canManage && (
           <td className="p-4" onClick={(e) => e.stopPropagation()}>
-            {r.status === 'claimed' && (
+            {!reimbursementBlocker(r) && (
               <input
                 type="checkbox"
                 checked={selectedIds.has(r.id)}
@@ -134,13 +135,18 @@ const FinanceRecordTable = ({
           <StatusBadge variant={STATUS_BADGE_VARIANT[r.status]}>
             {FINANCE_STATUS_LABELS[r.status]}
           </StatusBadge>
+          {r.driver && r.status !== 'reimbursed' && reimbursementBlocker(r) && (
+            <p className="mt-1 max-w-48 text-xs text-amber-700">
+              {reimbursementBlocker(r)}
+            </p>
+          )}
         </td>
         <td className="px-6 py-4 text-slate-500">
           <AppDate value={r.created_at} format="short" />
         </td>
         {canManage && (
           <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
-            {r.status === 'claimed' && (
+            {!reimbursementBlocker(r) && (
               <button
                 type="button"
                 title="Verify & Reimburse"

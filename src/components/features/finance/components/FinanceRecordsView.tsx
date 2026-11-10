@@ -8,6 +8,7 @@ import { PageContainer } from '../../../layout/PageContainer';
 import { FilterSelect } from '../../../ui/FilterSelect';
 import { PageHeader } from '../../../ui/PageHeader';
 import { STATUS_FILTER_OPTIONS } from '../constants';
+import { reimbursementBlocker } from '../eligibility';
 import { useFinanceRecords } from '../hooks';
 import type { FinanceStatus } from '../types';
 import { FinanceRecordTable } from './FinanceRecordTable';
@@ -50,6 +51,7 @@ const FinanceRecordsView = () => {
   const handleStatusFilterChange = (value: string) => {
     setStatusFilter(value as FinanceStatus | '');
     setPage(1);
+    setSelectedIds(new Set());
   };
 
   const toggleSelect = (id: string) => {
@@ -62,7 +64,7 @@ const FinanceRecordsView = () => {
   };
 
   const claimedIds = records
-    .filter((r) => r.status === 'claimed')
+    .filter((r) => !reimbursementBlocker(r))
     .map((r) => r.id);
 
   const toggleSelectAll = () => {
@@ -110,7 +112,10 @@ const FinanceRecordsView = () => {
         records={records}
         count={count}
         page={page}
-        onPageChange={setPage}
+        onPageChange={(value) => {
+          setPage(value);
+          setSelectedIds(new Set());
+        }}
         loading={loading}
         error={error}
         onRetry={refetch}

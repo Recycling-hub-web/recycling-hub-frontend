@@ -39,11 +39,11 @@ const getFinanceRecord = (id: string): Promise<FinanceRecordListItem> =>
 // the driver's own batch drop-off proof).
 const verifyAndReimburse = (
   ids: string[],
-  proof?: string,
+  proof: string,
 ): Promise<FinanceRecordListItem[]> =>
   apiFetch('/finance/verify-reimburse/', {
     method: 'POST',
-    json: { ids, ...(proof && { proof }) },
+    json: { ids, proof },
   });
 
 export { getFinanceRecord, listFinanceRecords, verifyAndReimburse };

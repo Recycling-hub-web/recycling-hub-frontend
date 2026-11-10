@@ -2,6 +2,7 @@
 
 import { type FormEvent, useState } from 'react';
 
+import { ApiError } from '../../../../lib/api';
 import { StatusFileUpload } from '../../../form/upload/StatusFileUpload';
 import { AlertBanner } from '../../../ui/AlertBanner';
 import { FormActions } from '../../../ui/buttons/FormActions';
@@ -34,12 +35,16 @@ const ReimburseModal = ({
   const [proofKey, setProofKey] = useState('');
   const [proofFile, setProofFile] = useState<File | null>(null);
   const [apiError, setApiError] = useState('');
+  const [recordErrors, setRecordErrors] = useState<
+    { order: string; reason: string }[]
+  >([]);
 
   const handleClose = () => {
     if (submitting || uploading) return;
     setProofKey('');
     setProofFile(null);
     setApiError('');
+    setRecordErrors([]);
     onClose();
   };
 
@@ -48,17 +53,23 @@ const ReimburseModal = ({
     setProofFile(file);
     setProofKey('');
     setApiError('');
+    setRecordErrors([]);
     try {
       const result = await upload(file);
       setProofKey(result.file_key);
-    } catch {
-      setApiError('Could not upload the proof. Please try again.');
+    } catch (err) {
+      setApiError(
+        err instanceof ApiError
+          ? err.message
+          : 'Could not upload the proof. Please try again.',
+      );
     }
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setApiError('');
+    setRecordErrors([]);
     if (submitting || uploading) return;
     if (!proofKey) {
       setApiError('Upload the proof of payment before reimbursing.');
@@ -68,8 +79,30 @@ const ReimburseModal = ({
       await verifyReimburse(ids, proofKey);
       onReimbursed();
       handleClose();
-    } catch {
-      setApiError('Could not verify and reimburse this. Please try again.');
+    } catch (err) {
+      setApiError(
+        err instanceof ApiError
+          ? err.message
+          : 'Could not verify and reimburse this. Please try again.',
+      );
+      if (
+        err instanceof ApiError &&
+        err.data &&
+        typeof err.data === 'object' &&
+        'records' in err.data &&
+        Array.isArray(err.data.records)
+      ) {
+        setRecordErrors(
+          err.data.records.flatMap((record: unknown) => {
+            if (!record || typeof record !== 'object') return [];
+            const item = record as Record<string, unknown>;
+            return typeof item.order === 'string' &&
+              typeof item.reason === 'string'
+              ? [{ order: item.order, reason: item.reason }]
+              : [];
+          }),
+        );
+      }
     }
   };
 
@@ -83,7 +116,7 @@ const ReimburseModal = ({
       subtitle={
         count === 1
           ? 'Confirm this driver has been paid back.'
-          : `Confirm these ${count} drivers' records have been paid back.`
+          : `Review and record payment for ${count} orders. One proof covers this batch.`
       }
       footer={
         <FormActions>
@@ -113,6 +146,18 @@ const ReimburseModal = ({
         className="space-y-1"
       >
         <AlertBanner message={apiError} />
+        {recordErrors.length > 0 && (
+          <ul
+            className="mb-4 space-y-2 rounded-xl bg-red-50 p-4 text-sm text-red-800"
+            aria-label="Records requiring attention"
+          >
+            {recordErrors.map((record) => (
+              <li key={record.order}>
+                <strong>{record.order}</strong>: {record.reason}
+              </li>
+            ))}
+          </ul>
+        )}
 
         <div className="mb-4" data-field="reimbursement_proof">
           <StatusFileUpload
@@ -130,6 +175,7 @@ const ReimburseModal = ({
               setProofFile(null);
               setProofKey('');
               setApiError('');
+              setRecordErrors([]);
             }}
             onError={setApiError}
             required

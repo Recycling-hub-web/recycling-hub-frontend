@@ -16,6 +16,7 @@ import {
 import { useAuth } from '../../../../contexts/AuthContext';
 import { isAdminRole } from '../../../../types/auth';
 import { PageContainer } from '../../../layout/PageContainer';
+import { AlertBanner } from '../../../ui/AlertBanner';
 import { StatusBadge } from '../../../ui/badges/StatusBadge';
 import { Button } from '../../../ui/buttons/Button';
 import { Card } from '../../../ui/card/Card';
@@ -25,6 +26,7 @@ import { Loading } from '../../../ui/loading/Loading';
 import { PageHeader } from '../../../ui/PageHeader';
 import { ActivityLog } from '../../activity/components';
 import { STATUS_BADGE_VARIANT } from '../constants';
+import { reimbursementBlocker } from '../eligibility';
 import { useFinanceRecord } from '../hooks';
 import { FINANCE_PAYMENT_METHOD_LABELS, FINANCE_STATUS_LABELS } from '../types';
 import { ReimburseModal } from './ReimburseModal';
@@ -73,7 +75,7 @@ const FinanceRecordDetailsView = ({
     );
   }
 
-  const canReimburse = canManage && record.status === 'claimed';
+  const canReimburse = canManage && !reimbursementBlocker(record);
 
   return (
     <PageContainer variant="form">
@@ -104,6 +106,9 @@ const FinanceRecordDetailsView = ({
         </StatusBadge>
       </div>
 
+      {canManage && record.driver && record.status !== 'reimbursed' && (
+        <AlertBanner message={reimbursementBlocker(record)} variant="warning" />
+      )}
       <Card className="p-5">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <InfoRow

@@ -173,6 +173,7 @@ test.describe('Admin/staff Pickup Requests', () => {
     await expect(page).toHaveURL(/\/admin\/pickup-requests\/[^/]+$/);
     await expect(page.getByRole('heading', { name: fullName })).toBeVisible();
     await expect(page.getByText('Open', { exact: true })).toBeVisible();
+    await page.getByRole('button', { name: 'Orders (0)', exact: true }).click();
     await expect(page.getByText('0 orders')).toBeVisible();
   });
 
@@ -228,6 +229,7 @@ test.describe('Admin/staff Pickup Requests', () => {
     }
 
     await page.goto(`/admin/pickup-requests/${pickupRequestId}`);
+    await page.getByRole('button', { name: 'Orders (7)', exact: true }).click();
     await expect(page.getByText('7 orders')).toBeVisible();
     await expect(page.getByRole('link', { name: 'Create order' })).toHaveCount(
       0,

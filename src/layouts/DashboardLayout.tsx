@@ -4,6 +4,7 @@ import { ReactLenis } from 'lenis/react';
 import type { ReactNode } from 'react';
 
 import { RequireAuth } from '../components/features/auth/components';
+import { NotificationsProvider } from '../components/features/notifications/context/NotificationsContext';
 import { AppFooter } from '../components/layout/AppFooter';
 import { Sidebar } from '../components/layout/Sidebar';
 import { SystemMobileNavigation } from '../components/layout/SystemMobileNavigation';
@@ -34,35 +35,37 @@ const DashboardLayout = ({
 }: DashboardLayoutProps) => {
   return (
     <RequireAuth roles={roles}>
-      <SystemExperienceContext.Provider value>
-        <div className="system-app-shell flex h-dvh overflow-hidden bg-neutral-50 lg:gap-4 lg:px-6 lg:py-5">
-          <div className="hidden lg:flex">
-            <Sidebar navItems={navItems} />
-          </div>
-          <div className="flex min-w-0 flex-1 flex-col">
-            <Topbar />
-            <main className="flex-1 overflow-hidden">
-              {/* Non-root — the global root ReactLenis in providers.tsx/_app.tsx
-               * smooths window scroll for public/marketing pages, but this
-               * layout's own outer div is h-screen/overflow-hidden (so the
-               * sidebar stays put — see DashboardLayout's own history), which
-               * leaves the window nothing to scroll. This instance re-targets
-               * Lenis's smooth-scroll at this <main> instead, so dashboard
-               * pages keep the same smooth-scroll feel. */}
-              <ReactLenis
-                className={`system-app-content h-full overflow-y-auto overflow-x-hidden ${contentPadding}`}
-                options={{ lerp: 0.1, duration: 1.2, smoothWheel: true }}
-              >
-                {children}
-              </ReactLenis>
-            </main>
-            <div className="hidden lg:block">
-              <AppFooter />
+      <NotificationsProvider>
+        <SystemExperienceContext.Provider value>
+          <div className="system-app-shell flex h-dvh overflow-hidden bg-neutral-50 lg:gap-4 lg:px-6 lg:py-5">
+            <div className="hidden lg:flex">
+              <Sidebar navItems={navItems} />
             </div>
-            <SystemMobileNavigation navItems={navItems} />
+            <div className="flex min-w-0 flex-1 flex-col">
+              <Topbar />
+              <main className="flex-1 overflow-hidden">
+                {/* Non-root — the global root ReactLenis in providers.tsx/_app.tsx
+                 * smooths window scroll for public/marketing pages, but this
+                 * layout's own outer div is h-screen/overflow-hidden (so the
+                 * sidebar stays put — see DashboardLayout's own history), which
+                 * leaves the window nothing to scroll. This instance re-targets
+                 * Lenis's smooth-scroll at this <main> instead, so dashboard
+                 * pages keep the same smooth-scroll feel. */}
+                <ReactLenis
+                  className={`system-app-content h-full overflow-y-auto overflow-x-hidden ${contentPadding}`}
+                  options={{ lerp: 0.1, duration: 1.2, smoothWheel: true }}
+                >
+                  {children}
+                </ReactLenis>
+              </main>
+              <div className="hidden lg:block">
+                <AppFooter />
+              </div>
+              <SystemMobileNavigation navItems={navItems} />
+            </div>
           </div>
-        </div>
-      </SystemExperienceContext.Provider>
+        </SystemExperienceContext.Provider>
+      </NotificationsProvider>
     </RequireAuth>
   );
 };
