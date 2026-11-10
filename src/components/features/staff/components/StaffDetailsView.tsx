@@ -100,7 +100,7 @@ const StaffDetailsView = ({ staffId }: { staffId: string }) => {
     <PageContainer variant="form">
       <Link
         href="/admin/staff"
-        className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600"
+        className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600 lg:mb-4 lg:min-h-0"
       >
         <LuArrowLeft className="size-4" />
         Back to staff
@@ -169,7 +169,7 @@ const StaffDetailsView = ({ staffId }: { staffId: string }) => {
 
         {hasArabicTranslation && (
           <div className="mt-5 border-t border-slate-100 pt-5">
-            <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
               Arabic translation (auto-generated)
             </p>
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">

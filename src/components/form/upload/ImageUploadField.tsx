@@ -192,7 +192,7 @@ const ImageUploadField = ({
             <div className="flex size-24 items-center justify-center rounded-full border-2 border-dashed border-slate-300 bg-slate-50 transition-all duration-200 group-hover:border-brand-400 group-hover:bg-brand-50">
               <div className="flex flex-col items-center gap-1">
                 <Camera className="size-6 text-slate-400 transition-colors group-hover:text-brand-500" />
-                <span className="text-[10px] font-medium text-slate-400 transition-colors group-hover:text-brand-500">
+                <span className="text-xs font-medium text-slate-400 transition-colors group-hover:text-brand-500">
                   Upload
                 </span>
               </div>
@@ -206,7 +206,7 @@ const ImageUploadField = ({
             />
           </label>
           <p className="text-xs text-slate-500">Click to upload {uploadNoun}</p>
-          <p className="text-[10px] text-slate-400">
+          <p className="text-xs text-slate-400">
             {resolvedLabel} accepted (max 10MB)
           </p>
         </div>
@@ -240,7 +240,7 @@ const ImageUploadField = ({
             {imgError ? (
               <label className="flex size-24 cursor-pointer flex-col items-center justify-center rounded-full border-2 border-dashed border-brand-400 bg-gradient-to-br from-brand-600 to-brand-800 shadow-sm">
                 <Camera className="size-5 text-white" />
-                <span className="mt-0.5 text-[10px] font-medium text-white">
+                <span className="mt-0.5 text-xs font-medium text-white">
                   Upload
                 </span>
                 <input
@@ -261,7 +261,7 @@ const ImageUploadField = ({
                 />
                 <label className="bg-black/50 absolute inset-0 flex cursor-pointer flex-col items-center justify-center rounded-full opacity-0 transition-opacity duration-200 group-hover:opacity-100">
                   <Camera className="size-5 text-white" />
-                  <span className="mt-0.5 text-[10px] font-medium text-white">
+                  <span className="mt-0.5 text-xs font-medium text-white">
                     Replace
                   </span>
                   <input
@@ -320,7 +320,7 @@ const ImageUploadField = ({
           <p className="max-w-[140px] truncate text-center text-xs font-medium text-slate-700">
             {simpleFile.name}
           </p>
-          <p className="text-[10px] text-slate-400">
+          <p className="text-xs text-slate-400">
             {simpleUploading
               ? `Uploading… ${simpleProgress}%`
               : `${(simpleFile.size / 1024).toFixed(1)} KB`}

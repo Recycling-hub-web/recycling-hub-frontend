@@ -122,7 +122,7 @@ const CategoryDetailsView = ({
     <PageContainer variant="form">
       <Link
         href={basePath}
-        className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600"
+        className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600 lg:mb-4 lg:min-h-0"
       >
         <LuArrowLeft className="size-4" />
         Back to categories
@@ -185,7 +185,7 @@ const CategoryDetailsView = ({
 
         {category.description && (
           <div className="mt-5 border-t border-slate-100 pt-5">
-            <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
               Description
             </p>
             <p className="whitespace-pre-wrap text-sm leading-relaxed text-slate-700">
@@ -196,7 +196,7 @@ const CategoryDetailsView = ({
 
         {(category.name_ar || category.description_ar) && (
           <div className="mt-5 border-t border-slate-100 pt-5">
-            <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
               Arabic translation (auto-generated)
             </p>
             {category.name_ar && (

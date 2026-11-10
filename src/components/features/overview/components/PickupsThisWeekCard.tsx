@@ -11,7 +11,7 @@ import { percentChange, type PickupWeekState } from '../hooks';
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 const roundButton =
-  'flex size-10 items-center justify-center rounded-full border border-brand-600 text-brand-700 transition hover:bg-brand-50';
+  'flex size-11 items-center justify-center rounded-full border border-brand-600 lg:size-10 text-brand-700 transition hover:bg-brand-50';
 
 /** Pickup requests submitted each day this week — today highlighted,
  * the rest of the week hatched — with this week, last week and the

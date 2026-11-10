@@ -111,7 +111,7 @@ const Sidebar = ({ navItems, open, onClose }: SidebarProps) => {
             <div>
               {groupBySection(navItems).map(({ title, items }, index) => (
                 <div key={title} className={index > 0 ? 'mt-4' : ''}>
-                  <p className="mb-2 px-4 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+                  <p className="mb-2 px-4 text-xs font-semibold uppercase tracking-wider text-slate-400">
                     {title}
                   </p>
                   <ul data-nav-section={title} className="flex flex-col gap-1">

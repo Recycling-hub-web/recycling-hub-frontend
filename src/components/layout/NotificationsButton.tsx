@@ -35,11 +35,11 @@ const NotificationsButton = () => {
         <button
           type="button"
           aria-label="Notifications"
-          className="relative flex size-9 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
+          className="relative flex size-11 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 lg:size-9"
         >
           <LuBell className="size-5" />
           {count > 0 && (
-            <span className="system-notification-dot absolute right-1.5 top-1.5 flex size-2 rounded-full bg-red-500" />
+            <span className="system-notification-dot absolute right-2.5 top-2.5 flex size-2 rounded-full bg-red-500 lg:right-1.5 lg:top-1.5" />
           )}
         </button>
       }

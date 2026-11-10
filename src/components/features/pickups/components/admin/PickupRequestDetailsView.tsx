@@ -137,7 +137,7 @@ const PickupRequestDetailsView = ({
     <PageContainer variant="form">
       <Link
         href={basePath}
-        className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600"
+        className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600 lg:mb-4 lg:min-h-0"
       >
         <LuArrowLeft className="size-4" />
         Back to pickup requests
@@ -204,7 +204,7 @@ const PickupRequestDetailsView = ({
 
         {request.collection_point && (
           <div className="mt-5 border-t border-slate-100 pt-5">
-            <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
               Drop-off collection point
             </p>
             <p className="text-sm text-slate-700">
@@ -216,7 +216,7 @@ const PickupRequestDetailsView = ({
 
         {request.note && (
           <div className="mt-5 border-t border-slate-100 pt-5">
-            <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
               Note
             </p>
             <p className="whitespace-pre-wrap text-sm leading-relaxed text-slate-700">
@@ -227,7 +227,7 @@ const PickupRequestDetailsView = ({
 
         {request.status === 'cancelled' && (
           <div className="mt-5 border-t border-slate-100 pt-5">
-            <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
               Cancellation
             </p>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">

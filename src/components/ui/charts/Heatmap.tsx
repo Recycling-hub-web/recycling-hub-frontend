@@ -59,7 +59,7 @@ const Heatmap = ({
                 <th
                   key={col}
                   scope="col"
-                  className="truncate pb-1 text-center text-[11px] font-normal text-slate-500"
+                  className="truncate pb-1 text-center text-xs font-normal text-slate-500"
                 >
                   {col}
                 </th>

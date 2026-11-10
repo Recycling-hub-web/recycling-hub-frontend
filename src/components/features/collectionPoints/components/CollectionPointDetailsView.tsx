@@ -91,7 +91,7 @@ const CollectionPointDetailsView = ({
     <PageContainer variant="form">
       <Link
         href={basePath}
-        className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600"
+        className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600 lg:mb-4 lg:min-h-0"
       >
         <LuArrowLeft className="size-4" />
         Back to collection points
@@ -122,7 +122,7 @@ const CollectionPointDetailsView = ({
 
         {collectionPoint.name_ar && (
           <div className="mt-5 border-t border-slate-100 pt-5">
-            <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
               Name (Arabic)
             </p>
             <p dir="rtl" className="text-sm font-semibold text-slate-800">

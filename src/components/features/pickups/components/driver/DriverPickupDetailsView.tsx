@@ -24,6 +24,7 @@ import { AppDate } from '../../../../ui/date/AppDate';
 import { InfoRow } from '../../../../ui/InfoRow';
 import { Loading } from '../../../../ui/loading/Loading';
 import { PageHeader } from '../../../../ui/PageHeader';
+import { StickyActionBar } from '../../../../ui/StickyActionBar';
 import { useToast } from '../../../../ui/toast/ToastContext';
 import { WhatsAppLink } from '../../../../ui/WhatsAppLink';
 import {
@@ -95,7 +96,7 @@ const DriverPickupDetailsView = ({
     <PageContainer variant="form">
       <Link
         href="/driver/pickups"
-        className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600"
+        className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600 lg:mb-4 lg:min-h-0"
       >
         <LuArrowLeft className="size-4" />
         Back to pickups
@@ -105,11 +106,14 @@ const DriverPickupDetailsView = ({
         title={request.code}
         subtitle={`${request.pickup_request.full_name} — ${itemsSummary(request.items)}`}
         actions={
+          // Desktop: in the header. Phones: the sticky bar at the bottom.
           canConfirmSchedule ? (
-            <Button onClick={() => setConfirmOpen(true)}>
-              <LuClipboardCheck className="mr-1.5 size-4" />
-              Confirm pickup time
-            </Button>
+            <span className="hidden lg:inline-flex">
+              <Button onClick={() => setConfirmOpen(true)}>
+                <LuClipboardCheck className="mr-1.5 size-4" />
+                Confirm pickup time
+              </Button>
+            </span>
           ) : undefined
         }
       />
@@ -246,7 +250,7 @@ const DriverPickupDetailsView = ({
 
         {request.photos.length > 0 && (
           <div className="mt-5 border-t border-slate-100 pt-5">
-            <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
               Photos
             </p>
             <div className="flex flex-wrap gap-2">
@@ -274,7 +278,7 @@ const DriverPickupDetailsView = ({
 
         {request.pickup_request.note && (
           <div className="mt-5 border-t border-slate-100 pt-5">
-            <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
               Requester&apos;s note
             </p>
             <p className="whitespace-pre-wrap text-sm leading-relaxed text-slate-700">
@@ -285,7 +289,7 @@ const DriverPickupDetailsView = ({
 
         {request.pickup_request.collection_point && (
           <div className="mt-5 border-t border-slate-100 pt-5">
-            <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
               Drop-off collection point
             </p>
             <p className="text-sm text-slate-700">
@@ -295,6 +299,15 @@ const DriverPickupDetailsView = ({
           </div>
         )}
       </Card>
+
+      {canConfirmSchedule && (
+        <StickyActionBar className="lg:hidden">
+          <Button onClick={() => setConfirmOpen(true)}>
+            <LuClipboardCheck className="mr-1.5 size-4" />
+            Confirm pickup time
+          </Button>
+        </StickyActionBar>
+      )}
 
       <ConfirmScheduleModal
         requestId={request.id}

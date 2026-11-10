@@ -24,15 +24,66 @@ const TableWrapper = ({ children, footer }: TableWrapperProps) => {
       setCanScrollRight(el.scrollWidth - el.clientWidth - el.scrollLeft > 1);
     };
 
-    // Carry column headings into the stacked mobile record cards.
+    // Carry column headings into the stacked mobile record cards, and
+    // give each cell its card role (see global.css .system-record-list):
+    // the first data column is the card's title, a checkbox-only cell
+    // the selector, a cell with an input a full-width field, and the
+    // last "Actions" (or unlabelled) column the card's action row. A
+    // table can set data-card-role on a cell itself to override this.
+    const cleanups: (() => void)[] = [];
     el.querySelectorAll('table').forEach((table) => {
       const headings = Array.from(
         table.querySelectorAll('thead tr:first-child th'),
       ).map((cell) => cell.textContent?.trim() ?? '');
       table.querySelectorAll('tbody tr').forEach((row) => {
-        Array.from(row.children).forEach((cell, index) => {
-          if (cell.tagName === 'TD' && !cell.hasAttribute('colspan')) {
-            cell.setAttribute('data-column-label', headings[index] ?? '');
+        const cells = Array.from(row.children).filter(
+          (cell) => cell.tagName === 'TD' && !cell.hasAttribute('colspan'),
+        ) as HTMLElement[];
+        let titleSet = false;
+        cells.forEach((cell) => {
+          const index = Array.from(row.children).indexOf(cell);
+          const heading = headings[index] ?? '';
+          cell.setAttribute('data-column-label', heading);
+          // Roles this effect gave out last time are worked out afresh
+          // (the row may have changed); a role the table set itself stays.
+          if (cell.hasAttribute('data-card-role-auto')) {
+            cell.removeAttribute('data-card-role');
+            cell.removeAttribute('data-card-role-auto');
+          }
+          if (cell.dataset.cardRole) {
+            if (cell.dataset.cardRole === 'title') titleSet = true;
+            return;
+          }
+          const checkbox = cell.querySelector('input[type="checkbox"]');
+          const hasText = Boolean(cell.textContent?.trim());
+          const isLast = index === row.children.length - 1;
+          if (checkbox && !hasText) {
+            cell.setAttribute('data-card-role', 'select');
+            cell.setAttribute('data-card-role-auto', '');
+            // The whole 44px cell toggles its checkbox, not just the box.
+            const toggle = (e: Event) => {
+              if (e.target !== checkbox) (checkbox as HTMLInputElement).click();
+            };
+            cell.addEventListener('click', toggle);
+            cleanups.push(() => cell.removeEventListener('click', toggle));
+          } else if (
+            isLast &&
+            (heading === '' || /^actions$/i.test(heading)) &&
+            cell.querySelector('a, button')
+          ) {
+            cell.setAttribute('data-card-role', 'actions');
+            cell.setAttribute('data-card-role-auto', '');
+          } else if (
+            cell.querySelector(
+              'input:not([type="checkbox"]):not([type="hidden"]), select, textarea',
+            )
+          ) {
+            cell.setAttribute('data-card-role', 'field');
+            cell.setAttribute('data-card-role-auto', '');
+          } else if (!titleSet) {
+            cell.setAttribute('data-card-role', 'title');
+            cell.setAttribute('data-card-role-auto', '');
+            titleSet = true;
           }
         });
       });
@@ -45,6 +96,7 @@ const TableWrapper = ({ children, footer }: TableWrapperProps) => {
     return () => {
       el.removeEventListener('scroll', updateScrollState);
       resizeObserver.disconnect();
+      cleanups.forEach((cleanup) => cleanup());
     };
   }, [children]);
 

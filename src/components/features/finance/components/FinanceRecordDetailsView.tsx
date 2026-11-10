@@ -79,7 +79,7 @@ const FinanceRecordDetailsView = ({
     <PageContainer variant="form">
       <Link
         href={basePath}
-        className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600"
+        className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600 lg:mb-4 lg:min-h-0"
       >
         <LuArrowLeft className="size-4" />
         Back to finance records
@@ -144,7 +144,7 @@ const FinanceRecordDetailsView = ({
 
         {record.items.length > 0 && (
           <div className="mt-5 border-t border-slate-100 pt-5">
-            <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
               Itemized price breakdown
             </p>
             <ul className="space-y-0.5 text-sm text-slate-700">
@@ -160,7 +160,7 @@ const FinanceRecordDetailsView = ({
 
         {record.proof_of_payment?.public_url && (
           <div className="mt-5 border-t border-slate-100 pt-5">
-            <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
               Proof of payment (customer → driver)
             </p>
             {/* eslint-disable-next-line @next/next/no-img-element -- remote/presigned URL, not a static asset */}
@@ -218,7 +218,7 @@ const FinanceRecordDetailsView = ({
 
           {record.reimbursement_proof?.public_url && (
             <div className="mt-5 border-t border-slate-100 pt-5">
-              <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
                 Reimbursement proof (accounting → driver)
               </p>
               {/* eslint-disable-next-line @next/next/no-img-element -- remote/presigned URL, not a static asset */}

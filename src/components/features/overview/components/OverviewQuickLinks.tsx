@@ -35,7 +35,7 @@ const OverviewQuickLinks = ({ navItems, ownHref }: OverviewQuickLinksProps) => {
 
   return (
     <div data-testid="overview-quick-links">
-      <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+      <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
         Quick links
       </p>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">

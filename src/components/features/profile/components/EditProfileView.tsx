@@ -166,7 +166,7 @@ const EditProfileView = () => {
     <PageContainer variant="form">
       <Link
         href="/profile"
-        className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600"
+        className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600 lg:mb-4 lg:min-h-0"
       >
         <LuArrowLeft className="size-4" />
         Back to profile
@@ -201,7 +201,7 @@ const EditProfileView = () => {
           <h2 className="mb-3 text-sm font-semibold text-neutral-950">
             Personal details
           </h2>
-          <div className="grid gap-x-4 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
             <InputField
               label="Full name"
               field="full_name"
@@ -254,7 +254,7 @@ const EditProfileView = () => {
               <h2 className="mb-3 text-sm font-semibold text-neutral-950">
                 Work details
               </h2>
-              <div className="grid gap-x-4 sm:grid-cols-2">
+              <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
                 <InputField
                   label="Department"
                   field="department"

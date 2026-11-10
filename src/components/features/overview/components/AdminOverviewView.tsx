@@ -54,7 +54,7 @@ const AdminOverviewView = () => {
           <RequestsThisWeekStat
             href="/admin/pickup-requests"
             week={week}
-            className="col-span-2 lg:col-span-1 lg:row-span-2"
+            className="sm:col-span-2 lg:col-span-1 lg:row-span-2"
           />
           <OverviewStatCard
             icon={LuUsers}

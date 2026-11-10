@@ -14,6 +14,7 @@ import { PageContainer } from '../../../../layout/PageContainer';
 import { AlertBanner } from '../../../../ui/AlertBanner';
 import { Button } from '../../../../ui/buttons/Button';
 import { PageHeader } from '../../../../ui/PageHeader';
+import { StickyActionBar } from '../../../../ui/StickyActionBar';
 import {
   TableEmptyRow,
   TableErrorRow,
@@ -352,7 +353,11 @@ const RouteDropOffView = () => {
             Drop-off photo <span className="text-red-600">*</span>
           </span>
         </div>
+      </div>
 
+      {/* The page's one main action, kept in reach while scrolling a long
+          checklist on a phone. */}
+      <StickyActionBar>
         <Button
           onClick={handleSubmit}
           disabled={
@@ -363,7 +368,7 @@ const RouteDropOffView = () => {
             ? 'Dropping off…'
             : `Drop off to store (${selected.size})`}
         </Button>
-      </div>
+      </StickyActionBar>
     </PageContainer>
   );
 };
