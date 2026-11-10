@@ -110,7 +110,7 @@ type PickupRequestUpdatePayload = Partial<{
   phone_number: string;
   pickup_address: string;
   collection_point: string;
-  requested_at: string;
+  requested_at: string | null;
   note: string;
 }>;
 
@@ -271,6 +271,24 @@ const assignDriverToRequest = (
   payload: AssignDriverPayload,
 ): Promise<CollectionRequestDetails> =>
   apiFetch(`/pickups/${id}/assign-driver/`, { method: 'POST', json: payload });
+
+type BulkAssignDriverPayload = {
+  order_ids: string[];
+  driver: string;
+  scheduled_at?: string;
+};
+
+// The batch counterpart to assignDriverToRequest — one driver (and
+// optional shared time) applied to several pending+approved orders at
+// once, from a pickup request's own orders table. All-or-nothing: see
+// CollectionRequestViewSet.bulk_assign_driver on the backend.
+const bulkAssignDriver = (
+  payload: BulkAssignDriverPayload,
+): Promise<CollectionRequestListItem[]> =>
+  apiFetch('/pickups/bulk-assign-driver/', {
+    method: 'POST',
+    json: payload,
+  });
 
 // The driver's self-service counterpart to assignDriverToRequest —
 // claims using the logged-in driver's own profile, no body needed.
@@ -485,6 +503,7 @@ const uploadPublicPickupPhoto = async (
 
 export {
   assignDriverToRequest,
+  bulkAssignDriver,
   cancelOrder,
   cancelPickupRequest,
   claimOrder,
@@ -513,6 +532,7 @@ export {
 };
 export type {
   AssignDriverPayload,
+  BulkAssignDriverPayload,
   CancelOrderPayload,
   CancelPickupRequestPayload,
   CollectItemInput,

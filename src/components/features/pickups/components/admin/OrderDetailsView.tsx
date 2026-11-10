@@ -111,6 +111,7 @@ const OrderDetailsView = ({
   }
 
   const canEvaluate = request.status === 'pending';
+  const isReevaluation = request.evaluation_status !== 'pending';
   // Scheduling only ever assigns a driver — see AssignDriverModal.
   const canAssignDriver =
     request.status === 'pending' && request.evaluation_status === 'approved';
@@ -142,7 +143,7 @@ const OrderDetailsView = ({
             {canEvaluate && (
               <Button variant="secondary" onClick={() => setEvaluateOpen(true)}>
                 <LuClipboardCheck className="mr-1.5 size-4" />
-                Evaluate
+                {isReevaluation ? 'Re-evaluate' : 'Evaluate'}
               </Button>
             )}
             {canAssignDriver && (
@@ -476,6 +477,7 @@ const OrderDetailsView = ({
         onClose={() => setEvaluateOpen(false)}
         onEvaluated={handleEvaluated}
         items={request.items}
+        isReevaluation={isReevaluation}
       />
       <AssignDriverModal
         requestId={request.id}

@@ -1,6 +1,7 @@
 // Order-level (admin/staff) — CollectionRequest, "Order" is a UI/API
 // label only.
 export { AssignDriverModal } from './admin/AssignDriverModal';
+export { BulkAssignDriverModal } from './admin/BulkAssignDriverModal';
 export { CancelModal } from './admin/CancelModal';
 export { ConvertQuickLeadView } from './admin/ConvertQuickLeadView';
 export { EditOrderView } from './admin/EditOrderView';

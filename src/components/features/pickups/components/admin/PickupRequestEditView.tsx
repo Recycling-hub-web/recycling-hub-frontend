@@ -154,8 +154,6 @@ const PickupRequestEditView = ({
     if (phoneError) nextErrors.phone_local = phoneError;
     if (!data.pickup_address.trim())
       nextErrors.pickup_address = 'Pickup address is required.';
-    if (!data.requested_at)
-      nextErrors.requested_at = 'Pickup date and time is required.';
     setErrors(nextErrors);
     const orderCheck = validateOrders(orders, categories.unitsByCategory);
     setOrderItemErrors(orderCheck.itemErrors);
@@ -182,7 +180,9 @@ const PickupRequestEditView = ({
           email: formData.email.trim(),
           phone_number: phoneNumber,
           pickup_address: formData.pickup_address,
-          requested_at: new Date(formData.requested_at).toISOString(),
+          requested_at: formData.requested_at
+            ? new Date(formData.requested_at).toISOString()
+            : null,
           note: formData.note || undefined,
         });
       }
@@ -292,6 +292,7 @@ const PickupRequestEditView = ({
               label="Pickup date & time"
               field="requested_at"
               type="datetime-local"
+              required={false}
               formData={formData}
               errors={errors}
               updateFormData={updateFormData}

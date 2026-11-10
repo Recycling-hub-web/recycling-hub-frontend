@@ -220,8 +220,6 @@ const ConvertQuickLeadView = ({ basePath }: ConvertQuickLeadViewProps) => {
     if (phoneError) nextErrors.phone_local = phoneError;
     if (!data.pickup_address.trim())
       nextErrors.pickup_address = 'Pickup address is required.';
-    if (!data.requested_at)
-      nextErrors.requested_at = 'Pickup date and time is required.';
     if (data.evaluation_decision === 'approved') {
       if (itemized) {
         if (!prices.every(isValidPrice)) {
@@ -260,7 +258,9 @@ const ConvertQuickLeadView = ({ basePath }: ConvertQuickLeadViewProps) => {
       ),
       request_type: formData.request_type,
       pickup_address: formData.pickup_address,
-      requested_at: new Date(formData.requested_at).toISOString(),
+      requested_at: formData.requested_at
+        ? new Date(formData.requested_at).toISOString()
+        : undefined,
       note: formData.note || undefined,
       items: items.map((item) => ({
         category: item.category,
@@ -425,6 +425,7 @@ const ConvertQuickLeadView = ({ basePath }: ConvertQuickLeadViewProps) => {
               label="Pickup date & time"
               field="requested_at"
               type="datetime-local"
+              required={false}
               formData={formData}
               errors={errors}
               updateFormData={updateFormData}

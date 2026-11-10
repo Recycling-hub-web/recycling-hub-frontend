@@ -203,6 +203,7 @@ const PickupRequestCreateView = ({
                   label="Pickup date & time"
                   field="requested_at"
                   type="datetime-local"
+                  required={false}
                   onBlur={() => blurField('requested_at')}
                   {...field}
                 />

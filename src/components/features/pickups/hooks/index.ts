@@ -1,5 +1,6 @@
 // Order-level (CollectionRequest — "Order" is a UI/API label only).
 export { useAssignDriver } from './useAssignDriver';
+export { useBulkAssignDriver } from './useBulkAssignDriver';
 export { useCancelOrder } from './useCancelOrder';
 export { useClaimOrder } from './useClaimOrder';
 export { useCloseDelivery } from './useCloseDelivery';
