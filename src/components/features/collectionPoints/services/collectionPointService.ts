@@ -10,7 +10,7 @@ type Paginated<T> = {
 
 type ListCollectionPointsParams = {
   page?: number;
-  /** DRF's SearchFilter — matches name, name_ar, point_uid, or city
+  /** DRF's SearchFilter — matches name, point_uid, or city
    * (CollectionPointViewSet.search_fields). */
   search?: string;
 };
@@ -32,7 +32,6 @@ const getCollectionPoint = (id: string): Promise<CollectionPoint> =>
 
 type CollectionPointPayload = Partial<{
   name: string;
-  name_ar: string;
   address: string;
   city: string;
   postcode: string;

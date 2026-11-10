@@ -22,7 +22,6 @@ import { useCollectionPoint, useUpdateCollectionPoint } from '../hooks';
 
 type FormState = {
   name: string;
-  name_ar: string;
   address: string;
   city: string;
   postcode: string;
@@ -58,7 +57,6 @@ const EditCollectionPointView = ({
     if (!collectionPoint) return;
     setFormData({
       name: collectionPoint.name,
-      name_ar: collectionPoint.name_ar,
       address: collectionPoint.address,
       city: collectionPoint.city,
       postcode: collectionPoint.postcode,
@@ -95,7 +93,6 @@ const EditCollectionPointView = ({
     try {
       await updateCollectionPoint(collectionPoint.id, {
         name: formData.name,
-        name_ar: formData.name_ar,
         address: formData.address,
         city: formData.city,
         postcode: formData.postcode,
@@ -129,7 +126,6 @@ const EditCollectionPointView = ({
   // against it directly is a safe, real dirty-check.
   const hasChanges =
     formData.name !== collectionPoint.name ||
-    formData.name_ar !== collectionPoint.name_ar ||
     formData.address !== collectionPoint.address ||
     formData.city !== collectionPoint.city ||
     formData.postcode !== collectionPoint.postcode ||
@@ -158,15 +154,6 @@ const EditCollectionPointView = ({
             <InputField
               label="Name"
               field="name"
-              formData={formData}
-              errors={errors}
-              updateFormData={updateFormData}
-              disabled={submitting}
-            />
-            <InputField
-              label="Name (Arabic)"
-              field="name_ar"
-              required={false}
               formData={formData}
               errors={errors}
               updateFormData={updateFormData}

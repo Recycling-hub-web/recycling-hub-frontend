@@ -19,7 +19,6 @@ import { useCreateCollectionPoint } from '../hooks';
 
 type FormState = {
   name: string;
-  name_ar: string;
   address: string;
   city: string;
   postcode: string;
@@ -27,7 +26,6 @@ type FormState = {
 
 const INITIAL_STATE: FormState = {
   name: '',
-  name_ar: '',
   address: '',
   city: '',
   postcode: '',
@@ -77,7 +75,6 @@ const CreateCollectionPointView = ({
     try {
       const collectionPoint = await createCollectionPoint({
         name: formData.name,
-        name_ar: formData.name_ar || undefined,
         address: formData.address,
         city: formData.city,
         postcode: formData.postcode || undefined,
@@ -117,16 +114,6 @@ const CreateCollectionPointView = ({
               label="Name"
               field="name"
               placeholder="e.g. AIU Collection Point"
-              formData={formData}
-              errors={errors}
-              updateFormData={updateFormData}
-              disabled={submitting}
-            />
-            <InputField
-              label="Name (Arabic)"
-              field="name_ar"
-              required={false}
-              placeholder="Optional — a curated translation, not auto-generated"
               formData={formData}
               errors={errors}
               updateFormData={updateFormData}
