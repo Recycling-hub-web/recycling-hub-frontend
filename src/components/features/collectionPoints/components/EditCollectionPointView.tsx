@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { LuArrowLeft } from 'react-icons/lu';
 
 import { ApiError } from '../../../../lib/api';
+import { AddressInput } from '../../../form/fields/AddressInput';
 import { InputField } from '../../../form/fields/InputField';
 import { ToggleInput } from '../../../form/toggle/ToggleInput';
 import { PageContainer } from '../../../layout/PageContainer';
@@ -172,13 +173,25 @@ const EditCollectionPointView = ({
               disabled={submitting}
             />
             <div className="sm:col-span-2">
-              <InputField
+              <AddressInput
                 label="Address"
                 field="address"
+                countryRestrictions={['my']}
                 formData={formData}
                 errors={errors}
                 updateFormData={updateFormData}
                 disabled={submitting}
+                onSelect={(location) =>
+                  setFormData((prev) =>
+                    prev
+                      ? {
+                          ...prev,
+                          city: location.city ?? prev.city,
+                          postcode: location.postalCode ?? prev.postcode,
+                        }
+                      : prev,
+                  )
+                }
               />
             </div>
             <InputField

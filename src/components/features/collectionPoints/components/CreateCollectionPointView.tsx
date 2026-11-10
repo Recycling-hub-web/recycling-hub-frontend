@@ -6,6 +6,7 @@ import type { FormEvent } from 'react';
 import { useState } from 'react';
 import { LuArrowLeft } from 'react-icons/lu';
 
+import { AddressInput } from '../../../form/fields/AddressInput';
 import { InputField } from '../../../form/fields/InputField';
 import { PageContainer } from '../../../layout/PageContainer';
 import { AlertBanner } from '../../../ui/AlertBanner';
@@ -132,14 +133,22 @@ const CreateCollectionPointView = ({
               disabled={submitting}
             />
             <div className="sm:col-span-2">
-              <InputField
+              <AddressInput
                 label="Address"
                 field="address"
-                placeholder="Street address"
+                placeholder="Search for an address, business, or landmark…"
+                countryRestrictions={['my']}
                 formData={formData}
                 errors={errors}
                 updateFormData={updateFormData}
                 disabled={submitting}
+                onSelect={(location) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    city: location.city ?? prev.city,
+                    postcode: location.postalCode ?? prev.postcode,
+                  }))
+                }
               />
             </div>
             <InputField

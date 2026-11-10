@@ -12,7 +12,6 @@ import {
   LuPencil,
   LuPhone,
   LuPlus,
-  LuTruck,
   LuUser,
   LuX,
 } from 'react-icons/lu';
@@ -46,7 +45,6 @@ import {
   PICKUP_REQUEST_TYPE_LABELS,
   PICKUP_STAGE_LABELS,
 } from '../../types';
-import { BulkAssignDriverModal } from './BulkAssignDriverModal';
 import { CancelPickupRequestModal } from './CancelPickupRequestModal';
 
 type PickupRequestDetailsViewProps = {
@@ -74,20 +72,10 @@ const PickupRequestDetailsView = ({
   const { request, loading, error, refetch } = usePickupRequest(requestId);
   const toast = useToast();
   const [cancelOpen, setCancelOpen] = useState(false);
-  const [selectedOrderIds, setSelectedOrderIds] = useState<Set<string>>(
-    new Set(),
-  );
-  const [bulkAssignOpen, setBulkAssignOpen] = useState(false);
 
   const handleCancelled = () => {
     refetch();
     toast.success('Pickup request cancelled');
-  };
-
-  const handleBulkAssigned = () => {
-    refetch();
-    setSelectedOrderIds(new Set());
-    toast.success(`${selectedOrderIds.size} orders assigned to a driver`);
   };
 
   if (loading) return <Loading text="Loading pickup request…" />;
@@ -114,35 +102,6 @@ const PickupRequestDetailsView = ({
   const canCreateOrder =
     request.status === 'open' &&
     request.orders.length < MAX_ORDERS_PER_PICKUP_REQUEST;
-
-  // Same eligibility as the single-order "Schedule pickup" button on
-  // OrderDetailsView — only a pending, already-approved order can be
-  // assigned to a driver. Orders outside that just get no checkbox.
-  const assignableIds = new Set(
-    request.orders
-      .filter(
-        (o) => o.status === 'pending' && o.evaluation_status === 'approved',
-      )
-      .map((o) => o.id),
-  );
-  const allAssignableSelected =
-    assignableIds.size > 0 &&
-    Array.from(assignableIds).every((id) => selectedOrderIds.has(id));
-
-  const toggleOrderSelected = (id: string) => {
-    setSelectedOrderIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  };
-
-  const toggleSelectAllAssignable = () => {
-    setSelectedOrderIds(
-      allAssignableSelected ? new Set() : new Set(assignableIds),
-    );
-  };
 
   const actionItems: DropdownItem[] = [
     {
@@ -324,20 +283,7 @@ const PickupRequestDetailsView = ({
       )}
 
       <Card className="mt-4 p-5">
-        <div className="mb-3 flex items-center justify-between gap-3">
-          <p className="text-sm font-semibold text-slate-900">Orders</p>
-          {selectedOrderIds.size > 0 && (
-            <div className="flex items-center gap-3">
-              <span className="text-sm font-medium text-slate-700">
-                {selectedOrderIds.size} selected
-              </span>
-              <Button size="sm" onClick={() => setBulkAssignOpen(true)}>
-                <LuTruck className="mr-1.5 size-4" />
-                Assign driver
-              </Button>
-            </div>
-          )}
-        </div>
+        <p className="mb-3 text-sm font-semibold text-slate-900">Orders</p>
         {request.orders.length === 0 ? (
           <TableWrapper>
             <table className="min-w-full divide-y divide-slate-200 text-sm">
@@ -356,17 +302,6 @@ const PickupRequestDetailsView = ({
             <table className="min-w-full divide-y divide-slate-200 text-sm">
               <thead className="bg-slate-50">
                 <tr>
-                  {assignableIds.size > 0 && (
-                    <th className="w-10 px-6 py-3">
-                      <input
-                        type="checkbox"
-                        checked={allAssignableSelected}
-                        onChange={toggleSelectAllAssignable}
-                        className="size-4 rounded border-slate-300"
-                        aria-label="Select all assignable orders"
-                      />
-                    </th>
-                  )}
                   <th className="px-6 py-3 text-left font-semibold text-slate-500">
                     Order
                   </th>
@@ -392,19 +327,6 @@ const PickupRequestDetailsView = ({
                   );
                   return (
                     <tr key={order.id}>
-                      {assignableIds.size > 0 && (
-                        <td className="px-6 py-4">
-                          {assignableIds.has(order.id) && (
-                            <input
-                              type="checkbox"
-                              checked={selectedOrderIds.has(order.id)}
-                              onChange={() => toggleOrderSelected(order.id)}
-                              className="size-4 rounded border-slate-300"
-                              aria-label={`Select order ${order.code}`}
-                            />
-                          )}
-                        </td>
-                      )}
                       <td className="px-6 py-4 font-medium text-slate-900">
                         <Link
                           href={`${ordersBasePath}/${order.id}`}
@@ -446,12 +368,6 @@ const PickupRequestDetailsView = ({
         open={cancelOpen}
         onClose={() => setCancelOpen(false)}
         onCancelled={handleCancelled}
-      />
-      <BulkAssignDriverModal
-        orderIds={Array.from(selectedOrderIds)}
-        open={bulkAssignOpen}
-        onClose={() => setBulkAssignOpen(false)}
-        onAssigned={handleBulkAssigned}
       />
     </PageContainer>
   );
