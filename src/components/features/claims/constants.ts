@@ -26,7 +26,6 @@ const CATEGORY_FILTER_OPTIONS = [
 
 const STATUS_BADGE_VARIANT: Record<ClaimStatus, BadgeVariant> = {
   pending: 'neutral',
-  approved: 'info',
   rejected: 'danger',
   paid: 'success',
 };

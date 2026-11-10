@@ -24,7 +24,7 @@ import { InfoRow } from '../../../ui/InfoRow';
 import { Loading } from '../../../ui/loading/Loading';
 import { PageHeader } from '../../../ui/PageHeader';
 import { STATUS_BADGE_VARIANT } from '../constants';
-import { useClaim, useMarkClaimPaid } from '../hooks';
+import { useClaim } from '../hooks';
 import { CLAIM_CATEGORY_LABELS, CLAIM_STATUS_LABELS } from '../types';
 import { ApproveRejectModal } from './ApproveRejectModal';
 
@@ -32,7 +32,7 @@ type ClaimDetailsViewProps = {
   claimId: string;
 };
 
-/** Accounting/admin's full review surface (Approve/Reject/Mark as Paid
+/** Accounting/admin's full review surface (Approve & mark as paid/Reject
  * via ActionsDropdown); staff and the owning driver see the same page
  * read-only — no dropdown at all, same split as Finance's own details
  * view. */
@@ -45,7 +45,6 @@ const ClaimDetailsView = ({ claimId }: ClaimDetailsViewProps) => {
       : `/${user?.role}/claims`;
 
   const { claim, loading, error, refetch } = useClaim(claimId);
-  const { execute: markPaid, loading: markingPaid } = useMarkClaimPaid();
   const [modalMode, setModalMode] = useState<'approve' | 'reject' | null>(null);
 
   if (loading) return <Loading text="Loading claim…" />;
@@ -65,14 +64,9 @@ const ClaimDetailsView = ({ claimId }: ClaimDetailsViewProps) => {
     );
   }
 
-  const handleMarkPaid = async () => {
-    await markPaid(claim.id);
-    refetch();
-  };
-
   const dropdownItems: DropdownItem[] = [
     {
-      label: 'Approve',
+      label: 'Approve & mark as paid',
       icon: LuCircleCheck,
       color: 'success',
       disabled: claim.status !== 'pending',
@@ -84,13 +78,6 @@ const ClaimDetailsView = ({ claimId }: ClaimDetailsViewProps) => {
       color: 'danger',
       disabled: claim.status !== 'pending',
       onClick: () => setModalMode('reject'),
-    },
-    {
-      label: 'Mark as paid',
-      icon: LuWalletCards,
-      color: 'success',
-      disabled: claim.status !== 'approved' || markingPaid,
-      onClick: handleMarkPaid,
     },
   ];
 
@@ -162,6 +149,28 @@ const ClaimDetailsView = ({ claimId }: ClaimDetailsViewProps) => {
               alt=""
               className="size-32 rounded-xl border border-slate-200 object-cover"
             />
+          </div>
+        )}
+
+        {claim.payment_proof && (
+          <div className="mt-5 border-t border-slate-100 pt-5">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
+              Payment proof
+            </p>
+            {claim.payment_proof.public_url ? (
+              <a
+                href={claim.payment_proof.public_url}
+                target="_blank"
+                rel="noreferrer"
+                className="text-sm font-semibold text-brand-600 underline"
+              >
+                View payment proof
+              </a>
+            ) : (
+              <p className="text-sm text-slate-600">
+                {claim.payment_proof.file_key}
+              </p>
+            )}
           </div>
         )}
 

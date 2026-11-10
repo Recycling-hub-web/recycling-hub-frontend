@@ -54,15 +54,20 @@ const createClaim = (payload: CreateClaimPayload): Promise<ClaimListItem> =>
   apiFetch('/claims/', { method: 'POST', json: payload });
 
 // POST /claims/{id}/approve/ — `amount_approved` optional; omit to
-// approve at the claimed amount.
+// approve and mark paid at the claimed amount. Payment proof is required.
 const approveClaim = (
   id: string,
+  paymentProof: string,
   amountApproved?: number,
 ): Promise<ClaimListItem> =>
   apiFetch(`/claims/${id}/approve/`, {
     method: 'POST',
-    json:
-      amountApproved !== undefined ? { amount_approved: amountApproved } : {},
+    json: {
+      payment_proof: paymentProof,
+      ...(amountApproved !== undefined
+        ? { amount_approved: amountApproved }
+        : {}),
+    },
   });
 
 // POST /claims/{id}/reject/ — `rejection_reason` is required.
@@ -74,10 +79,6 @@ const rejectClaim = (
     method: 'POST',
     json: { rejection_reason: rejectionReason },
   });
-
-// POST /claims/{id}/mark-paid/ — no body.
-const markClaimPaid = (id: string): Promise<ClaimListItem> =>
-  apiFetch(`/claims/${id}/mark-paid/`, { method: 'POST' });
 
 // GET /claims/vehicles/mine/ — the requesting driver's own assigned
 // vehicle. 404s with {"detail": "No vehicle is assigned to you."} when
@@ -91,7 +92,6 @@ export {
   getClaim,
   getMyVehicle,
   listClaims,
-  markClaimPaid,
   rejectClaim,
 };
 export type { CreateClaimPayload, ListClaimsParams, Paginated };

@@ -2,11 +2,13 @@
 
 import { type FormEvent, useState } from 'react';
 
+import { ApiError } from '../../../../lib/api';
 import { InputField } from '../../../form/fields/InputField';
 import { TextareaField } from '../../../form/fields/TextareaField';
 import { AlertBanner } from '../../../ui/AlertBanner';
 import { FormActions } from '../../../ui/buttons/FormActions';
 import { Modal } from '../../../ui/modal/Modal';
+import { useUploadStorageFile } from '../../storageFiles/hooks';
 import { useApproveClaim, useRejectClaim } from '../hooks';
 import type { ClaimListItem } from '../types';
 
@@ -21,8 +23,8 @@ type ApproveRejectModalProps = {
   onDone: () => void;
 };
 
-/** Accounting/admin's Approve (optional amount override — omit to
- * approve at the claimed amount) and Reject (rejection reason
+/** Accounting/admin's combined approval/payment (proof required)
+ * and Reject (rejection reason
  * required) actions, both opened from ClaimDetailsView's
  * ActionsDropdown. */
 const ApproveRejectModal = ({
@@ -37,12 +39,37 @@ const ApproveRejectModal = ({
   const [amountApproved, setAmountApproved] = useState('');
   const [rejectionReason, setRejectionReason] = useState('');
   const [error, setError] = useState('');
+  const [paymentProof, setPaymentProof] = useState('');
+  const [proofName, setProofName] = useState('');
+  const { execute: upload, loading: uploading } = useUploadStorageFile();
+
+  const handleProofChange = async (file: File | undefined) => {
+    if (!file) return;
+    setError('');
+    setPaymentProof('');
+    setProofName('');
+    try {
+      const result = await upload(file);
+      setPaymentProof(result.file_key);
+      setProofName(file.name);
+    } catch (err) {
+      setError(
+        err instanceof ApiError
+          ? err.message
+          : 'Could not upload payment proof.',
+      );
+    }
+  };
 
   const submitting = approving || rejecting;
-  let submitButtonLabel = mode === 'approve' ? 'Approve' : 'Reject';
+  let submitButtonLabel =
+    mode === 'approve' ? 'Approve & mark as paid' : 'Reject';
   if (submitting) submitButtonLabel = 'Saving…';
 
   const handleClose = () => {
+    if (submitting || uploading) return;
+    setPaymentProof('');
+    setProofName('');
     setAmountApproved('');
     setRejectionReason('');
     setError('');
@@ -52,10 +79,18 @@ const ApproveRejectModal = ({
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError('');
+    if (submitting || uploading) return;
     try {
       if (mode === 'approve') {
+        if (!paymentProof) {
+          setError(
+            'Upload payment proof before approving and marking this claim as paid.',
+          );
+          return;
+        }
         await approve(
           claim.id,
+          paymentProof,
           amountApproved.trim() ? Number(amountApproved) : undefined,
         );
       } else {
@@ -67,12 +102,12 @@ const ApproveRejectModal = ({
       }
       onDone();
       handleClose();
-    } catch {
-      setError(
+    } catch (err) {
+      const fallback =
         mode === 'approve'
-          ? 'Could not approve this claim. Please try again.'
-          : 'Could not reject this claim. Please try again.',
-      );
+          ? 'Could not approve and pay this claim. Please try again.'
+          : 'Could not reject this claim. Please try again.';
+      setError(err instanceof ApiError ? err.message : fallback);
     }
   };
 
@@ -80,10 +115,10 @@ const ApproveRejectModal = ({
     <Modal
       open={open}
       onClose={handleClose}
-      title={mode === 'approve' ? 'Approve claim' : 'Reject claim'}
+      title={mode === 'approve' ? 'Approve & mark as paid' : 'Reject claim'}
       subtitle={
         mode === 'approve'
-          ? 'Optionally override the amount approved for payout.'
+          ? 'Confirm payment with proof. Approval and payment are saved together.'
           : 'A reason is required so the driver knows why.'
       }
       footer={
@@ -91,7 +126,7 @@ const ApproveRejectModal = ({
           <button
             type="button"
             onClick={handleClose}
-            disabled={submitting}
+            disabled={submitting || uploading}
             className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Cancel
@@ -99,7 +134,7 @@ const ApproveRejectModal = ({
           <button
             type="submit"
             form="approve-reject-form"
-            disabled={submitting}
+            disabled={submitting || uploading}
             className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {submitButtonLabel}
@@ -123,15 +158,37 @@ const ApproveRejectModal = ({
               type="number"
               prefix="RM"
               required={false}
-              placeholder={`Default: ${claim.amount_claimed}`}
+              placeholder={`Default: ${claim.amount_approved ?? claim.amount_claimed}`}
               formData={{ amount_approved: amountApproved }}
               updateFormData={(_field, value) => setAmountApproved(value)}
-              disabled={submitting}
+              disabled={submitting || uploading}
             />
             <p className="-mt-3 mb-4 text-xs text-slate-400">
-              Leave blank to approve at the claimed amount (RM
-              {claim.amount_claimed}).
+              Leave blank to use RM
+              {claim.amount_approved ?? claim.amount_claimed}.
             </p>
+            <div className="mb-4" data-field="payment_proof">
+              <label
+                htmlFor="claim-payment-proof-input"
+                className="mb-2 block text-sm font-medium text-slate-900"
+              >
+                Payment proof <span className="text-red-600">*</span>
+              </label>
+              <input
+                id="claim-payment-proof-input"
+                type="file"
+                accept="image/*,application/pdf"
+                disabled={submitting || uploading}
+                onChange={(e) => handleProofChange(e.target.files?.[0])}
+                className="block w-full text-sm text-slate-600"
+              />
+              <p className="mt-2 text-xs text-slate-500">
+                {uploading
+                  ? 'Uploading…'
+                  : proofName ||
+                    'Upload a receipt showing the driver was paid.'}
+              </p>
+            </div>
           </>
         ) : (
           <TextareaField
@@ -140,7 +197,7 @@ const ApproveRejectModal = ({
             placeholder="Why this claim is being rejected"
             formData={{ rejection_reason: rejectionReason }}
             updateFormData={(_field, value) => setRejectionReason(value)}
-            disabled={submitting}
+            disabled={submitting || uploading}
           />
         )}
       </form>

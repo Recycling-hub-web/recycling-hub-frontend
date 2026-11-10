@@ -7,10 +7,14 @@ import { approveClaim } from '../services/claimsService';
 const useApproveClaim = () => {
   const [loading, setLoading] = useState(false);
 
-  const execute = async (id: string, amountApproved?: number) => {
+  const execute = async (
+    id: string,
+    paymentProof: string,
+    amountApproved?: number,
+  ) => {
     setLoading(true);
     try {
-      return await approveClaim(id, amountApproved);
+      return await approveClaim(id, paymentProof, amountApproved);
     } finally {
       setLoading(false);
     }
