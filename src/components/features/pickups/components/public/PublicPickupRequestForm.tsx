@@ -14,7 +14,7 @@ import { AddressInput } from '../../../../form/fields/AddressInput';
 import { InputField } from '../../../../form/fields/InputField';
 import { PhoneInputField } from '../../../../form/fields/PhoneInputField';
 import { TextareaField } from '../../../../form/fields/TextareaField';
-import { PublicButton } from '../../../../ui/buttons/PublicButton';
+import { Button } from '../../../../ui/buttons/Button';
 import { IconTile } from '../../../../ui/card/IconTile';
 import { SectionCard } from '../../../../ui/card/SectionCard';
 import { DescriptionList } from '../../../../ui/DescriptionList';
@@ -364,7 +364,7 @@ const PublicPickupRequestForm = () => {
                   </p>
                   <div className="flex w-full items-center gap-2 sm:w-auto">
                     {stepIndex > 0 && (
-                      <PublicButton
+                      <Button
                         type="button"
                         variant="secondary"
                         onClick={form.back}
@@ -372,9 +372,9 @@ const PublicPickupRequestForm = () => {
                         className="flex-1 sm:flex-none"
                       >
                         {copy.backButton}
-                      </PublicButton>
+                      </Button>
                     )}
-                    <PublicButton
+                    <Button
                       type="submit"
                       disabled={submitting}
                       className="flex-1 sm:flex-none"
@@ -382,7 +382,7 @@ const PublicPickupRequestForm = () => {
                       {isLastStep && submitting && copy.submittingButton}
                       {isLastStep && !submitting && copy.submitButton}
                       {!isLastStep && copy.continueButton}
-                    </PublicButton>
+                    </Button>
                   </div>
                 </div>
               </form>

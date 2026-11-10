@@ -10,7 +10,7 @@ import {
 import { useDictionary } from '../../../../../hooks/useDictionary';
 import { ApiError } from '../../../../../lib/api';
 import { PhoneInputField } from '../../../../form/fields/PhoneInputField';
-import { PublicButton } from '../../../../ui/buttons/PublicButton';
+import { Button } from '../../../../ui/buttons/Button';
 import { FadeIn } from '../../../../ui/FadeIn';
 import { useToast } from '../../../../ui/toast/ToastContext';
 import { useCreateQuickPickupRequest } from '../../hooks';
@@ -148,13 +148,9 @@ const QuickPickupRequestForm = () => {
               )}
 
               <div className="mt-6">
-                <PublicButton
-                  type="submit"
-                  disabled={submitting}
-                  className="w-full"
-                >
+                <Button type="submit" disabled={submitting} className="w-full">
                   {submitting ? content.submittingButton : content.submitButton}
-                </PublicButton>
+                </Button>
               </div>
             </form>
           </div>
