@@ -5,6 +5,7 @@ import { type FormEvent, useState } from 'react';
 import { ApiError } from '../../../../lib/api';
 import { InputField } from '../../../form/fields/InputField';
 import { TextareaField } from '../../../form/fields/TextareaField';
+import { StatusFileUpload } from '../../../form/upload/StatusFileUpload';
 import { AlertBanner } from '../../../ui/AlertBanner';
 import { FormActions } from '../../../ui/buttons/FormActions';
 import { Modal } from '../../../ui/modal/Modal';
@@ -40,18 +41,17 @@ const ApproveRejectModal = ({
   const [rejectionReason, setRejectionReason] = useState('');
   const [error, setError] = useState('');
   const [paymentProof, setPaymentProof] = useState('');
-  const [proofName, setProofName] = useState('');
+  const [proofFile, setProofFile] = useState<File | null>(null);
   const { execute: upload, loading: uploading } = useUploadStorageFile();
 
   const handleProofChange = async (file: File | undefined) => {
     if (!file) return;
     setError('');
     setPaymentProof('');
-    setProofName('');
+    setProofFile(file);
     try {
       const result = await upload(file);
       setPaymentProof(result.file_key);
-      setProofName(file.name);
     } catch (err) {
       setError(
         err instanceof ApiError
@@ -69,7 +69,7 @@ const ApproveRejectModal = ({
   const handleClose = () => {
     if (submitting || uploading) return;
     setPaymentProof('');
-    setProofName('');
+    setProofFile(null);
     setAmountApproved('');
     setRejectionReason('');
     setError('');
@@ -168,26 +168,23 @@ const ApproveRejectModal = ({
               {claim.amount_approved ?? claim.amount_claimed}.
             </p>
             <div className="mb-4" data-field="payment_proof">
-              <label
-                htmlFor="claim-payment-proof-input"
-                className="mb-2 block text-sm font-medium text-slate-900"
-              >
-                Payment proof <span className="text-red-600">*</span>
-              </label>
-              <input
+              <StatusFileUpload
                 id="claim-payment-proof-input"
-                type="file"
-                accept="image/*,application/pdf"
+                label="Payment proof"
+                description="Upload a receipt showing the driver was paid."
+                file={proofFile}
+                onFileChange={handleProofChange}
+                onRemove={() => {
+                  if (submitting || uploading) return;
+                  setProofFile(null);
+                  setPaymentProof('');
+                  setError('');
+                }}
+                onError={setError}
+                required
                 disabled={submitting || uploading}
-                onChange={(e) => handleProofChange(e.target.files?.[0])}
-                className="block w-full text-sm text-slate-600"
+                uploading={uploading}
               />
-              <p className="mt-2 text-xs text-slate-500">
-                {uploading
-                  ? 'Uploading…'
-                  : proofName ||
-                    'Upload a receipt showing the driver was paid.'}
-              </p>
             </div>
           </>
         ) : (
