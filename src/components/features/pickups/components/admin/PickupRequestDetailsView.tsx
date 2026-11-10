@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import {
   LuArrowLeft,
@@ -17,6 +18,10 @@ import {
 
 import { PageContainer } from '../../../../layout/PageContainer';
 import { StatusBadge } from '../../../../ui/badges/StatusBadge';
+import {
+  ActionsDropdown,
+  type DropdownItem,
+} from '../../../../ui/buttons/ActionsDropdown';
 import { Button } from '../../../../ui/buttons/Button';
 import { Card } from '../../../../ui/card/Card';
 import { AppDate } from '../../../../ui/date/AppDate';
@@ -27,6 +32,7 @@ import { TableEmptyRow, TableWrapper } from '../../../../ui/table';
 import { useToast } from '../../../../ui/toast/ToastContext';
 import { WhatsAppLink } from '../../../../ui/WhatsAppLink';
 import {
+  MAX_ORDERS_PER_PICKUP_REQUEST,
   PICKUP_REQUEST_STATUS_BADGE_VARIANT,
   PICKUP_STAGE_BADGE_VARIANT,
   REQUEST_TYPE_BADGE_VARIANT,
@@ -40,8 +46,6 @@ import {
   PICKUP_STAGE_LABELS,
 } from '../../types';
 import { CancelPickupRequestModal } from './CancelPickupRequestModal';
-
-const MAX_ORDERS_PER_PICKUP_REQUEST = 7;
 
 type PickupRequestDetailsViewProps = {
   requestId: string;
@@ -64,6 +68,7 @@ const PickupRequestDetailsView = ({
   basePath,
   ordersBasePath,
 }: PickupRequestDetailsViewProps) => {
+  const router = useRouter();
   const { request, loading, error, refetch } = usePickupRequest(requestId);
   const toast = useToast();
   const [cancelOpen, setCancelOpen] = useState(false);
@@ -90,11 +95,43 @@ const PickupRequestDetailsView = ({
     );
   }
 
-  const canEdit = request.status === 'open';
+  // Admin and staff can always correct a request's details (no delete —
+  // a request is cancelled instead). New orders and cancelling only make
+  // sense while it's still open; the backend enforces both.
   const canCancel = request.status === 'open';
   const canCreateOrder =
     request.status === 'open' &&
     request.orders.length < MAX_ORDERS_PER_PICKUP_REQUEST;
+
+  const actionItems: DropdownItem[] = [
+    {
+      label: 'Edit',
+      icon: LuPencil,
+      onClick: () => router.push(`${basePath}/${request.id}/edit`),
+      color: 'neutral',
+    },
+    ...(canCreateOrder
+      ? [
+          {
+            label: 'Create order',
+            icon: LuPlus,
+            onClick: () =>
+              router.push(`${basePath}/${request.id}/orders/create`),
+            color: 'neutral' as const,
+          },
+        ]
+      : []),
+    ...(canCancel
+      ? [
+          {
+            label: 'Cancel request',
+            icon: LuX,
+            onClick: () => setCancelOpen(true),
+            color: 'danger' as const,
+          },
+        ]
+      : []),
+  ];
 
   return (
     <PageContainer variant="form">
@@ -110,32 +147,16 @@ const PickupRequestDetailsView = ({
         title={request.full_name}
         subtitle={`${request.orders.length} order${request.orders.length === 1 ? '' : 's'}`}
         actions={
-          <>
-            {canEdit && (
-              <Button
-                variant="secondary"
-                href={`${basePath}/${request.id}/edit`}
-              >
-                <LuPencil className="mr-1.5 size-4" />
-                Edit
-              </Button>
-            )}
-            {canCreateOrder && (
-              <Button href={`${basePath}/${request.id}/orders/create`}>
-                <LuPlus className="mr-1.5 size-4" />
-                Create order
-              </Button>
-            )}
-            {canCancel && (
-              <Button
-                variant="danger-outline"
-                onClick={() => setCancelOpen(true)}
-              >
-                <LuX className="mr-1.5 size-4" />
-                Cancel request
-              </Button>
-            )}
-          </>
+          // More than one action → one Actions dropdown (project rule);
+          // a lone action stays a plain button.
+          actionItems.length > 1 ? (
+            <ActionsDropdown items={actionItems} />
+          ) : (
+            <Button variant="secondary" href={`${basePath}/${request.id}/edit`}>
+              <LuPencil className="mr-1.5 size-4" />
+              Edit
+            </Button>
+          )
         }
       />
 

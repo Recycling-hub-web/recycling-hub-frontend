@@ -123,17 +123,23 @@ test.describe('New pickup request step form', () => {
     await expect(page.getByText('Ring twice')).toBeVisible();
     await expect(page.getByText('No orders.', { exact: false })).toBeVisible();
 
-    await page.getByRole('button', { name: 'Edit pickup' }).click();
+    await page
+      .getByRole('button', { name: 'Edit pickup', exact: true })
+      .click();
     await expect(stepHeading(page, 'Pickup')).toBeVisible();
     await steps(page)
       .getByRole('button', { name: /Review and submit/ })
       .click();
-    await page.getByRole('button', { name: 'Edit customer' }).click();
+    await page
+      .getByRole('button', { name: 'Edit customer', exact: true })
+      .click();
     await expect(stepHeading(page, 'Customer')).toBeVisible();
     await steps(page)
       .getByRole('button', { name: /Review and submit/ })
       .click();
-    await page.getByRole('button', { name: 'Edit orders' }).click();
+    await page
+      .getByRole('button', { name: 'Edit orders', exact: true })
+      .click();
     await expect(stepHeading(page, 'Orders')).toBeVisible();
   });
 
@@ -147,7 +153,9 @@ test.describe('New pickup request step form', () => {
     await finishOrders(page);
 
     // Break step 1, then go straight back to the review and submit.
-    await page.getByRole('button', { name: 'Edit customer' }).click();
+    await page
+      .getByRole('button', { name: 'Edit customer', exact: true })
+      .click();
     await page.locator('[data-field="full_name"] input').fill('');
     await steps(page)
       .getByRole('button', { name: /Review and submit/ })

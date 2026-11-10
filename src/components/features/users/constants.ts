@@ -117,8 +117,24 @@ const REGISTRATION_STATUS_FILTER_OPTIONS = [
   ),
 ];
 
+/** Whether `actor` may edit, delete or resend the invite of `target` —
+ * the frontend mirror of the backend's assert_can_manage_target: an
+ * Admin can't change another Admin (Super Admins are hidden from Admins
+ * entirely). Used to hide actions that would only come back "not
+ * allowed"; the backend stays the real guard. */
+const canManageUser = (
+  actor: { id: string; role: UserRole } | null | undefined,
+  target: { id: string; role: UserRole },
+) =>
+  !(
+    actor?.role === 'admin' &&
+    target.role === 'admin' &&
+    actor.id !== target.id
+  );
+
 export {
   ALL_ROLES,
+  canManageUser,
   creatableRolesFor,
   MAX_VERIFICATION_EMAILS,
   REGISTRATION_STATUS_BADGE_VARIANT,

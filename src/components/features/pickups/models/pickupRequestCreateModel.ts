@@ -4,7 +4,10 @@ import {
 } from '../../../../constants/dialCodes';
 import type { DraftOrder } from '../components/admin/NewOrdersFieldArray';
 import { REQUEST_TYPE_FILTER_OPTIONS } from '../constants';
-import type { PickupRequestCreatePayload } from '../services/pickupService';
+import type {
+  CreateOrderPayload,
+  PickupRequestCreatePayload,
+} from '../services/pickupService';
 import type { PickupRequestType } from '../types';
 import { hasItemErrors, type UnitsByCategory, validateItems } from '../units';
 
@@ -133,6 +136,17 @@ const validateOrders = (
   };
 };
 
+/** One draft order as the API takes it — shared by the create form's
+ * `orders` and the edit page's add-order calls. */
+const orderToPayload = (order: DraftOrder): CreateOrderPayload => ({
+  items: order.items.map((item) => ({
+    category: item.category,
+    estimated_quantity: item.estimated_quantity?.trim() || undefined,
+    quantity_unit: item.quantity_unit?.trim() || undefined,
+  })),
+  photos: order.photos.map((p) => p.file_key),
+});
+
 /** The POST body — field for field, key for key, the single-page form's
  * payload (keys left `undefined` are dropped when sent). */
 const buildPayload = (
@@ -146,16 +160,7 @@ const buildPayload = (
   pickup_address: data.pickup_address,
   requested_at: new Date(data.requested_at).toISOString(),
   note: data.note || undefined,
-  orders: orders.length
-    ? orders.map((order) => ({
-        items: order.items.map((item) => ({
-          category: item.category,
-          estimated_quantity: item.estimated_quantity?.trim() || undefined,
-          quantity_unit: item.quantity_unit?.trim() || undefined,
-        })),
-        photos: order.photos.map((p) => p.file_key),
-      }))
-    : undefined,
+  orders: orders.length ? orders.map(orderToPayload) : undefined,
 });
 
 /** The success toast's body, unchanged. */
@@ -170,6 +175,7 @@ const requestTypeLabel = (type: PickupRequestType) =>
 export {
   buildPayload,
   INITIAL_STATE,
+  orderToPayload,
   REQUEST_TYPE_OPTIONS,
   requestTypeLabel,
   STEP_FIELDS,
