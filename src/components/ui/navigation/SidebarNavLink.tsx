@@ -28,7 +28,7 @@ const SidebarNavLink = ({
     <Link
       href={href}
       aria-current={active ? 'page' : undefined}
-      className={`flex items-center gap-2.5 rounded-xl py-2.5 pe-3 ps-4 text-sm font-medium transition-colors duration-200 motion-reduce:transition-none ${
+      className={`flex items-center gap-2.5 rounded-xl py-2 pe-3 ps-4 text-sm font-medium transition-colors duration-200 motion-reduce:transition-none ${
         active
           ? 'bg-brand-50 text-brand-700 ring-1 ring-inset ring-brand-600/10'
           : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'

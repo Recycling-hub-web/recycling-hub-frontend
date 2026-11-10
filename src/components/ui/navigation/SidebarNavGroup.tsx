@@ -41,7 +41,7 @@ const SidebarNavGroup = ({
         onClick={() => setOpen((value) => !value)}
         aria-expanded={open}
         aria-controls={listId}
-        className={`flex w-full items-center gap-2.5 rounded-xl py-2.5 pe-3 ps-4 text-start text-sm font-medium transition-colors duration-200 hover:bg-slate-50 motion-reduce:transition-none ${
+        className={`flex w-full items-center gap-2.5 rounded-xl py-2 pe-3 ps-4 text-start text-sm font-medium transition-colors duration-200 hover:bg-slate-50 motion-reduce:transition-none ${
           hasActiveChild
             ? 'text-brand-700'
             : 'text-slate-600 hover:text-slate-900'

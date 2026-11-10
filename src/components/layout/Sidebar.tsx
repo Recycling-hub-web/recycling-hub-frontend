@@ -3,7 +3,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LuX } from 'react-icons/lu';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { LuChevronDown, LuX } from 'react-icons/lu';
 
 import { ASSETS } from '../../constants/content';
 import type { NavItem } from '../ui/navigation';
@@ -47,6 +48,25 @@ const groupBySection = (items: NavItem[]) =>
 const Sidebar = ({ navItems, open, onClose }: SidebarProps) => {
   const pathname = usePathname();
   const activeHref = getActiveHref(navItems, pathname);
+
+  // A soft fade at the bottom of the menu while more items sit below the
+  // fold — otherwise the last section (People) can hide behind the user
+  // card on a laptop-height window with nothing to say it's there.
+  const listRef = useRef<HTMLDivElement>(null);
+  const [moreBelow, setMoreBelow] = useState(false);
+  const checkMoreBelow = useCallback(() => {
+    const el = listRef.current;
+    if (el) setMoreBelow(el.scrollTop + el.clientHeight < el.scrollHeight - 4);
+  }, []);
+  useEffect(() => {
+    checkMoreBelow();
+    const el = listRef.current;
+    if (!el || typeof ResizeObserver === 'undefined') return undefined;
+    const observer = new ResizeObserver(checkMoreBelow);
+    observer.observe(el);
+    if (el.firstElementChild) observer.observe(el.firstElementChild);
+    return () => observer.disconnect();
+  }, [checkMoreBelow, navItems]);
 
   return (
     <>
@@ -98,33 +118,59 @@ const Sidebar = ({ navItems, open, onClose }: SidebarProps) => {
           </button>
         </div>
 
-        <div className="flex flex-1 flex-col overflow-y-auto px-3 py-6">
-          {groupBySection(navItems).map(({ title, items }, index) => (
-            <div key={title} className={index > 0 ? 'mt-5' : ''}>
-              <p className="mb-2 px-4 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
-                {title}
-              </p>
-              <ul data-nav-section={title} className="flex flex-col gap-1">
-                {items.map(({ children, ...item }) =>
-                  children?.length ? (
-                    <SidebarNavGroup
-                      key={item.href}
-                      label={item.label}
-                      icon={item.icon}
-                      items={children}
-                      activeHref={activeHref}
-                    />
-                  ) : (
-                    <SidebarNavLink
-                      key={item.href}
-                      {...item}
-                      active={item.href === activeHref}
-                    />
-                  ),
-                )}
-              </ul>
+        <div className="relative flex min-h-0 flex-1 flex-col">
+          <div
+            ref={listRef}
+            onScroll={checkMoreBelow}
+            className="flex flex-1 flex-col overflow-y-auto px-3 py-4"
+          >
+            <div>
+              {groupBySection(navItems).map(({ title, items }, index) => (
+                <div key={title} className={index > 0 ? 'mt-4' : ''}>
+                  <p className="mb-2 px-4 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+                    {title}
+                  </p>
+                  <ul data-nav-section={title} className="flex flex-col gap-1">
+                    {items.map(({ children, ...item }) =>
+                      children?.length ? (
+                        <SidebarNavGroup
+                          key={item.href}
+                          label={item.label}
+                          icon={item.icon}
+                          items={children}
+                          activeHref={activeHref}
+                        />
+                      ) : (
+                        <SidebarNavLink
+                          key={item.href}
+                          {...item}
+                          active={item.href === activeHref}
+                        />
+                      ),
+                    )}
+                  </ul>
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
+          {moreBelow && (
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 flex h-14 items-end justify-center bg-gradient-to-t from-white via-white/90 to-transparent pb-2">
+              <button
+                type="button"
+                onClick={() =>
+                  listRef.current?.scrollTo({
+                    top: listRef.current.scrollHeight,
+                    behavior: 'smooth',
+                  })
+                }
+                className="pointer-events-auto inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-600 shadow-sm transition-colors hover:border-brand-300 hover:text-brand-700"
+              >
+                More
+                <LuChevronDown className="size-3.5" aria-hidden />
+                <span className="sr-only"> menu items below</span>
+              </button>
+            </div>
+          )}
         </div>
 
         <SidebarUserCard />
