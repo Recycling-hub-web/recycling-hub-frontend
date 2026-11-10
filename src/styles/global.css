@@ -192,7 +192,7 @@ body {
   .system-app-shell button, .system-app-shell input, .system-app-shell select, .system-app-shell a[role="button"] { min-height: 44px; }
   .system-app-shell input, .system-app-shell select, .system-app-shell textarea { font-size: 16px; }
   .system-mobile-tabs { display: flex; flex-shrink: 0; justify-content: space-around; border-top: 1px solid #e2e8f0; background: white; padding: 6px env(safe-area-inset-right, 0px) 6px env(safe-area-inset-left, 0px); }
-  .system-mobile-tabs > * { display: flex; flex: 1; min-width: 0; min-height: 58px; flex-direction: column; align-items: center; justify-content: center; gap: 5px; color: #64748b; font-size: 10px; font-weight: 600; text-align: center; }
+  .system-mobile-tabs > * { display: flex; flex: 1; min-width: 0; min-height: 58px; flex-direction: column; align-items: center; justify-content: center; gap: 5px; color: #64748b; font-size: 12px; font-weight: 600; text-align: center; }
   .system-mobile-tabs svg { width: 22px; height: 22px; }
   .system-mobile-tabs [aria-current="page"] { color: #008a3e; background: #f0faf4; border-radius: 16px; }
   .system-mobile-sheet { position: fixed; inset: auto 0 0; margin: 0; width: 100%; max-width: none; max-height: 85dvh; border: 0; padding: 0; border-radius: 24px 24px 0 0; overscroll-behavior: contain; }
@@ -210,6 +210,21 @@ body {
   .system-record-list td[data-column-label] { display: flex; align-items: center; justify-content: space-between; gap: 16px; max-width: none; width: 100%; padding: 10px 0; white-space: normal; overflow-wrap: anywhere; text-align: right; }
   .system-record-list td[data-column-label]::before { content: attr(data-column-label); flex-shrink: 0; max-width: 45%; text-align: left; font-size: 12px; font-weight: 500; color: #64748b; }
   .system-record-list td[colspan] { display: block; padding: 20px 8px; }
+  /* Card roles, set by TableWrapper: a title on top (with the selector
+     beside it), label/value rows, full-width fields, and an action row. */
+  .system-record-list tbody tr { display: flex; flex-wrap: wrap; align-items: center; column-gap: 8px; }
+  .system-record-list td[data-card-role="title"] { order: -2; flex: 1 1 0; min-width: 0; justify-content: flex-start; padding: 12px 0 8px; text-align: left; font-size: 1rem; font-weight: 600; color: theme('colors.neutral.950'); }
+  .system-record-list td[data-card-role="title"]::before { content: none; }
+  .system-record-list td[data-card-role="select"] { order: -1; flex: 0 0 auto; width: 44px; min-height: 44px; justify-content: center; padding: 0; cursor: pointer; }
+  .system-record-list td[data-card-role="select"]::before { content: none; }
+  .system-record-list td[data-card-role="select"] input[type="checkbox"] { width: 20px; height: 20px; }
+  .system-record-list td[data-card-role="field"] { flex-direction: column; align-items: stretch; gap: 6px; text-align: left; }
+  .system-record-list td[data-card-role="field"]::before { max-width: none; }
+  .system-record-list td[data-card-role="field"] > * { width: 100%; }
+  .system-record-list td[data-card-role="actions"] { justify-content: flex-end; gap: 4px; margin-top: 4px; padding: 8px 0 4px; border-top: 1px solid theme('colors.slate.100'); }
+  .system-record-list td[data-card-role="actions"]::before { content: none; }
+  .system-record-list td[data-card-role="actions"] > div { justify-content: flex-end; }
+  .system-record-list td[data-card-role="actions"] a, .system-record-list td[data-card-role="actions"] button { min-width: 44px; min-height: 44px; }
 }
 @keyframes system-sheet-in { from { transform: translateY(100%); opacity: .5; } to { transform: translateY(0); opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .system-mobile-sheet[open] { animation: none; } }
@@ -222,7 +237,7 @@ body {
   .system-profile-trigger > span:first-child { width: 32px; height: 32px; border: 2px solid white; box-shadow: 0 0 0 1px #dce9e1; background: #eaf5ee; color: #167c44; }
   .system-page-container { background: transparent; }
   .system-mobile-tabs { padding-top: 8px; padding-bottom: 8px; box-shadow: 0 -8px 28px rgb(19 67 41 / 4%); }
-  .system-mobile-tabs > * { gap: 4px; position: relative; font-size: 11px; transition: color 180ms ease, transform 180ms ease; }
+  .system-mobile-tabs > * { gap: 4px; position: relative; font-size: 12px; transition: color 180ms ease, transform 180ms ease; }
   .system-mobile-tabs svg { box-sizing: content-box; padding: 5px 18px; border-radius: 18px; transition: background 180ms ease; }
   .system-mobile-tabs [aria-current="page"] { background: transparent; }
   .system-mobile-tabs [aria-current="page"] svg { background: #e6f5eb; stroke-width: 2.3; }

@@ -49,7 +49,16 @@ const SystemMobileNavigation = ({ navItems }: Props) => {
     ...(notifications ? [{ ...notifications, label: 'Notifications' }] : []),
     ...(mainWork ? [mainWork] : []),
   ];
-  const activeHref = getActiveHref(tabs, pathname);
+  // Home only lights up on the home page itself — its href (/admin, …)
+  // is a prefix of every page in the section, so prefix-matching it would
+  // keep Home lit everywhere. Any page that isn't one of the tabs was
+  // reached through the Menu sheet, so Menu lights up instead.
+  const activeHref =
+    getActiveHref(
+      tabs.filter((tab) => tab.href !== home?.href),
+      pathname,
+    ) ?? (pathname === home?.href ? home.href : undefined);
+  const menuActive = open || !activeHref;
   const menuActiveHref = getActiveHref(navItems, pathname);
 
   useEffect(() => {
@@ -93,7 +102,7 @@ const SystemMobileNavigation = ({ navItems }: Props) => {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          aria-current={open ? 'page' : undefined}
+          aria-current={menuActive ? 'page' : undefined}
         >
           <LuMenu aria-hidden="true" />
           <span>Menu</span>
