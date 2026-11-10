@@ -122,7 +122,7 @@ const CollectionPointDetailsView = ({
 
         {collectionPoint.name_ar && (
           <div className="mt-5 border-t border-slate-100 pt-5">
-            <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
               Name (Arabic)
             </p>
             <p dir="rtl" className="text-sm font-semibold text-slate-800">

@@ -20,7 +20,7 @@ type Props = {
 // for receiving, Finance Records for accounting.
 const MAIN_WORK_PATTERN = /\/(pickup-requests|pickups|deliveries|finance)$/;
 
-/** The dashboard's mobile (<1024px) chrome: a 4-tab bottom bar — Home,
+/** The dashboard's mobile (<992px, Tailwind's lg) chrome: a 4-tab bottom bar — Home,
  * Notifications, one role-specific "main work" page, and Menu (opens
  * the "Your workspace" sheet listing every page) — plus that sheet
  * itself. Self-contained: owns its own open/close state, since nothing
@@ -67,7 +67,7 @@ const SystemMobileNavigation = ({ navItems }: Props) => {
   useEffect(() => {
     if (!open) return undefined;
     sheet.current?.showModal();
-    const desktop = window.matchMedia('(min-width: 1024px)');
+    const desktop = window.matchMedia('(min-width: 992px)');
     const closeOnDesktop = () => {
       if (desktop.matches) setOpen(false);
     };

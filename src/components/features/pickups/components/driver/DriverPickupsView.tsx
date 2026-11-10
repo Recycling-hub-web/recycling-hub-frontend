@@ -283,7 +283,7 @@ const DriverPickupsView = () => {
           <td className="px-6 py-4 text-slate-500">
             <span className="inline-flex items-center gap-1.5">
               {optimizedOrder[r.id] ? (
-                <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-brand-100 text-[11px] font-semibold text-brand-700">
+                <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-brand-100 text-xs font-semibold text-brand-700">
                   {optimizedOrder[r.id]}
                 </span>
               ) : (

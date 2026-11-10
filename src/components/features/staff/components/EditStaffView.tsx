@@ -125,13 +125,13 @@ const EditStaffView = ({ staffId }: { staffId: string }) => {
 
           <div className="mb-4 grid grid-cols-1 gap-3 rounded-xl bg-slate-50 p-3.5 sm:grid-cols-2">
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
                 Full name
               </p>
               <p className="text-sm text-slate-700">{profile.user.full_name}</p>
             </div>
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
                 Email
               </p>
               <p className="text-sm text-slate-700">{profile.user.email}</p>

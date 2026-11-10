@@ -169,7 +169,7 @@ const StaffDetailsView = ({ staffId }: { staffId: string }) => {
 
         {hasArabicTranslation && (
           <div className="mt-5 border-t border-slate-100 pt-5">
-            <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
               Arabic translation (auto-generated)
             </p>
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">

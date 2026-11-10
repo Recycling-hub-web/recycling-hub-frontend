@@ -124,7 +124,7 @@ const SocialMediaInputField = ({
             {SelectedIcon ? (
               <SelectedIcon className="size-5 shrink-0" />
             ) : (
-              <span className="text-[10px] text-slate-400">Select</span>
+              <span className="text-xs text-slate-400">Select</span>
             )}
             {!lockedPlatform && (
               <ChevronDown
