@@ -48,7 +48,10 @@ const AssignDriverModal = ({
     () =>
       drivers.map((d) => ({
         value: d.id,
-        label: `${d.user.full_name} — ${d.department || d.position || d.branch}`,
+        // The work detail is optional; leave it off instead of showing "null".
+        label: [d.user.full_name, d.department || d.position || d.branch]
+          .filter(Boolean)
+          .join(' — '),
       })),
     [drivers],
   );
