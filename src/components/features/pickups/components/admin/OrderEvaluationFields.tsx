@@ -1,11 +1,13 @@
 'use client';
 
+import type { ComponentProps } from 'react';
 import { LuCircleCheck, LuCircleX, LuClock } from 'react-icons/lu';
 
 import { TextareaField } from '../../../../form/fields/TextareaField';
 import type { SegmentedOption } from '../../../../ui/buttons/SegmentedControl';
 import { SegmentedControl } from '../../../../ui/buttons/SegmentedControl';
 import type { PickupRequestItemInput } from '../../services/pickupService';
+import type { PickupItemsFieldArray } from '../shared/PickupItemsFieldArray';
 import { isValidPrice, PricingEditor } from '../shared/PricingEditor';
 
 type EvaluationDecision = 'none' | 'approved' | 'rejected';
@@ -74,7 +76,9 @@ type OrderEvaluationFieldsProps = {
   evaluation: DraftEvaluation;
   onChange: (evaluation: DraftEvaluation) => void;
   items: PickupRequestItemInput[];
-  categoryLabel: (categoryId: string) => string;
+  categoryOptions: ComponentProps<
+    typeof PickupItemsFieldArray
+  >['categoryOptions'];
   errors?: Record<string, string>;
   disabled?: boolean;
 };
@@ -87,13 +91,20 @@ const OrderEvaluationFields = ({
   evaluation,
   onChange,
   items,
-  categoryLabel,
+  categoryOptions,
   errors = {},
   disabled = false,
 }: OrderEvaluationFieldsProps) => {
   const set = (patch: Partial<DraftEvaluation>) =>
     onChange({ ...evaluation, ...patch });
   const headingId = `${id}-evaluation-heading`;
+  const categoryLabel = (categoryId: string) => {
+    const option = categoryOptions.find((o) =>
+      typeof o === 'string' ? o === categoryId : o.value === categoryId,
+    );
+    if (!option) return '';
+    return typeof option === 'string' ? option : option.label;
+  };
 
   return (
     <section

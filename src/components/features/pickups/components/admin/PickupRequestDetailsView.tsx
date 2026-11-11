@@ -378,10 +378,10 @@ const PickupRequestDetailsView = ({
                           />
                         </td>
                         <td className="px-6 py-4 text-right">
-                          {/* Pricing an order is the step before it can be
-                              scheduled — offered here so it doesn't take a
-                              trip to the order page. */}
-                          {order.status === 'pending' && (
+                          {/* Same as the order page's Evaluate: pending or
+                              scheduled orders. */}
+                          {(order.status === 'pending' ||
+                            order.status === 'scheduled') && (
                             <Button
                               variant="secondary"
                               size="sm"
@@ -421,6 +421,7 @@ const PickupRequestDetailsView = ({
             }}
             items={order?.items ?? []}
             isReevaluation={order?.evaluation_status !== 'pending'}
+            scheduled={order?.status === 'scheduled'}
           />
         );
       })()}

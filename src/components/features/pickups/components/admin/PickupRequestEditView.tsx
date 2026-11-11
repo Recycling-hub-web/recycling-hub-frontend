@@ -93,6 +93,9 @@ const PickupRequestEditView = ({
     Record<string, string>[][]
   >([]);
   const [orderPhotoErrors, setOrderPhotoErrors] = useState<string[]>([]);
+  const [orderEvaluationErrors, setOrderEvaluationErrors] = useState<
+    Record<string, string>[]
+  >([]);
   const [uploading, setUploading] = useState<Set<string>>(new Set());
   const setUploadingFor = useCallback((key: string, isUploading: boolean) => {
     setUploading((prev) => {
@@ -159,6 +162,7 @@ const PickupRequestEditView = ({
     const orderCheck = validateOrders(orders, categories.unitsByCategory);
     setOrderItemErrors(orderCheck.itemErrors);
     setOrderPhotoErrors(orderCheck.photoErrors);
+    setOrderEvaluationErrors(orderCheck.evaluationErrors);
     return Object.keys(nextErrors).length === 0 && orderCheck.valid;
   };
 
@@ -351,6 +355,8 @@ const PickupRequestEditView = ({
                   onUploadingChange={setUploadingFor}
                   max={ordersLeft}
                   showIntro={false}
+                  evaluable
+                  evaluationErrors={orderEvaluationErrors}
                 />
               </div>
             )}

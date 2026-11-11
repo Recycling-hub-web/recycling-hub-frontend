@@ -108,7 +108,10 @@ const OrderDetailsView = ({
     );
   }
 
-  const canEvaluate = request.status === 'pending';
+  // Pending, or scheduled: re-pricing keeps the driver, rejecting takes
+  // the order back off them (see CollectionRequestDecisionService.evaluate).
+  const canEvaluate =
+    request.status === 'pending' || request.status === 'scheduled';
   const isReevaluation = request.evaluation_status !== 'pending';
   // Scheduling only ever assigns a driver — see AssignDriverModal.
   const canAssignDriver =
@@ -331,6 +334,7 @@ const OrderDetailsView = ({
         onEvaluated={handleEvaluated}
         items={request.items}
         isReevaluation={isReevaluation}
+        scheduled={request.status === 'scheduled'}
       />
       <AssignDriverModal
         requestId={request.id}

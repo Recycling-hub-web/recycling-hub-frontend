@@ -26,6 +26,8 @@ type EvaluateModalProps = {
    * or rejected) — only changes the title/copy, the submit behaviour
    * is identical either way (see the docstring below). */
   isReevaluation?: boolean;
+  /** The order already has a driver — says what rejecting does to that. */
+  scheduled?: boolean;
 };
 
 type FormState = { price: string; note: string };
@@ -52,6 +54,7 @@ const EvaluateModal = ({
   onEvaluated,
   items = [],
   isReevaluation = false,
+  scheduled = false,
 }: EvaluateModalProps) => {
   const { execute: evaluate, loading: submitting } = useEvaluatePickup();
   const [formData, setFormData] = useState<FormState>(INITIAL_STATE);
@@ -167,6 +170,12 @@ const EvaluateModal = ({
     >
       <div className="space-y-1">
         <AlertBanner message={apiError} />
+        {scheduled && (
+          <p className="mb-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+            A driver is already assigned. Approving keeps them on it with the
+            new price; rejecting takes the order off the driver.
+          </p>
+        )}
 
         <PricingEditor
           lines={items.map((item) => ({

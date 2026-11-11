@@ -207,6 +207,7 @@ const requestTypeLabel = (type: PickupRequestType) =>
 
 export {
   buildPayload,
+  evaluationToPayload,
   INITIAL_STATE,
   orderToPayload,
   REQUEST_TYPE_OPTIONS,

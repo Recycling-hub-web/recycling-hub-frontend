@@ -62,9 +62,7 @@ type NewOrdersFieldArrayProps = {
   /** How many more orders may be added — less than the per-request cap
    * when the request already has some (the edit page). */
   max?: number;
-  /** Offer the optional Evaluation block on each order (New pickup
-   * request only — the edit page adds orders through a call that
-   * doesn't take one). */
+  /** Offer the optional Evaluation block on each order. */
   evaluable?: boolean;
   /** Per order: its evaluation errors (`price`, `note`). */
   evaluationErrors?: Record<string, string>[];
@@ -89,14 +87,6 @@ const NewOrdersFieldArray = ({
   evaluable = false,
   evaluationErrors = [],
 }: NewOrdersFieldArrayProps) => {
-  const categoryLabel = (id: string) => {
-    const option = categoryOptions.find((o) =>
-      typeof o === 'string' ? o === id : o.value === id,
-    );
-    if (!option) return '';
-    return typeof option === 'string' ? option : option.label;
-  };
-
   const update = (key: string, patch: Partial<DraftOrder>) =>
     onChange((current) =>
       current.map((o) => (o.key === key ? { ...o, ...patch } : o)),
@@ -191,7 +181,7 @@ const NewOrdersFieldArray = ({
                   evaluation={order.evaluation}
                   onChange={(evaluation) => update(order.key, { evaluation })}
                   items={order.items}
-                  categoryLabel={categoryLabel}
+                  categoryOptions={categoryOptions}
                   errors={evaluationErrors[index]}
                   disabled={disabled}
                 />
