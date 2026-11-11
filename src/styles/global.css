@@ -270,3 +270,39 @@ body {
   .system-notification-dot { animation: none; }
   .system-mobile-tabs > *, .system-mobile-tabs svg, .system-action-card, .system-command-card a, .system-modal-panel { transition: none; }
 }
+
+/* Driver pickup cards: compact paired metadata, with full-size action targets. */
+@media (max-width: 575.98px) {
+  .system-record-list .driver-pickups-table tbody tr { padding: 6px 12px; column-gap: 12px; }
+  .system-record-list .driver-pickups-table td[data-card-role="title"] { padding: 6px 0; font-size: 0.9375rem; }
+  .system-record-list .driver-pickups-table td[data-pickup-field] { flex: 0 0 calc(50% - 6px); width: calc(50% - 6px); min-width: 0; padding: 5px 0; flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: 2px; text-align: left; font-size: 0.8125rem; }
+  .system-record-list .driver-pickups-table td[data-pickup-field]::before { max-width: none; font-size: 0.6875rem; }
+  .system-record-list .driver-pickups-table td[data-pickup-field="materials"] { flex-basis: 100%; width: 100%; padding: 2px 0 6px; }
+  .system-record-list .driver-pickups-table td[data-pickup-field="materials"]::before { content: none; }
+  .system-record-list .driver-pickups-table td[data-pickup-field] > * { max-width: 100%; }
+  .system-record-list .driver-pickups-table td[data-pickup-field="requester"] > span { overflow-wrap: anywhere; }
+  .system-record-list .driver-pickups-table td[data-card-role="actions"] { margin-top: 5px; padding: 4px 0 0; }
+}
+
+@media (min-width: 576px) {
+  .driver-pickups-table th, .driver-pickups-table td { vertical-align: middle; white-space: nowrap; }
+  .driver-pickups-table td[data-card-role="actions"] > div { flex-wrap: nowrap; gap: 4px; }
+}
+
+/* Animate note fields at their natural height, including user-resized textareas. */
+.note-field-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  visibility: hidden;
+  transition: grid-template-rows 220ms ease, opacity 180ms ease, visibility 0s linear 220ms;
+}
+.note-field-panel[data-expanded="true"] {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  visibility: visible;
+  transition: grid-template-rows 220ms ease, opacity 180ms ease, visibility 0s;
+}
+@media (prefers-reduced-motion: reduce) {
+  .note-field-panel, .note-field-panel[data-expanded="true"] { transition: none; }
+}

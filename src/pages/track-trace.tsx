@@ -6,6 +6,7 @@ import {
   LuSearch,
 } from 'react-icons/lu';
 
+import { TextareaField } from '../components/form/fields/TextareaField';
 import { ValidatedForm } from '../components/form/ValidatedForm';
 import { Meta } from '../components/layout/Meta';
 import { FadeIn } from '../components/ui/FadeIn';
@@ -223,20 +224,14 @@ const TrackTracePage: NextPageWithLayout = () => {
                 </div>
 
                 <div className="flex flex-col gap-1.5 sm:col-span-2">
-                  <label
-                    htmlFor="notes"
-                    className="text-xs font-semibold uppercase tracking-wide text-slate-500"
-                  >
-                    {content.form.notesLabel}
-                  </label>
-                  <textarea
-                    id="notes"
-                    value={notes}
-                    onChange={(e) => setNotes(e.target.value)}
+                  <TextareaField
+                    label={content.form.notesLabel}
+                    field="notes"
+                    required={false}
+                    formData={{ notes }}
+                    updateFormData={(_, value) => setNotes(value)}
                     disabled={submitted}
-                    rows={3}
                     placeholder={content.form.notesPlaceholder}
-                    className="resize-none rounded-lg border border-slate-200 px-3.5 py-2.5 text-sm text-neutral-950 placeholder:text-slate-400 focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20 disabled:bg-slate-50 disabled:text-slate-400"
                   />
                 </div>
               </div>

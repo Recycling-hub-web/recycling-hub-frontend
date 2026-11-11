@@ -54,7 +54,7 @@ const TablePagination = ({
         <button
           type="button"
           onClick={() => onPageChange(Math.max(currentPage - 1, 1))}
-          disabled={currentPage === 1}
+          disabled={loading || currentPage === 1}
           className={navButtonClassName}
         >
           <LuArrowLeft className="size-4" />
@@ -66,7 +66,7 @@ const TablePagination = ({
         <button
           type="button"
           onClick={() => onPageChange(currentPage + 1)}
-          disabled={itemCount < itemsPerPage}
+          disabled={loading || currentPage >= totalPages}
           className={navButtonClassName}
         >
           Next

@@ -173,6 +173,7 @@ const createOrder = (
 
 type ListOrdersParams = {
   page?: number;
+  pageSize?: number;
   status?: PickupStatus | PickupStatus[];
   search?: string;
   requestType?: PickupRequestType;
@@ -183,6 +184,7 @@ type ListOrdersParams = {
 
 const listOrders = ({
   page = 1,
+  pageSize,
   status,
   search,
   requestType,
@@ -190,6 +192,7 @@ const listOrders = ({
   dropOffPoint,
 }: ListOrdersParams = {}): Promise<Paginated<CollectionRequestListItem>> => {
   const params = new URLSearchParams({ page: String(page) });
+  if (pageSize) params.set('page_size', String(pageSize));
   if (status)
     params.set('status', Array.isArray(status) ? status.join(',') : status);
   if (search) params.set('search', search);
@@ -282,11 +285,9 @@ const schedulePickupRequest = (
 
 type AssignDriverPayload = {
   driver: string;
-  scheduled_at?: string;
 };
 
-// The only way to schedule a pickup from the UI — assigns a driver and,
-// optionally, a pickup time. schedulePickupRequest above (a staff
+// Assign a driver; pickup time is confirmed separately by the driver. schedulePickupRequest above (a staff
 // collector, no driver) still exists on the backend but no longer has a
 // frontend caller. Only valid from `pending` +
 // `evaluation_status=approved` — see
@@ -300,11 +301,10 @@ const assignDriverToRequest = (
 type BulkAssignDriverPayload = {
   order_ids: string[];
   driver: string;
-  scheduled_at?: string;
 };
 
-// The batch counterpart to assignDriverToRequest — one driver (and
-// optional shared time) applied to several pending+approved orders at
+// The batch counterpart to assignDriverToRequest — one driver
+// applied to several pending+approved orders at
 // once, from a pickup request's own orders table. All-or-nothing: see
 // CollectionRequestViewSet.bulk_assign_driver on the backend.
 const bulkAssignDriver = (

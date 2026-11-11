@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { LuMapPin, LuNavigation } from 'react-icons/lu';
 
 import { SelectField } from '../../../../form/fields/SelectField';
 import { AlertBanner } from '../../../../ui/AlertBanner';
@@ -14,31 +13,7 @@ import type {
   LatLng,
   OptimizeRouteResult,
 } from '../../types';
-import {
-  googleMapsMultiStopUrl,
-  wazeNavigateUrl,
-} from '../../utils/navigationLinks';
-
-type OptimizeRouteModalProps = {
-  open: boolean;
-  onClose: () => void;
-  selectedRequests: CollectionRequestListItem[];
-  /** Waze has no multi-stop link — choosing it just closes this modal
-   * and hands the optimized order back up so the table can badge each
-   * row 1..N; the driver works them in order via each row's own
-   * existing per-stop Navigate action. */
-  onWazeOrderChosen: (orderedRequestIds: string[]) => void;
-};
-
-// Every selected request is on the driver's one open Route (that's
-// what the "mine" tab is) — if it already has a resolved destination
-// (a previous optimize call on this same route), default to it. If
-// not, leave the field blank: the backend can still often infer one
-// itself from the requests' own `collection_point` (set at drop-off
-// routing time), and only errors if that's ambiguous too.
-const inferCollectionPointId = (
-  requests: CollectionRequestListItem[],
-): string => requests[0]?.route?.collection_point?.id ?? '';
+import { OptimizedRoutePreview } from './OptimizedRoutePreview';
 
 const getCurrentPosition = (): Promise<LatLng> =>
   new Promise((resolve, reject) => {
@@ -60,205 +35,130 @@ const getCurrentPosition = (): Promise<LatLng> =>
     );
   });
 
-/** Order a set of the driver's own claimed, scheduled stops into the
- * fastest visiting sequence ending at a collection point, then hand
- * off to whichever navigation app the driver picks. See
- * apps.pickups.services.optimize_route on the backend — nothing
- * computed here is persisted beyond the route's own collection point,
- * so re-optimizing is just opening this again. */
-const OptimizeRouteModal = ({
+export const OptimizeRouteModal = ({
   open,
+  inlinePreview,
   onClose,
   selectedRequests,
-  onWazeOrderChosen,
-}: OptimizeRouteModalProps) => {
+  onOptimized,
+}: {
+  inlinePreview: boolean;
+  open: boolean;
+  onClose: () => void;
+  selectedRequests: CollectionRequestListItem[];
+  onOptimized: (result: OptimizeRouteResult, origin: LatLng) => void;
+}) => {
   const { collectionPoints, loading: loadingPoints } =
     useCollectionPoints(open);
-  const { execute: optimize, loading: optimizing } = useOptimizeRoute();
-
+  const { execute: optimize } = useOptimizeRoute();
   const [formData, setFormData] = useState({ collection_point: '' });
-  const [errors, setErrors] = useState<Record<string, string>>({});
   const [apiError, setApiError] = useState('');
-  const [origin, setOrigin] = useState<LatLng | null>(null);
-  const [result, setResult] = useState<OptimizeRouteResult | null>(null);
-
+  const [desktopPreview, setDesktopPreview] = useState<{
+    result: OptimizeRouteResult;
+    origin: LatLng;
+  } | null>(null);
+  const [preparing, setPreparing] = useState(false);
   useEffect(() => {
     if (open) {
       setFormData({
-        collection_point: inferCollectionPointId(selectedRequests),
+        collection_point:
+          selectedRequests[0]?.route?.collection_point?.id || '',
       });
-      setErrors({});
       setApiError('');
-      setOrigin(null);
-      setResult(null);
+      setDesktopPreview(null);
     }
-    // Only reset when the modal opens — selectedRequests can keep
-    // changing identity on every parent render otherwise.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
-
-  const updateFormData = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-    setErrors((prev) => ({ ...prev, [field]: '' }));
-  };
-
-  const collectionPointOptions = collectionPoints.map((c) => ({
-    value: c.id,
-    label: c.name,
-  }));
-
-  const handleClose = () => {
-    onClose();
-  };
-
-  const handleSubmit = async () => {
+  const submit = async () => {
+    if (preparing) return;
+    setPreparing(true);
     setApiError('');
-    setErrors({});
     try {
-      const here = await getCurrentPosition();
-      setOrigin(here);
-      const response = await optimize({
-        request_ids: selectedRequests.map((r) => r.id),
+      if (!selectedRequests.length || selectedRequests.length > 7)
+        throw new Error('Select between 1 and 7 stops.');
+      const origin = await getCurrentPosition();
+      const result = await optimize({
+        request_ids: selectedRequests.map((order) => order.id),
         collection_point: formData.collection_point || undefined,
-        origin: here,
-      });
-      setResult(response);
-    } catch (err) {
-      // ApiError and the plain Error getCurrentPosition rejects with
-      // both carry a useful .message — anything else gets a fallback.
-      setApiError(
-        err instanceof Error
-          ? err.message
-          : 'Could not optimize this route. Please try again.',
-      );
-    }
-  };
-
-  const handleOpenGoogleMaps = () => {
-    if (!result || !origin) return;
-    window.open(
-      googleMapsMultiStopUrl(
         origin,
-        result.stops,
-        result.collection_point.address || result.destination,
-      ),
-      '_blank',
-      'noopener,noreferrer',
-    );
-    handleClose();
-  };
-
-  const handleOpenWaze = () => {
-    if (!result) return;
-    onWazeOrderChosen(result.stops.map((s) => s.request_id));
-    // Waze has no multi-stop link — open the first leg now, same as
-    // the per-row Navigate action, so the driver isn't left with
-    // nothing to tap after choosing Waze.
-    const first = selectedRequests.find(
-      (r) => r.id === result.stops[0]?.request_id,
-    );
-    if (first) {
-      window.open(
-        wazeNavigateUrl(first.pickup_request.pickup_address),
-        '_blank',
-        'noopener,noreferrer',
+      });
+      onOptimized(result, origin);
+      if (inlinePreview) onClose();
+      else setDesktopPreview({ result, origin });
+    } catch (error) {
+      setApiError(
+        error instanceof Error
+          ? error.message
+          : 'Could not optimize route. Please try again.',
       );
+    } finally {
+      setPreparing(false);
     }
-    handleClose();
   };
-
   return (
     <Modal
       open={open}
-      onClose={handleClose}
+      onClose={() => {
+        if (!preparing) onClose();
+      }}
+      closeOnBackdrop={!preparing}
       title="Optimize route"
-      subtitle={
-        result
-          ? 'Choose where to open the optimized route.'
-          : `Find the fastest order for ${selectedRequests.length} selected stop${selectedRequests.length === 1 ? '' : 's'}.`
-      }
+      size={desktopPreview ? 'lg' : 'md'}
+      subtitle={`Plan ${selectedRequests.length} selected stops, ending at your collection point.`}
       footer={
-        result ? (
+        desktopPreview ? undefined : (
           <FormActions>
             <Button
+              size="sm"
               variant="secondary"
-              size="sm"
-              className="gap-1.5"
-              onClick={handleOpenWaze}
-            >
-              <LuNavigation className="size-4" />
-              Open in Waze
-            </Button>
-            <Button
-              size="sm"
-              className="gap-1.5"
-              onClick={handleOpenGoogleMaps}
-            >
-              <LuMapPin className="size-4" />
-              Open in Google Maps
-            </Button>
-          </FormActions>
-        ) : (
-          <FormActions>
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={handleClose}
-              disabled={optimizing}
+              disabled={preparing}
+              onClick={onClose}
             >
               Cancel
             </Button>
-            <Button size="sm" onClick={handleSubmit} disabled={optimizing}>
-              {optimizing ? 'Optimizing…' : 'Get optimized route'}
+            <Button
+              size="sm"
+              disabled={preparing || loadingPoints}
+              onClick={submit}
+            >
+              {preparing ? 'Optimizing…' : 'Get optimized route'}
             </Button>
           </FormActions>
         )
       }
     >
-      <AlertBanner message={apiError} />
-      {!result && (
+      {desktopPreview ? (
+        <OptimizedRoutePreview
+          result={desktopPreview.result}
+          origin={desktopPreview.origin}
+          selectedRequests={selectedRequests}
+          showMap={false}
+          showWaze
+        />
+      ) : (
         <>
-          <p className="mb-2 text-xs text-slate-500">
-            Where the route ends. Pick a store to change it, or leave it as is
-            to keep this route&apos;s current destination.
+          <AlertBanner message={apiError} />
+          <p className="mb-3 text-sm text-slate-500">
+            {inlinePreview
+              ? 'Choose the drop-off destination. The map and stop list will appear below your pickups.'
+              : 'Choose the drop-off destination to preview your optimized route.'}
           </p>
           <SelectField
             label="Collection point"
             field="collection_point"
             required={false}
-            options={collectionPointOptions}
+            options={collectionPoints.map((point) => ({
+              value: point.id,
+              label: point.name,
+            }))}
             formData={formData}
-            errors={errors}
-            updateFormData={updateFormData}
-            disabled={loadingPoints || optimizing}
+            updateFormData={(field, value) =>
+              setFormData((previous) => ({ ...previous, [field]: value }))
+            }
+            disabled={preparing || loadingPoints}
           />
-        </>
-      )}
-      {result && (
-        <>
-          <ol className="space-y-2 text-sm text-slate-700">
-            {result.stops.map((stop, i) => {
-              const req = selectedRequests.find(
-                (r) => r.id === stop.request_id,
-              );
-              return (
-                <li key={stop.request_id} className="flex items-center gap-2">
-                  <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-slate-100 text-xs font-semibold text-slate-600">
-                    {i + 1}
-                  </span>
-                  {req?.pickup_request.full_name ?? stop.request_id}
-                </li>
-              );
-            })}
-          </ol>
-          <p className="mt-3 flex items-start gap-2 rounded-lg bg-slate-50 p-3 text-sm text-slate-700">
-            <span className="font-semibold">Ends at:</span>
-            <span>{result.collection_point.name}</span>
-          </p>
         </>
       )}
     </Modal>
   );
 };
-
-export { OptimizeRouteModal };

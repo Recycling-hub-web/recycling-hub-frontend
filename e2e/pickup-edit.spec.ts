@@ -69,6 +69,9 @@ test("staff edit an order's note and materials from its details page", async ({
   const save = page.getByRole('button', { name: 'Save changes' });
   await expect(save).toBeDisabled();
 
+  const noteToggle = page.locator('[data-field="note"]').getByRole('switch');
+  if ((await noteToggle.getAttribute('aria-checked')) === 'false')
+    await noteToggle.click();
   await page
     .locator('[data-field="note"] textarea')
     .fill('Customer asked for a morning slot.');
