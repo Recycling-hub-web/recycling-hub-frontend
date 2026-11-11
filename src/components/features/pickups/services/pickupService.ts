@@ -78,6 +78,9 @@ type PickupRequestCreatePayload = {
   /** Admin/staff only: orders to create together with the request (at
    * most 7) — see PickupRequestCreateSerializer.orders. */
   orders?: CreateOrderPayload[];
+  /** Admin/staff only, with `orders`: evaluate the request in the same
+   * call. */
+  evaluation?: RequestEvaluationPayload;
   /** 1–4 photo keys from uploadPublicPickupPhoto — required on the
    * public form, optional for admin/staff. */
   photos?: string[];
@@ -145,13 +148,11 @@ type CreateOrderPayload = {
   items?: PickupRequestItemInput[];
   /** Up to 4 storage file keys — see PickupPhotosUploader. */
   photos?: string[];
-  /** Only with a new pickup request (POST /pickup-requests/): evaluate
-   * the order in the same call. */
-  evaluation?: OrderEvaluationPayload;
 };
 
-/** `item_prices[i]` prices the order's `items[i]`. */
-type OrderEvaluationPayload =
+/** Evaluating a new pickup request in its create call (admin/staff):
+ * `item_prices` lists every item of every order, order by order. */
+type RequestEvaluationPayload =
   | { decision: 'approved'; price: string }
   | { decision: 'approved'; item_prices: string[] }
   | { decision: 'rejected'; note: string };
@@ -250,6 +251,20 @@ const evaluatePickupRequest = (
   payload: EvaluatePickupPayload,
 ): Promise<CollectionRequestDetails> =>
   apiFetch(`/pickups/${id}/evaluate/`, { method: 'POST', json: payload });
+
+/** Evaluating a whole pickup request — every order still open to it
+ * (pending or scheduled) at once. `price` is one total, shared across
+ * those orders by the backend; `items` prices every item of them. */
+type EvaluateRequestPayload = EvaluatePickupPayload;
+
+const evaluateWholeRequest = (
+  pickupRequestId: string,
+  payload: EvaluateRequestPayload,
+): Promise<PickupRequestDetails> =>
+  apiFetch(`/pickup-requests/${pickupRequestId}/evaluate/`, {
+    method: 'POST',
+    json: payload,
+  });
 
 type SchedulePickupPayload = {
   collector: string;
@@ -533,6 +548,7 @@ export {
   deleteOrder,
   dropOffRoute,
   evaluatePickupRequest,
+  evaluateWholeRequest,
   getOrder,
   getPickupRequest,
   getQuickPickupRequest,
@@ -562,16 +578,17 @@ export type {
   DropOffPayload,
   EvaluateItemInput,
   EvaluatePickupPayload,
+  EvaluateRequestPayload,
   ListOrdersParams,
   ListPickupRequestsParams,
   ListQuickPickupRequestsParams,
   OptimizeRoutePayload,
-  OrderEvaluationPayload,
   Paginated,
   PickupRequestCreatePayload,
   PickupRequestCreateResult,
   PickupRequestItemInput,
   PickupRequestUpdatePayload,
+  RequestEvaluationPayload,
   SchedulePickupPayload,
   UpdateOrderPayload,
 };

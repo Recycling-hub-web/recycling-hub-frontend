@@ -11,9 +11,9 @@ import {
 import { attachPhoto, mockStorageUploads } from './helpers/storage';
 
 /**
- * New pickup request → Orders step: each order has an optional
- * Evaluation block (Not yet / Approve / Reject), so an order can be
- * priced or rejected in the same save that creates it.
+ * New pickup request → Orders step: one optional Evaluation block for
+ * the whole request (Not yet / Approve / Reject, one total or a price per
+ * item), saved in the same call that creates it.
  */
 
 test.beforeEach(async ({ page }) => {
@@ -36,7 +36,7 @@ const addMaterial = async (order: Locator) => {
   ).toBeVisible();
 };
 
-test('orders are approved and rejected on the create form', async ({
+test('the whole request is evaluated on the create form, per item', async ({
   page,
 }) => {
   await loginAs(page, 'admin');
@@ -56,26 +56,27 @@ test('orders are approved and rejected on the create form', async ({
     await addMaterial(orders.nth(i));
   }
 
-  const decide = (index: number, decision: 'Approve' | 'Reject') =>
-    orders
-      .nth(index)
-      .getByTestId('order-evaluation')
-      .getByRole('button', { name: decision, exact: true })
-      .click();
-
-  // Order 1: approve without a price — caught before moving on.
-  await decide(0, 'Approve');
+  // One Evaluation for the whole request, below the orders.
+  const evaluation = page.getByTestId('order-evaluation');
+  await expect(evaluation).toHaveCount(1);
+  await evaluation
+    .getByRole('button', { name: 'Approve', exact: true })
+    .click();
   await page.getByRole('button', { name: 'Continue' }).click();
-  await expect(orders.nth(0).getByText('Enter a valid price.')).toBeVisible();
-  await orders.nth(0).getByLabel('Total price').fill('88.40');
+  await expect(evaluation.getByText('Enter a valid price.')).toBeVisible();
 
-  // Order 2: reject with a reason. Order 3: decide later.
-  await decide(1, 'Reject');
-  await orders.nth(1).locator('[data-field="note"] textarea').fill('Wet');
+  // Per item: one price per material across the three orders.
+  await evaluation.getByRole('switch', { name: 'Price each item' }).click();
+  const prices = evaluation.getByLabel(/^Price for /);
+  await expect(prices).toHaveCount(3);
+  await prices.nth(0).fill('10');
+  await prices.nth(1).fill('20');
+  await prices.nth(2).fill('30.50');
 
   await finishOrders(page);
-  await expect(page.getByText(/Approved, RM 88\.40/)).toBeVisible();
-  await expect(page.getByText(/— Rejected/)).toBeVisible();
+  await expect(
+    page.getByText('Approved, RM 60.50 (priced per item)'),
+  ).toBeVisible();
 
   await createRequest(page);
   await expect(page).toHaveURL(/\/admin\/pickup-requests\/(?!create)[^/]+$/);
@@ -84,12 +85,16 @@ test('orders are approved and rejected on the create form', async ({
   const detail = await (
     await page.request.get(`/api/v1/pickup-requests/${id}/`)
   ).json();
-  const statuses = detail.orders
-    .map((o: { evaluation_status: string }) => o.evaluation_status)
-    .sort();
-  expect(statuses).toEqual(['approved', 'pending', 'rejected']);
-  const approved = detail.orders.find(
-    (o: { evaluation_status: string }) => o.evaluation_status === 'approved',
+  const savedOrders = detail.orders as {
+    evaluation_status: string;
+    price: string | number;
+  }[];
+  expect(savedOrders.map((o) => o.evaluation_status)).toEqual([
+    'approved',
+    'approved',
+    'approved',
+  ]);
+  expect(savedOrders.map((o) => Number(o.price)).sort((a, b) => a - b)).toEqual(
+    [10, 20, 30.5],
   );
-  expect(Number(approved.price)).toBe(88.4);
 });

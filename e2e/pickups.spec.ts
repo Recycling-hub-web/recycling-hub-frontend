@@ -3,6 +3,11 @@ import { expect, test } from '@playwright/test';
 
 import { loginAs } from './helpers/auth';
 import { E_WASTE_CATEGORY_ID } from './helpers/categories';
+import {
+  openOrderActions,
+  orderAction,
+  orderActionItem,
+} from './helpers/orderActions';
 import { E2E_PHOTO } from './helpers/storage';
 
 /**
@@ -90,7 +95,7 @@ test.describe('Admin orders', () => {
     await page.goto(`/admin/pickups/${orderId}`);
 
     await expect(page.getByText('Pending', { exact: true })).toBeVisible();
-    await page.getByRole('button', { name: 'Schedule pickup' }).click();
+    await orderAction(page, 'Schedule pickup');
 
     // Schedule modal (AssignDriverModal, driver-only): submit is only
     // ever disabled while in flight, not pre-emptively on validity —
@@ -117,7 +122,7 @@ test.describe('Admin orders', () => {
     await expect(page.getByText('Scheduled', { exact: true })).toBeVisible();
     await expect(page.getByText(/pickup scheduled/i)).toBeVisible();
 
-    await page.getByRole('button', { name: 'Mark as collected' }).click();
+    await orderAction(page, 'Mark as collected');
     // Scheduling now always assigns a driver (see AssignDriverModal), so
     // the collect modal always shows payment fields — a staff collector
     // with no driver, and thus no payment fields, no longer exists.
@@ -130,13 +135,11 @@ test.describe('Admin orders', () => {
     await expect(page.getByText('Collected', { exact: true })).toBeVisible();
     await expect(page.getByText(/marked as collected/i)).toBeVisible();
 
-    // Terminal state — no more action buttons.
-    await expect(
-      page.getByRole('button', { name: 'Schedule pickup' }),
-    ).toHaveCount(0);
-    await expect(
-      page.getByRole('button', { name: 'Cancel', exact: true }),
-    ).toHaveCount(0);
+    // Terminal state — no more actions besides viewing the request.
+    await openOrderActions(page);
+    await expect(orderActionItem(page, 'Schedule pickup')).toHaveCount(0);
+    await expect(orderActionItem(page, 'Cancel')).toHaveCount(0);
+    await page.keyboard.press('Escape');
 
     // There's no delete action in the UI (orders are cancelled, not
     // deleted — a deliberate scope decision, unlike contact messages).
@@ -150,12 +153,7 @@ test.describe('Admin orders', () => {
     const { orderId } = await seedOrder(page.request, fullName);
     await page.goto(`/admin/pickups/${orderId}`);
 
-    // exact: true — the notification bell (always rendered in the
-    // topbar) can contain this seeded order's own requester name in an
-    // unread "New pickup request submitted" item, whose accessible
-    // name would otherwise also match a loose "Cancel" substring
-    // search.
-    await page.getByRole('button', { name: 'Cancel', exact: true }).click();
+    await orderAction(page, 'Cancel');
     const confirmCancel = page.getByRole('button', {
       name: 'Cancel pickup',
       exact: true,
@@ -176,9 +174,9 @@ test.describe('Admin orders', () => {
 
     await expect(page.getByText('Cancelled', { exact: true })).toBeVisible();
     await expect(page.getByText(/pickup cancelled/i)).toBeVisible();
-    await expect(
-      page.getByRole('button', { name: 'Schedule pickup' }),
-    ).toHaveCount(0);
+    await openOrderActions(page);
+    await expect(orderActionItem(page, 'Schedule pickup')).toHaveCount(0);
+    await page.keyboard.press('Escape');
 
     await page.request.delete(`/api/v1/pickups/${orderId}/`);
   });
@@ -194,15 +192,12 @@ test.describe('Staff orders', () => {
     await approveOrder(page.request, orderId);
     await page.goto(`/staff/pickups/${orderId}`);
 
-    await expect(
-      page.getByRole('button', { name: 'Schedule pickup' }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole('button', { name: 'Cancel', exact: true }),
-    ).toBeVisible();
+    await openOrderActions(page);
+    await expect(orderActionItem(page, 'Schedule pickup')).toBeVisible();
+    await expect(orderActionItem(page, 'Cancel')).toBeVisible();
 
     // The driver picker (GET /accounts/drivers/) must work for staff too.
-    await page.getByRole('button', { name: 'Schedule pickup' }).click();
+    await orderActionItem(page, 'Schedule pickup').click();
     await expect(page.locator('select option')).not.toHaveCount(1);
 
     // Staff can delete too — no admin-only restriction on this module,

@@ -3,6 +3,7 @@ import { expect, test } from '@playwright/test';
 
 import { loginAs } from './helpers/auth';
 import { E_WASTE_CATEGORY_ID } from './helpers/categories';
+import { orderAction } from './helpers/orderActions';
 import { attachPhoto, mockStorageUploads } from './helpers/storage';
 
 /**
@@ -184,7 +185,7 @@ test('collect modal requires payment method and proof when a driver is assigned'
   });
 
   await page.goto(`/admin/pickups/${id}`);
-  await page.getByRole('button', { name: 'Mark as collected' }).click();
+  await orderAction(page, 'Mark as collected');
   await expect(page.getByText('Payment method')).toBeVisible();
   await expect(page.getByText('Proof of payment')).toBeVisible();
 

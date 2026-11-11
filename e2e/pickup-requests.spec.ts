@@ -3,6 +3,7 @@ import { expect, test } from '@playwright/test';
 
 import { loginAs } from './helpers/auth';
 import { E_WASTE_CATEGORY_ID } from './helpers/categories';
+import { orderAction } from './helpers/orderActions';
 import {
   createRequest,
   fillCustomer,
@@ -369,16 +370,18 @@ test('full lifecycle: public submission through to the request showing fulfilled
   const orderId = page.url().split('/').pop() as string;
   await expect(page.getByText('E-waste — 5 kg')).toBeVisible();
 
-  // 4. Evaluate -> approve with a price. UI-driven (same EvaluateModal
-  // e2e/pickups.spec.ts already covers in isolation) — asserted here
-  // too since it gates the next step.
-  await page.getByRole('button', { name: 'Evaluate' }).click();
-  await page.locator('[data-field="price"] input').fill('20.00');
-  await page
-    .getByRole('dialog')
-    .getByRole('button', { name: 'Approve' })
-    .click();
-  await expect(page.getByText('Approved', { exact: true })).toBeVisible();
+  // 4. Evaluate the request -> approve with a price. Evaluation is per
+  // pickup request, from its Actions menu.
+  await page.goto(`/admin/pickup-requests/${pickupRequestId}`);
+  await orderAction(page, 'Evaluate');
+  const evaluate = page.getByRole('dialog');
+  await evaluate.getByLabel('Total price').fill('20.00');
+  await evaluate.getByRole('button', { name: 'Approve' }).click();
+  await expect(evaluate).toBeHidden();
+  const evaluated = await (
+    await page.request.get(`/api/v1/pickups/${orderId}/`)
+  ).json();
+  expect(evaluated.evaluation_status).toBe('approved');
 
   // 5. Assign the specific driver this test logs in as next (qaDriver)
   // — via the API directly rather than the UI's driver picker (which

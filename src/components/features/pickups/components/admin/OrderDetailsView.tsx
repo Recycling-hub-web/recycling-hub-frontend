@@ -1,11 +1,12 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import {
   LuArrowLeft,
   LuCalendar,
-  LuClipboardCheck,
+  LuClipboardList,
   LuMail,
   LuMapPin,
   LuPackage,
@@ -17,7 +18,10 @@ import {
 
 import { PageContainer } from '../../../../layout/PageContainer';
 import { StatusBadge } from '../../../../ui/badges/StatusBadge';
-import { Button } from '../../../../ui/buttons/Button';
+import {
+  ActionsDropdown,
+  type DropdownItem,
+} from '../../../../ui/buttons/ActionsDropdown';
 import { Card } from '../../../../ui/card/Card';
 import { AppDate } from '../../../../ui/date/AppDate';
 import { InfoRow } from '../../../../ui/InfoRow';
@@ -41,7 +45,6 @@ import { CollectModal } from '../shared/CollectModal';
 import { OrderRecordTabs } from '../shared/OrderRecordTabs';
 import { AssignDriverModal } from './AssignDriverModal';
 import { CancelModal } from './CancelModal';
-import { EvaluateModal } from './EvaluateModal';
 
 type OrderDetailsViewProps = {
   requestId: string;
@@ -64,8 +67,8 @@ const OrderDetailsView = ({
   requestsBasePath,
 }: OrderDetailsViewProps) => {
   const { request, loading, error, refetch } = useOrder(requestId);
+  const router = useRouter();
   const toast = useToast();
-  const [evaluateOpen, setEvaluateOpen] = useState(false);
   const [assignDriverOpen, setAssignDriverOpen] = useState(false);
   const [collectOpen, setCollectOpen] = useState(false);
   const [cancelOpen, setCancelOpen] = useState(false);
@@ -74,10 +77,6 @@ const OrderDetailsView = ({
   // navigation) and refresh it, but always pair that with an explicit
   // toast: landing back on the same page a modal action was triggered
   // from can't otherwise be distinguished from nothing having happened.
-  const handleEvaluated = () => {
-    refetch();
-    toast.success('Evaluation saved');
-  };
   const handleDriverAssigned = () => {
     refetch();
     toast.success('Pickup scheduled');
@@ -108,17 +107,54 @@ const OrderDetailsView = ({
     );
   }
 
-  // Pending, or scheduled: re-pricing keeps the driver, rejecting takes
-  // the order back off them (see CollectionRequestDecisionService.evaluate).
-  const canEvaluate =
-    request.status === 'pending' || request.status === 'scheduled';
-  const isReevaluation = request.evaluation_status !== 'pending';
   // Scheduling only ever assigns a driver — see AssignDriverModal.
   const canAssignDriver =
     request.status === 'pending' && request.evaluation_status === 'approved';
   const canCollect = request.status === 'scheduled';
   const canCancel =
     request.status === 'pending' || request.status === 'scheduled';
+
+  // More than one action → one Actions dropdown (project rule); View
+  // pickup request is always there, so this is never a lone action.
+  const actionItems: DropdownItem[] = [
+    {
+      label: 'View pickup request',
+      icon: LuClipboardList,
+      onClick: () =>
+        router.push(`${requestsBasePath}/${request.pickup_request.id}`),
+      color: 'neutral',
+    },
+    ...(canAssignDriver
+      ? [
+          {
+            label: 'Schedule pickup',
+            icon: LuTruck,
+            onClick: () => setAssignDriverOpen(true),
+            color: 'neutral' as const,
+          },
+        ]
+      : []),
+    ...(canCollect
+      ? [
+          {
+            label: 'Mark as collected',
+            icon: LuPackage,
+            onClick: () => setCollectOpen(true),
+            color: 'neutral' as const,
+          },
+        ]
+      : []),
+    ...(canCancel
+      ? [
+          {
+            label: 'Cancel',
+            icon: LuX,
+            onClick: () => setCancelOpen(true),
+            color: 'danger' as const,
+          },
+        ]
+      : []),
+  ];
 
   return (
     <PageContainer variant="form">
@@ -133,43 +169,7 @@ const OrderDetailsView = ({
       <PageHeader
         title={request.code}
         subtitle={`${request.pickup_request.full_name} — ${itemsSummary(request.items)}`}
-        actions={
-          <>
-            <Button
-              variant="secondary"
-              href={`${requestsBasePath}/${request.pickup_request.id}`}
-            >
-              View pickup request
-            </Button>
-            {canEvaluate && (
-              <Button variant="secondary" onClick={() => setEvaluateOpen(true)}>
-                <LuClipboardCheck className="mr-1.5 size-4" />
-                {isReevaluation ? 'Re-evaluate' : 'Evaluate'}
-              </Button>
-            )}
-            {canAssignDriver && (
-              <Button onClick={() => setAssignDriverOpen(true)}>
-                <LuTruck className="mr-1.5 size-4" />
-                Schedule pickup
-              </Button>
-            )}
-            {canCollect && (
-              <Button onClick={() => setCollectOpen(true)}>
-                <LuPackage className="mr-1.5 size-4" />
-                Mark as collected
-              </Button>
-            )}
-            {canCancel && (
-              <Button
-                variant="danger-outline"
-                onClick={() => setCancelOpen(true)}
-              >
-                <LuX className="mr-1.5 size-4" />
-                Cancel
-              </Button>
-            )}
-          </>
-        }
+        actions={<ActionsDropdown items={actionItems} />}
       />
 
       <div className="mb-5 flex flex-wrap gap-2">
@@ -327,15 +327,6 @@ const OrderDetailsView = ({
         }
       />
 
-      <EvaluateModal
-        requestId={request.id}
-        open={evaluateOpen}
-        onClose={() => setEvaluateOpen(false)}
-        onEvaluated={handleEvaluated}
-        items={request.items}
-        isReevaluation={isReevaluation}
-        scheduled={request.status === 'scheduled'}
-      />
       <AssignDriverModal
         requestId={request.id}
         open={assignDriverOpen}

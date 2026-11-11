@@ -12,30 +12,18 @@ import {
   type OrderPhoto,
   PickupPhotosUploader,
 } from '../shared/PickupPhotosUploader';
-import {
-  type DraftEvaluation,
-  EMPTY_EVALUATION,
-  OrderEvaluationFields,
-} from './OrderEvaluationFields';
 
 type DraftOrder = {
   /** Stable React key only — never sent to the API. */
   key: string;
   items: PickupRequestItemInput[];
   photos: OrderPhoto[];
-  /** Decided on the create form (see `evaluable`); 'none' = later. */
-  evaluation: DraftEvaluation;
 };
 
 let nextKey = 0;
 const newDraftOrder = (): DraftOrder => {
   nextKey += 1;
-  return {
-    key: `order-${nextKey}`,
-    items: [],
-    photos: [],
-    evaluation: EMPTY_EVALUATION,
-  };
+  return { key: `order-${nextKey}`, items: [], photos: [] };
 };
 
 type NewOrdersFieldArrayProps = {
@@ -62,10 +50,6 @@ type NewOrdersFieldArrayProps = {
   /** How many more orders may be added — less than the per-request cap
    * when the request already has some (the edit page). */
   max?: number;
-  /** Offer the optional Evaluation block on each order. */
-  evaluable?: boolean;
-  /** Per order: its evaluation errors (`price`, `note`). */
-  evaluationErrors?: Record<string, string>[];
 };
 
 /** Orders to create together with a new pickup request — each with its
@@ -84,8 +68,6 @@ const NewOrdersFieldArray = ({
   onUploadingChange,
   showIntro = true,
   max = MAX_ORDERS_PER_PICKUP_REQUEST,
-  evaluable = false,
-  evaluationErrors = [],
 }: NewOrdersFieldArrayProps) => {
   const update = (key: string, patch: Partial<DraftOrder>) =>
     onChange((current) =>
@@ -175,17 +157,6 @@ const NewOrdersFieldArray = ({
                   }
                 />
               </div>
-              {evaluable && (
-                <OrderEvaluationFields
-                  id={order.key}
-                  evaluation={order.evaluation}
-                  onChange={(evaluation) => update(order.key, { evaluation })}
-                  items={order.items}
-                  categoryOptions={categoryOptions}
-                  errors={evaluationErrors[index]}
-                  disabled={disabled}
-                />
-              )}
             </div>
           </div>
         ))}

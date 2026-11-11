@@ -13,7 +13,7 @@ import { isValidPrice, PricingEditor } from '../shared/PricingEditor';
 type EvaluationDecision = 'none' | 'approved' | 'rejected';
 
 /** "Not yet / Approve / Reject" — evaluating while creating, shared by
- * the New pickup request form's orders and Convert quick lead. */
+ * the New pickup request form and Convert quick lead. */
 const EVALUATE_NOW_OPTIONS: SegmentedOption<EvaluationDecision>[] = [
   { value: 'none', label: 'Not yet', icon: LuClock },
   {
@@ -30,8 +30,9 @@ const EVALUATE_NOW_OPTIONS: SegmentedOption<EvaluationDecision>[] = [
   },
 ];
 
-/** A draft order's evaluation, before it's sent. `itemPrices[i]` prices
- * the order's `items[i]` (the API takes them by position too). */
+/** A draft evaluation, before it's sent. `itemPrices[i]` prices the
+ * i-th item (every order's items, in order — the API takes them by
+ * position too). */
 type DraftEvaluation = {
   decision: EvaluationDecision;
   price: string;
@@ -83,9 +84,9 @@ type OrderEvaluationFieldsProps = {
   disabled?: boolean;
 };
 
-/** Optional "Evaluation" block for an order being created: decide it now
- * (price to approve, reason to reject) instead of using the Evaluate
- * button on the order afterwards. */
+/** Optional "Evaluation" block for a pickup request being created:
+ * decide it now (one total or a price per item to approve, a reason to
+ * reject) instead of using Evaluate on the request afterwards. */
 const OrderEvaluationFields = ({
   id,
   evaluation,
@@ -117,8 +118,8 @@ const OrderEvaluationFields = ({
         <span className="font-normal text-slate-400">(optional)</span>
       </h3>
       <p className="mt-0.5 text-xs text-slate-500">
-        Already know the outcome? Decide it now and skip the Evaluate step on
-        the order later.
+        Already know the outcome? Decide it now for the whole request and skip
+        the Evaluate step later. One total is shared across the orders.
       </p>
 
       <SegmentedControl

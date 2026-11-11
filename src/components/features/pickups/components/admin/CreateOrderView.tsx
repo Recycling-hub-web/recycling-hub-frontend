@@ -20,7 +20,6 @@ import {
   usePickupCategories,
   usePickupRequest,
 } from '../../hooks';
-import { evaluationToPayload } from '../../models/pickupRequestCreateModel';
 import type { PickupRequestItemInput } from '../../services/pickupService';
 import { hasItemErrors, validateItems } from '../../units';
 import { PickupItemsFieldArray } from '../shared/PickupItemsFieldArray';
@@ -28,12 +27,6 @@ import {
   type OrderPhoto,
   PickupPhotosUploader,
 } from '../shared/PickupPhotosUploader';
-import {
-  type DraftEvaluation,
-  EMPTY_EVALUATION,
-  OrderEvaluationFields,
-  validateEvaluation,
-} from './OrderEvaluationFields';
 
 type CreateOrderViewProps = {
   pickupRequestId: string;
@@ -75,11 +68,6 @@ const CreateOrderView = ({
   const [itemErrors, setItemErrors] = useState<Record<string, string>[]>([]);
   const [photos, setPhotos] = useState<OrderPhoto[]>([]);
   const [photoError, setPhotoError] = useState('');
-  const [evaluation, setEvaluation] =
-    useState<DraftEvaluation>(EMPTY_EVALUATION);
-  const [evaluationErrors, setEvaluationErrors] = useState<
-    Record<string, string>
-  >({});
 
   const validate = (): boolean => {
     const nextItemErrors = validateItems(items, unitsByCategory);
@@ -88,13 +76,7 @@ const CreateOrderView = ({
       ? ''
       : 'Add at least one photo of the materials.';
     setPhotoError(nextPhotoError);
-    const nextEvaluationErrors = validateEvaluation(evaluation, items.length);
-    setEvaluationErrors(nextEvaluationErrors);
-    return (
-      !hasItemErrors(nextItemErrors) &&
-      !nextPhotoError &&
-      Object.keys(nextEvaluationErrors).length === 0
-    );
+    return !hasItemErrors(nextItemErrors) && !nextPhotoError;
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -111,7 +93,6 @@ const CreateOrderView = ({
             }))
           : undefined,
         photos: photos.map((p) => p.file_key),
-        evaluation: evaluationToPayload(evaluation, items.length),
       });
       toast.success('Order created', `Order ${order.code} has been created.`);
       router.push(`${ordersBasePath}/${order.id}`);
@@ -182,18 +163,6 @@ const CreateOrderView = ({
                 error={photoError}
               />
             </div>
-            <OrderEvaluationFields
-              id="new-order"
-              evaluation={evaluation}
-              onChange={(next) => {
-                setEvaluation(next);
-                setEvaluationErrors({});
-              }}
-              items={items}
-              categoryOptions={categoryOptions}
-              errors={evaluationErrors}
-              disabled={submitting}
-            />
           </div>
 
           <FormActions className="pt-5">

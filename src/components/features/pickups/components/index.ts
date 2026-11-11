@@ -5,7 +5,6 @@ export { BulkAssignDriverModal } from './admin/BulkAssignDriverModal';
 export { CancelModal } from './admin/CancelModal';
 export { ConvertQuickLeadView } from './admin/ConvertQuickLeadView';
 export { EditOrderView } from './admin/EditOrderView';
-export { EvaluateModal } from './admin/EvaluateModal';
 export { OrderDetailsView } from './admin/OrderDetailsView';
 export { QuickLeadTable } from './admin/QuickLeadTable';
 

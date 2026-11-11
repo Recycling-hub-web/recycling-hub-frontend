@@ -5,13 +5,14 @@ import {
 import type { DraftOrder } from '../components/admin/NewOrdersFieldArray';
 import {
   type DraftEvaluation,
+  EMPTY_EVALUATION,
   validateEvaluation,
 } from '../components/admin/OrderEvaluationFields';
 import { REQUEST_TYPE_FILTER_OPTIONS } from '../constants';
 import type {
   CreateOrderPayload,
-  OrderEvaluationPayload,
   PickupRequestCreatePayload,
+  RequestEvaluationPayload,
 } from '../services/pickupService';
 import type { PickupRequestType } from '../types';
 import { hasItemErrors, type UnitsByCategory, validateItems } from '../units';
@@ -119,7 +120,6 @@ const validateStepFields = (
 type OrderErrors = {
   itemErrors: Record<string, string>[][];
   photoErrors: string[];
-  evaluationErrors: Record<string, string>[];
   valid: boolean;
 };
 
@@ -133,27 +133,43 @@ const validateOrders = (
   const photoErrors = orders.map((order) =>
     order.photos.length ? '' : 'Add at least one photo of the materials.',
   );
-  const evaluationErrors = orders.map((order) =>
-    validateEvaluation(order.evaluation, order.items.length),
-  );
   return {
     itemErrors,
     photoErrors,
-    evaluationErrors,
-    valid:
-      !itemErrors.some(hasItemErrors) &&
-      !photoErrors.some(Boolean) &&
-      !evaluationErrors.some((e) => Object.keys(e).length > 0),
+    valid: !itemErrors.some(hasItemErrors) && !photoErrors.some(Boolean),
   };
 };
 
-/** A decided evaluation as the API takes it; `undefined` (left out of
- * the body) while it's 'Not yet'. */
+/** Field errors for the request's evaluation (`price`, `note`), checked
+ * with the Orders step. Per-item pricing needs materials on every order,
+ * since the backend prices the request item by item. */
+const validateRequestEvaluation = (
+  evaluation: DraftEvaluation,
+  orders: DraftOrder[],
+): Record<string, string> => {
+  const itemCount = orders.reduce((n, o) => n + o.items.length, 0);
+  if (
+    evaluation.decision === 'approved' &&
+    evaluation.itemized &&
+    itemCount > 1 &&
+    orders.some((o) => o.items.length === 0)
+  ) {
+    return {
+      price:
+        'Every order needs its materials to price per item — or use one total.',
+    };
+  }
+  return validateEvaluation(evaluation, itemCount);
+};
+
+/** The request's evaluation as the API takes it; `undefined` (left out
+ * of the body) while it's 'Not yet' or there are no orders. */
 const evaluationToPayload = (
-  evaluation: DraftEvaluation | undefined,
-  itemCount: number,
-): OrderEvaluationPayload | undefined => {
-  if (!evaluation || evaluation.decision === 'none') return undefined;
+  evaluation: DraftEvaluation,
+  orders: DraftOrder[],
+): RequestEvaluationPayload | undefined => {
+  const itemCount = orders.reduce((n, o) => n + o.items.length, 0);
+  if (!orders.length || evaluation.decision === 'none') return undefined;
   if (evaluation.decision === 'rejected') {
     return { decision: 'rejected', note: evaluation.note.trim() };
   }
@@ -175,7 +191,6 @@ const orderToPayload = (order: DraftOrder): CreateOrderPayload => ({
     quantity_unit: item.quantity_unit?.trim() || undefined,
   })),
   photos: order.photos.map((p) => p.file_key),
-  evaluation: evaluationToPayload(order.evaluation, order.items.length),
 });
 
 /** The POST body — field for field, key for key, the single-page form's
@@ -183,6 +198,7 @@ const orderToPayload = (order: DraftOrder): CreateOrderPayload => ({
 const buildPayload = (
   data: FormState,
   orders: DraftOrder[],
+  evaluation: DraftEvaluation = EMPTY_EVALUATION,
 ): PickupRequestCreatePayload => ({
   full_name: data.full_name,
   email: data.email || undefined,
@@ -194,6 +210,7 @@ const buildPayload = (
     : undefined,
   note: data.note || undefined,
   orders: orders.length ? orders.map(orderToPayload) : undefined,
+  evaluation: evaluationToPayload(evaluation, orders),
 });
 
 /** The success toast's body, unchanged. */
@@ -217,6 +234,7 @@ export {
   successMessage,
   validateField,
   validateOrders,
+  validateRequestEvaluation,
   validateStepFields,
 };
 export type { FieldName, FormState, OrderErrors, Step, StepId };

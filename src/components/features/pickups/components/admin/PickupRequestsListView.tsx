@@ -3,12 +3,18 @@
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
-import { LuClipboardList, LuPlus, LuTruck } from 'react-icons/lu';
+import {
+  LuClipboardCheck,
+  LuClipboardList,
+  LuPlus,
+  LuTruck,
+} from 'react-icons/lu';
 
 import { SearchInput } from '../../../../form/filter/SearchInput';
 import { PageContainer } from '../../../../layout/PageContainer';
 import { StatusBadge } from '../../../../ui/badges/StatusBadge';
 import { Button } from '../../../../ui/buttons/Button';
+import { IconButton } from '../../../../ui/buttons/IconButton';
 import { AppDate } from '../../../../ui/date/AppDate';
 import { FilterToggle } from '../../../../ui/filters/FilterToggle';
 import { FilterSelect } from '../../../../ui/FilterSelect';
@@ -43,10 +49,15 @@ import {
 } from '../../types';
 import { BulkAssignDriverModal } from './BulkAssignDriverModal';
 import { QuickLeadTable } from './QuickLeadTable';
+import {
+  evaluableOrders,
+  isReevaluation,
+  RequestEvaluateModal,
+} from './RequestEvaluateModal';
 
 const SEARCH_DEBOUNCE_MS = 350;
 const PAGE_SIZE = 12;
-const columnCount = 7;
+const columnCount = 8;
 
 type Tab = 'requests' | 'quick';
 
@@ -148,6 +159,9 @@ const PickupRequestsListContent = ({
     new Set(),
   );
   const [bulkAssignOpen, setBulkAssignOpen] = useState(false);
+  // The request being evaluated from a row's Evaluate icon, if any.
+  const [evaluatingId, setEvaluatingId] = useState<string | null>(null);
+  const evaluatingRequest = requests.find((r) => r.id === evaluatingId);
 
   const assignableOrderIds = (request: (typeof requests)[number]) =>
     request.orders
@@ -271,6 +285,19 @@ const PickupRequestsListContent = ({
         </td>
         <td className="px-6 py-4 text-slate-500">
           <AppDate value={r.requested_at} format="short" />
+        </td>
+        <td
+          className="px-6 py-4 text-right"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {evaluableOrders(r.orders).length > 0 && (
+            <IconButton
+              variant="ghost"
+              icon={<LuClipboardCheck className="size-5" />}
+              title={`${isReevaluation(r.orders) ? 'Re-evaluate' : 'Evaluate'} ${r.full_name}`}
+              onClick={() => setEvaluatingId(r.id)}
+            />
+          )}
         </td>
       </tr>
     ));
@@ -404,6 +431,9 @@ const PickupRequestsListContent = ({
                   <th className="px-6 py-3 text-left font-semibold text-slate-500">
                     Requested for
                   </th>
+                  <th className="px-6 py-3 text-right font-semibold text-slate-500">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -414,6 +444,19 @@ const PickupRequestsListContent = ({
         </>
       )}
 
+      <RequestEvaluateModal
+        pickupRequestId={evaluatingRequest?.id ?? ''}
+        orders={evaluatingRequest?.orders ?? []}
+        open={Boolean(evaluatingRequest)}
+        onClose={() => setEvaluatingId(null)}
+        onEvaluated={() => {
+          toast.success(
+            'Pickup request evaluated',
+            `${evaluatingRequest?.full_name}'s orders were updated.`,
+          );
+          refetch();
+        }}
+      />
       <BulkAssignDriverModal
         orderIds={bulkOrderIds}
         open={bulkAssignOpen}

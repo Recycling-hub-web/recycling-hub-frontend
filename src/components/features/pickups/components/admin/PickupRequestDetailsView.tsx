@@ -53,7 +53,11 @@ import {
   OrderDocuments,
 } from '../shared/OrderRecordTabs';
 import { CancelPickupRequestModal } from './CancelPickupRequestModal';
-import { EvaluateModal } from './EvaluateModal';
+import {
+  evaluableOrders,
+  isReevaluation,
+  RequestEvaluateModal,
+} from './RequestEvaluateModal';
 
 type PickupRequestDetailsViewProps = {
   requestId: string;
@@ -80,8 +84,7 @@ const PickupRequestDetailsView = ({
   const { request, loading, error, refetch } = usePickupRequest(requestId);
   const toast = useToast();
   const [cancelOpen, setCancelOpen] = useState(false);
-  // The order being evaluated from the Orders tab, if any.
-  const [evaluating, setEvaluating] = useState<string | null>(null);
+  const [evaluateOpen, setEvaluateOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<
     'overview' | 'orders' | 'documents' | 'activity'
   >('overview');
@@ -147,6 +150,18 @@ const PickupRequestDetailsView = ({
             icon: LuPlus,
             onClick: () =>
               router.push(`${basePath}/${request.id}/orders/create`),
+            color: 'neutral' as const,
+          },
+        ]
+      : []),
+    // The whole request is evaluated at once — every order still open
+    // to it (see RequestEvaluateModal).
+    ...(evaluableOrders(request.orders).length
+      ? [
+          {
+            label: isReevaluation(request.orders) ? 'Re-evaluate' : 'Evaluate',
+            icon: LuClipboardCheck,
+            onClick: () => setEvaluateOpen(true),
             color: 'neutral' as const,
           },
         ]
@@ -337,9 +352,6 @@ const PickupRequestDetailsView = ({
                     <th className="px-6 py-3 text-left font-semibold text-slate-500">
                       Created
                     </th>
-                    <th className="px-6 py-3 text-right font-semibold text-slate-500">
-                      Actions
-                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -377,23 +389,6 @@ const PickupRequestDetailsView = ({
                             format="short"
                           />
                         </td>
-                        <td className="px-6 py-4 text-right">
-                          {/* Same as the order page's Evaluate: pending or
-                              scheduled orders. */}
-                          {(order.status === 'pending' ||
-                            order.status === 'scheduled') && (
-                            <Button
-                              variant="secondary"
-                              size="sm"
-                              onClick={() => setEvaluating(order.id)}
-                            >
-                              <LuClipboardCheck className="mr-1.5 size-4" />
-                              {order.evaluation_status === 'pending'
-                                ? 'Evaluate'
-                                : 'Re-evaluate'}
-                            </Button>
-                          )}
-                        </td>
                       </tr>
                     );
                   })}
@@ -408,23 +403,16 @@ const PickupRequestDetailsView = ({
         <OrderActivity orderId={request.id} requestLevel />
       )}
 
-      {(() => {
-        const order = request.orders.find((o) => o.id === evaluating);
-        return (
-          <EvaluateModal
-            requestId={order?.id ?? ''}
-            open={Boolean(order)}
-            onClose={() => setEvaluating(null)}
-            onEvaluated={() => {
-              toast.success('Order evaluated', `${order?.code} was updated.`);
-              refetch();
-            }}
-            items={order?.items ?? []}
-            isReevaluation={order?.evaluation_status !== 'pending'}
-            scheduled={order?.status === 'scheduled'}
-          />
-        );
-      })()}
+      <RequestEvaluateModal
+        pickupRequestId={request.id}
+        orders={request.orders}
+        open={evaluateOpen}
+        onClose={() => setEvaluateOpen(false)}
+        onEvaluated={() => {
+          toast.success('Pickup request evaluated', 'Its orders were updated.');
+          refetch();
+        }}
+      />
       <CancelPickupRequestModal
         pickupRequestId={request.id}
         open={cancelOpen}
