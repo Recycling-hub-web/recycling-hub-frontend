@@ -6,7 +6,10 @@ import { LuBell, LuCheckCheck } from 'react-icons/lu';
 
 import { useAuth } from '../../contexts/AuthContext';
 import { useNotifications } from '../features/notifications/hooks';
-import type { NotificationItem } from '../features/notifications/types';
+import {
+  NOTIFICATION_MODULE_LABELS,
+  type NotificationItem,
+} from '../features/notifications/types';
 import {
   notificationInboxPath,
   notificationLink,
@@ -115,6 +118,11 @@ const NotificationsButton = () => {
                   item.is_read ? '' : 'bg-brand-50/50'
                 }`}
               >
+                {item.module && (
+                  <p className="mb-1 text-xs font-medium text-brand-700">
+                    {NOTIFICATION_MODULE_LABELS[item.module] || item.module}
+                  </p>
+                )}
                 <p className="text-sm font-semibold text-slate-900">
                   {item.title}
                 </p>

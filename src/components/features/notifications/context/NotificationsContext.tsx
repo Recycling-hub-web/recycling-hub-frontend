@@ -192,7 +192,10 @@ const NotificationsProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
   // Changing accounts destroys all prior inbox state and in-flight requests.
   return (
-    <NotificationSession key={user?.id ?? 'signed-out'} enabled={!!user}>
+    <NotificationSession
+      key={user ? `${user.id}:${user.role}` : 'signed-out'}
+      enabled={!!user}
+    >
       {children}
     </NotificationSession>
   );
