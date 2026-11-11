@@ -95,6 +95,8 @@ type OptimizeRouteResult = {
  * moved off the Order itself. */
 type PickupRequestSummary = {
   id: string;
+  /** Human-readable reference, same format as an order's (e.g. "C4821"). */
+  code: string;
   request_type: PickupRequestType;
   full_name: string;
   email: string;

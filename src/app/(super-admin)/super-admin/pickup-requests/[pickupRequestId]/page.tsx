@@ -16,7 +16,6 @@ export default function SuperAdminPickupRequestDetailsPage({
     <PickupRequestDetailsView
       requestId={params.pickupRequestId}
       basePath="/super-admin/pickup-requests"
-      ordersBasePath="/super-admin/pickups"
     />
   );
 }

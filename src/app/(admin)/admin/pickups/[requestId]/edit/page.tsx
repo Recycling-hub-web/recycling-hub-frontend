@@ -1,18 +1,15 @@
-import type { Metadata } from 'next';
+import { OrderRedirect } from '../../../../../../components/features/pickups/components';
 
-import { EditOrderView } from '../../../../../../components/features/pickups/components';
-
-export const metadata: Metadata = {
-  title: 'Edit Order — Recycling Hub Admin',
-  robots: { index: false, follow: false },
-};
-
-export default function AdminEditPickupPage({
+/** Orders live on their pickup request's page — see OrderRedirect. */
+export default function AdminEditOrderPage({
   params,
 }: {
   params: { requestId: string };
 }) {
   return (
-    <EditOrderView requestId={params.requestId} basePath="/admin/pickups" />
+    <OrderRedirect
+      orderId={params.requestId}
+      requestsBasePath="/admin/pickup-requests"
+    />
   );
 }

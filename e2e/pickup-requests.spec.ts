@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 
 import { loginAs } from './helpers/auth';
 import { E_WASTE_CATEGORY_ID } from './helpers/categories';
-import { orderAction } from './helpers/orderActions';
+import { requestAction } from './helpers/orderActions';
 import {
   createRequest,
   fillCustomer,
@@ -373,7 +373,7 @@ test('full lifecycle: public submission through to the request showing fulfilled
   // 4. Evaluate the request -> approve with a price. Evaluation is per
   // pickup request, from its Actions menu.
   await page.goto(`/admin/pickup-requests/${pickupRequestId}`);
-  await orderAction(page, 'Evaluate');
+  await requestAction(page, 'Evaluate');
   const evaluate = page.getByRole('dialog');
   await evaluate.getByLabel('Total price').fill('20.00');
   await evaluate.getByRole('button', { name: 'Approve' }).click();

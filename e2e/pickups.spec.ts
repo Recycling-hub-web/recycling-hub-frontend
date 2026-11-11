@@ -92,9 +92,12 @@ test.describe('Admin orders', () => {
     const fullName = uniqueName('Schedule');
     const { orderId } = await seedOrder(page.request, fullName);
     await approveOrder(page.request, orderId);
+    // The old order link opens the order on its request's page.
     await page.goto(`/admin/pickups/${orderId}`);
+    await expect(page).toHaveURL(/\/admin\/pickup-requests\/[^?]+\?order=/);
 
-    await expect(page.getByText('Pending', { exact: true })).toBeVisible();
+    // Approved but not scheduled yet — the order card's stage badge.
+    await expect(page.getByText('Approved', { exact: true })).toBeVisible();
     await orderAction(page, 'Schedule pickup');
 
     // Schedule modal (AssignDriverModal, driver-only): submit is only
@@ -135,11 +138,10 @@ test.describe('Admin orders', () => {
     await expect(page.getByText('Collected', { exact: true })).toBeVisible();
     await expect(page.getByText(/marked as collected/i)).toBeVisible();
 
-    // Terminal state — no more actions besides viewing the request.
-    await openOrderActions(page);
-    await expect(orderActionItem(page, 'Schedule pickup')).toHaveCount(0);
-    await expect(orderActionItem(page, 'Cancel')).toHaveCount(0);
-    await page.keyboard.press('Escape');
+    // Terminal state — the order has no actions left at all.
+    await expect(
+      page.getByRole('button', { name: 'Order actions', exact: true }),
+    ).toHaveCount(0);
 
     // There's no delete action in the UI (orders are cancelled, not
     // deleted — a deliberate scope decision, unlike contact messages).
@@ -153,7 +155,7 @@ test.describe('Admin orders', () => {
     const { orderId } = await seedOrder(page.request, fullName);
     await page.goto(`/admin/pickups/${orderId}`);
 
-    await orderAction(page, 'Cancel');
+    await orderAction(page, 'Cancel order');
     const confirmCancel = page.getByRole('button', {
       name: 'Cancel pickup',
       exact: true,
@@ -174,9 +176,9 @@ test.describe('Admin orders', () => {
 
     await expect(page.getByText('Cancelled', { exact: true })).toBeVisible();
     await expect(page.getByText(/pickup cancelled/i)).toBeVisible();
-    await openOrderActions(page);
-    await expect(orderActionItem(page, 'Schedule pickup')).toHaveCount(0);
-    await page.keyboard.press('Escape');
+    await expect(
+      page.getByRole('button', { name: 'Order actions', exact: true }),
+    ).toHaveCount(0);
 
     await page.request.delete(`/api/v1/pickups/${orderId}/`);
   });
@@ -194,7 +196,7 @@ test.describe('Staff orders', () => {
 
     await openOrderActions(page);
     await expect(orderActionItem(page, 'Schedule pickup')).toBeVisible();
-    await expect(orderActionItem(page, 'Cancel')).toBeVisible();
+    await expect(orderActionItem(page, 'Cancel order')).toBeVisible();
 
     // The driver picker (GET /accounts/drivers/) must work for staff too.
     await orderActionItem(page, 'Schedule pickup').click();

@@ -1,21 +1,14 @@
-import type { Metadata } from 'next';
+import { OrderRedirect } from '../../../../../components/features/pickups/components';
 
-import { OrderDetailsView } from '../../../../../components/features/pickups/components';
-
-export const metadata: Metadata = {
-  title: 'Order — Recycling Hub Staff',
-  robots: { index: false, follow: false },
-};
-
-export default function StaffPickupRequestPage({
+/** Orders live on their pickup request's page — see OrderRedirect. */
+export default function StaffOrderPage({
   params,
 }: {
   params: { requestId: string };
 }) {
   return (
-    <OrderDetailsView
-      requestId={params.requestId}
-      basePath="/staff/pickups"
+    <OrderRedirect
+      orderId={params.requestId}
       requestsBasePath="/staff/pickup-requests"
     />
   );

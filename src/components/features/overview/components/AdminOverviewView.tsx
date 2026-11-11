@@ -66,7 +66,7 @@ const AdminOverviewView = () => {
             icon={LuTruck}
             label="Pending pickups"
             value={stats.pendingPickups}
-            href="/admin/pickups"
+            href="/admin/pickup-requests"
           />
           <OverviewStatCard
             icon={LuMail}

@@ -286,7 +286,7 @@ const ConvertQuickLeadView = ({ basePath }: ConvertQuickLeadViewProps) => {
           // manually now.
           toast.error(
             'Request created, but evaluation failed',
-            'Open the order and evaluate it from there.',
+            'Open the pickup request and evaluate it from there.',
           );
         }
       } else {
@@ -295,7 +295,10 @@ const ConvertQuickLeadView = ({ basePath }: ConvertQuickLeadViewProps) => {
           `A request for ${formData.full_name} has been added.`,
         );
       }
-      router.push(`${basePath}/${order.id}`);
+      // Orders live on their request's page — open the new one there.
+      router.push(
+        `${basePath.replace('/pickups', '/pickup-requests')}/${order.pickup_request.id}?order=${order.id}`,
+      );
     } catch {
       // useConvertQuickPickupRequest already captured the message in
       // `error`, shown below.

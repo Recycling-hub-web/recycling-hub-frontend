@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 
 import { loginAs } from './helpers/auth';
 import { E_WASTE_CATEGORY_ID, GLASS_CATEGORY_ID } from './helpers/categories';
-import { orderAction } from './helpers/orderActions';
+import { requestAction } from './helpers/orderActions';
 import { attachPhoto, E2E_PHOTO, mockStorageUploads } from './helpers/storage';
 
 /**
@@ -93,7 +93,7 @@ test('evaluator can price a multi-item order as one lump total', async ({
   const fullName = uniqueName('Lump');
   const orderId = await seedMultiItemOrder(page.request, fullName);
   await openRequestOf(page, orderId);
-  await orderAction(page, 'Evaluate');
+  await requestAction(page, 'Evaluate');
   const dialog = page.getByRole('dialog');
 
   // The bulk/per-item toggle only renders because the request has more
@@ -119,7 +119,7 @@ test('evaluator can price a multi-item order per item, live-summed into the tota
   const fullName = uniqueName('Itemized');
   const orderId = await seedMultiItemOrder(page.request, fullName);
   await openRequestOf(page, orderId);
-  await orderAction(page, 'Evaluate');
+  await requestAction(page, 'Evaluate');
   const dialog = page.getByRole('dialog');
   await dialog.getByRole('switch', { name: 'Price each item' }).click();
 

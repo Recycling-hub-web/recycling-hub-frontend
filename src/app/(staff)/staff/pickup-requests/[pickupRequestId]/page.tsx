@@ -16,7 +16,6 @@ export default function StaffPickupRequestDetailsPage({
     <PickupRequestDetailsView
       requestId={params.pickupRequestId}
       basePath="/staff/pickup-requests"
-      ordersBasePath="/staff/pickups"
     />
   );
 }

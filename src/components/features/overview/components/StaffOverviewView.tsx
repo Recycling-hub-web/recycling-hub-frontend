@@ -99,13 +99,13 @@ const StaffOverviewView = () => {
             icon={LuTruck}
             label="Pending pickups"
             value={stats.pendingPickups}
-            href="/staff/pickups"
+            href="/staff/pickup-requests"
           />
           <OverviewStatCard
             icon={LuUserRoundSearch}
             label="Uncontacted leads"
             value={loadingLeads ? null : newLeadsCount}
-            href="/staff/pickups"
+            href="/staff/pickup-requests?tab=quick"
           />
           <OverviewStatCard
             icon={LuMail}
@@ -149,7 +149,7 @@ const StaffOverviewView = () => {
                   Uncontacted leads
                 </h2>
                 <Link
-                  href="/staff/pickups"
+                  href="/staff/pickup-requests?tab=quick"
                   className="text-xs font-medium text-brand-600 hover:underline"
                 >
                   View all

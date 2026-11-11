@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 
 import { loginAs } from './helpers/auth';
 import { E_WASTE_CATEGORY_ID } from './helpers/categories';
-import { orderAction } from './helpers/orderActions';
+import { requestAction } from './helpers/orderActions';
 import { E2E_PHOTO } from './helpers/storage';
 
 /**
@@ -48,7 +48,7 @@ test('the request page evaluates every order with one shared total', async ({
   const created = await seedRequest(page.request, `E2E Whole ${Date.now()}`);
   await page.goto(`/admin/pickup-requests/${created.id}`);
 
-  await orderAction(page, 'Evaluate');
+  await requestAction(page, 'Evaluate');
   const dialog = page.getByRole('dialog');
   await expect(dialog.getByText(/2 orders/)).toBeVisible();
   await dialog.getByLabel('Total price').fill('100');
@@ -62,9 +62,19 @@ test('the request page evaluates every order with one shared total', async ({
     25, 75,
   ]);
 
-  // Order pages don't evaluate on their own any more.
+  // Orders don't evaluate on their own: an old order link opens the
+  // request with that order, whose own menu has no Evaluate.
   await page.goto(`/admin/pickups/${orders[0]!.id}`);
-  await page.getByRole('button', { name: 'Actions', exact: true }).click();
+  await expect(page).toHaveURL(
+    new RegExp(`/admin/pickup-requests/${created.id}\\?order=`),
+  );
+  await page
+    .getByRole('button', { name: 'Order actions', exact: true })
+    .first()
+    .click();
+  await expect(
+    page.getByRole('menuitem', { name: 'Schedule pickup' }),
+  ).toBeVisible();
   await expect(page.getByRole('menuitem', { name: /valuate/ })).toHaveCount(0);
 });
 
@@ -95,4 +105,29 @@ test('the list icon rejects the whole request with a reason', async ({
     'rejected',
     'rejected',
   ]);
+});
+
+test('the list shows the pickup request code, searchable', async ({ page }) => {
+  await loginAs(page, 'admin');
+  const created = await seedRequest(page.request, `E2E Code ${Date.now()}`);
+  expect(created.code).toMatch(/^C\d{4}$/);
+
+  await page.goto('/admin/pickup-requests');
+  await page
+    .getByPlaceholder(/Search/)
+    .first()
+    .fill(created.code);
+  const row = page.getByRole('row').filter({ hasText: created.code });
+  await expect(row).toHaveCount(1);
+  // The orders column is a count, not the orders' own codes.
+  await expect(row).toContainText('2 orders');
+  for (const order of created.orders as { code: string }[]) {
+    // eslint-disable-next-line no-await-in-loop
+    await expect(row).not.toContainText(order.code);
+  }
+
+  await row.click();
+  await expect(
+    page.getByRole('heading', { level: 1, name: created.code }),
+  ).toBeVisible();
 });

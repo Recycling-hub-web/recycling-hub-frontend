@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
 import {
@@ -57,7 +56,7 @@ import {
 
 const SEARCH_DEBOUNCE_MS = 350;
 const PAGE_SIZE = 12;
-const columnCount = 8;
+const columnCount = 9;
 
 type Tab = 'requests' | 'quick';
 
@@ -247,6 +246,9 @@ const PickupRequestsListContent = ({
             />
           )}
         </td>
+        <td className="whitespace-nowrap px-6 py-4 font-semibold text-neutral-950">
+          {r.code}
+        </td>
         <td className="max-w-[180px] truncate px-6 py-4 font-medium text-slate-900">
           {r.full_name}
         </td>
@@ -263,24 +265,11 @@ const PickupRequestsListContent = ({
             {PICKUP_REQUEST_STATUS_LABELS[r.status]}
           </StatusBadge>
         </td>
-        <td
-          className="max-w-[180px] px-6 py-4 text-slate-700"
-          onClick={(e) => e.stopPropagation()}
-        >
+        <td className="px-6 py-4 text-slate-700">
           {r.orders.length === 0 ? (
             <span className="text-slate-400">No orders yet</span>
           ) : (
-            <div className="flex flex-wrap gap-x-2 gap-y-1">
-              {r.orders.map((order) => (
-                <Link
-                  key={order.id}
-                  href={`${ordersBasePath}/${order.id}`}
-                  className="font-medium text-slate-900 hover:text-brand-600 hover:underline"
-                >
-                  {order.code}
-                </Link>
-              ))}
-            </div>
+            `${r.orders.length} order${r.orders.length === 1 ? '' : 's'}`
           )}
         </td>
         <td className="px-6 py-4 text-slate-500">
@@ -348,7 +337,7 @@ const PickupRequestsListContent = ({
             <SearchInput
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              placeholder="Search by name, email, or phone…"
+              placeholder="Search by code, name, email, or phone…"
               className="sm:max-w-xs"
             />
             {selectedRequestIds.size > 0 && (
@@ -412,6 +401,9 @@ const PickupRequestsListContent = ({
                         aria-label="Select all assignable requests"
                       />
                     )}
+                  </th>
+                  <th className="px-6 py-3 text-left font-semibold text-slate-500">
+                    Code
                   </th>
                   <th className="px-6 py-3 text-left font-semibold text-slate-500">
                     Name
