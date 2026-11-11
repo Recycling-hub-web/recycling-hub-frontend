@@ -3,6 +3,7 @@
 import { type FormEvent, useState } from 'react';
 
 import { InputField } from '../../../../form/fields/InputField';
+import { ValidatedForm } from '../../../../form/ValidatedForm';
 import { AlertBanner } from '../../../../ui/AlertBanner';
 import { FormActions } from '../../../../ui/buttons/FormActions';
 import { Modal } from '../../../../ui/modal/Modal';
@@ -103,7 +104,7 @@ const ConfirmScheduleModal = ({
         </FormActions>
       }
     >
-      <form
+      <ValidatedForm
         id="confirm-schedule-form"
         onSubmit={handleSubmit}
         noValidate
@@ -118,7 +119,7 @@ const ConfirmScheduleModal = ({
           errors={errors}
           updateFormData={updateFormData}
         />
-      </form>
+      </ValidatedForm>
     </Modal>
   );
 };

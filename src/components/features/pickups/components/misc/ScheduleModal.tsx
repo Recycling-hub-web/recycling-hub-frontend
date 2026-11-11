@@ -5,6 +5,7 @@ import { type FormEvent, useMemo, useState } from 'react';
 import { InputField } from '../../../../form/fields/InputField';
 import { SelectField } from '../../../../form/fields/SelectField';
 import { TextareaField } from '../../../../form/fields/TextareaField';
+import { ValidatedForm } from '../../../../form/ValidatedForm';
 import { AlertBanner } from '../../../../ui/AlertBanner';
 import { FormActions } from '../../../../ui/buttons/FormActions';
 import { Modal } from '../../../../ui/modal/Modal';
@@ -120,7 +121,7 @@ const ScheduleModal = ({
         </FormActions>
       }
     >
-      <form
+      <ValidatedForm
         id="schedule-pickup-form"
         onSubmit={handleSubmit}
         noValidate
@@ -152,7 +153,7 @@ const ScheduleModal = ({
           formData={formData}
           updateFormData={updateFormData}
         />
-      </form>
+      </ValidatedForm>
     </Modal>
   );
 };

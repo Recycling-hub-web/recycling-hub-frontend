@@ -68,9 +68,11 @@ const Modal = ({
   }, [open, onClose]);
 
   useEffect(() => {
-    document.body.style.overflow = open ? 'hidden' : '';
+    if (!open) return undefined;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
     return () => {
-      document.body.style.overflow = '';
+      document.body.style.overflow = previousOverflow;
     };
   }, [open]);
 
@@ -78,6 +80,7 @@ const Modal = ({
 
   return createPortal(
     <div
+      data-lenis-prevent
       className={`${system ? 'system-modal-backdrop' : ''} fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm transition-all duration-300 ${
         shown ? 'bg-black/40' : 'bg-black/0'
       }`}
@@ -88,7 +91,7 @@ const Modal = ({
         aria-modal="true"
         aria-label={title}
         data-shown={shown}
-        className={`${system ? 'system-modal-panel' : ''} relative w-full ${SIZE_CLASSES[size]} rounded-2xl bg-white shadow-2xl transition-all duration-300 ${
+        className={`${system ? 'system-modal-panel' : ''} relative flex w-full ${SIZE_CLASSES[size]} max-h-[90dvh] flex-col overflow-hidden rounded-2xl bg-white shadow-2xl transition-all duration-300 ${
           shown
             ? 'translate-y-0 scale-100 opacity-100'
             : 'translate-y-4 scale-95 opacity-0'
@@ -96,7 +99,7 @@ const Modal = ({
         onClick={(e) => e.stopPropagation()}
       >
         {(title || icon) && (
-          <div className="flex items-start justify-between border-b border-slate-100 px-5 py-4">
+          <div className="flex shrink-0 items-start justify-between border-b border-slate-100 px-5 py-4">
             <div className="flex min-w-0 items-center gap-2.5">
               {icon}
               <div className="min-w-0">
@@ -121,10 +124,18 @@ const Modal = ({
           </div>
         )}
 
-        <div className="px-5 py-4">{children}</div>
+        {/* The only part that scrolls — header and footer stay put, so a
+         * tall form (e.g. CollectModal with several items) never hides
+         * its own action buttons below an unreachable fold: the body's
+         * own scroll is locked while a modal is open (see the effect
+         * above), so without this the content below max-h simply had no
+         * way to reach the screen at all, not just an awkward one. */}
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-4">
+          {children}
+        </div>
 
         {footer && (
-          <div className="border-t border-slate-100 px-5 pb-5 pt-4">
+          <div className="shrink-0 border-t border-slate-100 px-5 pb-5 pt-4">
             {footer}
           </div>
         )}

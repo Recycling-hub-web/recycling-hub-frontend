@@ -33,6 +33,9 @@ const listActivityLog = ({
   objectId,
 }: ListActivityLogParams = {}): Promise<Paginated<ActivityLogEntry>> => {
   const params = new URLSearchParams({ page: String(page) });
+  if (entityType === 'financerecord' && objectId) {
+    return apiFetch(`/finance/${objectId}/activity/?${params.toString()}`);
+  }
   if (module) params.set('module', module);
   if (action) params.set('action', action);
   if (actor) params.set('actor', actor);

@@ -3,12 +3,12 @@ import { expect, test } from '@playwright/test';
 import path from 'path';
 
 import { loginAs } from './helpers/auth';
+import { mockStorageUploads, PNG } from './helpers/storage';
 
 /**
  * Driver Expense Claims (apps/claims on the backend) — petrol/fuel and
- * tool reimbursement claims submitted by drivers, reviewed (approve/
- * reject) and paid out by accounting/admin. Staff shares the same list
- * read-only (no Approve/Reject/Mark as Paid anywhere, same split as
+ * tool reimbursement claims submitted by drivers, approved and paid together with proof, or rejected by accounting/admin. Staff shares the same list
+ * read-only (no Approve & mark as paid/Reject anywhere, same split as
  * Finance Records' own accounting/admin-vs-staff-vs-driver shape,
  * except staff has no write access here at all).
  *
@@ -169,8 +169,8 @@ test('driver submits petrol and tool claims; accounting reviews, rejects, and pa
   const toolClaimId = page.url().split('/').pop() as string;
   await expect(page.getByText('Pending', { exact: true })).toBeVisible();
 
-  // 3. Accounting sees both claims, approves the petrol claim
-  // (overriding the amount), and rejects the tool claim with a reason.
+  // 3. Accounting approves and pays the petrol claim with proof and an
+  // amount override, and rejects the tool claim with a reason.
   await loginAs(page, 'qaAccounting');
   await page.goto('/accounting/claims');
   await expect(
@@ -180,10 +180,24 @@ test('driver submits petrol and tool claims; accounting reviews, rejects, and pa
   await page.goto(`/accounting/claims/${petrolClaimId}`);
   await expect(page.getByText('Pending', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Actions' }).click();
-  await page.getByRole('menuitem', { name: 'Approve' }).click();
+  await page.getByRole('menuitem', { name: 'Approve & mark as paid' }).click();
   await page.locator('[data-field="amount_approved"] input').fill('40.00');
   await page.locator('button[form="approve-reject-form"]').click();
-  await expect(page.getByText('Approved', { exact: true })).toBeVisible();
+  await expect(
+    page.getByText(
+      'Upload payment proof before approving and marking this claim as paid.',
+    ),
+  ).toBeVisible();
+  await mockStorageUploads(page);
+  await page
+    .locator('#claim-payment-proof-input')
+    .setInputFiles({ name: 'payment.png', mimeType: 'image/png', buffer: PNG });
+  await expect(page.getByText('payment.png', { exact: true })).toBeVisible();
+  await page.locator('button[form="approve-reject-form"]').click();
+  await expect(page.getByText('Paid', { exact: true })).toBeVisible();
+  await expect(
+    page.getByRole('link', { name: 'View payment proof' }),
+  ).toBeVisible();
 
   await page.goto(`/accounting/claims/${toolClaimId}`);
   await page.getByRole('button', { name: 'Actions' }).click();
@@ -198,7 +212,7 @@ test('driver submits petrol and tool claims; accounting reviews, rejects, and pa
   ).toBeVisible();
 
   // 4. Staff can see the list and both claims, but there is no
-  // Approve/Reject/Mark as Paid control visible anywhere — no action
+  // Approve & mark as paid/Reject control visible anywhere — no action
   // column in the list, and the detail page's ActionsDropdown doesn't
   // render at all for a read-only role.
   await loginAs(page, 'qaStaff');
@@ -209,19 +223,12 @@ test('driver submits petrol and tool claims; accounting reviews, rejects, and pa
   await expect(page.getByRole('button', { name: 'Actions' })).toHaveCount(0);
 
   await page.goto(`/staff/claims/${petrolClaimId}`);
-  await expect(page.getByText('Approved', { exact: true })).toBeVisible();
+  await expect(page.getByText('Paid', { exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Actions' })).toHaveCount(0);
 
   await page.goto(`/staff/claims/${toolClaimId}`);
   await expect(page.getByText('Rejected', { exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Actions' })).toHaveCount(0);
-
-  // 5. Accounting marks the approved petrol claim as paid.
-  await loginAs(page, 'qaAccounting');
-  await page.goto(`/accounting/claims/${petrolClaimId}`);
-  await page.getByRole('button', { name: 'Actions' }).click();
-  await page.getByRole('menuitem', { name: 'Mark as paid' }).click();
-  await expect(page.getByText('Paid', { exact: true })).toBeVisible();
 
   // Cleanup: free up the driver's one vehicle slot for other tests/runs.
   await loginAs(page, 'admin');

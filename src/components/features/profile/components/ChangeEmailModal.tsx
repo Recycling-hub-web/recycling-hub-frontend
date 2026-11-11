@@ -8,6 +8,7 @@ import { ApiError } from '../../../../lib/api';
 import { InputField } from '../../../form/fields/InputField';
 import { OtpInputField } from '../../../form/fields/OtpInputField';
 import { PasswordField } from '../../../form/fields/PasswordField';
+import { ValidatedForm } from '../../../form/ValidatedForm';
 import { AlertBanner } from '../../../ui/AlertBanner';
 import { Button } from '../../../ui/buttons/Button';
 import { FormActions } from '../../../ui/buttons/FormActions';
@@ -135,7 +136,7 @@ const ChangeEmailModal = ({
       icon={<LuMail className="size-5" />}
       closeOnBackdrop={!loading}
     >
-      <form onSubmit={handleSubmit} noValidate>
+      <ValidatedForm onSubmit={handleSubmit} noValidate>
         <AlertBanner message={error} />
 
         {step === 'details' ? (
@@ -197,7 +198,7 @@ const ChangeEmailModal = ({
             {step === 'code' && (loading ? 'Confirming…' : 'Change email')}
           </Button>
         </FormActions>
-      </form>
+      </ValidatedForm>
     </Modal>
   );
 };

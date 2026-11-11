@@ -9,6 +9,7 @@ import { LuArrowLeft } from 'react-icons/lu';
 import { InputField } from '../../../form/fields/InputField';
 import { SelectField } from '../../../form/fields/SelectField';
 import { TextareaField } from '../../../form/fields/TextareaField';
+import { ValidatedForm } from '../../../form/ValidatedForm';
 import { PageContainer } from '../../../layout/PageContainer';
 import { AlertBanner } from '../../../ui/AlertBanner';
 import { Button } from '../../../ui/buttons/Button';
@@ -16,10 +17,6 @@ import { FormActions } from '../../../ui/buttons/FormActions';
 import { Card } from '../../../ui/card/Card';
 import { PageHeader } from '../../../ui/PageHeader';
 import { useToast } from '../../../ui/toast/ToastContext';
-import {
-  ImageFileUploader,
-  type StoredImage,
-} from '../../storageFiles/components/ImageFileUploader';
 import { NONE_PARENT } from '../constants';
 import { useCreateCategory } from '../hooks';
 import { listCategories } from '../services/categoryService';
@@ -31,7 +28,6 @@ type FormState = {
   description: string;
   parent: string;
   allowed_quantity_units: QuantityUnit[];
-  image: StoredImage;
 };
 
 const INITIAL_STATE: FormState = {
@@ -39,7 +35,6 @@ const INITIAL_STATE: FormState = {
   description: '',
   parent: NONE_PARENT,
   allowed_quantity_units: ['kg'],
-  image: null,
 };
 
 type CreateCategoryViewProps = {
@@ -104,7 +99,6 @@ const CreateCategoryView = ({ basePath }: CreateCategoryViewProps) => {
         description: formData.description || undefined,
         parent: formData.parent === NONE_PARENT ? null : formData.parent,
         allowed_quantity_units: formData.allowed_quantity_units,
-        image: formData.image?.file_key,
       });
       toast.success('Category created', `${formData.name} has been added.`);
       router.push(`${basePath}/${category.id}`);
@@ -129,7 +123,7 @@ const CreateCategoryView = ({ basePath }: CreateCategoryViewProps) => {
       />
 
       <Card className="p-5">
-        <form onSubmit={handleSubmit}>
+        <ValidatedForm onSubmit={handleSubmit}>
           <AlertBanner message={error} />
 
           <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
@@ -170,18 +164,6 @@ const CreateCategoryView = ({ basePath }: CreateCategoryViewProps) => {
               />
             </div>
             <div className="sm:col-span-2">
-              <ImageFileUploader
-                label="Image"
-                field="image"
-                helperText="Optional — a photo of the material."
-                value={formData.image}
-                onChange={(image) =>
-                  setFormData((prev) => ({ ...prev, image }))
-                }
-                disabled={submitting}
-              />
-            </div>
-            <div className="sm:col-span-2">
               <TextareaField
                 label="Description"
                 field="description"
@@ -202,7 +184,7 @@ const CreateCategoryView = ({ basePath }: CreateCategoryViewProps) => {
               {submitting ? 'Creating…' : 'Create category'}
             </Button>
           </FormActions>
-        </form>
+        </ValidatedForm>
       </Card>
     </PageContainer>
   );

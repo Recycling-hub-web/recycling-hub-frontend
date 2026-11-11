@@ -75,7 +75,7 @@ const REQUEST_TYPE_OPTIONS = REQUEST_TYPE_FILTER_OPTIONS.filter(
 /** Which validated fields live on which step. Note has no rule. */
 const STEP_FIELDS: Record<StepId, FieldName[]> = {
   customer: ['full_name', 'request_type', 'email', 'phone_local'],
-  pickup: ['requested_at', 'pickup_address'],
+  pickup: ['pickup_address'],
   orders: [],
   review: [],
 };
@@ -93,8 +93,6 @@ const validateField = (field: FieldName, data: FormState): string => {
       return validatePhoneNumber(data.phone_dial_code, data.phone_local) ?? '';
     case 'pickup_address':
       return data.pickup_address.trim() ? '' : 'Pickup address is required.';
-    case 'requested_at':
-      return data.requested_at ? '' : 'Pickup date and time is required.';
     default:
       return '';
   }
@@ -158,7 +156,9 @@ const buildPayload = (
   phone_number: joinPhoneNumber(data.phone_dial_code, data.phone_local),
   request_type: data.request_type,
   pickup_address: data.pickup_address,
-  requested_at: new Date(data.requested_at).toISOString(),
+  requested_at: data.requested_at
+    ? new Date(data.requested_at).toISOString()
+    : undefined,
   note: data.note || undefined,
   orders: orders.length ? orders.map(orderToPayload) : undefined,
 });

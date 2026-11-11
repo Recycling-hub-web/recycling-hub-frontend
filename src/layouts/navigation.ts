@@ -41,6 +41,7 @@ type NavModuleConfig = {
  * "Pickup Requests" can't drift into "Pickups" on one side only. */
 const NAV_MODULES = {
   overview: { segment: '', label: 'Overview', icon: LuLayoutDashboard },
+  banks: { segment: 'banks', label: 'Banks', icon: LuWallet },
   users: { segment: 'users', label: 'Users', icon: LuUsers },
   staff: { segment: 'staff', label: 'Staff', icon: LuIdCard },
   administrators: {
@@ -194,7 +195,7 @@ const adminNavItemsFor = (role: UserRole | undefined): NavItem[] => [
       title: 'Operations',
       entries: ['pickupRequests', 'collectionPoints', 'vehicles'],
     },
-    { title: 'Finance', entries: ['financeMenu'] },
+    { title: 'Finance', entries: ['financeMenu', 'banks'] },
     {
       title: 'Content',
       entries: ['blogs', 'categories', 'partnerships', 'contact'],
@@ -215,14 +216,14 @@ const adminNavItemsFor = (role: UserRole | undefined): NavItem[] => [
 
 // Super Admin's own section: the Super-Admin-exclusive Administrators
 // screen plus the shared modules, mounted at /super-admin/*. Users, Staff
-// and Notifications stay on the Admin side, and there's no link into
+// stay on the Admin side, and there's no link into
 // /admin/* from here. System Settings (/super-admin/system) is hidden from
 // the menu for now — add 'system' back to show it; the page still works
 // by direct URL.
 const SUPER_ADMIN_NAV_ITEMS: NavItem[] = buildNavSections('/super-admin', [
-  { title: 'Main', entries: ['overview'] },
+  { title: 'Main', entries: ['overview', 'notifications'] },
   { title: 'Operations', entries: ['pickupRequests', 'collectionPoints'] },
-  { title: 'Finance', entries: ['financeMenu'] },
+  { title: 'Finance', entries: ['financeMenu', 'banks'] },
   {
     title: 'Content',
     entries: ['blogs', 'categories', 'partnerships', 'contact', 'storageFiles'],

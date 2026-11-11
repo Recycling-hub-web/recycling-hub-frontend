@@ -1,9 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { LuClipboardList, LuPlus } from 'react-icons/lu';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense, useEffect, useState } from 'react';
+import { LuClipboardList, LuPlus, LuTruck } from 'react-icons/lu';
 
 import { SearchInput } from '../../../../form/filter/SearchInput';
 import { PageContainer } from '../../../../layout/PageContainer';
@@ -41,11 +41,12 @@ import {
   type PickupRequestStatus,
   type PickupRequestType,
 } from '../../types';
+import { BulkAssignDriverModal } from './BulkAssignDriverModal';
 import { QuickLeadTable } from './QuickLeadTable';
 
 const SEARCH_DEBOUNCE_MS = 350;
 const PAGE_SIZE = 12;
-const columnCount = 6;
+const columnCount = 7;
 
 type Tab = 'requests' | 'quick';
 
@@ -68,10 +69,18 @@ type PickupRequestsListViewProps = {
  * only ever browsed via its parent request's own details page (its
  * nested Orders table). Admin and staff share identical permissions
  * on this module. */
-const PickupRequestsListView = ({ basePath }: PickupRequestsListViewProps) => {
+const PickupRequestsListContent = ({
+  basePath,
+}: PickupRequestsListViewProps) => {
   const router = useRouter();
   const toast = useToast();
-  const [activeTab, setActiveTab] = useState<Tab>('requests');
+  const searchParams = useSearchParams();
+  const [activeTab, setActiveTab] = useState<Tab>(
+    searchParams?.get('tab') === 'quick' ? 'quick' : 'requests',
+  );
+  useEffect(() => {
+    setActiveTab(searchParams?.get('tab') === 'quick' ? 'quick' : 'requests');
+  }, [searchParams]);
 
   // Quick leads — a customer asking to be called back. Following one up
   // creates a Pickup Request, so they're listed here. Their links (the
@@ -129,6 +138,60 @@ const PickupRequestsListView = ({ basePath }: PickupRequestsListViewProps) => {
     requestType: requestTypeFilter || undefined,
   });
 
+  // Bulk "Assign driver" — selected per request (matching this table's
+  // own grain), resolved down to each request's own eligible order ids
+  // right before submit. A request with no pending+approved order of
+  // its own just gets no checkbox; one with several still only sends
+  // the eligible ones (same rule as the single "Schedule pickup"
+  // button on an order's own details page).
+  const [selectedRequestIds, setSelectedRequestIds] = useState<Set<string>>(
+    new Set(),
+  );
+  const [bulkAssignOpen, setBulkAssignOpen] = useState(false);
+
+  const assignableOrderIds = (request: (typeof requests)[number]) =>
+    request.orders
+      .filter(
+        (o) => o.status === 'pending' && o.evaluation_status === 'approved',
+      )
+      .map((o) => o.id);
+
+  const assignableRequests = requests.filter(
+    (r) => assignableOrderIds(r).length > 0,
+  );
+  const allAssignableSelected =
+    assignableRequests.length > 0 &&
+    assignableRequests.every((r) => selectedRequestIds.has(r.id));
+
+  const toggleRequestSelected = (id: string) => {
+    setSelectedRequestIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAllAssignable = () => {
+    setSelectedRequestIds(
+      allAssignableSelected
+        ? new Set()
+        : new Set(assignableRequests.map((r) => r.id)),
+    );
+  };
+
+  const bulkOrderIds = requests
+    .filter((r) => selectedRequestIds.has(r.id))
+    .flatMap(assignableOrderIds);
+
+  const handleBulkAssigned = () => {
+    refetch();
+    setSelectedRequestIds(new Set());
+    toast.success(
+      `${selectedRequestIds.size} request${selectedRequestIds.size === 1 ? '' : 's'} assigned to a driver`,
+    );
+  };
+
   const renderRows = () => {
     if (loading) return <TableLoadingRow colSpan={columnCount} />;
     if (error)
@@ -159,6 +222,17 @@ const PickupRequestsListView = ({ basePath }: PickupRequestsListViewProps) => {
         onClick={() => router.push(`${basePath}/${r.id}`)}
         className="cursor-pointer transition-colors hover:bg-slate-50"
       >
+        <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
+          {assignableOrderIds(r).length > 0 && (
+            <input
+              type="checkbox"
+              checked={selectedRequestIds.has(r.id)}
+              onChange={() => toggleRequestSelected(r.id)}
+              className="size-4 rounded border-slate-300"
+              aria-label={`Select ${r.full_name}`}
+            />
+          )}
+        </td>
         <td className="max-w-[180px] truncate px-6 py-4 font-medium text-slate-900">
           {r.full_name}
         </td>
@@ -218,7 +292,16 @@ const PickupRequestsListView = ({ basePath }: PickupRequestsListViewProps) => {
       <Tabs
         tabs={TAB_ITEMS}
         active={activeTab}
-        onChange={setActiveTab}
+        onChange={(tab) => {
+          setActiveTab(tab);
+          const params = new URLSearchParams(searchParams?.toString());
+          if (tab === 'quick') params.set('tab', 'quick');
+          else params.delete('tab');
+          const query = params.toString();
+          router.replace(query ? `${basePath}?${query}` : basePath, {
+            scroll: false,
+          });
+        }}
         className="-mt-2 mb-4 px-0"
       />
 
@@ -241,6 +324,17 @@ const PickupRequestsListView = ({ basePath }: PickupRequestsListViewProps) => {
               placeholder="Search by name, email, or phone…"
               className="sm:max-w-xs"
             />
+            {selectedRequestIds.size > 0 && (
+              <div className="ml-auto flex items-center gap-3">
+                <span className="text-sm font-medium text-slate-700">
+                  {selectedRequestIds.size} selected
+                </span>
+                <Button size="sm" onClick={() => setBulkAssignOpen(true)}>
+                  <LuTruck className="mr-1.5 size-4" />
+                  Assign driver
+                </Button>
+              </div>
+            )}
             <FilterToggle
               activeCount={
                 [requestTypeFilter, statusFilter].filter(Boolean).length
@@ -281,6 +375,17 @@ const PickupRequestsListView = ({ basePath }: PickupRequestsListViewProps) => {
             <table className="min-w-full divide-y divide-slate-200 text-sm">
               <thead className="bg-slate-50">
                 <tr>
+                  <th className="w-10 px-6 py-3">
+                    {assignableRequests.length > 0 && (
+                      <input
+                        type="checkbox"
+                        checked={allAssignableSelected}
+                        onChange={toggleSelectAllAssignable}
+                        className="size-4 rounded border-slate-300"
+                        aria-label="Select all assignable requests"
+                      />
+                    )}
+                  </th>
                   <th className="px-6 py-3 text-left font-semibold text-slate-500">
                     Name
                   </th>
@@ -308,8 +413,21 @@ const PickupRequestsListView = ({ basePath }: PickupRequestsListViewProps) => {
           </TableWrapper>
         </>
       )}
+
+      <BulkAssignDriverModal
+        orderIds={bulkOrderIds}
+        open={bulkAssignOpen}
+        onClose={() => setBulkAssignOpen(false)}
+        onAssigned={handleBulkAssigned}
+      />
     </PageContainer>
   );
 };
+
+const PickupRequestsListView = (props: PickupRequestsListViewProps) => (
+  <Suspense fallback={<p role="status">Loading pickup requests…</p>}>
+    <PickupRequestsListContent {...props} />
+  </Suspense>
+);
 
 export { PickupRequestsListView };

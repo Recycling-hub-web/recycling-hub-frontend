@@ -18,7 +18,7 @@ import {
 
 import { useAuth } from '../../../../contexts/AuthContext';
 import { ApiError } from '../../../../lib/api';
-import { ROLE_LABELS } from '../../../../types/auth';
+import { isAdminRole, ROLE_LABELS } from '../../../../types/auth';
 import { PageContainer } from '../../../layout/PageContainer';
 import { StatusBadge } from '../../../ui/badges/StatusBadge';
 import type { DropdownItem } from '../../../ui/buttons/ActionsDropdown';
@@ -31,6 +31,7 @@ import { ConfirmModal } from '../../../ui/modal/ConfirmModal';
 import { PageHeader } from '../../../ui/PageHeader';
 import { useToast } from '../../../ui/toast/ToastContext';
 import { ActivityLog } from '../../activity/components';
+import { DriverBankDetails } from '../../drivers/DriverBankDetails';
 import {
   canManageUser,
   REGISTRATION_STATUS_BADGE_VARIANT,
@@ -214,6 +215,14 @@ const UserDetailsView = ({ userId }: { userId: string }) => {
           />
         </div>
       </Card>
+
+      {user.role === 'driver' && user.payout_details && (
+        <DriverBankDetails
+          details={user.payout_details}
+          canEdit={isAdminRole(actor?.role)}
+          onSaved={refetch}
+        />
+      )}
 
       <Card className="mt-4 p-5">
         <p className="mb-3 text-sm font-semibold text-slate-900">Activity</p>

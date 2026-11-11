@@ -91,6 +91,9 @@ const OtpInputField = ({
             }}
             type="text"
             inputMode="numeric"
+            required={required}
+            pattern="[0-9]"
+            aria-label={`${label}, digit ${i + 1}`}
             maxLength={1}
             value={digit}
             onChange={(e) => handleChange(i, e.target.value)}

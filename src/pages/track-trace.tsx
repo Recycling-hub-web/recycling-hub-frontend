@@ -6,6 +6,7 @@ import {
   LuSearch,
 } from 'react-icons/lu';
 
+import { ValidatedForm } from '../components/form/ValidatedForm';
 import { Meta } from '../components/layout/Meta';
 import { FadeIn } from '../components/ui/FadeIn';
 import { ReusableHero } from '../components/ui/hero';
@@ -115,7 +116,7 @@ const TrackTracePage: NextPageWithLayout = () => {
           </FadeIn>
 
           <FadeIn delay={0.1}>
-            <form
+            <ValidatedForm
               onSubmit={handleSubmit}
               noValidate
               className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8"
@@ -263,7 +264,7 @@ const TrackTracePage: NextPageWithLayout = () => {
                     : content.form.submitButton}
                 </button>
               </div>
-            </form>
+            </ValidatedForm>
           </FadeIn>
         </div>
       </section>

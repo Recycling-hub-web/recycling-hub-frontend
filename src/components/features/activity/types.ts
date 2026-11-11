@@ -9,7 +9,9 @@ type ActivityModule =
   | 'partnerships'
   | 'blogs'
   | 'collection_points'
-  | 'service_areas';
+  | 'service_areas'
+  | 'claims'
+  | 'system';
 
 type ActivityAction =
   | 'created'
@@ -27,7 +29,13 @@ type ActivityAction =
   | 'invited'
   | 'contacted'
   | 'converted'
-  | 'uploaded';
+  | 'uploaded'
+  | 'claimed'
+  | 'reimbursed'
+  | 'delivered'
+  | 'closed'
+  | 'paid'
+  | 'bulk_assigned_driver';
 
 /** Flat shape from GET /audit/ (AuditLogSerializer). `details` is a
  * free-form JSON object whose keys depend on `action` (e.g. `price` for
@@ -57,6 +65,8 @@ const MODULE_LABELS: Record<ActivityModule, string> = {
   blogs: 'Blogs',
   collection_points: 'Collection Points',
   service_areas: 'Service Areas',
+  claims: 'Expense Claims',
+  system: 'System',
 };
 
 const ACTION_LABELS: Record<ActivityAction, string> = {
@@ -76,6 +86,12 @@ const ACTION_LABELS: Record<ActivityAction, string> = {
   contacted: 'Contacted',
   converted: 'Converted',
   uploaded: 'Uploaded',
+  claimed: 'Payment recorded for review',
+  reimbursed: 'Driver reimbursed',
+  delivered: 'Dropped off',
+  closed: 'Delivery verified',
+  paid: 'Paid',
+  bulk_assigned_driver: 'Driver assigned to orders',
 };
 
 export { ACTION_LABELS, MODULE_LABELS };

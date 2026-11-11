@@ -22,6 +22,10 @@ type EvaluateModalProps = {
    * business requests alike — the evaluator's choice is never gated by
    * request_type. */
   items?: PickupRequestItem[];
+  /** True once this request already has a prior evaluation (approved
+   * or rejected) — only changes the title/copy, the submit behaviour
+   * is identical either way (see the docstring below). */
+  isReevaluation?: boolean;
 };
 
 type FormState = { price: string; note: string };
@@ -47,6 +51,7 @@ const EvaluateModal = ({
   onClose,
   onEvaluated,
   items = [],
+  isReevaluation = false,
 }: EvaluateModalProps) => {
   const { execute: evaluate, loading: submitting } = useEvaluatePickup();
   const [formData, setFormData] = useState<FormState>(INITIAL_STATE);
@@ -125,7 +130,11 @@ const EvaluateModal = ({
     <Modal
       open={open}
       onClose={handleClose}
-      title="Evaluate pickup request"
+      title={
+        isReevaluation
+          ? 'Re-evaluate pickup request'
+          : 'Evaluate pickup request'
+      }
       subtitle="Approve with a price, or reject with a reason."
       footer={
         <FormActions>

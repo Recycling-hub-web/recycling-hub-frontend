@@ -4,14 +4,17 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { LuBell, LuCheckCheck } from 'react-icons/lu';
 
+import { useAuth } from '../../../../contexts/AuthContext';
 import { PageContainer } from '../../../layout/PageContainer';
 import { AppDate } from '../../../ui/date/AppDate';
 import { EmptyState } from '../../../ui/empty/EmptyState';
 import { Loading } from '../../../ui/loading/Loading';
 import { PageHeader } from '../../../ui/PageHeader';
 import { TablePagination } from '../../../ui/table';
-import { useNotificationsList } from '../hooks';
+import { Tabs } from '../../../ui/tabs';
+import { useNotifications, useNotificationsList } from '../hooks';
 import type { NotificationItem } from '../types';
+import { notificationLink } from '../utils/notificationLinks';
 
 const PAGE_SIZE = 12;
 
@@ -23,6 +26,9 @@ const PAGE_SIZE = 12;
 const NotificationsView = () => {
   const router = useRouter();
   const [page, setPage] = useState(1);
+  const [filter, setFilter] = useState<'all' | 'unread'>('all');
+  const { user } = useAuth();
+  const { count: unreadCount, markingAll, pendingIds } = useNotifications();
   const {
     notifications,
     count,
@@ -31,14 +37,17 @@ const NotificationsView = () => {
     refetch,
     markRead,
     markAllRead,
-  } = useNotificationsList({ page });
+  } = useNotificationsList({
+    page,
+    unreadOnly: filter === 'unread',
+    onPageReset: setPage,
+  });
 
-  const handleClick = (item: NotificationItem) => {
-    if (!item.is_read) markRead(item.id);
-    if (item.link) router.push(item.link);
+  const handleClick = async (item: NotificationItem) => {
+    if (!item.is_read) await markRead(item.id);
+    const link = notificationLink(item, user?.role);
+    if (link) router.push(link);
   };
-
-  const hasUnread = notifications.some((item) => !item.is_read);
 
   const renderBody = () => {
     if (loading) return <Loading text="Loading notifications…" />;
@@ -60,7 +69,11 @@ const NotificationsView = () => {
       return (
         <EmptyState
           icon={<LuBell className="size-6" />}
-          title="No notifications yet"
+          title={
+            filter === 'unread'
+              ? 'No unread notifications'
+              : 'No notifications yet'
+          }
           description="You're all caught up — new activity will show up here."
         />
       );
@@ -72,6 +85,7 @@ const NotificationsView = () => {
             key={item.id}
             type="button"
             onClick={() => handleClick(item)}
+            disabled={pendingIds.has(item.id)}
             className={`block w-full rounded-xl px-4 py-3.5 text-left transition hover:bg-slate-100 ${
               item.is_read ? 'bg-slate-50' : 'bg-brand-50'
             }`}
@@ -95,19 +109,41 @@ const NotificationsView = () => {
         title="Notifications"
         subtitle="Everything that's happened that needs your attention."
         actions={
-          hasUnread ? (
+          unreadCount > 0 ? (
             <button
               type="button"
               onClick={markAllRead}
+              disabled={markingAll}
               className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50"
             >
               <LuCheckCheck className="size-4" />
-              Mark all read
+              {markingAll ? 'Saving…' : 'Mark all read'}
             </button>
           ) : undefined
         }
       />
 
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+        <Tabs
+          tabs={[
+            { key: 'all', label: 'All' },
+            { key: 'unread', label: `Unread (${unreadCount})` },
+          ]}
+          active={filter}
+          onChange={(value) => {
+            setFilter(value);
+            setPage(1);
+          }}
+        />
+        <button
+          type="button"
+          onClick={refetch}
+          disabled={loading}
+          className="text-sm font-medium text-brand-600 disabled:opacity-50"
+        >
+          Refresh
+        </button>
+      </div>
       {renderBody()}
 
       {!loading && !error && count > PAGE_SIZE && (

@@ -9,6 +9,7 @@ import { LuArrowLeft } from 'react-icons/lu';
 import { ApiError } from '../../../../../lib/api';
 import { InputField } from '../../../../form/fields/InputField';
 import { TextareaField } from '../../../../form/fields/TextareaField';
+import { ValidatedForm } from '../../../../form/ValidatedForm';
 import { PageContainer } from '../../../../layout/PageContainer';
 import { AlertBanner } from '../../../../ui/AlertBanner';
 import { Button } from '../../../../ui/buttons/Button';
@@ -153,7 +154,7 @@ const EditOrderView = ({ requestId, basePath }: EditOrderViewProps) => {
       />
 
       <Card className="p-5">
-        <form onSubmit={handleSubmit}>
+        <ValidatedForm onSubmit={handleSubmit}>
           <AlertBanner message={error} />
 
           <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
@@ -230,7 +231,7 @@ const EditOrderView = ({ requestId, basePath }: EditOrderViewProps) => {
               {submitting ? 'Saving…' : 'Save changes'}
             </Button>
           </FormActions>
-        </form>
+        </ValidatedForm>
       </Card>
     </PageContainer>
   );

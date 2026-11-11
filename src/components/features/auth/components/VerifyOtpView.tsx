@@ -11,6 +11,7 @@ import { ApiError } from '../../../../lib/api';
 import type { Dictionary } from '../../../../lib/dictionary';
 import { ROLE_HOME } from '../../../../types/auth';
 import { OtpInputField } from '../../../form/fields/OtpInputField';
+import { ValidatedForm } from '../../../form/ValidatedForm';
 import { AlertBanner } from '../../../ui/AlertBanner';
 import { Button } from '../../../ui/buttons/Button';
 import { useResendOtp, useVerifyOtp } from '../hooks';
@@ -122,7 +123,7 @@ const VerifyOtpView = ({ t }: { t: Dictionary['auth']['verifyOtp'] }) => {
         className="mb-0 mt-4 rounded-xl border px-4 py-3"
       />
 
-      <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
+      <ValidatedForm className="mt-6 space-y-4" onSubmit={handleSubmit}>
         <OtpInputField
           label={t.codeLabel}
           field="code"
@@ -143,7 +144,7 @@ const VerifyOtpView = ({ t }: { t: Dictionary['auth']['verifyOtp'] }) => {
         >
           {resendLabel()}
         </button>
-      </form>
+      </ValidatedForm>
     </AuthCard>
   );
 };

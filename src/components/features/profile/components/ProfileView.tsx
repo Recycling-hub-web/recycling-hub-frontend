@@ -29,6 +29,7 @@ import { Card } from '../../../ui/card/Card';
 import { InfoRow } from '../../../ui/InfoRow';
 import { Loading } from '../../../ui/loading/Loading';
 import { PageHeader } from '../../../ui/PageHeader';
+import { DriverBankDetails } from '../../drivers/DriverBankDetails';
 import { ChangeEmailModal } from './ChangeEmailModal';
 import { ChangePasswordModal } from './ChangePasswordModal';
 import { ProfileIdentity } from './ProfileIdentity';
@@ -62,7 +63,7 @@ const Section = ({
  * Officer/Accounting). */
 const ProfileView = () => {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   const [passwordOpen, setPasswordOpen] = useState(false);
   const [emailOpen, setEmailOpen] = useState(false);
 
@@ -206,6 +207,15 @@ const ProfileView = () => {
         open={passwordOpen}
         onClose={() => setPasswordOpen(false)}
       />
+      {user.role === 'driver' && profile?.payout_details && (
+        <DriverBankDetails
+          details={profile.payout_details}
+          canEdit
+          canManageBanks={false}
+          onSaved={refreshUser}
+        />
+      )}
+
       <ChangeEmailModal
         open={emailOpen}
         onClose={() => setEmailOpen(false)}

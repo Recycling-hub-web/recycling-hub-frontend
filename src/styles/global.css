@@ -258,7 +258,7 @@ body {
   .system-record-list tbody tr { box-shadow: 0 3px 12px rgb(23 62 40 / 4%); }
   .system-notification-dot { animation: system-quiet-pulse 2.8s ease-out 3; }
   .system-modal-backdrop { align-items: flex-end; padding: 0; }
-  .system-modal-panel { max-width: none; max-height: calc(100dvh - env(safe-area-inset-top, 0px) - 24px); overflow-y: auto; overscroll-behavior: contain; border-radius: 24px 24px 0 0; padding-bottom: env(safe-area-inset-bottom, 0px); transform-origin: bottom; transition: transform 280ms cubic-bezier(.22,1,.36,1), opacity 200ms ease; }
+  .system-modal-panel { max-width: none; max-height: calc(100dvh - env(safe-area-inset-top, 0px) - 24px); overflow: hidden; overscroll-behavior: contain; border-radius: 24px 24px 0 0; padding-bottom: env(safe-area-inset-bottom, 0px); transform-origin: bottom; transition: transform 280ms cubic-bezier(.22,1,.36,1), opacity 200ms ease; }
   .system-modal-panel::before { content: ''; display: block; width: 40px; height: 4px; margin: 10px auto 0; border-radius: 4px; background: #dce5df; }
   .system-modal-panel[data-shown="false"] { transform: translateY(100%); opacity: 0; }
   .system-modal-panel[data-shown="true"] { transform: translateY(0); opacity: 1; }

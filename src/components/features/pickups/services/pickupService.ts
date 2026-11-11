@@ -110,7 +110,7 @@ type PickupRequestUpdatePayload = Partial<{
   phone_number: string;
   pickup_address: string;
   collection_point: string;
-  requested_at: string;
+  requested_at: string | null;
   note: string;
 }>;
 
@@ -163,7 +163,7 @@ const createOrder = (
 
 type ListOrdersParams = {
   page?: number;
-  status?: PickupStatus;
+  status?: PickupStatus | PickupStatus[];
   search?: string;
   requestType?: PickupRequestType;
   evaluationStatus?: PickupEvaluationStatus;
@@ -180,7 +180,8 @@ const listOrders = ({
   dropOffPoint,
 }: ListOrdersParams = {}): Promise<Paginated<CollectionRequestListItem>> => {
   const params = new URLSearchParams({ page: String(page) });
-  if (status) params.set('status', status);
+  if (status)
+    params.set('status', Array.isArray(status) ? status.join(',') : status);
   if (search) params.set('search', search);
   if (requestType) params.set('request_type', requestType);
   if (evaluationStatus) params.set('evaluation_status', evaluationStatus);
@@ -271,6 +272,24 @@ const assignDriverToRequest = (
   payload: AssignDriverPayload,
 ): Promise<CollectionRequestDetails> =>
   apiFetch(`/pickups/${id}/assign-driver/`, { method: 'POST', json: payload });
+
+type BulkAssignDriverPayload = {
+  order_ids: string[];
+  driver: string;
+  scheduled_at?: string;
+};
+
+// The batch counterpart to assignDriverToRequest — one driver (and
+// optional shared time) applied to several pending+approved orders at
+// once, from a pickup request's own orders table. All-or-nothing: see
+// CollectionRequestViewSet.bulk_assign_driver on the backend.
+const bulkAssignDriver = (
+  payload: BulkAssignDriverPayload,
+): Promise<CollectionRequestListItem[]> =>
+  apiFetch('/pickups/bulk-assign-driver/', {
+    method: 'POST',
+    json: payload,
+  });
 
 // The driver's self-service counterpart to assignDriverToRequest —
 // claims using the logged-in driver's own profile, no body needed.
@@ -433,6 +452,11 @@ const getQuickPickupRequest = (
 
 // Purely informational — doesn't block converting later. 400 if the
 // lead was already converted.
+const cancelQuickPickupRequest = (
+  id: string,
+): Promise<PickupQuickRequestListItem> =>
+  apiFetch(`/pickups/quick/${id}/cancel/`, { method: 'POST' });
+
 const markQuickPickupRequestContacted = (
   id: string,
 ): Promise<PickupQuickRequestListItem> =>
@@ -485,8 +509,10 @@ const uploadPublicPickupPhoto = async (
 
 export {
   assignDriverToRequest,
+  bulkAssignDriver,
   cancelOrder,
   cancelPickupRequest,
+  cancelQuickPickupRequest,
   claimOrder,
   closeDelivery,
   collectPickupRequest,
@@ -513,6 +539,7 @@ export {
 };
 export type {
   AssignDriverPayload,
+  BulkAssignDriverPayload,
   CancelOrderPayload,
   CancelPickupRequestPayload,
   CollectItemInput,

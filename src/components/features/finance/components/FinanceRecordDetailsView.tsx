@@ -16,6 +16,7 @@ import {
 import { useAuth } from '../../../../contexts/AuthContext';
 import { isAdminRole } from '../../../../types/auth';
 import { PageContainer } from '../../../layout/PageContainer';
+import { AlertBanner } from '../../../ui/AlertBanner';
 import { StatusBadge } from '../../../ui/badges/StatusBadge';
 import { Button } from '../../../ui/buttons/Button';
 import { Card } from '../../../ui/card/Card';
@@ -24,9 +25,15 @@ import { InfoRow } from '../../../ui/InfoRow';
 import { Loading } from '../../../ui/loading/Loading';
 import { PageHeader } from '../../../ui/PageHeader';
 import { ActivityLog } from '../../activity/components';
+import { DriverBankDetails } from '../../drivers/DriverBankDetails';
 import { STATUS_BADGE_VARIANT } from '../constants';
+import { reimbursementBlocker } from '../eligibility';
 import { useFinanceRecord } from '../hooks';
-import { FINANCE_PAYMENT_METHOD_LABELS, FINANCE_STATUS_LABELS } from '../types';
+import {
+  DRIVER_FINANCE_STATUS_LABELS,
+  FINANCE_PAYMENT_METHOD_LABELS,
+  FINANCE_STATUS_LABELS,
+} from '../types';
 import { ReimburseModal } from './ReimburseModal';
 
 type FinanceRecordDetailsViewProps = {
@@ -73,7 +80,7 @@ const FinanceRecordDetailsView = ({
     );
   }
 
-  const canReimburse = canManage && record.status === 'claimed';
+  const canReimburse = canManage && !reimbursementBlocker(record);
 
   return (
     <PageContainer variant="form">
@@ -99,11 +106,23 @@ const FinanceRecordDetailsView = ({
       />
 
       <div className="mb-5">
-        <StatusBadge variant={STATUS_BADGE_VARIANT[record.status]}>
-          {FINANCE_STATUS_LABELS[record.status]}
+        <StatusBadge
+          variant={
+            user?.role === 'driver' &&
+            (record.status === 'claimed' || record.status === 'verified')
+              ? 'success'
+              : STATUS_BADGE_VARIANT[record.status]
+          }
+        >
+          {user?.role === 'driver'
+            ? DRIVER_FINANCE_STATUS_LABELS[record.status]
+            : FINANCE_STATUS_LABELS[record.status]}
         </StatusBadge>
       </div>
 
+      {canManage && record.driver && record.status !== 'reimbursed' && (
+        <AlertBanner message={reimbursementBlocker(record)} variant="warning" />
+      )}
       <Card className="p-5">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <InfoRow
@@ -161,28 +180,40 @@ const FinanceRecordDetailsView = ({
         {record.proof_of_payment?.public_url && (
           <div className="mt-5 border-t border-slate-100 pt-5">
             <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
-              Proof of payment (customer → driver)
+              Proof of payment (driver → customer)
             </p>
-            {/* eslint-disable-next-line @next/next/no-img-element -- remote/presigned URL, not a static asset */}
-            <img
-              src={record.proof_of_payment.public_url}
-              alt=""
-              className="size-32 rounded-xl border border-slate-200 object-cover"
-            />
+            <a
+              href={record.proof_of_payment.public_url}
+              target="_blank"
+              rel="noreferrer"
+              className="text-sm font-semibold text-brand-600 underline"
+            >
+              View payment proof
+            </a>
           </div>
         )}
       </Card>
 
+      {record.driver && (
+        <DriverBankDetails
+          details={record.driver}
+          canEdit={isAdminRole(user?.role)}
+          onSaved={refetch}
+        />
+      )}
+
       {record.status !== 'pending' && (
         <Card className="mt-4 p-5">
           <p className="mb-3 text-sm font-semibold text-slate-900">
-            Claim & reimbursement
+            {user?.role === 'driver'
+              ? 'Customer payment & reimbursement'
+              : 'Payment review & reimbursement'}
           </p>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {record.claimed_at && (
               <InfoRow
                 icon={<LuCalendar className="size-4" />}
-                label="Claimed at"
+                label="Payment recorded at"
                 value={<AppDate value={record.claimed_at} format="long" />}
               />
             )}
@@ -221,12 +252,14 @@ const FinanceRecordDetailsView = ({
               <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
                 Reimbursement proof (accounting → driver)
               </p>
-              {/* eslint-disable-next-line @next/next/no-img-element -- remote/presigned URL, not a static asset */}
-              <img
-                src={record.reimbursement_proof.public_url}
-                alt=""
-                className="size-32 rounded-xl border border-slate-200 object-cover"
-              />
+              <a
+                href={record.reimbursement_proof.public_url}
+                target="_blank"
+                rel="noreferrer"
+                className="text-sm font-semibold text-brand-600 underline"
+              >
+                View reimbursement proof
+              </a>
             </div>
           )}
         </Card>

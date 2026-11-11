@@ -18,6 +18,7 @@ import { ApiError } from '../../../../lib/api';
 import { InputField } from '../../../form/fields/InputField';
 import { PhoneInputField } from '../../../form/fields/PhoneInputField';
 import { TextareaField } from '../../../form/fields/TextareaField';
+import { ValidatedForm } from '../../../form/ValidatedForm';
 import { PublicButton } from '../../../ui/buttons/PublicButton';
 import { FadeIn } from '../../../ui/FadeIn';
 import { useToast } from '../../../ui/toast/ToastContext';
@@ -182,7 +183,11 @@ const ContactFormSection = () => {
                 {content.subheading}
               </p>
 
-              <form onSubmit={handleSubmit} noValidate className="mt-6">
+              <ValidatedForm
+                onSubmit={handleSubmit}
+                noValidate
+                className="mt-6"
+              >
                 <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
                   <InputField
                     label={content.firstName}
@@ -260,7 +265,7 @@ const ContactFormSection = () => {
                       : content.submitButton}
                   </PublicButton>
                 </div>
-              </form>
+              </ValidatedForm>
             </div>
 
             {/* Right — how to reach us, brand-green panel. Outer div is

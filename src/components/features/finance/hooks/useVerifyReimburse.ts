@@ -8,7 +8,7 @@ import { verifyAndReimburse } from '../services/financeService';
 const useVerifyReimburse = () => {
   const [loading, setLoading] = useState(false);
 
-  const execute = async (ids: string[], proof?: string) => {
+  const execute = async (ids: string[], proof: string) => {
     setLoading(true);
     try {
       return await verifyAndReimburse(ids, proof);

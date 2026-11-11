@@ -1,5 +1,5 @@
 import { Eye, EyeOff } from 'lucide-react';
-import { useState } from 'react';
+import { useId, useState } from 'react';
 
 import { getNestedValue } from '../utils';
 
@@ -24,19 +24,28 @@ const PasswordField = ({
   updateFormData,
   onBlur,
 }: PasswordFieldProps) => {
+  const inputId = useId();
   const [show, setShow] = useState(false);
   const value = (getNestedValue(formData, field) as string | undefined) ?? '';
   const error = errors?.[field];
 
   return (
     <div className="mb-4" data-field={field}>
-      <label className="block text-sm font-medium text-slate-900">
+      <label
+        htmlFor={inputId}
+        className="block text-sm font-medium text-slate-900"
+      >
         {label} {required && <span className="text-red-600">*</span>}
       </label>
 
       <div className="relative mt-2">
         <input
+          id={inputId}
+          name={field}
+          required={required}
+          aria-required={required}
           type={show ? 'text' : 'password'}
+          maxLength={4096}
           value={value}
           onChange={(e) => updateFormData(field, e.target.value)}
           onBlur={onBlur}

@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { LuWallet, LuWalletCards } from 'react-icons/lu';
 
+import { useAuth } from '../../../../contexts/AuthContext';
 import { StatusBadge } from '../../../ui/badges/StatusBadge';
 import { AppDate } from '../../../ui/date/AppDate';
 import {
@@ -13,8 +14,13 @@ import {
   TableWrapper,
 } from '../../../ui/table';
 import { STATUS_BADGE_VARIANT } from '../constants';
+import { reimbursementBlocker } from '../eligibility';
 import type { FinanceRecordListItem } from '../types';
-import { FINANCE_PAYMENT_METHOD_LABELS, FINANCE_STATUS_LABELS } from '../types';
+import {
+  DRIVER_FINANCE_STATUS_LABELS,
+  FINANCE_PAYMENT_METHOD_LABELS,
+  FINANCE_STATUS_LABELS,
+} from '../types';
 
 const PAGE_SIZE = 12;
 
@@ -40,7 +46,7 @@ type FinanceRecordTableProps = {
   onToggleSelectAll: () => void;
   /** Opens the Verify & Reimburse modal for these ids — the table
    * never calls the API directly, since the modal also collects an
-   * optional reimbursement proof. */
+   * required reimbursement proof. */
   onRequestReimburse: (ids: string[]) => void;
   /** False on the driver's own read-only view — no checkboxes or
    * per-row action, since a driver can't Verify & Reimburse anyway
@@ -71,8 +77,10 @@ const FinanceRecordTable = ({
   canManage,
 }: FinanceRecordTableProps) => {
   const router = useRouter();
+  const { user } = useAuth();
+  const isDriver = user?.role === 'driver';
   const columnCount = canManage ? 9 : 7;
-  const claimedRecords = records.filter((r) => r.status === 'claimed');
+  const claimedRecords = records.filter((r) => !reimbursementBlocker(r));
   const allClaimedSelected =
     claimedRecords.length > 0 &&
     claimedRecords.every((r) => selectedIds.has(r.id));
@@ -106,7 +114,7 @@ const FinanceRecordTable = ({
       >
         {canManage && (
           <td className="p-4" onClick={(e) => e.stopPropagation()}>
-            {r.status === 'claimed' && (
+            {!reimbursementBlocker(r) && (
               <input
                 type="checkbox"
                 checked={selectedIds.has(r.id)}
@@ -131,16 +139,32 @@ const FinanceRecordTable = ({
             : '—'}
         </td>
         <td className="px-6 py-4">
-          <StatusBadge variant={STATUS_BADGE_VARIANT[r.status]}>
-            {FINANCE_STATUS_LABELS[r.status]}
+          <StatusBadge
+            variant={
+              isDriver && (r.status === 'claimed' || r.status === 'verified')
+                ? 'success'
+                : STATUS_BADGE_VARIANT[r.status]
+            }
+          >
+            {isDriver
+              ? DRIVER_FINANCE_STATUS_LABELS[r.status]
+              : FINANCE_STATUS_LABELS[r.status]}
           </StatusBadge>
+          {canManage &&
+            r.driver &&
+            r.status !== 'reimbursed' &&
+            reimbursementBlocker(r) && (
+              <p className="mt-1 max-w-48 text-xs text-amber-700">
+                {reimbursementBlocker(r)}
+              </p>
+            )}
         </td>
         <td className="px-6 py-4 text-slate-500">
           <AppDate value={r.created_at} format="short" />
         </td>
         {canManage && (
           <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
-            {r.status === 'claimed' && (
+            {!reimbursementBlocker(r) && (
               <button
                 type="button"
                 title="Verify & Reimburse"
@@ -182,7 +206,7 @@ const FinanceRecordTable = ({
                     checked={allClaimedSelected}
                     onChange={onToggleSelectAll}
                     className="size-4 rounded border-slate-300"
-                    aria-label="Select all claimed records"
+                    aria-label="Select all records awaiting review"
                   />
                 )}
               </th>

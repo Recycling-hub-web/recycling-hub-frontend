@@ -14,7 +14,7 @@ import {
   TableWrapper,
 } from '../../../ui/table';
 import { STATUS_BADGE_VARIANT as FINANCE_STATUS_BADGE_VARIANT } from '../../finance/constants';
-import { FINANCE_STATUS_LABELS } from '../../finance/types';
+import { DRIVER_FINANCE_STATUS_LABELS } from '../../finance/types';
 import { STATUS_BADGE_VARIANT } from '../../pickups/constants';
 import { itemsSummary, PICKUP_STATUS_LABELS } from '../../pickups/types';
 import { useDriverOverviewStats, useDriverPickupVolume } from '../hooks';
@@ -68,13 +68,16 @@ const DriverOverviewView = () => {
   const financeStatusData = stats.financeStatusCounts
     ? (
         Object.keys(
-          FINANCE_STATUS_LABELS,
-        ) as (keyof typeof FINANCE_STATUS_LABELS)[]
+          DRIVER_FINANCE_STATUS_LABELS,
+        ) as (keyof typeof DRIVER_FINANCE_STATUS_LABELS)[]
       ).map((s) => ({
         key: s,
-        label: FINANCE_STATUS_LABELS[s],
+        label: DRIVER_FINANCE_STATUS_LABELS[s],
         value: stats.financeStatusCounts![s],
-        variant: FINANCE_STATUS_BADGE_VARIANT[s],
+        variant:
+          s === 'claimed' || s === 'verified'
+            ? ('success' as const)
+            : FINANCE_STATUS_BADGE_VARIANT[s],
       }))
     : [];
 

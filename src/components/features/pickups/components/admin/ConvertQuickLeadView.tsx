@@ -17,6 +17,7 @@ import { InputField } from '../../../../form/fields/InputField';
 import { PhoneInputField } from '../../../../form/fields/PhoneInputField';
 import { SelectField } from '../../../../form/fields/SelectField';
 import { TextareaField } from '../../../../form/fields/TextareaField';
+import { ValidatedForm } from '../../../../form/ValidatedForm';
 import { PageContainer } from '../../../../layout/PageContainer';
 import { AlertBanner } from '../../../../ui/AlertBanner';
 import { Button } from '../../../../ui/buttons/Button';
@@ -220,8 +221,6 @@ const ConvertQuickLeadView = ({ basePath }: ConvertQuickLeadViewProps) => {
     if (phoneError) nextErrors.phone_local = phoneError;
     if (!data.pickup_address.trim())
       nextErrors.pickup_address = 'Pickup address is required.';
-    if (!data.requested_at)
-      nextErrors.requested_at = 'Pickup date and time is required.';
     if (data.evaluation_decision === 'approved') {
       if (itemized) {
         if (!prices.every(isValidPrice)) {
@@ -260,7 +259,9 @@ const ConvertQuickLeadView = ({ basePath }: ConvertQuickLeadViewProps) => {
       ),
       request_type: formData.request_type,
       pickup_address: formData.pickup_address,
-      requested_at: new Date(formData.requested_at).toISOString(),
+      requested_at: formData.requested_at
+        ? new Date(formData.requested_at).toISOString()
+        : undefined,
       note: formData.note || undefined,
       items: items.map((item) => ({
         category: item.category,
@@ -343,6 +344,20 @@ const ConvertQuickLeadView = ({ basePath }: ConvertQuickLeadViewProps) => {
 
   if (loadingLead) return <Loading text="Loading lead…" />;
 
+  if (lead?.status === 'cancelled') {
+    return (
+      <PageContainer variant="form">
+        <AlertBanner message="This lead has been cancelled and cannot be converted." />
+        <Button
+          href={basePath.replace('/pickups', '/pickup-requests')}
+          variant="secondary"
+        >
+          Back to pickup requests
+        </Button>
+      </PageContainer>
+    );
+  }
+
   return (
     <PageContainer variant="form">
       <Link
@@ -359,7 +374,7 @@ const ConvertQuickLeadView = ({ basePath }: ConvertQuickLeadViewProps) => {
       />
 
       <Card className="p-5">
-        <form onSubmit={handleSubmit}>
+        <ValidatedForm onSubmit={handleSubmit}>
           <AlertBanner message={error} />
 
           <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
@@ -425,6 +440,7 @@ const ConvertQuickLeadView = ({ basePath }: ConvertQuickLeadViewProps) => {
               label="Pickup date & time"
               field="requested_at"
               type="datetime-local"
+              required={false}
               formData={formData}
               errors={errors}
               updateFormData={updateFormData}
@@ -553,7 +569,7 @@ const ConvertQuickLeadView = ({ basePath }: ConvertQuickLeadViewProps) => {
               {submitting ? 'Creating…' : 'Create request'}
             </Button>
           </FormActions>
-        </form>
+        </ValidatedForm>
       </Card>
     </PageContainer>
   );

@@ -119,17 +119,6 @@ const CollectionPointDetailsView = ({
             value={`${collectionPoint.address}, ${collectionPoint.city}${collectionPoint.postcode ? ` ${collectionPoint.postcode}` : ''}`}
           />
         </div>
-
-        {collectionPoint.name_ar && (
-          <div className="mt-5 border-t border-slate-100 pt-5">
-            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
-              Name (Arabic)
-            </p>
-            <p dir="rtl" className="text-sm font-semibold text-slate-800">
-              {collectionPoint.name_ar}
-            </p>
-          </div>
-        )}
       </Card>
 
       <ConfirmModal

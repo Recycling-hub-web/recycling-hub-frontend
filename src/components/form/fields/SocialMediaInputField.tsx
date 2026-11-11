@@ -164,7 +164,10 @@ const SocialMediaInputField = ({
         </div>
 
         <input
-          type="text"
+          type={platform === 'website' ? 'url' : 'text'}
+          required={required}
+          maxLength={200}
+          aria-label={label}
           value={username}
           disabled={!platform}
           onChange={(e) => handleUsernameChange(e.target.value)}

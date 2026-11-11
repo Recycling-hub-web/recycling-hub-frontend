@@ -7,8 +7,10 @@ import { useEffect, useState } from 'react';
 import { LuArrowLeft } from 'react-icons/lu';
 
 import { ApiError } from '../../../../lib/api';
+import { AddressInput } from '../../../form/fields/AddressInput';
 import { InputField } from '../../../form/fields/InputField';
 import { ToggleInput } from '../../../form/toggle/ToggleInput';
+import { ValidatedForm } from '../../../form/ValidatedForm';
 import { PageContainer } from '../../../layout/PageContainer';
 import { AlertBanner } from '../../../ui/AlertBanner';
 import { Button } from '../../../ui/buttons/Button';
@@ -21,7 +23,6 @@ import { useCollectionPoint, useUpdateCollectionPoint } from '../hooks';
 
 type FormState = {
   name: string;
-  name_ar: string;
   address: string;
   city: string;
   postcode: string;
@@ -57,7 +58,6 @@ const EditCollectionPointView = ({
     if (!collectionPoint) return;
     setFormData({
       name: collectionPoint.name,
-      name_ar: collectionPoint.name_ar,
       address: collectionPoint.address,
       city: collectionPoint.city,
       postcode: collectionPoint.postcode,
@@ -94,7 +94,6 @@ const EditCollectionPointView = ({
     try {
       await updateCollectionPoint(collectionPoint.id, {
         name: formData.name,
-        name_ar: formData.name_ar,
         address: formData.address,
         city: formData.city,
         postcode: formData.postcode,
@@ -128,7 +127,6 @@ const EditCollectionPointView = ({
   // against it directly is a safe, real dirty-check.
   const hasChanges =
     formData.name !== collectionPoint.name ||
-    formData.name_ar !== collectionPoint.name_ar ||
     formData.address !== collectionPoint.address ||
     formData.city !== collectionPoint.city ||
     formData.postcode !== collectionPoint.postcode ||
@@ -150,7 +148,7 @@ const EditCollectionPointView = ({
       />
 
       <Card className="p-5">
-        <form onSubmit={handleSubmit}>
+        <ValidatedForm onSubmit={handleSubmit}>
           <AlertBanner message={apiError} />
 
           <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
@@ -162,23 +160,26 @@ const EditCollectionPointView = ({
               updateFormData={updateFormData}
               disabled={submitting}
             />
-            <InputField
-              label="Name (Arabic)"
-              field="name_ar"
-              required={false}
-              formData={formData}
-              errors={errors}
-              updateFormData={updateFormData}
-              disabled={submitting}
-            />
             <div className="sm:col-span-2">
-              <InputField
+              <AddressInput
                 label="Address"
                 field="address"
+                countryRestrictions={['my']}
                 formData={formData}
                 errors={errors}
                 updateFormData={updateFormData}
                 disabled={submitting}
+                onSelect={(location) =>
+                  setFormData((prev) =>
+                    prev
+                      ? {
+                          ...prev,
+                          city: location.city ?? prev.city,
+                          postcode: location.postalCode ?? prev.postcode,
+                        }
+                      : prev,
+                  )
+                }
               />
             </div>
             <InputField
@@ -218,7 +219,7 @@ const EditCollectionPointView = ({
               {submitting ? 'Saving…' : 'Save changes'}
             </Button>
           </FormActions>
-        </form>
+        </ValidatedForm>
       </Card>
     </PageContainer>
   );

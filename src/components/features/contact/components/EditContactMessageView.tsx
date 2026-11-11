@@ -16,6 +16,7 @@ import { InputField } from '../../../form/fields/InputField';
 import { PhoneInputField } from '../../../form/fields/PhoneInputField';
 import { SelectField } from '../../../form/fields/SelectField';
 import { TextareaField } from '../../../form/fields/TextareaField';
+import { ValidatedForm } from '../../../form/ValidatedForm';
 import { PageContainer } from '../../../layout/PageContainer';
 import { AlertBanner } from '../../../ui/AlertBanner';
 import { Button } from '../../../ui/buttons/Button';
@@ -170,7 +171,7 @@ const EditContactMessageView = ({
       <PageHeader title="Edit message" subtitle={message.subject} />
 
       <Card className="p-5">
-        <form onSubmit={handleSubmit}>
+        <ValidatedForm onSubmit={handleSubmit}>
           <AlertBanner message={apiError} />
 
           <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
@@ -240,7 +241,7 @@ const EditContactMessageView = ({
               {submitting ? 'Saving…' : 'Save changes'}
             </Button>
           </FormActions>
-        </form>
+        </ValidatedForm>
       </Card>
     </PageContainer>
   );

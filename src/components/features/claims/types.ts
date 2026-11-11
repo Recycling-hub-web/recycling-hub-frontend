@@ -18,7 +18,7 @@ type Vehicle = {
 
 type ClaimCategory = 'petrol' | 'tool';
 
-type ClaimStatus = 'pending' | 'approved' | 'rejected' | 'paid';
+type ClaimStatus = 'pending' | 'rejected' | 'paid';
 
 /** Same shape as finance's ProofOfPayment — a StorageFileField read. */
 type ReceiptFile = { file_key: string; public_url: string | null } | null;
@@ -41,6 +41,7 @@ type ClaimListItem = {
   amount_claimed: string;
   amount_approved: string | null;
   receipt: ReceiptFile;
+  payment_proof: ReceiptFile;
   status: ClaimStatus;
   rejection_reason: string;
   reviewed_at: string | null;
@@ -57,7 +58,6 @@ const CLAIM_CATEGORY_LABELS: Record<ClaimCategory, string> = {
 
 const CLAIM_STATUS_LABELS: Record<ClaimStatus, string> = {
   pending: 'Pending',
-  approved: 'Approved',
   rejected: 'Rejected',
   paid: 'Paid',
 };

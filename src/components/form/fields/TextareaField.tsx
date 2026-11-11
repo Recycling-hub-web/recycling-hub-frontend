@@ -1,4 +1,7 @@
+import { useId } from 'react';
+
 import { fieldStateClasses, getNestedValue } from '../utils';
+import { fieldLimit } from '../validation';
 
 type TextareaFieldProps = {
   label: string;
@@ -23,15 +26,24 @@ const TextareaField = ({
   onBlur,
   disabled = false,
 }: TextareaFieldProps) => {
+  const inputId = useId();
   const value = (getNestedValue(formData, field) as string | undefined) ?? '';
 
   return (
     <div className="mb-4" data-field={field}>
-      <label className="block text-sm font-medium text-slate-900">
+      <label
+        htmlFor={inputId}
+        className="block text-sm font-medium text-slate-900"
+      >
         {label} {required && <span className="text-red-600">*</span>}
       </label>
 
       <textarea
+        id={inputId}
+        name={field}
+        required={required}
+        aria-required={required}
+        maxLength={fieldLimit(field, true)}
         value={value}
         onChange={(e) => updateFormData(field, e.target.value)}
         onBlur={onBlur}

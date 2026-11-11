@@ -1,3 +1,5 @@
+import type { DriverPayoutDetails } from '../../../types/driverPayout';
+
 type FinanceCollectionRequest = {
   id: string;
   full_name: string;
@@ -20,7 +22,7 @@ type FinanceStatus = 'pending' | 'claimed' | 'verified' | 'reimbursed';
 
 type FinancePaymentMethod = 'duitnow' | 'cash' | 'bank_transfer';
 
-type FinanceDriver = {
+type FinanceDriver = DriverPayoutDetails & {
   id: string;
   full_name: string;
   payout_method: FinancePaymentMethod | '';
@@ -55,9 +57,17 @@ type FinanceRecordListItem = {
 };
 
 const FINANCE_STATUS_LABELS: Record<FinanceStatus, string> = {
-  pending: 'Pending',
-  claimed: 'Claimed',
+  pending: 'Pending collection',
+  claimed: 'Awaiting review',
   verified: 'Verified',
+  reimbursed: 'Reimbursed',
+};
+
+// The driver has already paid the customer; review is a staff workflow.
+const DRIVER_FINANCE_STATUS_LABELS: Record<FinanceStatus, string> = {
+  pending: 'Pending payment',
+  claimed: 'Paid',
+  verified: 'Paid',
   reimbursed: 'Reimbursed',
 };
 
@@ -67,7 +77,11 @@ const FINANCE_PAYMENT_METHOD_LABELS: Record<FinancePaymentMethod, string> = {
   bank_transfer: 'Bank transfer',
 };
 
-export { FINANCE_PAYMENT_METHOD_LABELS, FINANCE_STATUS_LABELS };
+export {
+  DRIVER_FINANCE_STATUS_LABELS,
+  FINANCE_PAYMENT_METHOD_LABELS,
+  FINANCE_STATUS_LABELS,
+};
 export type {
   FinanceCollectionRequest,
   FinanceDriver,

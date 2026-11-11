@@ -91,6 +91,8 @@ const CheckSimpleBoxGroup = ({
                 >
                   <input
                     type="checkbox"
+                    name={field}
+                    required={required && selectedIds.length === 0}
                     checked={selected}
                     onChange={() => toggleSelection(option.id)}
                     className="accent-brand-600"

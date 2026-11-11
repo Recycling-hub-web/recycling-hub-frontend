@@ -3,6 +3,7 @@
 import { type FormEvent, useState } from 'react';
 
 import { TextareaField } from '../../../../form/fields/TextareaField';
+import { ValidatedForm } from '../../../../form/ValidatedForm';
 import { AlertBanner } from '../../../../ui/AlertBanner';
 import { FormActions } from '../../../../ui/buttons/FormActions';
 import { Modal } from '../../../../ui/modal/Modal';
@@ -98,7 +99,7 @@ const CancelModal = ({
         </FormActions>
       }
     >
-      <form
+      <ValidatedForm
         id="cancel-pickup-form"
         onSubmit={handleSubmit}
         noValidate
@@ -113,7 +114,7 @@ const CancelModal = ({
           errors={errors}
           updateFormData={updateFormData}
         />
-      </form>
+      </ValidatedForm>
     </Modal>
   );
 };

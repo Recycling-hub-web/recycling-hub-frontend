@@ -90,6 +90,20 @@ test('driver can open an order from the list and see its read-only details', asy
   await page.reload();
   await expect(page.getByRole('link', { name: 'Google Maps' })).toHaveCount(0);
   await expect(page.getByRole('link', { name: 'Waze' })).toHaveCount(0);
+  await page.getByRole('button', { name: /^Documents \(/ }).click();
+  await expect(
+    page.getByRole('link', { name: 'Open customer payment proof' }),
+  ).toBeVisible();
+  await page.getByRole('button', { name: 'Payment', exact: true }).click();
+  await expect(
+    page.getByRole('heading', {
+      name: 'Customer payment & driver reimbursement',
+    }),
+  ).toBeVisible();
+  await page.getByRole('button', { name: 'Activity', exact: true }).click();
+  await expect(
+    page.locator('ol').getByText('Collected', { exact: true }),
+  ).toBeVisible();
 
   await loginAs(page, 'admin');
   await page.request.delete(`/api/v1/pickups/${id}/`);

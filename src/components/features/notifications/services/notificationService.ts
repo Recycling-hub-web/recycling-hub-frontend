@@ -10,17 +10,25 @@ type Paginated<T> = {
 
 type ListNotificationsParams = {
   page?: number;
+  isRead?: boolean;
+  signal?: AbortSignal;
 };
 
 // All under /audit/notifications/ — see NotificationViewSet on the
 // backend. Every authenticated role has their own inbox (no admin-only
 // gate, unlike /audit/ itself).
-const listNotifications = ({ page = 1 }: ListNotificationsParams = {}): Promise<
-  Paginated<NotificationItem>
-> => apiFetch(`/audit/notifications/?page=${page}`);
+const listNotifications = ({
+  page = 1,
+  isRead,
+  signal,
+}: ListNotificationsParams = {}): Promise<Paginated<NotificationItem>> => {
+  const params = new URLSearchParams({ page: String(page) });
+  if (isRead !== undefined) params.set('is_read', String(isRead));
+  return apiFetch(`/audit/notifications/?${params.toString()}`, { signal });
+};
 
-const getUnreadCount = (): Promise<{ count: number }> =>
-  apiFetch('/audit/notifications/unread-count/');
+const getUnreadCount = (signal?: AbortSignal): Promise<{ count: number }> =>
+  apiFetch('/audit/notifications/unread-count/', { signal });
 
 const markNotificationRead = (id: string): Promise<NotificationItem> =>
   apiFetch(`/audit/notifications/${id}/mark-read/`, { method: 'POST' });

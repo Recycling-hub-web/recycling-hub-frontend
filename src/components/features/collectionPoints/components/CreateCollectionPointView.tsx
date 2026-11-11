@@ -6,7 +6,9 @@ import type { FormEvent } from 'react';
 import { useState } from 'react';
 import { LuArrowLeft } from 'react-icons/lu';
 
+import { AddressInput } from '../../../form/fields/AddressInput';
 import { InputField } from '../../../form/fields/InputField';
+import { ValidatedForm } from '../../../form/ValidatedForm';
 import { PageContainer } from '../../../layout/PageContainer';
 import { AlertBanner } from '../../../ui/AlertBanner';
 import { Button } from '../../../ui/buttons/Button';
@@ -18,7 +20,6 @@ import { useCreateCollectionPoint } from '../hooks';
 
 type FormState = {
   name: string;
-  name_ar: string;
   address: string;
   city: string;
   postcode: string;
@@ -26,7 +27,6 @@ type FormState = {
 
 const INITIAL_STATE: FormState = {
   name: '',
-  name_ar: '',
   address: '',
   city: '',
   postcode: '',
@@ -76,7 +76,6 @@ const CreateCollectionPointView = ({
     try {
       const collectionPoint = await createCollectionPoint({
         name: formData.name,
-        name_ar: formData.name_ar || undefined,
         address: formData.address,
         city: formData.city,
         postcode: formData.postcode || undefined,
@@ -108,7 +107,7 @@ const CreateCollectionPointView = ({
       />
 
       <Card className="p-5">
-        <form onSubmit={handleSubmit}>
+        <ValidatedForm onSubmit={handleSubmit}>
           <AlertBanner message={error} />
 
           <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
@@ -121,25 +120,23 @@ const CreateCollectionPointView = ({
               updateFormData={updateFormData}
               disabled={submitting}
             />
-            <InputField
-              label="Name (Arabic)"
-              field="name_ar"
-              required={false}
-              placeholder="Optional — a curated translation, not auto-generated"
-              formData={formData}
-              errors={errors}
-              updateFormData={updateFormData}
-              disabled={submitting}
-            />
             <div className="sm:col-span-2">
-              <InputField
+              <AddressInput
                 label="Address"
                 field="address"
-                placeholder="Street address"
+                placeholder="Search for an address, business, or landmark…"
+                countryRestrictions={['my']}
                 formData={formData}
                 errors={errors}
                 updateFormData={updateFormData}
                 disabled={submitting}
+                onSelect={(location) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    city: location.city ?? prev.city,
+                    postcode: location.postalCode ?? prev.postcode,
+                  }))
+                }
               />
             </div>
             <InputField
@@ -171,7 +168,7 @@ const CreateCollectionPointView = ({
               {submitting ? 'Creating…' : 'Create collection point'}
             </Button>
           </FormActions>
-        </form>
+        </ValidatedForm>
       </Card>
     </PageContainer>
   );

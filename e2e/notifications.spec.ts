@@ -1,7 +1,6 @@
 import { expect, test } from '@playwright/test';
 
 import { loginAs } from './helpers/auth';
-import { E_WASTE_CATEGORY_ID } from './helpers/categories';
 
 /**
  * Notifications — covers the two anonymous-create exceptions in the
@@ -30,6 +29,11 @@ test('submitting a quick lead notifies staff', async ({ page, request }) => {
   const row = page.locator('main', { hasText: 'New callback request' }).first();
   await expect(row).toBeVisible();
   await expect(page.locator('main')).toContainText(phone);
+  await page.locator('main button', { hasText: phone }).first().click();
+  await expect(page).toHaveURL(/\/staff\/pickup-requests\?tab=quick$/);
+  await expect(
+    page.getByRole('button', { name: 'Quick Leads', exact: true }),
+  ).toBeVisible();
 });
 
 test('quick lead notification bell badge clears via mark all read', async ({
@@ -62,12 +66,12 @@ test('submitting the full pickup request form notifies staff', async ({
 }) => {
   const fullName = `E2E Notif Pickup ${Date.now()}`;
 
-  const res = await request.post('/api/v1/pickups/', {
+  const res = await request.post('/api/v1/pickup-requests/', {
     data: {
       full_name: fullName,
       email: 'e2e-notif@example.com',
       phone_number: '+60123456789',
-      items: [{ category: E_WASTE_CATEGORY_ID, quantity_unit: 'kg' }],
+      photos: ['images/pickups/e2e-notification.png'],
       pickup_address: '1 Jalan Test, 50000 Kuala Lumpur',
     },
   });
@@ -84,7 +88,7 @@ test('submitting the full pickup request form notifies staff', async ({
   await expect(page.locator('main')).toContainText(fullName);
 
   await row.click();
-  await expect(page).toHaveURL(new RegExp(`/staff/pickups/${id}$`));
+  await expect(page).toHaveURL(new RegExp(`/staff/pickup-requests/${id}$`));
 });
 
 test('the notifications dropdown stays within a narrow viewport', async ({

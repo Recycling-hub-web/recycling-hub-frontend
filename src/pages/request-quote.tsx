@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router';
 import { type FormEvent, type ReactElement, useEffect, useState } from 'react';
 
+import { ValidatedForm } from '../components/form/ValidatedForm';
 import { Meta } from '../components/layout/Meta';
 import { PublicSeoSchema } from '../components/layout/PublicSeoSchema';
 import { FadeIn } from '../components/ui/FadeIn';
@@ -82,7 +83,7 @@ const RequestQuotePage: NextPageWithLayout = () => {
             <p className="mb-6 leading-relaxed text-slate-600">
               {content.help.description}
             </p>
-            <form
+            <ValidatedForm
               onSubmit={handleSubmit}
               noValidate
               className="rounded-2xl border border-slate-200 bg-neutral-50 p-6 sm:p-8"
@@ -221,7 +222,7 @@ const RequestQuotePage: NextPageWithLayout = () => {
                     : content.form.submitButton}
                 </button>
               </div>
-            </form>
+            </ValidatedForm>
           </FadeIn>
 
           <FadeIn delay={0.1}>

@@ -17,6 +17,7 @@ import { AddressInput } from '../../../../form/fields/AddressInput';
 import { InputField } from '../../../../form/fields/InputField';
 import { PhoneInputField } from '../../../../form/fields/PhoneInputField';
 import { TextareaField } from '../../../../form/fields/TextareaField';
+import { ValidatedForm } from '../../../../form/ValidatedForm';
 import { PageContainer } from '../../../../layout/PageContainer';
 import { AlertBanner } from '../../../../ui/AlertBanner';
 import { Button } from '../../../../ui/buttons/Button';
@@ -154,8 +155,6 @@ const PickupRequestEditView = ({
     if (phoneError) nextErrors.phone_local = phoneError;
     if (!data.pickup_address.trim())
       nextErrors.pickup_address = 'Pickup address is required.';
-    if (!data.requested_at)
-      nextErrors.requested_at = 'Pickup date and time is required.';
     setErrors(nextErrors);
     const orderCheck = validateOrders(orders, categories.unitsByCategory);
     setOrderItemErrors(orderCheck.itemErrors);
@@ -182,7 +181,9 @@ const PickupRequestEditView = ({
           email: formData.email.trim(),
           phone_number: phoneNumber,
           pickup_address: formData.pickup_address,
-          requested_at: new Date(formData.requested_at).toISOString(),
+          requested_at: formData.requested_at
+            ? new Date(formData.requested_at).toISOString()
+            : null,
           note: formData.note || undefined,
         });
       }
@@ -255,7 +256,7 @@ const PickupRequestEditView = ({
       <PageHeader title="Edit pickup request" subtitle={request.full_name} />
 
       <Card className="p-5">
-        <form onSubmit={handleSubmit}>
+        <ValidatedForm onSubmit={handleSubmit}>
           <AlertBanner message={error} />
 
           <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
@@ -292,6 +293,7 @@ const PickupRequestEditView = ({
               label="Pickup date & time"
               field="requested_at"
               type="datetime-local"
+              required={false}
               formData={formData}
               errors={errors}
               updateFormData={updateFormData}
@@ -362,7 +364,7 @@ const PickupRequestEditView = ({
               {submitting ? 'Saving…' : 'Save changes'}
             </Button>
           </FormActions>
-        </form>
+        </ValidatedForm>
       </Card>
     </PageContainer>
   );

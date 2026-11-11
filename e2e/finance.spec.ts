@@ -77,24 +77,35 @@ test.beforeEach(async ({ page }) => {
   await mockStorageUploads(page);
 });
 
-test('driver claims reimbursement, accounting verifies and reimburses', async ({
+test('driver payment is queued automatically and accounting reimburses', async ({
   page,
 }) => {
   await loginAs(page, 'admin');
   const fullName = uniqueName('Claim');
   await seedDriverCollectedRecord(page.request, fullName, '35.00');
 
-  // Driver sees the pending-payment banner and claims in one click.
+  // Recording customer payment automatically queues reimbursement.
   await loginAs(page, 'qaDriver');
   await page.goto('/driver/pickups');
-  await expect(page.getByText(/pending payment/i)).toBeVisible();
-  await page.getByRole('button', { name: 'Claim Reimbursement' }).click();
-  await expect(page.getByText(/reimbursement claimed/i)).toBeVisible();
+  await expect(page.getByText(/paid to customers/i)).toBeVisible();
+  await expect(
+    page.getByRole('button', { name: 'Claim Reimbursement' }),
+  ).toHaveCount(0);
 
   await page.goto('/driver/finance');
   await expect(
     page.locator('main', { hasText: fullName }).first(),
-  ).toContainText('Claimed');
+  ).toContainText('Paid');
+
+  const activityResponse = page.waitForResponse((response) =>
+    /\/api\/v1\/finance\/[^/]+\/activity\//.test(response.url()),
+  );
+  await page.locator('tr', { hasText: fullName }).click();
+  expect((await activityResponse).ok()).toBe(true);
+  await expect(
+    page.getByText('You do not have permission to perform this action.'),
+  ).toHaveCount(0);
+  await expect(page.getByText('Collected', { exact: true })).toBeVisible();
 
   // Admin verifies and reimburses — single-row action. Icon-only with
   // a tooltip, not a text button in the table; opens a modal (where
@@ -103,7 +114,7 @@ test('driver claims reimbursement, accounting verifies and reimburses', async ({
   await loginAs(page, 'admin');
   await page.goto('/admin/finance');
   const row = page.locator('tr', { hasText: fullName });
-  await expect(row).toContainText('Claimed');
+  await expect(row).toContainText('Awaiting review');
   await row
     .getByRole('button', { name: `Verify and reimburse ${fullName}` })
     .click();
@@ -125,7 +136,6 @@ test('bulk Verify & Reimburse pays back several claimed records at once', async 
   await seedDriverCollectedRecord(page.request, nameB, '18.00');
 
   await loginAs(page, 'qaDriver');
-  await page.request.post('/api/v1/finance/claim-mine/');
 
   await loginAs(page, 'admin');
   await page.goto('/admin/finance');
@@ -209,7 +219,6 @@ test('staff can reach Finance Records and verify & reimburse a claimed record', 
   await seedDriverCollectedRecord(page.request, fullName, '28.00');
 
   await loginAs(page, 'qaDriver');
-  await page.request.post('/api/v1/finance/claim-mine/');
 
   // Staff shares accounting/admin's full, writable Finance Records
   // table (IsAccountingOrAdminOrStaff on the backend) — not the
@@ -217,7 +226,7 @@ test('staff can reach Finance Records and verify & reimburse a claimed record', 
   await loginAs(page, 'qaStaff');
   await page.goto('/staff/finance');
   const row = page.locator('tr', { hasText: fullName });
-  await expect(row).toContainText('Claimed');
+  await expect(row).toContainText('Awaiting review');
   await row
     .getByRole('button', { name: `Verify and reimburse ${fullName}` })
     .click();
@@ -240,7 +249,6 @@ test('clicking a row opens its details page, which can also Verify & Reimburse',
   );
 
   await loginAs(page, 'qaDriver');
-  await page.request.post('/api/v1/finance/claim-mine/');
   const financeRes = await page.request.get('/api/v1/finance/?status=claimed');
   const financeRecord = (await financeRes.json()).results.find(
     (r: { collection_request: { id: string } }) =>
@@ -254,7 +262,9 @@ test('clicking a row opens its details page, which can also Verify & Reimburse',
     new RegExp(`/admin/finance/${financeRecord.id}`),
   );
   await expect(page.getByRole('heading', { name: fullName })).toBeVisible();
-  await expect(page.getByText('Claimed', { exact: true })).toBeVisible();
+  await expect(
+    page.getByText('Awaiting review', { exact: true }),
+  ).toBeVisible();
 
   await page.getByRole('button', { name: 'Verify & Reimburse' }).click();
   await attachPhoto(page.locator('[data-field="reimbursement_proof"]'));
