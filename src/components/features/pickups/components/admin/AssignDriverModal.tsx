@@ -2,7 +2,6 @@
 
 import { type FormEvent, useMemo, useState } from 'react';
 
-import { InputField } from '../../../../form/fields/InputField';
 import { SelectField } from '../../../../form/fields/SelectField';
 import { ValidatedForm } from '../../../../form/ValidatedForm';
 import { AlertBanner } from '../../../../ui/AlertBanner';
@@ -17,9 +16,9 @@ type AssignDriverModalProps = {
   onAssigned: () => void;
 };
 
-type FormState = { driver: string; scheduled_at: string };
+type FormState = { driver: string };
 
-const INITIAL_STATE: FormState = { driver: '', scheduled_at: '' };
+const INITIAL_STATE: FormState = { driver: '' };
 
 /** Schedule a pending, approved request by assigning it to a driver —
  * the only way to schedule a pickup from the UI (ScheduleModal's staff
@@ -48,7 +47,10 @@ const AssignDriverModal = ({
     () =>
       drivers.map((d) => ({
         value: d.id,
-        label: `${d.user.full_name} — ${d.department || d.position || d.branch}`,
+        // The work detail is optional; leave it off instead of showing "null".
+        label: [d.user.full_name, d.department || d.position || d.branch]
+          .filter(Boolean)
+          .join(' — '),
       })),
     [drivers],
   );
@@ -59,14 +61,6 @@ const AssignDriverModal = ({
   const validate = (): boolean => {
     const nextErrors: Record<string, string> = {};
     if (!formData.driver) nextErrors.driver = 'Choose a driver.';
-    // Optional. When given, it's the time agreed with the customer and
-    // counts as confirmed — the driver isn't asked to confirm it again.
-    if (
-      formData.scheduled_at &&
-      new Date(formData.scheduled_at).getTime() < Date.now()
-    ) {
-      nextErrors.scheduled_at = 'Pickup time must be in the future.';
-    }
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
   };
@@ -85,9 +79,6 @@ const AssignDriverModal = ({
     try {
       await assignDriver(requestId, {
         driver: formData.driver,
-        scheduled_at: formData.scheduled_at
-          ? new Date(formData.scheduled_at).toISOString()
-          : undefined,
       });
       onAssigned();
       handleClose();
@@ -101,7 +92,7 @@ const AssignDriverModal = ({
       open={open}
       onClose={handleClose}
       title="Schedule pickup"
-      subtitle="Assign a driver, with an optional confirmed pickup date and time."
+      subtitle="Assign a driver. The driver will confirm the pickup date and time."
       footer={
         <FormActions>
           <button
@@ -138,16 +129,6 @@ const AssignDriverModal = ({
           errors={errors}
           updateFormData={updateFormData}
           disabled={loadingDrivers}
-        />
-        <InputField
-          label="Confirmed pickup date & time"
-          field="scheduled_at"
-          type="datetime-local"
-          required={false}
-          helperText="Optional. If set, the driver won't be asked to confirm the time."
-          formData={formData}
-          errors={errors}
-          updateFormData={updateFormData}
         />
       </ValidatedForm>
     </Modal>

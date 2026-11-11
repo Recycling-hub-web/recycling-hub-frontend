@@ -60,7 +60,14 @@ const fillPickup = async (
   await expect(stepHeading(page, 'Pickup')).toBeVisible();
   await page.locator('[data-field="requested_at"] input').fill(when);
   await page.locator('[data-field="pickup_address"] input').fill(address);
-  if (note) await page.locator('[data-field="note"] textarea').fill(note);
+  if (note) {
+    const field = page.locator('[data-field="note"]');
+    if (
+      (await field.getByRole('switch').getAttribute('aria-checked')) === 'false'
+    )
+      await field.getByRole('switch').click();
+    await field.locator('textarea').fill(note);
+  }
   if (submit) await clickContinue(page);
 };
 

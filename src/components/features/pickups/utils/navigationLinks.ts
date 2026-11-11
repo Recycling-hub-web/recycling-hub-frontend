@@ -39,4 +39,26 @@ const googleMapsMultiStopUrl = (
   `&waypoints=${stops.map((s) => `${s.lat},${s.lng}`).join('|')}` +
   `&travelmode=driving`;
 
-export { googleMapsDirectionsUrl, googleMapsMultiStopUrl, wazeNavigateUrl };
+const googleMapsEmbedUrl = (
+  origin: LatLng,
+  stops: LatLng[],
+  destination: LatLng,
+): string | null => {
+  const key = process.env.NEXT_PUBLIC_GOOGLE_MAPS_EMBED_API_KEY;
+  if (!key) return null;
+  const params = new URLSearchParams({
+    key,
+    origin: `${origin.lat},${origin.lng}`,
+    destination: `${destination.lat},${destination.lng}`,
+    waypoints: stops.map((stop) => `${stop.lat},${stop.lng}`).join('|'),
+    mode: 'driving',
+  });
+  return `https://www.google.com/maps/embed/v1/directions?${params.toString()}`;
+};
+
+export {
+  googleMapsDirectionsUrl,
+  googleMapsEmbedUrl,
+  googleMapsMultiStopUrl,
+  wazeNavigateUrl,
+};

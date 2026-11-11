@@ -3,10 +3,16 @@ import {
   validatePhoneNumber,
 } from '../../../../constants/dialCodes';
 import type { DraftOrder } from '../components/admin/NewOrdersFieldArray';
+import {
+  type DraftEvaluation,
+  EMPTY_EVALUATION,
+  validateEvaluation,
+} from '../components/admin/OrderEvaluationFields';
 import { REQUEST_TYPE_FILTER_OPTIONS } from '../constants';
 import type {
   CreateOrderPayload,
   PickupRequestCreatePayload,
+  RequestEvaluationPayload,
 } from '../services/pickupService';
 import type { PickupRequestType } from '../types';
 import { hasItemErrors, type UnitsByCategory, validateItems } from '../units';
@@ -134,6 +140,48 @@ const validateOrders = (
   };
 };
 
+/** Field errors for the request's evaluation (`price`, `note`), checked
+ * with the Orders step. Per-item pricing needs materials on every order,
+ * since the backend prices the request item by item. */
+const validateRequestEvaluation = (
+  evaluation: DraftEvaluation,
+  orders: DraftOrder[],
+): Record<string, string> => {
+  const itemCount = orders.reduce((n, o) => n + o.items.length, 0);
+  if (
+    evaluation.decision === 'approved' &&
+    evaluation.itemized &&
+    itemCount > 1 &&
+    orders.some((o) => o.items.length === 0)
+  ) {
+    return {
+      price:
+        'Every order needs its materials to price per item — or use one total.',
+    };
+  }
+  return validateEvaluation(evaluation, itemCount);
+};
+
+/** The request's evaluation as the API takes it; `undefined` (left out
+ * of the body) while it's 'Not yet' or there are no orders. */
+const evaluationToPayload = (
+  evaluation: DraftEvaluation,
+  orders: DraftOrder[],
+): RequestEvaluationPayload | undefined => {
+  const itemCount = orders.reduce((n, o) => n + o.items.length, 0);
+  if (!orders.length || evaluation.decision === 'none') return undefined;
+  if (evaluation.decision === 'rejected') {
+    return { decision: 'rejected', note: evaluation.note.trim() };
+  }
+  if (evaluation.itemized && itemCount > 1) {
+    return {
+      decision: 'approved',
+      item_prices: evaluation.itemPrices.slice(0, itemCount),
+    };
+  }
+  return { decision: 'approved', price: evaluation.price };
+};
+
 /** One draft order as the API takes it — shared by the create form's
  * `orders` and the edit page's add-order calls. */
 const orderToPayload = (order: DraftOrder): CreateOrderPayload => ({
@@ -150,6 +198,7 @@ const orderToPayload = (order: DraftOrder): CreateOrderPayload => ({
 const buildPayload = (
   data: FormState,
   orders: DraftOrder[],
+  evaluation: DraftEvaluation = EMPTY_EVALUATION,
 ): PickupRequestCreatePayload => ({
   full_name: data.full_name,
   email: data.email || undefined,
@@ -161,6 +210,7 @@ const buildPayload = (
     : undefined,
   note: data.note || undefined,
   orders: orders.length ? orders.map(orderToPayload) : undefined,
+  evaluation: evaluationToPayload(evaluation, orders),
 });
 
 /** The success toast's body, unchanged. */
@@ -174,6 +224,7 @@ const requestTypeLabel = (type: PickupRequestType) =>
 
 export {
   buildPayload,
+  evaluationToPayload,
   INITIAL_STATE,
   orderToPayload,
   REQUEST_TYPE_OPTIONS,
@@ -183,6 +234,7 @@ export {
   successMessage,
   validateField,
   validateOrders,
+  validateRequestEvaluation,
   validateStepFields,
 };
 export type { FieldName, FormState, OrderErrors, Step, StepId };

@@ -2,6 +2,7 @@ import type { APIRequestContext } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 
 import { loginAs } from './helpers/auth';
+import { orderAction } from './helpers/orderActions';
 import { E2E_PHOTO } from './helpers/storage';
 
 /**
@@ -59,7 +60,7 @@ test('a time set by admin while assigning is already confirmed for the driver', 
   );
 
   await page.goto(`/admin/pickups/${orderId}`);
-  await page.getByRole('button', { name: 'Schedule pickup' }).click();
+  await orderAction(page, 'Schedule pickup');
   await page.locator('[data-field="driver"] select').selectOption(driver.id);
   const year = new Date().getFullYear() + 1;
   await page

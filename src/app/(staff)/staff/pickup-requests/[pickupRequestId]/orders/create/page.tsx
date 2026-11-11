@@ -15,7 +15,6 @@ export default function StaffCreateOrderPage({
   return (
     <CreateOrderView
       pickupRequestId={params.pickupRequestId}
-      ordersBasePath="/staff/pickups"
       requestsBasePath="/staff/pickup-requests"
     />
   );

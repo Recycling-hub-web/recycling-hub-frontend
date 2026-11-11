@@ -6,6 +6,10 @@ import type { SelectedAddress } from '../../../../lib/geoapify';
 import { useToast } from '../../../ui/toast/ToastContext';
 import type { DraftOrder } from '../components/admin/NewOrdersFieldArray';
 import {
+  type DraftEvaluation,
+  EMPTY_EVALUATION,
+} from '../components/admin/OrderEvaluationFields';
+import {
   buildPayload,
   type FieldName,
   type FormState,
@@ -15,6 +19,7 @@ import {
   successMessage,
   validateField,
   validateOrders,
+  validateRequestEvaluation,
   validateStepFields,
 } from '../models/pickupRequestCreateModel';
 import { useCreatePickupRequest } from './useCreatePickupRequest';
@@ -47,6 +52,12 @@ const usePickupRequestCreateForm = (basePath: PickupRequestBasePath) => {
     Record<string, string>[][]
   >([]);
   const [orderPhotoErrors, setOrderPhotoErrors] = useState<string[]>([]);
+  // One evaluation for the whole request (optional, needs an order).
+  const [evaluation, setEvaluation] =
+    useState<DraftEvaluation>(EMPTY_EVALUATION);
+  const [evaluationErrors, setEvaluationErrors] = useState<
+    Record<string, string>
+  >({});
   const [stepIndex, setStepIndex] = useState(0);
   /** Furthest step reached — any step up to it can be jumped to. */
   const [reached, setReached] = useState(0);
@@ -81,7 +92,11 @@ const usePickupRequestCreateForm = (basePath: PickupRequestBasePath) => {
       const result = validateOrders(orders, categories.unitsByCategory);
       setOrderItemErrors(result.itemErrors);
       setOrderPhotoErrors(result.photoErrors);
-      return result.valid;
+      const nextEvaluationErrors = orders.length
+        ? validateRequestEvaluation(evaluation, orders)
+        : {};
+      setEvaluationErrors(nextEvaluationErrors);
+      return result.valid && Object.keys(nextEvaluationErrors).length === 0;
     }
     const stepErrors = validateStepFields(id, formData);
     setErrors((prev) => ({ ...prev, ...stepErrors }));
@@ -132,7 +147,9 @@ const usePickupRequestCreateForm = (basePath: PickupRequestBasePath) => {
     }
 
     try {
-      const result = await createRequest(buildPayload(formData, orders));
+      const result = await createRequest(
+        buildPayload(formData, orders, evaluation),
+      );
       toast.success('Pickup request created', successMessage(formData, orders));
       router.push(`${basePath}/${result.id}`);
     } catch (err) {
@@ -158,6 +175,12 @@ const usePickupRequestCreateForm = (basePath: PickupRequestBasePath) => {
     setOrders,
     orderItemErrors,
     orderPhotoErrors,
+    evaluation,
+    setEvaluation: (value: DraftEvaluation) => {
+      setEvaluation(value);
+      setEvaluationErrors({});
+    },
+    evaluationErrors,
     categories,
     uploading: uploading.size > 0,
     setUploadingFor,

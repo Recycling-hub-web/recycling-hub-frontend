@@ -3,6 +3,7 @@ import { expect, test } from '@playwright/test';
 
 import { loginAs } from './helpers/auth';
 import { E_WASTE_CATEGORY_ID, GLASS_CATEGORY_ID } from './helpers/categories';
+import { requestAction } from './helpers/orderActions';
 import { attachPhoto, E2E_PHOTO, mockStorageUploads } from './helpers/storage';
 
 /**
@@ -68,6 +69,15 @@ const getDriverId = async (request: APIRequestContext): Promise<string> => {
   return driver.id;
 };
 
+const getOrder = async (page: Page, id: string) =>
+  (await page.request.get(`/api/v1/pickups/${id}/`)).json();
+
+/** Evaluation is per pickup request — open the order's request. */
+const openRequestOf = async (page: Page, orderId: string) => {
+  const order = await getOrder(page, orderId);
+  await page.goto(`/admin/pickup-requests/${order.pickup_request.id}`);
+};
+
 const deleteOrder = (page: Page, id: string) =>
   page.request.delete(`/api/v1/pickups/${id}/`);
 
@@ -82,21 +92,22 @@ test('evaluator can price a multi-item order as one lump total', async ({
   await loginAs(page, 'admin');
   const fullName = uniqueName('Lump');
   const orderId = await seedMultiItemOrder(page.request, fullName);
-
-  await page.goto(`/admin/pickups/${orderId}`);
-  await page.getByRole('button', { name: 'Evaluate' }).click();
+  await openRequestOf(page, orderId);
+  await requestAction(page, 'Evaluate');
   const dialog = page.getByRole('dialog');
 
-  // The lump/itemized toggle only renders because this Order has more
-  // than one item.
+  // The bulk/per-item toggle only renders because the request has more
+  // than one item; off = one total for the whole request.
   await expect(
     dialog.getByRole('switch', { name: 'Price each item' }),
   ).toHaveAttribute('aria-checked', 'false');
-  await page.locator('[data-field="price"] input').fill('345.00');
+  await dialog.getByLabel('Total price').fill('345.00');
   await dialog.getByRole('button', { name: 'Approve' }).click();
+  await expect(dialog).toBeHidden();
 
-  await expect(page.getByText('Approved', { exact: true })).toBeVisible();
-  await expect(page.getByText('345.00')).toBeVisible();
+  const order = await getOrder(page, orderId);
+  expect(order.evaluation_status).toBe('approved');
+  expect(Number(order.finance_record.price)).toBe(345);
 
   await deleteOrder(page, orderId);
 });
@@ -107,21 +118,22 @@ test('evaluator can price a multi-item order per item, live-summed into the tota
   await loginAs(page, 'admin');
   const fullName = uniqueName('Itemized');
   const orderId = await seedMultiItemOrder(page.request, fullName);
-
-  await page.goto(`/admin/pickups/${orderId}`);
-  await page.getByRole('button', { name: 'Evaluate' }).click();
+  await openRequestOf(page, orderId);
+  await requestAction(page, 'Evaluate');
   const dialog = page.getByRole('dialog');
   await dialog.getByRole('switch', { name: 'Price each item' }).click();
 
   // One price input per material.
-  await page.locator('[data-field="item-price-E-waste"] input').fill('300');
-  await page.locator('[data-field="item-price-Glass"] input').fill('45');
+  await dialog.getByLabel('Price for E-waste').fill('300');
+  await dialog.getByLabel('Price for Glass').fill('45');
 
-  await expect(page.getByText('RM 345.00')).toBeVisible();
+  await expect(dialog.getByText('RM 345.00')).toBeVisible();
   await dialog.getByRole('button', { name: 'Approve' }).click();
+  await expect(dialog).toBeHidden();
 
-  await expect(page.getByText('Approved', { exact: true })).toBeVisible();
-  await expect(page.getByText('345.00')).toBeVisible();
+  const order = await getOrder(page, orderId);
+  expect(order.evaluation_status).toBe('approved');
+  expect(Number(order.finance_record.price)).toBe(345);
 
   // The itemized breakdown carries through to the Finance record — no
   // search filter on this endpoint, so find it by collection_request id

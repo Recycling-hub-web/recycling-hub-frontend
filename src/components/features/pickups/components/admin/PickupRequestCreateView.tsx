@@ -27,7 +27,12 @@ import {
   requestTypeLabel,
   STEPS,
 } from '../../models/pickupRequestCreateModel';
+import type { DraftOrder } from './NewOrdersFieldArray';
 import { NewOrdersFieldArray } from './NewOrdersFieldArray';
+import {
+  type DraftEvaluation,
+  OrderEvaluationFields,
+} from './OrderEvaluationFields';
 
 type PickupRequestCreateViewProps = {
   basePath: PickupRequestBasePath;
@@ -48,6 +53,27 @@ const prefersReducedMotion = () =>
  * a step form: customer → pickup → orders (optional) → review. Same
  * public POST /pickup-requests/ and payload as before; all state and
  * rules live in usePickupRequestCreateForm and its model. */
+/** The review's evaluation line, e.g. "Approved, RM 120.50". */
+const evaluationSummary = (
+  evaluation: DraftEvaluation,
+  orders: DraftOrder[],
+) => {
+  const itemCount = orders.reduce((n, o) => n + o.items.length, 0);
+  if (evaluation.decision === 'rejected') {
+    return `Rejected — ${evaluation.note.trim()}`;
+  }
+  if (evaluation.decision !== 'approved') return 'Not yet';
+  const total =
+    evaluation.itemized && itemCount > 1
+      ? evaluation.itemPrices
+          .slice(0, itemCount)
+          .reduce((sum, p) => sum + (Number(p) || 0), 0)
+      : Number(evaluation.price) || 0;
+  return `Approved, RM ${total.toFixed(2)}${
+    evaluation.itemized && itemCount > 1 ? ' (priced per item)' : ''
+  }`;
+};
+
 const PickupRequestCreateView = ({
   basePath,
 }: PickupRequestCreateViewProps) => {
@@ -252,6 +278,17 @@ const PickupRequestCreateView = ({
                   onUploadingChange={form.setUploadingFor}
                   showIntro={false}
                 />
+                {form.orders.length > 0 && (
+                  <OrderEvaluationFields
+                    id="new-request"
+                    evaluation={form.evaluation}
+                    onChange={form.setEvaluation}
+                    items={form.orders.flatMap((order) => order.items)}
+                    categoryOptions={form.categories.options}
+                    errors={form.evaluationErrors}
+                    disabled={submitting}
+                  />
+                )}
               </div>
             )}
 
@@ -318,6 +355,13 @@ const PickupRequestCreateView = ({
                     </p>
                   )}
                 </SectionCard>
+                {form.orders.length > 0 && (
+                  <SectionCard title="Evaluation" action={editButton(2)}>
+                    <p className="text-sm text-slate-700">
+                      {evaluationSummary(form.evaluation, form.orders)}
+                    </p>
+                  </SectionCard>
+                )}
               </div>
             )}
           </div>

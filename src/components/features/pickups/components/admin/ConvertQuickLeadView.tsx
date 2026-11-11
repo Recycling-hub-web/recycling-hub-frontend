@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import type { FormEvent } from 'react';
 import { useEffect, useState } from 'react';
-import { LuArrowLeft, LuCircleCheck, LuCircleX, LuClock } from 'react-icons/lu';
+import { LuArrowLeft } from 'react-icons/lu';
 
 import {
   joinPhoneNumber,
@@ -22,7 +22,6 @@ import { PageContainer } from '../../../../layout/PageContainer';
 import { AlertBanner } from '../../../../ui/AlertBanner';
 import { Button } from '../../../../ui/buttons/Button';
 import { FormActions } from '../../../../ui/buttons/FormActions';
-import type { SegmentedOption } from '../../../../ui/buttons/SegmentedControl';
 import { SegmentedControl } from '../../../../ui/buttons/SegmentedControl';
 import { Card } from '../../../../ui/card/Card';
 import { Loading } from '../../../../ui/loading/Loading';
@@ -40,6 +39,7 @@ import type { PickupRequestItem, PickupRequestType } from '../../types';
 import { hasItemErrors, validateItems } from '../../units';
 import { PickupItemsFieldArray } from '../shared/PickupItemsFieldArray';
 import { isValidPrice, PricingEditor } from '../shared/PricingEditor';
+import { EVALUATE_NOW_OPTIONS } from './OrderEvaluationFields';
 
 const EMPTY_ITEM: PickupRequestItemInput = {
   category: '',
@@ -85,24 +85,6 @@ const INITIAL_STATE: FormState = {
 const REQUEST_TYPE_OPTIONS = REQUEST_TYPE_FILTER_OPTIONS.filter(
   (opt) => opt.value,
 );
-
-const EVALUATE_NOW_OPTIONS: SegmentedOption<
-  FormState['evaluation_decision']
->[] = [
-  { value: 'none', label: 'Not yet', icon: LuClock },
-  {
-    value: 'approved',
-    label: 'Approve',
-    icon: LuCircleCheck,
-    activeClassName: 'text-brand-600',
-  },
-  {
-    value: 'rejected',
-    label: 'Reject',
-    icon: LuCircleX,
-    activeClassName: 'text-red-600',
-  },
-];
 
 /** Pairs each form line's price with the item the backend created for
  * it. The items are bulk-created, so their response order isn't
@@ -304,7 +286,7 @@ const ConvertQuickLeadView = ({ basePath }: ConvertQuickLeadViewProps) => {
           // manually now.
           toast.error(
             'Request created, but evaluation failed',
-            'Open the order and evaluate it from there.',
+            'Open the pickup request and evaluate it from there.',
           );
         }
       } else {
@@ -313,7 +295,10 @@ const ConvertQuickLeadView = ({ basePath }: ConvertQuickLeadViewProps) => {
           `A request for ${formData.full_name} has been added.`,
         );
       }
-      router.push(`${basePath}/${order.id}`);
+      // Orders live on their request's page — open the new one there.
+      router.push(
+        `${basePath.replace('/pickups', '/pickup-requests')}/${order.pickup_request.id}?order=${order.id}`,
+      );
     } catch {
       // useConvertQuickPickupRequest already captured the message in
       // `error`, shown below.

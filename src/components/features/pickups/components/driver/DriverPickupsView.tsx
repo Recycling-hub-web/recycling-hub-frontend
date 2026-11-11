@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   LuCalendarCheck,
   LuEye,
@@ -32,9 +32,12 @@ import { WhatsAppLink } from '../../../../ui/WhatsAppLink';
 import { usePendingReimbursementSummary } from '../../../finance/hooks';
 import { STATUS_BADGE_VARIANT } from '../../constants';
 import { useClaimOrder, useOrders } from '../../hooks';
+import { listOrders } from '../../services/pickupService';
 import {
   type CollectionRequestListItem,
   itemsSummary,
+  type LatLng,
+  type OptimizeRouteResult,
   PICKUP_STATUS_LABELS,
   type PickupStatus,
 } from '../../types';
@@ -45,18 +48,16 @@ import {
 import { CollectModal } from '../shared/CollectModal';
 import { ConfirmedPickupCell } from '../shared/ConfirmedPickupCell';
 import { ConfirmScheduleModal } from './ConfirmScheduleModal';
+import { OptimizedRoutePreview } from './OptimizedRoutePreview';
 import { OptimizeRouteModal } from './OptimizeRouteModal';
 
 type Tab = 'available' | 'mine' | 'history';
 
 const HISTORY_STATUSES: PickupStatus[] = ['collected', 'delivered', 'closed'];
-const HISTORY_PAGE_SIZE = 12;
+const PAGE_SIZE = 7;
 
-// A larger batch stops being "a driver's one trip" and starts being a
-// planning problem of its own — kept small and frontend-only since
-// nothing about the backend's optimize-route call actually requires a
-// cap (see apps.pickups.services.optimize_route).
-const MAX_OPTIMIZE_STOPS = 10;
+// Match OptimizeRouteRequestSerializer: at most seven pickup stops per trip.
+const MAX_OPTIMIZE_STOPS = 7;
 
 // Once a pickup is collected (or further along: delivered/closed)
 // there's nowhere left to navigate to — matches
@@ -69,6 +70,17 @@ const DriverPickupsView = () => {
   const router = useRouter();
   const toast = useToast();
   const [activeTab, setActiveTab] = useState<Tab>('mine');
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const media = window.matchMedia('(max-width: 575.98px)');
+    const update = () => setIsMobile(media.matches);
+    update();
+    media.addEventListener('change', update);
+    return () => media.removeEventListener('change', update);
+  }, []);
+  const [minePage, setMinePage] = useState(1);
+  const [availablePage, setAvailablePage] = useState(1);
+  const selectedOrders = useRef(new Map<string, CollectionRequestListItem>());
   const [historyPage, setHistoryPage] = useState(1);
   const {
     requests: history,
@@ -76,20 +88,29 @@ const DriverPickupsView = () => {
     loading: loadingHistory,
     error: historyError,
     refetch: refetchHistory,
-  } = useOrders({ page: historyPage, status: HISTORY_STATUSES });
+  } = useOrders({
+    page: historyPage,
+    pageSize: PAGE_SIZE,
+    status: HISTORY_STATUSES,
+  });
   const {
     requests: available,
     count: availableCount,
     loading: loadingAvailable,
     error: availableError,
     refetch: refetchAvailable,
-  } = useOrders({ page: 1, status: 'pending' });
+  } = useOrders({
+    page: availablePage,
+    pageSize: PAGE_SIZE,
+    status: 'pending',
+  });
   const {
     requests: mine,
+    count: mineCount,
     loading: loadingMine,
     error: mineError,
     refetch: refetchMine,
-  } = useOrders({ page: 1, status: 'scheduled' });
+  } = useOrders({ page: minePage, pageSize: PAGE_SIZE, status: 'scheduled' });
   // A scheduled request's route can end up closed (dropped_off) or
   // unset without the request itself having moved off `scheduled` —
   // drop_off_route only transitions the specific items it was handed,
@@ -119,6 +140,24 @@ const DriverPickupsView = () => {
   // row is already this driver's own claimed, scheduled stop.
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [optimizeModalOpen, setOptimizeModalOpen] = useState(false);
+
+  const [routePreview, setRoutePreview] = useState<{
+    result: OptimizeRouteResult;
+    origin: LatLng;
+    orders: CollectionRequestListItem[];
+  } | null>(null);
+  const previewRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (isMobile && routePreview)
+      previewRef.current?.scrollIntoView({
+        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+          ? 'auto'
+          : 'smooth',
+        block: 'start',
+      });
+  }, [isMobile, routePreview]);
+  const [selectingAll, setSelectingAll] = useState(false);
+  const selectionRun = useRef(0);
   const [optimizedOrder, setOptimizedOrder] = useState<Record<string, number>>(
     {},
   );
@@ -133,7 +172,9 @@ const DriverPickupsView = () => {
     try {
       await claim(request.id);
       toast.success('Pickup claimed');
-      refetchAvailable();
+      if (available.length === 1 && availablePage > 1)
+        setAvailablePage(availablePage - 1);
+      else refetchAvailable();
       refetchMine();
     } catch {
       toast.error('Could not claim this pickup — it may already be taken.');
@@ -143,19 +184,32 @@ const DriverPickupsView = () => {
   };
 
   const handleCollected = () => {
+    selectionRun.current += 1;
+    setSelectingAll(false);
+    setRoutePreview(null);
     toast.success('Marked as collected');
-    refetchMine();
+    setSelectedIds(new Set());
+    selectedOrders.current.clear();
+    if (mine.length === 1 && minePage > 1) setMinePage(minePage - 1);
+    else refetchMine();
     refetchHistory();
     refetchPayments();
   };
 
   const handleTabChange = (tab: Tab) => {
+    selectionRun.current += 1;
+    setSelectingAll(false);
+    setRoutePreview(null);
     setActiveTab(tab);
+    selectedOrders.current.clear();
     setSelectedIds(new Set());
     setOptimizedOrder({});
   };
 
   const toggleSelect = (id: string) => {
+    setRoutePreview(null);
+    const order = mine.find((item) => item.id === id);
+    if (order) selectedOrders.current.set(id, order);
     setSelectedIds((prev) => {
       if (prev.has(id)) {
         const next = new Set(prev);
@@ -172,23 +226,60 @@ const DriverPickupsView = () => {
     });
   };
 
-  const maxSelectable = Math.min(optimizableMine.length, MAX_OPTIMIZE_STOPS);
-
+  const allPageSelected =
+    optimizableMine.length > 0 &&
+    optimizableMine.every((order) => selectedIds.has(order.id));
   const toggleSelectAll = () => {
-    setSelectedIds((prev) =>
-      prev.size > 0
-        ? new Set()
-        : new Set(
-            optimizableMine.slice(0, MAX_OPTIMIZE_STOPS).map((r) => r.id),
-          ),
+    setRoutePreview(null);
+    optimizableMine.forEach((order) =>
+      selectedOrders.current.set(order.id, order),
     );
+    setSelectedIds((previous) => {
+      const next = new Set(previous);
+      if (allPageSelected)
+        optimizableMine.forEach((order) => next.delete(order.id));
+      else
+        optimizableMine.forEach((order) => {
+          if (next.size < MAX_OPTIMIZE_STOPS) next.add(order.id);
+        });
+      return next;
+    });
   };
 
-  const handleWazeOrderChosen = (orderedRequestIds: string[]) => {
-    setOptimizedOrder(
-      Object.fromEntries(orderedRequestIds.map((id, i) => [id, i + 1])),
-    );
-    setSelectedIds(new Set());
+  const selectAllPickups = async () => {
+    selectionRun.current += 1;
+    const run = selectionRun.current;
+    setRoutePreview(null);
+    setSelectingAll(true);
+    try {
+      const eligible: CollectionRequestListItem[] = [];
+      let nextPage = 1;
+      let hasMore = true;
+      while (hasMore && eligible.length < MAX_OPTIMIZE_STOPS) {
+        // eslint-disable-next-line no-await-in-loop -- fetch another page only if eligible stops are still needed
+        const response = await listOrders({
+          page: nextPage,
+          pageSize: 200,
+          status: 'scheduled',
+        });
+        if (selectionRun.current !== run) return;
+        eligible.push(
+          ...response.results.filter((order) => order.route?.status === 'open'),
+        );
+        hasMore = Boolean(response.next);
+        nextPage += 1;
+      }
+      const chosen = eligible.slice(0, MAX_OPTIMIZE_STOPS);
+      chosen.forEach((order) => selectedOrders.current.set(order.id, order));
+      setSelectedIds(new Set(chosen.map((order) => order.id)));
+      if (!chosen.length)
+        toast.error('No pickups on your open route are available to select.');
+    } catch {
+      if (selectionRun.current === run)
+        toast.error('Could not select pickups. Please try again.');
+    } finally {
+      if (selectionRun.current === run) setSelectingAll(false);
+    }
   };
 
   // A passive count, not a push notification — every driver getting
@@ -209,24 +300,34 @@ const DriverPickupsView = () => {
   const tabs = {
     available: {
       requests: available,
+      count: availableCount,
+      page: availablePage,
+      onPageChange: setAvailablePage,
       loading: loadingAvailable,
       error: availableError,
       onRetry: refetchAvailable,
     },
     mine: {
       requests: mine,
+      count: mineCount,
+      page: minePage,
+      onPageChange: setMinePage,
       loading: loadingMine,
       error: mineError,
       onRetry: refetchMine,
     },
     history: {
       requests: history,
+      count: historyCount,
+      page: historyPage,
+      onPageChange: setHistoryPage,
       loading: loadingHistory,
       error: historyError,
       onRetry: refetchHistory,
     },
   };
-  const { requests, loading, error, onRetry } = tabs[activeTab];
+  const { requests, loading, error, onRetry, count, page, onPageChange } =
+    tabs[activeTab];
   const emptyMessages = {
     available: {
       title: 'No pickups available to claim right now',
@@ -244,7 +345,12 @@ const DriverPickupsView = () => {
     },
   };
   const columnCount = activeTab === 'available' ? 8 : 9;
-  const selectedRequests = mine.filter((r) => selectedIds.has(r.id));
+  const selectionButtonLabel = selectedIds.size
+    ? 'Clear selection'
+    : 'Select all (up to 7)';
+  const selectedRequests = Array.from(selectedIds)
+    .map((id) => selectedOrders.current.get(id))
+    .filter((order): order is CollectionRequestListItem => Boolean(order));
 
   const renderRows = () => {
     if (loading) return <TableLoadingRow colSpan={columnCount} />;
@@ -293,17 +399,24 @@ const DriverPickupsView = () => {
                 type="checkbox"
                 checked={selectedIds.has(r.id)}
                 onChange={() => toggleSelect(r.id)}
-                disabled={offRoute || atCap}
+                disabled={offRoute || atCap || selectingAll}
                 title={checkboxTitle}
                 className="size-4 rounded border-slate-300 disabled:cursor-not-allowed disabled:opacity-40"
                 aria-label={`Select pickup for ${r.pickup_request.full_name}`}
               />
             </td>
           )}
-          <td className="px-6 py-4 font-medium text-slate-900">{r.code}</td>
-          <td className="px-6 py-4 text-slate-700">{itemsSummary(r.items)}</td>
-          <td className="px-6 py-4 text-slate-500">
-            <span className="inline-flex items-center gap-1.5">
+          <td className="p-3 font-medium text-slate-900">{r.code}</td>
+          <td data-pickup-field="materials" className="p-3 text-slate-700">
+            <span
+              className="block max-w-48 truncate"
+              title={itemsSummary(r.items)}
+            >
+              {itemsSummary(r.items)}
+            </span>
+          </td>
+          <td data-pickup-field="requester" className="p-3 text-slate-500">
+            <span className="inline-flex max-w-full items-center gap-1.5">
               {optimizedOrder[r.id] ? (
                 <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-brand-100 text-xs font-semibold text-brand-700">
                   {optimizedOrder[r.id]}
@@ -311,27 +424,34 @@ const DriverPickupsView = () => {
               ) : (
                 <LuMapPin className="size-4 shrink-0" />
               )}
-              {r.pickup_request.full_name}
+              <span
+                className="block max-w-44 truncate"
+                title={r.pickup_request.full_name}
+              >
+                {r.pickup_request.full_name}
+              </span>
             </span>
           </td>
-          <td className="px-6 py-4">
+          <td data-pickup-field="contact" className="p-3">
             <WhatsAppLink phoneNumber={r.pickup_request.phone_number} />
           </td>
-          <td className="px-6 py-4 text-slate-700">{r.price ?? '—'}</td>
-          <td className="px-6 py-4 text-slate-500">
+          <td data-pickup-field="price" className="p-3 text-slate-700">
+            {r.price ?? '—'}
+          </td>
+          <td data-pickup-field="requested" className="p-3 text-slate-500">
             <AppDate value={r.pickup_request.requested_at} format="short" />
           </td>
-          <td className="px-6 py-4">
+          <td data-pickup-field="confirmed" className="p-3">
             <ConfirmedPickupCell order={r} />
           </td>
           {activeTab === 'history' && (
-            <td className="px-6 py-4">
+            <td data-pickup-field="status" className="p-3">
               <StatusBadge variant={STATUS_BADGE_VARIANT[r.status]}>
                 {PICKUP_STATUS_LABELS[r.status]}
               </StatusBadge>
             </td>
           )}
-          <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
+          <td className="p-3" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-end gap-2">
               {canNavigate && (
                 <>
@@ -434,38 +554,55 @@ const DriverPickupsView = () => {
         className="-mt-2 mb-4 px-0"
       />
 
-      {activeTab === 'mine' && selectedIds.size > 0 && (
-        <div className="mb-4 flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
+      {activeTab === 'mine' && mineCount > 0 && (
+        <div className="mb-4 flex flex-col gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3 sm:flex-row sm:items-center sm:justify-between">
           <span className="text-sm font-medium text-slate-700">
             {selectedIds.size}/{MAX_OPTIMIZE_STOPS} selected
           </span>
-          <Button
-            size="sm"
-            className="gap-1.5"
-            onClick={() => setOptimizeModalOpen(true)}
-          >
-            <LuRoute className="size-4" />
-            Optimize Route
-          </Button>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button
+              size="sm"
+              variant="secondary"
+              disabled={selectingAll || loadingMine}
+              onClick={() => {
+                if (selectedIds.size) {
+                  setRoutePreview(null);
+                  setSelectedIds(new Set());
+                  selectedOrders.current.clear();
+                } else selectAllPickups();
+              }}
+            >
+              {selectingAll ? 'Selecting…' : selectionButtonLabel}
+            </Button>
+            <Button
+              size="sm"
+              className="gap-1.5"
+              disabled={!selectedIds.size || selectingAll}
+              onClick={() => {
+                setOptimizeModalOpen(true);
+              }}
+            >
+              <LuRoute className="size-4" />
+              Optimize Route
+            </Button>
+          </div>
         </div>
       )}
 
       <TableWrapper
         footer={
-          activeTab === 'history' ? (
-            <TablePagination
-              currentPage={historyPage}
-              onPageChange={setHistoryPage}
-              itemsPerPage={HISTORY_PAGE_SIZE}
-              itemCount={history.length}
-              totalCount={historyCount}
-              itemLabel="orders"
-              loading={loadingHistory}
-            />
-          ) : undefined
+          <TablePagination
+            currentPage={page}
+            onPageChange={onPageChange}
+            itemsPerPage={PAGE_SIZE}
+            itemCount={requests.length}
+            totalCount={count}
+            itemLabel="orders"
+            loading={loading}
+          />
         }
       >
-        <table className="min-w-full divide-y divide-slate-200 text-sm">
+        <table className="driver-pickups-table min-w-full divide-y divide-slate-200 text-sm">
           <thead className="bg-slate-50">
             <tr>
               {activeTab === 'mine' && (
@@ -473,7 +610,8 @@ const DriverPickupsView = () => {
                   {optimizableMine.length > 0 && (
                     <input
                       type="checkbox"
-                      checked={selectedIds.size === maxSelectable}
+                      checked={allPageSelected}
+                      disabled={selectingAll}
                       onChange={toggleSelectAll}
                       title={
                         optimizableMine.length > MAX_OPTIMIZE_STOPS
@@ -481,38 +619,38 @@ const DriverPickupsView = () => {
                           : undefined
                       }
                       className="size-4 rounded border-slate-300"
-                      aria-label="Select all"
+                      aria-label="Select all on this page"
                     />
                   )}
                 </th>
               )}
-              <th className="px-6 py-3 text-left font-semibold text-slate-500">
+              <th className="p-3 text-left font-semibold text-slate-500">
                 Order
               </th>
-              <th className="px-6 py-3 text-left font-semibold text-slate-500">
+              <th className="p-3 text-left font-semibold text-slate-500">
                 Category
               </th>
-              <th className="px-6 py-3 text-left font-semibold text-slate-500">
+              <th className="p-3 text-left font-semibold text-slate-500">
                 Requester
               </th>
-              <th className="px-6 py-3 text-left font-semibold text-slate-500">
+              <th className="p-3 text-left font-semibold text-slate-500">
                 Contact
               </th>
-              <th className="px-6 py-3 text-left font-semibold text-slate-500">
+              <th className="p-3 text-left font-semibold text-slate-500">
                 Price
               </th>
-              <th className="px-6 py-3 text-left font-semibold text-slate-500">
+              <th className="p-3 text-left font-semibold text-slate-500">
                 Requested
               </th>
-              <th className="px-6 py-3 text-left font-semibold text-slate-500">
+              <th className="p-3 text-left font-semibold text-slate-500">
                 Confirmed pickup
               </th>
               {activeTab === 'history' && (
-                <th className="px-6 py-3 text-left font-semibold text-slate-500">
+                <th className="p-3 text-left font-semibold text-slate-500">
                   Status
                 </th>
               )}
-              <th className="px-6 py-3 text-right font-semibold text-slate-500">
+              <th className="p-3 text-right font-semibold text-slate-500">
                 Actions
               </th>
             </tr>
@@ -520,6 +658,15 @@ const DriverPickupsView = () => {
           <tbody className="divide-y divide-slate-100">{renderRows()}</tbody>
         </table>
       </TableWrapper>
+      {isMobile && activeTab === 'mine' && routePreview && (
+        <div ref={previewRef} className="scroll-mt-6">
+          <OptimizedRoutePreview
+            result={routePreview.result}
+            origin={routePreview.origin}
+            selectedRequests={routePreview.orders}
+          />
+        </div>
+      )}
 
       <CollectModal
         requestId={collectTarget?.id ?? ''}
@@ -543,10 +690,18 @@ const DriverPickupsView = () => {
       />
 
       <OptimizeRouteModal
+        inlinePreview={isMobile}
         open={optimizeModalOpen}
         onClose={() => setOptimizeModalOpen(false)}
         selectedRequests={selectedRequests}
-        onWazeOrderChosen={handleWazeOrderChosen}
+        onOptimized={(result, origin) => {
+          setOptimizedOrder(
+            Object.fromEntries(
+              result.stops.map((stop, index) => [stop.request_id, index + 1]),
+            ),
+          );
+          setRoutePreview({ result, origin, orders: [...selectedRequests] });
+        }}
       />
     </PageContainer>
   );

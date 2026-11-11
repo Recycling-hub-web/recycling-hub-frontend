@@ -30,9 +30,6 @@ import {
 
 type CreateOrderViewProps = {
   pickupRequestId: string;
-  /** Where the new Order is redirected to once created (e.g.
-   * /admin/pickups). */
-  ordersBasePath: '/admin/pickups' | '/staff/pickups' | '/super-admin/pickups';
   /** Back to the parent request's own details page (e.g.
    * /admin/pickup-requests). */
   requestsBasePath:
@@ -48,7 +45,6 @@ type CreateOrderViewProps = {
 // route param; posts to POST /pickup-requests/{id}/orders/.
 const CreateOrderView = ({
   pickupRequestId,
-  ordersBasePath,
   requestsBasePath,
 }: CreateOrderViewProps) => {
   const router = useRouter();
@@ -95,7 +91,8 @@ const CreateOrderView = ({
         photos: photos.map((p) => p.file_key),
       });
       toast.success('Order created', `Order ${order.code} has been created.`);
-      router.push(`${ordersBasePath}/${order.id}`);
+      // Orders live on their request's page — open the new one there.
+      router.push(`${requestsBasePath}/${pickupRequestId}?order=${order.id}`);
     } catch {
       // useCreateOrder already captured the message in `error`, shown
       // below.

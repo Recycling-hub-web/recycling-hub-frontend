@@ -50,7 +50,10 @@ const ScheduleModal = ({
     () =>
       collectors.map((c) => ({
         value: c.id,
-        label: `${c.user.full_name} — ${c.department || c.position || c.branch}`,
+        // The work detail is optional; leave it off instead of showing "null".
+        label: [c.user.full_name, c.department || c.position || c.branch]
+          .filter(Boolean)
+          .join(' — '),
       })),
     [collectors],
   );

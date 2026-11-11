@@ -4,9 +4,7 @@ export { AssignDriverModal } from './admin/AssignDriverModal';
 export { BulkAssignDriverModal } from './admin/BulkAssignDriverModal';
 export { CancelModal } from './admin/CancelModal';
 export { ConvertQuickLeadView } from './admin/ConvertQuickLeadView';
-export { EditOrderView } from './admin/EditOrderView';
-export { EvaluateModal } from './admin/EvaluateModal';
-export { OrderDetailsView } from './admin/OrderDetailsView';
+export { OrderRedirect } from './admin/OrderRedirect';
 export { QuickLeadTable } from './admin/QuickLeadTable';
 
 // PickupRequest-level (admin/staff) — the customer's ask, parent of

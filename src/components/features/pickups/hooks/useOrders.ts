@@ -11,6 +11,7 @@ import type {
 
 type UseOrdersParams = {
   page: number;
+  pageSize?: number;
   status?: PickupStatus | PickupStatus[];
   search?: string;
   requestType?: PickupRequestType;
@@ -23,6 +24,7 @@ type UseOrdersParams = {
  * PickupRequest concept — see usePickupRequests.ts). */
 const useOrders = ({
   page,
+  pageSize,
   status,
   search,
   requestType,
@@ -40,6 +42,7 @@ const useOrders = ({
     try {
       const data = await listOrders({
         page,
+        pageSize,
         status,
         search,
         requestType,
@@ -55,7 +58,15 @@ const useOrders = ({
     } finally {
       setLoading(false);
     }
-  }, [page, status, search, requestType, evaluationStatus, dropOffPoint]);
+  }, [
+    page,
+    pageSize,
+    status,
+    search,
+    requestType,
+    evaluationStatus,
+    dropOffPoint,
+  ]);
 
   useEffect(() => {
     refetch();

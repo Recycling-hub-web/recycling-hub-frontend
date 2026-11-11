@@ -78,6 +78,9 @@ type PickupRequestCreatePayload = {
   /** Admin/staff only: orders to create together with the request (at
    * most 7) — see PickupRequestCreateSerializer.orders. */
   orders?: CreateOrderPayload[];
+  /** Admin/staff only, with `orders`: evaluate the request in the same
+   * call. */
+  evaluation?: RequestEvaluationPayload;
   /** 1–4 photo keys from uploadPublicPickupPhoto — required on the
    * public form, optional for admin/staff. */
   photos?: string[];
@@ -147,6 +150,13 @@ type CreateOrderPayload = {
   photos?: string[];
 };
 
+/** Evaluating a new pickup request in its create call (admin/staff):
+ * `item_prices` lists every item of every order, order by order. */
+type RequestEvaluationPayload =
+  | { decision: 'approved'; price: string }
+  | { decision: 'approved'; item_prices: string[] }
+  | { decision: 'rejected'; note: string };
+
 // Admin/staff creating an Order under an existing PickupRequest — up to
 // 7 per request (hard block past that, see validate_order_count on the
 // backend).
@@ -163,6 +173,7 @@ const createOrder = (
 
 type ListOrdersParams = {
   page?: number;
+  pageSize?: number;
   status?: PickupStatus | PickupStatus[];
   search?: string;
   requestType?: PickupRequestType;
@@ -173,6 +184,7 @@ type ListOrdersParams = {
 
 const listOrders = ({
   page = 1,
+  pageSize,
   status,
   search,
   requestType,
@@ -180,6 +192,7 @@ const listOrders = ({
   dropOffPoint,
 }: ListOrdersParams = {}): Promise<Paginated<CollectionRequestListItem>> => {
   const params = new URLSearchParams({ page: String(page) });
+  if (pageSize) params.set('page_size', String(pageSize));
   if (status)
     params.set('status', Array.isArray(status) ? status.join(',') : status);
   if (search) params.set('search', search);
@@ -242,6 +255,20 @@ const evaluatePickupRequest = (
 ): Promise<CollectionRequestDetails> =>
   apiFetch(`/pickups/${id}/evaluate/`, { method: 'POST', json: payload });
 
+/** Evaluating a whole pickup request — every order still open to it
+ * (pending or scheduled) at once. `price` is one total, shared across
+ * those orders by the backend; `items` prices every item of them. */
+type EvaluateRequestPayload = EvaluatePickupPayload;
+
+const evaluateWholeRequest = (
+  pickupRequestId: string,
+  payload: EvaluateRequestPayload,
+): Promise<PickupRequestDetails> =>
+  apiFetch(`/pickup-requests/${pickupRequestId}/evaluate/`, {
+    method: 'POST',
+    json: payload,
+  });
+
 type SchedulePickupPayload = {
   collector: string;
   scheduled_at: string;
@@ -258,11 +285,9 @@ const schedulePickupRequest = (
 
 type AssignDriverPayload = {
   driver: string;
-  scheduled_at?: string;
 };
 
-// The only way to schedule a pickup from the UI — assigns a driver and,
-// optionally, a pickup time. schedulePickupRequest above (a staff
+// Assign a driver; pickup time is confirmed separately by the driver. schedulePickupRequest above (a staff
 // collector, no driver) still exists on the backend but no longer has a
 // frontend caller. Only valid from `pending` +
 // `evaluation_status=approved` — see
@@ -276,11 +301,10 @@ const assignDriverToRequest = (
 type BulkAssignDriverPayload = {
   order_ids: string[];
   driver: string;
-  scheduled_at?: string;
 };
 
-// The batch counterpart to assignDriverToRequest — one driver (and
-// optional shared time) applied to several pending+approved orders at
+// The batch counterpart to assignDriverToRequest — one driver
+// applied to several pending+approved orders at
 // once, from a pickup request's own orders table. All-or-nothing: see
 // CollectionRequestViewSet.bulk_assign_driver on the backend.
 const bulkAssignDriver = (
@@ -524,6 +548,7 @@ export {
   deleteOrder,
   dropOffRoute,
   evaluatePickupRequest,
+  evaluateWholeRequest,
   getOrder,
   getPickupRequest,
   getQuickPickupRequest,
@@ -553,6 +578,7 @@ export type {
   DropOffPayload,
   EvaluateItemInput,
   EvaluatePickupPayload,
+  EvaluateRequestPayload,
   ListOrdersParams,
   ListPickupRequestsParams,
   ListQuickPickupRequestsParams,
@@ -562,6 +588,7 @@ export type {
   PickupRequestCreateResult,
   PickupRequestItemInput,
   PickupRequestUpdatePayload,
+  RequestEvaluationPayload,
   SchedulePickupPayload,
   UpdateOrderPayload,
 };

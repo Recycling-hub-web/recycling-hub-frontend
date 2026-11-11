@@ -15,7 +15,6 @@ export default function SuperAdminCreateOrderPage({
   return (
     <CreateOrderView
       pickupRequestId={params.pickupRequestId}
-      ordersBasePath="/super-admin/pickups"
       requestsBasePath="/super-admin/pickup-requests"
     />
   );

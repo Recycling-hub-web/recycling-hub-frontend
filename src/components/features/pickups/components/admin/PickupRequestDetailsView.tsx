@@ -2,10 +2,11 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   LuArrowLeft,
   LuCalendar,
+  LuClipboardCheck,
   LuMail,
   LuMapPin,
   LuPackage,
@@ -25,33 +26,38 @@ import {
 import { Button } from '../../../../ui/buttons/Button';
 import { Card } from '../../../../ui/card/Card';
 import { AppDate } from '../../../../ui/date/AppDate';
+import { EmptyState } from '../../../../ui/empty/EmptyState';
 import { InfoRow } from '../../../../ui/InfoRow';
 import { Loading } from '../../../../ui/loading/Loading';
 import { PageHeader } from '../../../../ui/PageHeader';
-import { TableEmptyRow, TableWrapper } from '../../../../ui/table';
 import { Tabs } from '../../../../ui/tabs';
 import { useToast } from '../../../../ui/toast/ToastContext';
 import { WhatsAppLink } from '../../../../ui/WhatsAppLink';
 import {
   MAX_ORDERS_PER_PICKUP_REQUEST,
   PICKUP_REQUEST_STATUS_BADGE_VARIANT,
-  PICKUP_STAGE_BADGE_VARIANT,
   REQUEST_TYPE_BADGE_VARIANT,
 } from '../../constants';
 import { usePickupRequest } from '../../hooks';
 import {
-  derivePickupStage,
-  itemsSummary,
   PICKUP_REQUEST_STATUS_LABELS,
   PICKUP_REQUEST_TYPE_LABELS,
-  PICKUP_STAGE_LABELS,
 } from '../../types';
+import { CollectModal } from '../shared/CollectModal';
 import {
   documentsFor,
   OrderActivity,
   OrderDocuments,
 } from '../shared/OrderRecordTabs';
+import { AssignDriverModal } from './AssignDriverModal';
+import { CancelModal } from './CancelModal';
 import { CancelPickupRequestModal } from './CancelPickupRequestModal';
+import {
+  evaluableOrders,
+  isReevaluation,
+  RequestEvaluateModal,
+} from './RequestEvaluateModal';
+import { type OrderAction, RequestOrderCard } from './RequestOrderCard';
 
 type PickupRequestDetailsViewProps = {
   requestId: string;
@@ -59,28 +65,65 @@ type PickupRequestDetailsViewProps = {
     | '/admin/pickup-requests'
     | '/staff/pickup-requests'
     | '/super-admin/pickup-requests';
-  /** The matching Orders basePath (e.g. /admin/pickups) — where each
-   * nested order's row links to. */
-  ordersBasePath: '/admin/pickups' | '/staff/pickups' | '/super-admin/pickups';
 };
 
-/** The customer's ask — its own contact/address/date fields plus a
- * table of the Orders created under it. "Create order" starts
+/** The customer's ask — its own contact/address/date fields plus the
+ * Orders created under it, each handled right here (RequestOrderCard:
+ * details, payment, schedule/collect/cancel) — there's no separate order
+ * page; old order links land here with ?order=<id>. "Create order" starts
  * CreateOrderView, scoped to this request; "Cancel request" cascades
  * to every non-terminal Order (see CancelPickupRequestModal). Admin
  * and staff share identical permissions on this module. */
 const PickupRequestDetailsView = ({
   requestId,
   basePath,
-  ordersBasePath,
 }: PickupRequestDetailsViewProps) => {
   const router = useRouter();
   const { request, loading, error, refetch } = usePickupRequest(requestId);
   const toast = useToast();
   const [cancelOpen, setCancelOpen] = useState(false);
+  const [evaluateOpen, setEvaluateOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<
     'overview' | 'orders' | 'documents' | 'activity'
   >('overview');
+  // Orders open on this page (there's no separate order page); a link
+  // with ?order=<id> opens that one on the Orders tab.
+  const [expandedOrders, setExpandedOrders] = useState<Set<string>>(new Set());
+  const [orderAction, setOrderAction] = useState<{
+    id: string;
+    action: OrderAction;
+  } | null>(null);
+
+  useEffect(() => {
+    const orderId = new URLSearchParams(window.location.search).get('order');
+    if (!orderId) return;
+    setActiveTab('orders');
+    setExpandedOrders(new Set([orderId]));
+  }, [requestId]);
+
+  useEffect(() => {
+    if (activeTab !== 'orders' || !request) return;
+    const orderId = new URLSearchParams(window.location.search).get('order');
+    if (orderId) {
+      document
+        .getElementById(`order-${orderId}`)
+        ?.scrollIntoView({ block: 'start' });
+    }
+  }, [activeTab, request]);
+
+  const toggleOrder = (id: string) =>
+    setExpandedOrders((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  const closeOrderAction = () => setOrderAction(null);
+  const orderDone = (message: string) => {
+    setOrderAction(null);
+    refetch();
+    toast.success(message);
+  };
 
   const handleCancelled = () => {
     refetch();
@@ -103,6 +146,8 @@ const PickupRequestDetailsView = ({
       </div>
     );
   }
+
+  const actionOrder = request.orders.find((o) => o.id === orderAction?.id);
 
   // Admin and staff can always correct a request's details (no delete —
   // a request is cancelled instead). New orders and cancelling only make
@@ -147,6 +192,18 @@ const PickupRequestDetailsView = ({
           },
         ]
       : []),
+    // The whole request is evaluated at once — every order still open
+    // to it (see RequestEvaluateModal).
+    ...(evaluableOrders(request.orders).length
+      ? [
+          {
+            label: isReevaluation(request.orders) ? 'Re-evaluate' : 'Evaluate',
+            icon: LuClipboardCheck,
+            onClick: () => setEvaluateOpen(true),
+            color: 'neutral' as const,
+          },
+        ]
+      : []),
     ...(canCancel
       ? [
           {
@@ -170,8 +227,8 @@ const PickupRequestDetailsView = ({
       </Link>
 
       <PageHeader
-        title={request.full_name}
-        subtitle={`${request.orders.length} order${request.orders.length === 1 ? '' : 's'}`}
+        title={request.code}
+        subtitle={`${request.full_name} · ${request.orders.length} order${request.orders.length === 1 ? '' : 's'}`}
         actions={
           // More than one action → one Actions dropdown (project rule);
           // a lone action stays a plain button.
@@ -297,93 +354,64 @@ const PickupRequestDetailsView = ({
           )}
         </Card>
       )}
-      {activeTab === 'orders' && (
-        <Card className="mt-4 p-5">
-          <p className="mb-3 text-sm font-semibold text-slate-900">Orders</p>
-          {request.orders.length === 0 ? (
-            <TableWrapper>
-              <table className="min-w-full divide-y divide-slate-200 text-sm">
-                <tbody>
-                  <TableEmptyRow
-                    colSpan={1}
-                    icon={<LuPackage className="size-6" />}
-                    title="No orders yet"
-                    subtitle="Create one to start the materials/pricing/driver workflow."
-                  />
-                </tbody>
-              </table>
-            </TableWrapper>
-          ) : (
-            <TableWrapper>
-              <table className="min-w-full divide-y divide-slate-200 text-sm">
-                <thead className="bg-slate-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left font-semibold text-slate-500">
-                      Order
-                    </th>
-                    <th className="px-6 py-3 text-left font-semibold text-slate-500">
-                      Items
-                    </th>
-                    <th className="px-6 py-3 text-left font-semibold text-slate-500">
-                      Status
-                    </th>
-                    <th className="px-6 py-3 text-left font-semibold text-slate-500">
-                      Price
-                    </th>
-                    <th className="px-6 py-3 text-left font-semibold text-slate-500">
-                      Created
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {request.orders.map((order) => {
-                    const stage = derivePickupStage(
-                      order.status,
-                      order.evaluation_status,
-                    );
-                    return (
-                      <tr key={order.id}>
-                        <td className="px-6 py-4 font-medium text-slate-900">
-                          <Link
-                            href={`${ordersBasePath}/${order.id}`}
-                            className="hover:text-brand-600"
-                          >
-                            {order.code}
-                          </Link>
-                        </td>
-                        <td className="max-w-[200px] truncate px-6 py-4 text-slate-700">
-                          {itemsSummary(order.items)}
-                        </td>
-                        <td className="px-6 py-4">
-                          <StatusBadge
-                            variant={PICKUP_STAGE_BADGE_VARIANT[stage]}
-                          >
-                            {PICKUP_STAGE_LABELS[stage]}
-                          </StatusBadge>
-                        </td>
-                        <td className="px-6 py-4 text-slate-700">
-                          {order.price ?? '—'}
-                        </td>
-                        <td className="px-6 py-4 text-slate-500">
-                          <AppDate
-                            value={order.requested_date ?? request.created_at}
-                            format="short"
-                          />
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </TableWrapper>
-          )}
-        </Card>
-      )}
+      {activeTab === 'orders' &&
+        (request.orders.length === 0 ? (
+          <Card className="p-5">
+            <EmptyState
+              icon={<LuPackage className="size-6" />}
+              title="No orders yet"
+              description="Create one to start the materials, pricing and driver workflow."
+            />
+          </Card>
+        ) : (
+          <div className="space-y-3">
+            {request.orders.map((order) => (
+              <RequestOrderCard
+                key={order.id}
+                order={order}
+                expanded={expandedOrders.has(order.id)}
+                onToggle={() => toggleOrder(order.id)}
+                onAction={(action) => setOrderAction({ id: order.id, action })}
+                onChanged={refetch}
+              />
+            ))}
+          </div>
+        ))}
       {activeTab === 'documents' && <OrderDocuments documents={documents} />}
       {activeTab === 'activity' && (
         <OrderActivity orderId={request.id} requestLevel />
       )}
 
+      <RequestEvaluateModal
+        pickupRequestId={request.id}
+        orders={request.orders}
+        open={evaluateOpen}
+        onClose={() => setEvaluateOpen(false)}
+        onEvaluated={() => {
+          toast.success('Pickup request evaluated', 'Its orders were updated.');
+          refetch();
+        }}
+      />
+      <AssignDriverModal
+        requestId={orderAction?.id ?? ''}
+        open={orderAction?.action === 'schedule'}
+        onClose={closeOrderAction}
+        onAssigned={() => orderDone('Pickup scheduled')}
+      />
+      <CollectModal
+        requestId={orderAction?.id ?? ''}
+        open={orderAction?.action === 'collect'}
+        onClose={closeOrderAction}
+        onCollected={() => orderDone('Marked as collected')}
+        showPaymentFields={Boolean(actionOrder?.assigned_driver)}
+        items={actionOrder?.items ?? []}
+      />
+      <CancelModal
+        requestId={orderAction?.id ?? ''}
+        open={orderAction?.action === 'cancel'}
+        onClose={closeOrderAction}
+        onCancelled={() => orderDone('Order cancelled')}
+      />
       <CancelPickupRequestModal
         pickupRequestId={request.id}
         open={cancelOpen}

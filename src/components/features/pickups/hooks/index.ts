@@ -7,6 +7,7 @@ export { useCloseDelivery } from './useCloseDelivery';
 export { useCollectPickup } from './useCollectPickup';
 export { useConfirmSchedule } from './useConfirmSchedule';
 export { useEvaluatePickup } from './useEvaluatePickup';
+export { useEvaluateWholeRequest } from './useEvaluateWholeRequest';
 export { useOrder } from './useOrder';
 export { useOrders } from './useOrders';
 export { useSchedulePickup } from './useSchedulePickup';

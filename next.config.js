@@ -25,6 +25,7 @@ const REPORT_ONLY_CSP = [
   // environment; uploads PUT straight to it.
   "img-src 'self' data: blob: https:",
   "connect-src 'self' https:",
+  "frame-src 'self' blob: https://www.google.com",
   "frame-ancestors 'none'",
   "object-src 'none'",
   "base-uri 'self'",
