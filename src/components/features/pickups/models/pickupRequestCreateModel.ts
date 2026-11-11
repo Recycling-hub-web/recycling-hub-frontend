@@ -3,9 +3,14 @@ import {
   validatePhoneNumber,
 } from '../../../../constants/dialCodes';
 import type { DraftOrder } from '../components/admin/NewOrdersFieldArray';
+import {
+  type DraftEvaluation,
+  validateEvaluation,
+} from '../components/admin/OrderEvaluationFields';
 import { REQUEST_TYPE_FILTER_OPTIONS } from '../constants';
 import type {
   CreateOrderPayload,
+  OrderEvaluationPayload,
   PickupRequestCreatePayload,
 } from '../services/pickupService';
 import type { PickupRequestType } from '../types';
@@ -114,6 +119,7 @@ const validateStepFields = (
 type OrderErrors = {
   itemErrors: Record<string, string>[][];
   photoErrors: string[];
+  evaluationErrors: Record<string, string>[];
   valid: boolean;
 };
 
@@ -127,11 +133,37 @@ const validateOrders = (
   const photoErrors = orders.map((order) =>
     order.photos.length ? '' : 'Add at least one photo of the materials.',
   );
+  const evaluationErrors = orders.map((order) =>
+    validateEvaluation(order.evaluation, order.items.length),
+  );
   return {
     itemErrors,
     photoErrors,
-    valid: !itemErrors.some(hasItemErrors) && !photoErrors.some(Boolean),
+    evaluationErrors,
+    valid:
+      !itemErrors.some(hasItemErrors) &&
+      !photoErrors.some(Boolean) &&
+      !evaluationErrors.some((e) => Object.keys(e).length > 0),
   };
+};
+
+/** A decided evaluation as the API takes it; `undefined` (left out of
+ * the body) while it's 'Not yet'. */
+const evaluationToPayload = (
+  evaluation: DraftEvaluation | undefined,
+  itemCount: number,
+): OrderEvaluationPayload | undefined => {
+  if (!evaluation || evaluation.decision === 'none') return undefined;
+  if (evaluation.decision === 'rejected') {
+    return { decision: 'rejected', note: evaluation.note.trim() };
+  }
+  if (evaluation.itemized && itemCount > 1) {
+    return {
+      decision: 'approved',
+      item_prices: evaluation.itemPrices.slice(0, itemCount),
+    };
+  }
+  return { decision: 'approved', price: evaluation.price };
 };
 
 /** One draft order as the API takes it — shared by the create form's
@@ -143,6 +175,7 @@ const orderToPayload = (order: DraftOrder): CreateOrderPayload => ({
     quantity_unit: item.quantity_unit?.trim() || undefined,
   })),
   photos: order.photos.map((p) => p.file_key),
+  evaluation: evaluationToPayload(order.evaluation, order.items.length),
 });
 
 /** The POST body — field for field, key for key, the single-page form's

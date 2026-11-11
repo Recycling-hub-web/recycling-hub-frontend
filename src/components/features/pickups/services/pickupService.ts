@@ -145,7 +145,16 @@ type CreateOrderPayload = {
   items?: PickupRequestItemInput[];
   /** Up to 4 storage file keys — see PickupPhotosUploader. */
   photos?: string[];
+  /** Only with a new pickup request (POST /pickup-requests/): evaluate
+   * the order in the same call. */
+  evaluation?: OrderEvaluationPayload;
 };
+
+/** `item_prices[i]` prices the order's `items[i]`. */
+type OrderEvaluationPayload =
+  | { decision: 'approved'; price: string }
+  | { decision: 'approved'; item_prices: string[] }
+  | { decision: 'rejected'; note: string };
 
 // Admin/staff creating an Order under an existing PickupRequest — up to
 // 7 per request (hard block past that, see validate_order_count on the
@@ -557,6 +566,7 @@ export type {
   ListPickupRequestsParams,
   ListQuickPickupRequestsParams,
   OptimizeRoutePayload,
+  OrderEvaluationPayload,
   Paginated,
   PickupRequestCreatePayload,
   PickupRequestCreateResult,

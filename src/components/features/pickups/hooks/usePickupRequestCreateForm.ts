@@ -47,6 +47,9 @@ const usePickupRequestCreateForm = (basePath: PickupRequestBasePath) => {
     Record<string, string>[][]
   >([]);
   const [orderPhotoErrors, setOrderPhotoErrors] = useState<string[]>([]);
+  const [orderEvaluationErrors, setOrderEvaluationErrors] = useState<
+    Record<string, string>[]
+  >([]);
   const [stepIndex, setStepIndex] = useState(0);
   /** Furthest step reached — any step up to it can be jumped to. */
   const [reached, setReached] = useState(0);
@@ -81,6 +84,7 @@ const usePickupRequestCreateForm = (basePath: PickupRequestBasePath) => {
       const result = validateOrders(orders, categories.unitsByCategory);
       setOrderItemErrors(result.itemErrors);
       setOrderPhotoErrors(result.photoErrors);
+      setOrderEvaluationErrors(result.evaluationErrors);
       return result.valid;
     }
     const stepErrors = validateStepFields(id, formData);
@@ -158,6 +162,7 @@ const usePickupRequestCreateForm = (basePath: PickupRequestBasePath) => {
     setOrders,
     orderItemErrors,
     orderPhotoErrors,
+    orderEvaluationErrors,
     categories,
     uploading: uploading.size > 0,
     setUploadingFor,

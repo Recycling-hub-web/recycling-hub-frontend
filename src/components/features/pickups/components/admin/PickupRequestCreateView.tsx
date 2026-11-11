@@ -27,6 +27,7 @@ import {
   requestTypeLabel,
   STEPS,
 } from '../../models/pickupRequestCreateModel';
+import type { DraftOrder } from './NewOrdersFieldArray';
 import { NewOrdersFieldArray } from './NewOrdersFieldArray';
 
 type PickupRequestCreateViewProps = {
@@ -48,6 +49,19 @@ const prefersReducedMotion = () =>
  * a step form: customer → pickup → orders (optional) → review. Same
  * public POST /pickup-requests/ and payload as before; all state and
  * rules live in usePickupRequestCreateForm and its model. */
+/** The review line's evaluation part, e.g. " — Approved, RM 120.50". */
+const evaluationSummary = ({ evaluation, items }: DraftOrder) => {
+  if (evaluation.decision === 'rejected') return ' — Rejected';
+  if (evaluation.decision !== 'approved') return '';
+  const total =
+    evaluation.itemized && items.length > 1
+      ? evaluation.itemPrices
+          .slice(0, items.length)
+          .reduce((sum, p) => sum + (Number(p) || 0), 0)
+      : Number(evaluation.price) || 0;
+  return ` — Approved, RM ${total.toFixed(2)}`;
+};
+
 const PickupRequestCreateView = ({
   basePath,
 }: PickupRequestCreateViewProps) => {
@@ -251,6 +265,8 @@ const PickupRequestCreateView = ({
                   photoErrors={form.orderPhotoErrors}
                   onUploadingChange={form.setUploadingFor}
                   showIntro={false}
+                  evaluable
+                  evaluationErrors={form.orderEvaluationErrors}
                 />
               </div>
             )}
@@ -309,7 +325,7 @@ const PickupRequestCreateView = ({
                                 .join(' · '),
                             )
                             .join(', ') || 'No materials'
-                        } — ${order.photos.length} photo${order.photos.length === 1 ? '' : 's'}`,
+                        } — ${order.photos.length} photo${order.photos.length === 1 ? '' : 's'}${evaluationSummary(order)}`,
                       }))}
                     />
                   ) : (
