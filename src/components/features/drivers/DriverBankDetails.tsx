@@ -38,7 +38,6 @@ const fields = {
   account_holder_name: 'Account holder name',
   bank_account_number: 'Account number',
   bank_branch: 'Branch (optional)',
-  swift_bic: 'SWIFT / BIC (optional)',
   duitnow_id: 'DuitNow ID',
 };
 
@@ -134,7 +133,6 @@ export const DriverBankDetails = ({
             'account_holder_name',
             'bank_account_number',
             'bank_branch',
-            'swift_bic',
             'duitnow_id_type',
             'duitnow_id',
           ].map((key) => [key, form[key as keyof DriverPayoutDetails]]),
@@ -160,12 +158,7 @@ export const DriverBankDetails = ({
   };
   const getFields = (method: string): (keyof typeof fields)[] => {
     if (method === 'bank_transfer')
-      return [
-        'account_holder_name',
-        'bank_account_number',
-        'bank_branch',
-        'swift_bic',
-      ];
+      return ['account_holder_name', 'bank_account_number', 'bank_branch'];
     if (method === 'duitnow') return ['account_holder_name', 'duitnow_id'];
     return [];
   };
@@ -177,7 +170,6 @@ export const DriverBankDetails = ({
     bank_branch: 120,
     account_holder_name: 150,
     bank_account_number: 34,
-    swift_bic: 11,
     duitnow_id: 64,
   };
   return (
@@ -440,7 +432,6 @@ export const DriverBankDetails = ({
                     ...form,
                     bank: bank?.id || null,
                     bank_name: bank?.name || '',
-                    swift_bic: bank?.swift_bic || '',
                   });
                 }}
               >
@@ -473,11 +464,11 @@ export const DriverBankDetails = ({
           {inputFields.map((key) => (
             <label key={key} className="block text-sm font-medium">
               {fields[key]}
-              {!['bank_branch', 'swift_bic'].includes(key) && ' *'}
+              {key !== 'bank_branch' && ' *'}
               <input
                 type="text"
                 disabled={saving}
-                required={!['bank_branch', 'swift_bic'].includes(key)}
+                required={key !== 'bank_branch'}
                 maxLength={lengths[key]}
                 inputMode={key === 'bank_account_number' ? 'numeric' : 'text'}
                 className="mt-1 block w-full rounded-lg border border-slate-200 p-3"
@@ -490,9 +481,9 @@ export const DriverBankDetails = ({
           ))}
           <p className="text-xs text-slate-500">
             Enter the account holder name exactly as registered with the bank.
-            Keep leading zeros in account numbers. SWIFT/BIC is optional for
-            domestic transfers. For a DuitNow mobile ID, use international
-            format (for example +60123456789).
+            Keep leading zeros in account numbers. Only local banks are
+            supported. For a DuitNow mobile ID, use international format (for
+            example +60123456789).
           </p>
         </form>
       </Modal>

@@ -7,7 +7,6 @@ export type DriverPayoutDetails = {
   account_holder_name: string;
   bank_account_number: string;
   bank_branch: string;
-  swift_bic: string;
   duitnow_id_type: string;
   duitnow_id: string;
   payout_ready: boolean;

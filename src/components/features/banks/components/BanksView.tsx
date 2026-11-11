@@ -12,7 +12,6 @@ import type { Bank } from '../types';
 export const BanksView = () => {
   const [banks, setBanks] = useState<Bank[]>([]);
   const [name, setName] = useState('');
-  const [bic, setBic] = useState('');
   const [editing, setEditing] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -40,7 +39,6 @@ export const BanksView = () => {
         json,
       });
       setName('');
-      setBic('');
       setEditing(null);
       await load();
     } catch (err) {
@@ -53,7 +51,7 @@ export const BanksView = () => {
     <PageContainer variant="form">
       <PageHeader
         title="Banks"
-        subtitle="Manage the banks available for driver payouts."
+        subtitle="Manage local banks available for driver payouts."
       />
       <Card className="p-5">
         <p className="mb-4 text-sm text-slate-500">
@@ -77,7 +75,7 @@ export const BanksView = () => {
           className="mb-5 space-y-3"
           onSubmit={(event) => {
             event.preventDefault();
-            mutate(editing, { name: name.trim(), swift_bic: bic.trim() });
+            mutate(editing, { name: name.trim() });
           }}
         >
           <label className="block text-sm font-medium">
@@ -88,16 +86,6 @@ export const BanksView = () => {
               value={name}
               disabled={busy}
               onChange={(event) => setName(event.target.value)}
-              className="mt-1 block w-full rounded-lg border border-slate-200 p-3"
-            />
-          </label>
-          <label className="block text-sm font-medium">
-            SWIFT/BIC (optional)
-            <input
-              maxLength={11}
-              value={bic}
-              disabled={busy}
-              onChange={(event) => setBic(event.target.value.toUpperCase())}
               className="mt-1 block w-full rounded-lg border border-slate-200 p-3"
             />
           </label>
@@ -112,7 +100,6 @@ export const BanksView = () => {
                 onClick={() => {
                   setEditing(null);
                   setName('');
-                  setBic('');
                 }}
               >
                 Cancel edit
@@ -133,7 +120,6 @@ export const BanksView = () => {
               <div>
                 <p className="text-sm font-semibold">{bank.name}</p>
                 <p className="text-xs text-slate-500">
-                  {bank.swift_bic || 'No SWIFT/BIC'} ·{' '}
                   {bank.is_active ? 'Active' : 'Inactive'}
                 </p>
               </div>
@@ -145,7 +131,6 @@ export const BanksView = () => {
                   onClick={() => {
                     setEditing(bank.id);
                     setName(bank.name);
-                    setBic(bank.swift_bic);
                   }}
                 >
                   Edit
