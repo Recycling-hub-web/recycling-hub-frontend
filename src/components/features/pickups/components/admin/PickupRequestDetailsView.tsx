@@ -6,6 +6,7 @@ import { useState } from 'react';
 import {
   LuArrowLeft,
   LuCalendar,
+  LuClipboardCheck,
   LuMail,
   LuMapPin,
   LuPackage,
@@ -52,6 +53,7 @@ import {
   OrderDocuments,
 } from '../shared/OrderRecordTabs';
 import { CancelPickupRequestModal } from './CancelPickupRequestModal';
+import { EvaluateModal } from './EvaluateModal';
 
 type PickupRequestDetailsViewProps = {
   requestId: string;
@@ -78,6 +80,8 @@ const PickupRequestDetailsView = ({
   const { request, loading, error, refetch } = usePickupRequest(requestId);
   const toast = useToast();
   const [cancelOpen, setCancelOpen] = useState(false);
+  // The order being evaluated from the Orders tab, if any.
+  const [evaluating, setEvaluating] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<
     'overview' | 'orders' | 'documents' | 'activity'
   >('overview');
@@ -333,6 +337,9 @@ const PickupRequestDetailsView = ({
                     <th className="px-6 py-3 text-left font-semibold text-slate-500">
                       Created
                     </th>
+                    <th className="px-6 py-3 text-right font-semibold text-slate-500">
+                      Actions
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -370,6 +377,23 @@ const PickupRequestDetailsView = ({
                             format="short"
                           />
                         </td>
+                        <td className="px-6 py-4 text-right">
+                          {/* Pricing an order is the step before it can be
+                              scheduled — offered here so it doesn't take a
+                              trip to the order page. */}
+                          {order.status === 'pending' && (
+                            <Button
+                              variant="secondary"
+                              size="sm"
+                              onClick={() => setEvaluating(order.id)}
+                            >
+                              <LuClipboardCheck className="mr-1.5 size-4" />
+                              {order.evaluation_status === 'pending'
+                                ? 'Evaluate'
+                                : 'Re-evaluate'}
+                            </Button>
+                          )}
+                        </td>
                       </tr>
                     );
                   })}
@@ -384,6 +408,22 @@ const PickupRequestDetailsView = ({
         <OrderActivity orderId={request.id} requestLevel />
       )}
 
+      {(() => {
+        const order = request.orders.find((o) => o.id === evaluating);
+        return (
+          <EvaluateModal
+            requestId={order?.id ?? ''}
+            open={Boolean(order)}
+            onClose={() => setEvaluating(null)}
+            onEvaluated={() => {
+              toast.success('Order evaluated', `${order?.code} was updated.`);
+              refetch();
+            }}
+            items={order?.items ?? []}
+            isReevaluation={order?.evaluation_status !== 'pending'}
+          />
+        );
+      })()}
       <CancelPickupRequestModal
         pickupRequestId={request.id}
         open={cancelOpen}
