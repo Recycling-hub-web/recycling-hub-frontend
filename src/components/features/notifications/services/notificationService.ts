@@ -11,6 +11,7 @@ type Paginated<T> = {
 type ListNotificationsParams = {
   page?: number;
   isRead?: boolean;
+  module?: string;
   signal?: AbortSignal;
 };
 
@@ -20,9 +21,11 @@ type ListNotificationsParams = {
 const listNotifications = ({
   page = 1,
   isRead,
+  module,
   signal,
 }: ListNotificationsParams = {}): Promise<Paginated<NotificationItem>> => {
   const params = new URLSearchParams({ page: String(page) });
+  if (module) params.set('module', module);
   if (isRead !== undefined) params.set('is_read', String(isRead));
   return apiFetch(`/audit/notifications/?${params.toString()}`, { signal });
 };

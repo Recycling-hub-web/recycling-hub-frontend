@@ -9,12 +9,14 @@ import { useNotifications } from './useNotifications';
 type UseNotificationsListParams = {
   page: number;
   unreadOnly?: boolean;
+  module?: string;
   onPageReset: (page: number) => void;
 };
 
 const useNotificationsList = ({
   page,
   unreadOnly = false,
+  module,
   onPageReset,
 }: UseNotificationsListParams) => {
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
@@ -36,6 +38,7 @@ const useNotificationsList = ({
     try {
       const data = await listNotifications({
         page,
+        module,
         isRead: unreadOnly ? false : undefined,
         signal: request.signal,
       });
@@ -54,7 +57,7 @@ const useNotificationsList = ({
     } finally {
       if (!request.signal.aborted) setLoading(false);
     }
-  }, [page, unreadOnly, onPageReset]);
+  }, [page, unreadOnly, module, onPageReset]);
 
   useEffect(() => {
     refetch();

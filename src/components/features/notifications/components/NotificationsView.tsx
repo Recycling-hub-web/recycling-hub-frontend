@@ -13,7 +13,7 @@ import { PageHeader } from '../../../ui/PageHeader';
 import { TablePagination } from '../../../ui/table';
 import { Tabs } from '../../../ui/tabs';
 import { useNotifications, useNotificationsList } from '../hooks';
-import type { NotificationItem } from '../types';
+import { NOTIFICATION_MODULE_LABELS, type NotificationItem } from '../types';
 import { notificationLink } from '../utils/notificationLinks';
 
 const PAGE_SIZE = 12;
@@ -26,6 +26,7 @@ const PAGE_SIZE = 12;
 const NotificationsView = () => {
   const router = useRouter();
   const [page, setPage] = useState(1);
+  const [module, setModule] = useState('');
   const [filter, setFilter] = useState<'all' | 'unread'>('all');
   const { user } = useAuth();
   const { count: unreadCount, markingAll, pendingIds } = useNotifications();
@@ -39,6 +40,7 @@ const NotificationsView = () => {
     markAllRead,
   } = useNotificationsList({
     page,
+    module: module || undefined,
     unreadOnly: filter === 'unread',
     onPageReset: setPage,
   });
@@ -90,6 +92,11 @@ const NotificationsView = () => {
               item.is_read ? 'bg-slate-50' : 'bg-brand-50'
             }`}
           >
+            {item.module && (
+              <p className="mb-1 text-xs font-medium text-brand-700">
+                {NOTIFICATION_MODULE_LABELS[item.module] || item.module}
+              </p>
+            )}
             <p className="text-sm font-semibold text-slate-900">{item.title}</p>
             {item.body && (
               <p className="mt-0.5 text-sm text-slate-500">{item.body}</p>
@@ -135,6 +142,27 @@ const NotificationsView = () => {
             setPage(1);
           }}
         />
+        <label className="flex items-center gap-2 text-sm text-slate-600">
+          Module
+          <select
+            aria-label="Notification module"
+            value={module}
+            onChange={(event) => {
+              setModule(event.target.value);
+              setPage(1);
+            }}
+            className="min-h-11 rounded-lg border border-slate-200 bg-white px-3"
+          >
+            <option value="">All modules</option>
+            {Object.entries(NOTIFICATION_MODULE_LABELS).map(
+              ([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ),
+            )}
+          </select>
+        </label>
         <button
           type="button"
           onClick={refetch}
