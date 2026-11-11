@@ -418,9 +418,8 @@ const DriverPickupsView = () => {
         <div className="mb-4 flex flex-col items-start justify-between gap-3 rounded-xl border border-brand-200 bg-brand-50 p-4 sm:flex-row sm:items-center">
           <span className="inline-flex items-center gap-2 text-sm font-medium text-brand-900">
             <LuWallet className="size-4 shrink-0" />
-            You have {pendingCount} payment
-            {pendingCount === 1 ? '' : 's'} totaling RM
-            {pendingTotal.toFixed(2)} awaiting review
+            Paid to customers: RM{pendingTotal.toFixed(2)} across {pendingCount}{' '}
+            order{pendingCount === 1 ? '' : 's'}.
           </span>
           <Button size="sm" href="/driver/finance">
             View payments

@@ -61,13 +61,25 @@ const FINANCE_STATUS_LABELS: Record<FinanceStatus, string> = {
   reimbursed: 'Reimbursed',
 };
 
+// The driver has already paid the customer; review is a staff workflow.
+const DRIVER_FINANCE_STATUS_LABELS: Record<FinanceStatus, string> = {
+  pending: 'Pending payment',
+  claimed: 'Paid',
+  verified: 'Paid',
+  reimbursed: 'Reimbursed',
+};
+
 const FINANCE_PAYMENT_METHOD_LABELS: Record<FinancePaymentMethod, string> = {
   duitnow: 'DuitNow',
   cash: 'Cash',
   bank_transfer: 'Bank transfer',
 };
 
-export { FINANCE_PAYMENT_METHOD_LABELS, FINANCE_STATUS_LABELS };
+export {
+  DRIVER_FINANCE_STATUS_LABELS,
+  FINANCE_PAYMENT_METHOD_LABELS,
+  FINANCE_STATUS_LABELS,
+};
 export type {
   FinanceCollectionRequest,
   FinanceDriver,

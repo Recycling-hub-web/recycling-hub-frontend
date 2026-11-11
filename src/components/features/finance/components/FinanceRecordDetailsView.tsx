@@ -28,7 +28,11 @@ import { ActivityLog } from '../../activity/components';
 import { STATUS_BADGE_VARIANT } from '../constants';
 import { reimbursementBlocker } from '../eligibility';
 import { useFinanceRecord } from '../hooks';
-import { FINANCE_PAYMENT_METHOD_LABELS, FINANCE_STATUS_LABELS } from '../types';
+import {
+  DRIVER_FINANCE_STATUS_LABELS,
+  FINANCE_PAYMENT_METHOD_LABELS,
+  FINANCE_STATUS_LABELS,
+} from '../types';
 import { ReimburseModal } from './ReimburseModal';
 
 type FinanceRecordDetailsViewProps = {
@@ -101,8 +105,17 @@ const FinanceRecordDetailsView = ({
       />
 
       <div className="mb-5">
-        <StatusBadge variant={STATUS_BADGE_VARIANT[record.status]}>
-          {FINANCE_STATUS_LABELS[record.status]}
+        <StatusBadge
+          variant={
+            user?.role === 'driver' &&
+            (record.status === 'claimed' || record.status === 'verified')
+              ? 'success'
+              : STATUS_BADGE_VARIANT[record.status]
+          }
+        >
+          {user?.role === 'driver'
+            ? DRIVER_FINANCE_STATUS_LABELS[record.status]
+            : FINANCE_STATUS_LABELS[record.status]}
         </StatusBadge>
       </div>
 
@@ -183,7 +196,9 @@ const FinanceRecordDetailsView = ({
       {record.status !== 'pending' && (
         <Card className="mt-4 p-5">
           <p className="mb-3 text-sm font-semibold text-slate-900">
-            Payment review & reimbursement
+            {user?.role === 'driver'
+              ? 'Customer payment & reimbursement'
+              : 'Payment review & reimbursement'}
           </p>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {record.claimed_at && (

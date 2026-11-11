@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { LuWallet, LuWalletCards } from 'react-icons/lu';
 
+import { useAuth } from '../../../../contexts/AuthContext';
 import { StatusBadge } from '../../../ui/badges/StatusBadge';
 import { AppDate } from '../../../ui/date/AppDate';
 import {
@@ -15,7 +16,11 @@ import {
 import { STATUS_BADGE_VARIANT } from '../constants';
 import { reimbursementBlocker } from '../eligibility';
 import type { FinanceRecordListItem } from '../types';
-import { FINANCE_PAYMENT_METHOD_LABELS, FINANCE_STATUS_LABELS } from '../types';
+import {
+  DRIVER_FINANCE_STATUS_LABELS,
+  FINANCE_PAYMENT_METHOD_LABELS,
+  FINANCE_STATUS_LABELS,
+} from '../types';
 
 const PAGE_SIZE = 12;
 
@@ -72,6 +77,8 @@ const FinanceRecordTable = ({
   canManage,
 }: FinanceRecordTableProps) => {
   const router = useRouter();
+  const { user } = useAuth();
+  const isDriver = user?.role === 'driver';
   const columnCount = canManage ? 9 : 7;
   const claimedRecords = records.filter((r) => !reimbursementBlocker(r));
   const allClaimedSelected =
@@ -132,14 +139,25 @@ const FinanceRecordTable = ({
             : '—'}
         </td>
         <td className="px-6 py-4">
-          <StatusBadge variant={STATUS_BADGE_VARIANT[r.status]}>
-            {FINANCE_STATUS_LABELS[r.status]}
+          <StatusBadge
+            variant={
+              isDriver && (r.status === 'claimed' || r.status === 'verified')
+                ? 'success'
+                : STATUS_BADGE_VARIANT[r.status]
+            }
+          >
+            {isDriver
+              ? DRIVER_FINANCE_STATUS_LABELS[r.status]
+              : FINANCE_STATUS_LABELS[r.status]}
           </StatusBadge>
-          {r.driver && r.status !== 'reimbursed' && reimbursementBlocker(r) && (
-            <p className="mt-1 max-w-48 text-xs text-amber-700">
-              {reimbursementBlocker(r)}
-            </p>
-          )}
+          {canManage &&
+            r.driver &&
+            r.status !== 'reimbursed' &&
+            reimbursementBlocker(r) && (
+              <p className="mt-1 max-w-48 text-xs text-amber-700">
+                {reimbursementBlocker(r)}
+              </p>
+            )}
         </td>
         <td className="px-6 py-4 text-slate-500">
           <AppDate value={r.created_at} format="short" />

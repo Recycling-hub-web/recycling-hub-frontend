@@ -87,7 +87,7 @@ test('driver payment is queued automatically and accounting reimburses', async (
   // Recording customer payment automatically queues reimbursement.
   await loginAs(page, 'qaDriver');
   await page.goto('/driver/pickups');
-  await expect(page.getByText(/awaiting review/i)).toBeVisible();
+  await expect(page.getByText(/paid to customers/i)).toBeVisible();
   await expect(
     page.getByRole('button', { name: 'Claim Reimbursement' }),
   ).toHaveCount(0);
@@ -95,7 +95,17 @@ test('driver payment is queued automatically and accounting reimburses', async (
   await page.goto('/driver/finance');
   await expect(
     page.locator('main', { hasText: fullName }).first(),
-  ).toContainText('Awaiting review');
+  ).toContainText('Paid');
+
+  const activityResponse = page.waitForResponse((response) =>
+    /\/api\/v1\/finance\/[^/]+\/activity\//.test(response.url()),
+  );
+  await page.locator('tr', { hasText: fullName }).click();
+  expect((await activityResponse).ok()).toBe(true);
+  await expect(
+    page.getByText('You do not have permission to perform this action.'),
+  ).toHaveCount(0);
+  await expect(page.getByText('Collected', { exact: true })).toBeVisible();
 
   // Admin verifies and reimburses — single-row action. Icon-only with
   // a tooltip, not a text button in the table; opens a modal (where

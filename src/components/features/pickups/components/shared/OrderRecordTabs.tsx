@@ -21,6 +21,7 @@ import { ACTION_LABELS } from '../../../activity/types';
 import { ReimburseModal } from '../../../finance/components/ReimburseModal';
 import { reimbursementBlocker } from '../../../finance/eligibility';
 import {
+  DRIVER_FINANCE_STATUS_LABELS,
   FINANCE_PAYMENT_METHOD_LABELS,
   FINANCE_STATUS_LABELS,
 } from '../../../finance/types';
@@ -483,8 +484,14 @@ const OrderRecordTabs = ({
                 />
                 <InfoRow
                   icon={<LuFileText className="size-4" />}
-                  label="Reimbursement"
-                  value={FINANCE_STATUS_LABELS[payment.status]}
+                  label={
+                    user?.role === 'driver' ? 'Payment status' : 'Reimbursement'
+                  }
+                  value={
+                    user?.role === 'driver'
+                      ? DRIVER_FINANCE_STATUS_LABELS[payment.status]
+                      : FINANCE_STATUS_LABELS[payment.status]
+                  }
                 />
                 <InfoRow
                   icon={<LuCalendar className="size-4" />}
