@@ -6,6 +6,7 @@ import { LuKeyRound } from 'react-icons/lu';
 
 import { ApiError } from '../../../../lib/api';
 import { PasswordField } from '../../../form/fields/PasswordField';
+import { ValidatedForm } from '../../../form/ValidatedForm';
 import { AlertBanner } from '../../../ui/AlertBanner';
 import { Button } from '../../../ui/buttons/Button';
 import { FormActions } from '../../../ui/buttons/FormActions';
@@ -103,7 +104,7 @@ const ChangePasswordModal = ({ open, onClose }: ChangePasswordModalProps) => {
       icon={<LuKeyRound className="size-5" />}
       closeOnBackdrop={!loading}
     >
-      <form onSubmit={handleSubmit} noValidate>
+      <ValidatedForm onSubmit={handleSubmit} noValidate>
         <AlertBanner message={error} />
         <PasswordField
           label={'Current password'}
@@ -134,7 +135,7 @@ const ChangePasswordModal = ({ open, onClose }: ChangePasswordModalProps) => {
             {loading ? 'Updating…' : 'Update password'}
           </Button>
         </FormActions>
-      </form>
+      </ValidatedForm>
     </Modal>
   );
 };

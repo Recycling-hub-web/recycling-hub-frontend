@@ -1,3 +1,5 @@
+import { useId } from 'react';
+
 import { getNestedValue } from '../utils';
 
 type SelectOption =
@@ -40,15 +42,23 @@ const SelectField = ({
   onBlur,
   disabled = false,
 }: SelectFieldProps) => {
+  const inputId = useId();
   const value = (getNestedValue(formData, field) as string | undefined) ?? '';
 
   return (
     <div className="mb-4" data-field={dataField ?? field}>
-      <label className="block text-sm font-medium text-slate-900">
+      <label
+        htmlFor={inputId}
+        className="block text-sm font-medium text-slate-900"
+      >
         {label} {required && <span className="text-red-600">*</span>}
       </label>
 
       <select
+        id={inputId}
+        name={field}
+        required={required}
+        aria-required={required}
         value={value}
         onChange={(e) => updateFormData(field, e.target.value)}
         onBlur={onBlur}

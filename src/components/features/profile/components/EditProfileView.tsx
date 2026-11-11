@@ -15,6 +15,7 @@ import { useAuth } from '../../../../contexts/AuthContext';
 import { ApiError } from '../../../../lib/api';
 import { InputField } from '../../../form/fields/InputField';
 import { PhoneInputField } from '../../../form/fields/PhoneInputField';
+import { ValidatedForm } from '../../../form/ValidatedForm';
 import { PageContainer } from '../../../layout/PageContainer';
 import { AlertBanner } from '../../../ui/AlertBanner';
 import { Button } from '../../../ui/buttons/Button';
@@ -169,7 +170,7 @@ const EditProfileView = () => {
       <PageHeader title="Edit profile" subtitle={user.email} />
 
       <Card className="p-5">
-        <form onSubmit={handleSubmit} noValidate>
+        <ValidatedForm onSubmit={handleSubmit} noValidate>
           <AlertBanner message={error} />
 
           <div className="mb-5">
@@ -304,7 +305,7 @@ const EditProfileView = () => {
               {saving ? 'Saving…' : 'Save changes'}
             </Button>
           </FormActions>
-        </form>
+        </ValidatedForm>
       </Card>
 
       <ChangeEmailModal

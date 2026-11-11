@@ -1,4 +1,7 @@
+import { useId } from 'react';
+
 import { fieldStateClasses, getNestedValue } from '../utils';
+import { fieldLimit } from '../validation';
 
 type InputFieldProps = {
   label: string;
@@ -15,6 +18,11 @@ type InputFieldProps = {
   helperText?: string;
   /** Short fixed text inside the input's leading edge, e.g. "RM". */
   prefix?: string;
+  maxLength?: number;
+  min?: number | string;
+  max?: number | string;
+  step?: number | string;
+  pattern?: string;
 };
 
 const InputField = ({
@@ -31,17 +39,43 @@ const InputField = ({
   disabled = false,
   helperText = '',
   prefix,
+  maxLength,
+  min,
+  max,
+  step,
+  pattern,
 }: InputFieldProps) => {
+  const inputId = useId();
   const value =
     (getNestedValue(formData, field) as string | number | undefined) ?? '';
   const error = errors?.[field];
 
+  const isAmount = [
+    'price',
+    'actual_amount',
+    'amount_claimed',
+    'amount_approved',
+  ].includes(field);
+  const isNonnegative =
+    isAmount ||
+    [
+      'sort_order',
+      'estimated_quantity',
+      'collected_quantity',
+      'delivered_quantity',
+    ].includes(field);
+  const numberStep = field === 'sort_order' ? '1' : 'any';
   const dateProps =
-    type === 'date' ? { min: '1900-01-01', max: '2099-12-31' } : {};
+    type === 'date'
+      ? { min: min ?? '1900-01-01', max: max ?? '2099-12-31' }
+      : {};
 
   return (
     <div className="mb-4" data-field={dataField ?? field}>
-      <label className="block text-sm font-medium text-slate-900">
+      <label
+        htmlFor={inputId}
+        className="block text-sm font-medium text-slate-900"
+      >
         {label} {required && <span className="text-red-600">*</span>}
       </label>
 
@@ -52,6 +86,15 @@ const InputField = ({
           </span>
         )}
         <input
+          id={inputId}
+          name={field}
+          required={required}
+          aria-required={required}
+          maxLength={maxLength ?? fieldLimit(field)}
+          min={min ?? (isNonnegative ? 0 : undefined)}
+          max={max ?? (isAmount ? 99999999.99 : undefined)}
+          step={step ?? (isAmount ? '0.01' : numberStep)}
+          pattern={pattern ?? (field === 'postcode' ? '[0-9]{5}' : undefined)}
           type={type}
           value={value}
           onChange={(e) =>

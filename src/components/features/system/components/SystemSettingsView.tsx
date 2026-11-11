@@ -4,6 +4,7 @@ import { type FormEvent, useEffect, useState } from 'react';
 import { LuCrown, LuShieldCheck } from 'react-icons/lu';
 
 import { InputField } from '../../../form/fields/InputField';
+import { ValidatedForm } from '../../../form/ValidatedForm';
 import { PageContainer } from '../../../layout/PageContainer';
 import { AlertBanner } from '../../../ui/AlertBanner';
 import { Button } from '../../../ui/buttons/Button';
@@ -76,7 +77,7 @@ const SystemSettingsView = () => {
       <Card className="p-5">
         <AlertBanner message={apiError || error} />
 
-        <form onSubmit={handleSubmit} className="space-y-1">
+        <ValidatedForm onSubmit={handleSubmit} className="space-y-1">
           <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
             <div>
               <InputField
@@ -111,7 +112,7 @@ const SystemSettingsView = () => {
           <Button type="submit" disabled={submitting}>
             {submitting ? 'Saving…' : 'Save limits'}
           </Button>
-        </form>
+        </ValidatedForm>
       </Card>
 
       <Card className="mt-4 p-5">

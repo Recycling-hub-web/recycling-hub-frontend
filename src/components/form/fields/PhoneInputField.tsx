@@ -1,3 +1,5 @@
+import { useId } from 'react';
+
 import { DIAL_CODES } from '../../../constants/dialCodes';
 
 type PhoneInputFieldProps = {
@@ -25,6 +27,7 @@ const PhoneInputField = ({
   disabled = false,
   onBlur,
 }: PhoneInputFieldProps) => {
+  const inputId = useId();
   const dialCode = (formData[dialCodeField] as string | undefined) ?? '+60';
   const number = (formData[numberField] as string | undefined) ?? '';
   const error = errors?.[numberField];
@@ -35,10 +38,14 @@ const PhoneInputField = ({
 
   return (
     <div className="mb-4" data-field={numberField}>
-      <label className="block text-sm font-medium text-slate-900">
+      <label
+        htmlFor={inputId}
+        className="block text-sm font-medium text-slate-900"
+      >
         {label} {required && <span className="text-red-600">*</span>}
       </label>
       <div
+        data-dial-code={dialCode}
         className={`mt-2 flex h-12 overflow-hidden rounded-xl border transition ${error ? 'border-red-500' : 'border-slate-200'} ${disabled ? 'bg-slate-50 opacity-60' : ''}`}
       >
         <select
@@ -54,7 +61,14 @@ const PhoneInputField = ({
           ))}
         </select>
         <input
+          id={inputId}
+          name={numberField}
+          required={required}
+          aria-required={required}
           type="tel"
+          inputMode="tel"
+          autoComplete="tel-national"
+          maxLength={20}
           value={number}
           onChange={(e) => handleNumberChange(e.target.value)}
           onBlur={onBlur}

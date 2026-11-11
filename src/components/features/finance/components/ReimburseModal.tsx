@@ -4,6 +4,7 @@ import { type FormEvent, useState } from 'react';
 
 import { ApiError } from '../../../../lib/api';
 import { StatusFileUpload } from '../../../form/upload/StatusFileUpload';
+import { ValidatedForm } from '../../../form/ValidatedForm';
 import { AlertBanner } from '../../../ui/AlertBanner';
 import { FormActions } from '../../../ui/buttons/FormActions';
 import { Modal } from '../../../ui/modal/Modal';
@@ -139,7 +140,7 @@ const ReimburseModal = ({
         </FormActions>
       }
     >
-      <form
+      <ValidatedForm
         id="reimburse-form"
         onSubmit={handleSubmit}
         noValidate
@@ -183,7 +184,7 @@ const ReimburseModal = ({
             uploading={uploading}
           />
         </div>
-      </form>
+      </ValidatedForm>
     </Modal>
   );
 };

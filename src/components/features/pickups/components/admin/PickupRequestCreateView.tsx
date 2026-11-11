@@ -9,6 +9,7 @@ import { InputField } from '../../../../form/fields/InputField';
 import { PhoneInputField } from '../../../../form/fields/PhoneInputField';
 import { SelectField } from '../../../../form/fields/SelectField';
 import { TextareaField } from '../../../../form/fields/TextareaField';
+import { ValidatedForm } from '../../../../form/ValidatedForm';
 import { PageContainer } from '../../../../layout/PageContainer';
 import { AlertBanner } from '../../../../ui/AlertBanner';
 import { Button } from '../../../../ui/buttons/Button';
@@ -145,7 +146,7 @@ const PickupRequestCreateView = ({
           />
         </div>
 
-        <form onSubmit={handleSubmit} noValidate>
+        <ValidatedForm onSubmit={handleSubmit} noValidate>
           <div
             key={step.id}
             className="p-5 motion-safe:animate-page-enter"
@@ -361,7 +362,7 @@ const PickupRequestCreateView = ({
               </Button>
             </div>
           </div>
-        </form>
+        </ValidatedForm>
       </Card>
     </PageContainer>
   );

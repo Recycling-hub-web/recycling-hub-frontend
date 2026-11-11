@@ -15,6 +15,7 @@ import type { Dictionary } from '../../../../lib/dictionary';
 import { ROLE_HOME } from '../../../../types/auth';
 import { InputField } from '../../../form/fields/InputField';
 import { PasswordField } from '../../../form/fields/PasswordField';
+import { ValidatedForm } from '../../../form/ValidatedForm';
 import { AlertBanner } from '../../../ui/AlertBanner';
 import { Button } from '../../../ui/buttons/Button';
 
@@ -109,7 +110,7 @@ const LoginView = ({ t }: { t: Dictionary['auth']['login'] }) => {
           className="mb-0 mt-6 rounded-xl border px-4 py-3"
         />
 
-        <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
+        <ValidatedForm className="mt-6 space-y-4" onSubmit={handleSubmit}>
           <InputField
             label={t.emailLabel}
             field="email"
@@ -139,7 +140,7 @@ const LoginView = ({ t }: { t: Dictionary['auth']['login'] }) => {
           <Button type="submit" disabled={submitting} className="w-full">
             {submitting ? t.submitting : t.submit}
           </Button>
-        </form>
+        </ValidatedForm>
       </div>
     </div>
   );

@@ -8,6 +8,7 @@ import { LuArrowLeft } from 'react-icons/lu';
 
 import { ApiError } from '../../../../lib/api';
 import { InputField } from '../../../form/fields/InputField';
+import { ValidatedForm } from '../../../form/ValidatedForm';
 import { PageContainer } from '../../../layout/PageContainer';
 import { AlertBanner } from '../../../ui/AlertBanner';
 import { Button } from '../../../ui/buttons/Button';
@@ -120,7 +121,7 @@ const EditStaffView = ({ staffId }: { staffId: string }) => {
       />
 
       <Card className="p-5">
-        <form onSubmit={handleSubmit}>
+        <ValidatedForm onSubmit={handleSubmit}>
           <AlertBanner message={error} />
 
           <div className="mb-4 grid grid-cols-1 gap-3 rounded-xl bg-slate-50 p-3.5 sm:grid-cols-2">
@@ -203,7 +204,7 @@ const EditStaffView = ({ staffId }: { staffId: string }) => {
               {submitting ? 'Saving…' : 'Save changes'}
             </Button>
           </FormActions>
-        </form>
+        </ValidatedForm>
       </Card>
     </PageContainer>
   );

@@ -8,6 +8,7 @@ import { LuArrowLeft } from 'react-icons/lu';
 
 import { AddressInput } from '../../../form/fields/AddressInput';
 import { InputField } from '../../../form/fields/InputField';
+import { ValidatedForm } from '../../../form/ValidatedForm';
 import { PageContainer } from '../../../layout/PageContainer';
 import { AlertBanner } from '../../../ui/AlertBanner';
 import { Button } from '../../../ui/buttons/Button';
@@ -106,7 +107,7 @@ const CreateCollectionPointView = ({
       />
 
       <Card className="p-5">
-        <form onSubmit={handleSubmit}>
+        <ValidatedForm onSubmit={handleSubmit}>
           <AlertBanner message={error} />
 
           <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
@@ -167,7 +168,7 @@ const CreateCollectionPointView = ({
               {submitting ? 'Creating…' : 'Create collection point'}
             </Button>
           </FormActions>
-        </form>
+        </ValidatedForm>
       </Card>
     </PageContainer>
   );

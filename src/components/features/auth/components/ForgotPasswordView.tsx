@@ -7,6 +7,7 @@ import { LuCircleCheck, LuKeyRound } from 'react-icons/lu';
 
 import type { Dictionary } from '../../../../lib/dictionary';
 import { InputField } from '../../../form/fields/InputField';
+import { ValidatedForm } from '../../../form/ValidatedForm';
 import { Button } from '../../../ui/buttons/Button';
 import { useForgotPassword } from '../hooks';
 import { AuthCard } from './AuthCard';
@@ -56,7 +57,7 @@ const ForgotPasswordView = ({
       title={t.title}
       subtitle={t.subtitle}
     >
-      <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
+      <ValidatedForm className="mt-6 space-y-4" onSubmit={handleSubmit}>
         <InputField
           label={t.emailLabel}
           field="email"
@@ -76,7 +77,7 @@ const ForgotPasswordView = ({
         >
           {t.backToLogin}
         </Link>
-      </form>
+      </ValidatedForm>
     </AuthCard>
   );
 };

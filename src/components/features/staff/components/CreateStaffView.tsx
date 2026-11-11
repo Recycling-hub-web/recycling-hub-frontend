@@ -12,6 +12,7 @@ import {
 } from '../../../../constants/dialCodes';
 import { InputField } from '../../../form/fields/InputField';
 import { PhoneInputField } from '../../../form/fields/PhoneInputField';
+import { ValidatedForm } from '../../../form/ValidatedForm';
 import { PageContainer } from '../../../layout/PageContainer';
 import { AlertBanner } from '../../../ui/AlertBanner';
 import { Button } from '../../../ui/buttons/Button';
@@ -126,7 +127,7 @@ const CreateStaffView = () => {
       />
 
       <Card className="p-5">
-        <form onSubmit={handleSubmit}>
+        <ValidatedForm onSubmit={handleSubmit}>
           <AlertBanner message={error} />
 
           <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
@@ -219,7 +220,7 @@ const CreateStaffView = () => {
               {submitting ? 'Creating…' : 'Create staff member'}
             </Button>
           </FormActions>
-        </form>
+        </ValidatedForm>
       </Card>
     </PageContainer>
   );

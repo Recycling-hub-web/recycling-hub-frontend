@@ -6,6 +6,7 @@ import { LuCircleCheck } from 'react-icons/lu';
 
 import { ApiError } from '../../../../lib/api';
 import { PasswordField } from '../../../form/fields/PasswordField';
+import { ValidatedForm } from '../../../form/ValidatedForm';
 import { AlertBanner } from '../../../ui/AlertBanner';
 import { Button } from '../../../ui/buttons/Button';
 import { AuthCard } from './AuthCard';
@@ -102,7 +103,7 @@ const PasswordSetupForm = ({
         className="mb-0 mt-4 rounded-xl border px-4 py-3"
       />
 
-      <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
+      <ValidatedForm className="mt-6 space-y-4" onSubmit={handleSubmit}>
         <PasswordField
           label={copy.passwordLabel}
           field="password"
@@ -119,7 +120,7 @@ const PasswordSetupForm = ({
         <Button type="submit" disabled={submitting} className="w-full">
           {submitting ? copy.submitting : copy.submit}
         </Button>
-      </form>
+      </ValidatedForm>
     </AuthCard>
   );
 };

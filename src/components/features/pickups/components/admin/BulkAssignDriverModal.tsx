@@ -5,6 +5,7 @@ import { type FormEvent, useMemo, useState } from 'react';
 import { ApiError } from '../../../../../lib/api';
 import { InputField } from '../../../../form/fields/InputField';
 import { SelectField } from '../../../../form/fields/SelectField';
+import { ValidatedForm } from '../../../../form/ValidatedForm';
 import { AlertBanner } from '../../../../ui/AlertBanner';
 import { FormActions } from '../../../../ui/buttons/FormActions';
 import { Modal } from '../../../../ui/modal/Modal';
@@ -126,7 +127,7 @@ const BulkAssignDriverModal = ({
         </FormActions>
       }
     >
-      <form
+      <ValidatedForm
         id="bulk-assign-driver-form"
         onSubmit={handleSubmit}
         noValidate
@@ -152,7 +153,7 @@ const BulkAssignDriverModal = ({
           errors={errors}
           updateFormData={updateFormData}
         />
-      </form>
+      </ValidatedForm>
     </Modal>
   );
 };

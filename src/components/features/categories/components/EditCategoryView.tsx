@@ -10,6 +10,7 @@ import { ApiError } from '../../../../lib/api';
 import { InputField } from '../../../form/fields/InputField';
 import { SelectField } from '../../../form/fields/SelectField';
 import { TextareaField } from '../../../form/fields/TextareaField';
+import { ValidatedForm } from '../../../form/ValidatedForm';
 import { PageContainer } from '../../../layout/PageContainer';
 import { AlertBanner } from '../../../ui/AlertBanner';
 import { Button } from '../../../ui/buttons/Button';
@@ -155,7 +156,7 @@ const EditCategoryView = ({ categoryId, basePath }: EditCategoryViewProps) => {
       <PageHeader title="Edit category" subtitle={category.name} />
 
       <Card className="p-5">
-        <form onSubmit={handleSubmit}>
+        <ValidatedForm onSubmit={handleSubmit}>
           <AlertBanner message={apiError} />
 
           <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
@@ -224,7 +225,7 @@ const EditCategoryView = ({ categoryId, basePath }: EditCategoryViewProps) => {
               {submitting ? 'Saving…' : 'Save changes'}
             </Button>
           </FormActions>
-        </form>
+        </ValidatedForm>
       </Card>
     </PageContainer>
   );

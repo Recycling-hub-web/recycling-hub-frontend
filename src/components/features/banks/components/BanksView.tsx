@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 
 import { ApiError, apiFetch } from '../../../../lib/api';
+import { ValidatedForm } from '../../../form/ValidatedForm';
 import { PageContainer } from '../../../layout/PageContainer';
 import { Button } from '../../../ui/buttons/Button';
 import { Card } from '../../../ui/card/Card';
@@ -71,7 +72,7 @@ export const BanksView = () => {
             </button>
           </p>
         )}
-        <form
+        <ValidatedForm
           className="mb-5 space-y-3"
           onSubmit={(event) => {
             event.preventDefault();
@@ -106,7 +107,7 @@ export const BanksView = () => {
               </Button>
             )}
           </div>
-        </form>
+        </ValidatedForm>
         {loading && <p role="status">Loading banks…</p>}
         {!loading && banks.length === 0 && (
           <p className="text-sm text-slate-500">No banks added yet.</p>

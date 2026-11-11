@@ -14,6 +14,7 @@ import { AddressInput } from '../../../../form/fields/AddressInput';
 import { InputField } from '../../../../form/fields/InputField';
 import { PhoneInputField } from '../../../../form/fields/PhoneInputField';
 import { TextareaField } from '../../../../form/fields/TextareaField';
+import { ValidatedForm } from '../../../../form/ValidatedForm';
 import { Button } from '../../../../ui/buttons/Button';
 import { IconTile } from '../../../../ui/card/IconTile';
 import { SectionCard } from '../../../../ui/card/SectionCard';
@@ -174,7 +175,7 @@ const PublicPickupRequestForm = () => {
                 />
               </div>
 
-              <form onSubmit={handleSubmit} noValidate>
+              <ValidatedForm onSubmit={handleSubmit} noValidate>
                 <div
                   key={stepId}
                   className="p-6 motion-safe:animate-page-enter md:px-8"
@@ -385,7 +386,7 @@ const PublicPickupRequestForm = () => {
                     </Button>
                   </div>
                 </div>
-              </form>
+              </ValidatedForm>
             </div>
 
             <NextSteps title={copy.nextTitle} steps={copy.nextSteps} />

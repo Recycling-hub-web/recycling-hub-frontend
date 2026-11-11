@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '../../../contexts/AuthContext';
 import { ApiError, apiFetch } from '../../../lib/api';
 import type { DriverPayoutDetails } from '../../../types/driverPayout';
+import { ValidatedForm } from '../../form/ValidatedForm';
 import { Button } from '../../ui/buttons/Button';
 import { Card } from '../../ui/card/Card';
 import { AppDate } from '../../ui/date/AppDate';
@@ -348,7 +349,7 @@ export const DriverBankDetails = ({
           </div>
         }
       >
-        <form
+        <ValidatedForm
           id="driver-payout-form"
           className="space-y-4"
           onSubmit={(event) => {
@@ -485,7 +486,7 @@ export const DriverBankDetails = ({
             supported. For a DuitNow mobile ID, use international format (for
             example +60123456789).
           </p>
-        </form>
+        </ValidatedForm>
       </Modal>
     </Card>
   );

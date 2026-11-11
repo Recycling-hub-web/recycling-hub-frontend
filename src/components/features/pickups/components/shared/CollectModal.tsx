@@ -7,6 +7,7 @@ import { InputField } from '../../../../form/fields/InputField';
 import { SelectField } from '../../../../form/fields/SelectField';
 import { TextareaField } from '../../../../form/fields/TextareaField';
 import { StatusFileUpload } from '../../../../form/upload/StatusFileUpload';
+import { ValidatedForm } from '../../../../form/ValidatedForm';
 import { AlertBanner } from '../../../../ui/AlertBanner';
 import { Button } from '../../../../ui/buttons/Button';
 import { FormActions } from '../../../../ui/buttons/FormActions';
@@ -331,7 +332,7 @@ const CollectModal = ({
         </FormActions>
       }
     >
-      <form
+      <ValidatedForm
         id="collect-pickup-form"
         onSubmit={handleSubmit}
         noValidate
@@ -508,7 +509,7 @@ const CollectModal = ({
             </div>
           </>
         )}
-      </form>
+      </ValidatedForm>
     </Modal>
   );
 };

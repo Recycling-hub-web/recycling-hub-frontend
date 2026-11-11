@@ -60,6 +60,8 @@ const CheckBoxGroup = ({
               <div className="relative">
                 <input
                   type="checkbox"
+                  name={field}
+                  required={required && selectedIds.length === 0}
                   checked={selected}
                   onChange={() => toggleSelection(option.id)}
                   className="peer sr-only"

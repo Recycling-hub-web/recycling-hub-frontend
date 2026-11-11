@@ -6,6 +6,7 @@ import { ApiError } from '../../../../lib/api';
 import { InputField } from '../../../form/fields/InputField';
 import { TextareaField } from '../../../form/fields/TextareaField';
 import { StatusFileUpload } from '../../../form/upload/StatusFileUpload';
+import { ValidatedForm } from '../../../form/ValidatedForm';
 import { AlertBanner } from '../../../ui/AlertBanner';
 import { FormActions } from '../../../ui/buttons/FormActions';
 import { Modal } from '../../../ui/modal/Modal';
@@ -142,7 +143,7 @@ const ApproveRejectModal = ({
         </FormActions>
       }
     >
-      <form
+      <ValidatedForm
         id="approve-reject-form"
         onSubmit={handleSubmit}
         noValidate
@@ -197,7 +198,7 @@ const ApproveRejectModal = ({
             disabled={submitting || uploading}
           />
         )}
-      </form>
+      </ValidatedForm>
     </Modal>
   );
 };

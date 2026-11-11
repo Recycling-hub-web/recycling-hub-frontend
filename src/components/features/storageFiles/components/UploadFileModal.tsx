@@ -3,6 +3,7 @@
 import { type FormEvent, useState } from 'react';
 import { LuUpload } from 'react-icons/lu';
 
+import { ValidatedForm } from '../../../form/ValidatedForm';
 import { AlertBanner } from '../../../ui/AlertBanner';
 import { FormActions } from '../../../ui/buttons/FormActions';
 import { Modal } from '../../../ui/modal/Modal';
@@ -82,7 +83,7 @@ const UploadFileModal = ({
         </FormActions>
       }
     >
-      <form id="upload-file-form" onSubmit={handleSubmit} noValidate>
+      <ValidatedForm id="upload-file-form" onSubmit={handleSubmit} noValidate>
         <AlertBanner message={error} />
 
         <label
@@ -113,7 +114,7 @@ const UploadFileModal = ({
             setError('');
           }}
         />
-      </form>
+      </ValidatedForm>
     </Modal>
   );
 };

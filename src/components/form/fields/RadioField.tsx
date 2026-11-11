@@ -39,11 +39,13 @@ const RadioField = ({
           >
             <input
               type="radio"
+              required={required}
+              aria-label={`${label}: ${opt.label}`}
               name={field}
               value={opt.value}
               checked={value === opt.value}
               onChange={() => updateFormData(field, opt.value)}
-              className="hidden"
+              className="sr-only"
             />
             {opt.label}
           </label>

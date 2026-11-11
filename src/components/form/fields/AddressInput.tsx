@@ -268,6 +268,9 @@ const AddressInput = ({
         />
         <input
           type="text"
+          name={field}
+          required={required}
+          maxLength={1000}
           role="combobox"
           aria-expanded={open}
           aria-autocomplete="list"

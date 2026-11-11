@@ -10,6 +10,7 @@ import { ApiError } from '../../../../lib/api';
 import { AddressInput } from '../../../form/fields/AddressInput';
 import { InputField } from '../../../form/fields/InputField';
 import { ToggleInput } from '../../../form/toggle/ToggleInput';
+import { ValidatedForm } from '../../../form/ValidatedForm';
 import { PageContainer } from '../../../layout/PageContainer';
 import { AlertBanner } from '../../../ui/AlertBanner';
 import { Button } from '../../../ui/buttons/Button';
@@ -147,7 +148,7 @@ const EditCollectionPointView = ({
       />
 
       <Card className="p-5">
-        <form onSubmit={handleSubmit}>
+        <ValidatedForm onSubmit={handleSubmit}>
           <AlertBanner message={apiError} />
 
           <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
@@ -218,7 +219,7 @@ const EditCollectionPointView = ({
               {submitting ? 'Saving…' : 'Save changes'}
             </Button>
           </FormActions>
-        </form>
+        </ValidatedForm>
       </Card>
     </PageContainer>
   );

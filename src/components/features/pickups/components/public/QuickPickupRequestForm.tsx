@@ -10,6 +10,7 @@ import {
 import { useDictionary } from '../../../../../hooks/useDictionary';
 import { ApiError } from '../../../../../lib/api';
 import { PhoneInputField } from '../../../../form/fields/PhoneInputField';
+import { ValidatedForm } from '../../../../form/ValidatedForm';
 import { Button } from '../../../../ui/buttons/Button';
 import { FadeIn } from '../../../../ui/FadeIn';
 import { useToast } from '../../../../ui/toast/ToastContext';
@@ -104,7 +105,7 @@ const QuickPickupRequestForm = () => {
             </h2>
             <p className="mt-2 text-sm text-slate-500">{content.subheading}</p>
 
-            <form onSubmit={handleSubmit} noValidate className="mt-6">
+            <ValidatedForm onSubmit={handleSubmit} noValidate className="mt-6">
               <div className="inline-flex w-full rounded-full border border-slate-200 bg-slate-50 p-1">
                 {(Object.keys(REQUEST_TYPE_ICONS) as PickupRequestType[]).map(
                   (type) => {
@@ -152,7 +153,7 @@ const QuickPickupRequestForm = () => {
                   {submitting ? content.submittingButton : content.submitButton}
                 </Button>
               </div>
-            </form>
+            </ValidatedForm>
           </div>
         </FadeIn>
       </div>
