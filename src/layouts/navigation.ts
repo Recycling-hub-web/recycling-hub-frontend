@@ -41,6 +41,7 @@ type NavModuleConfig = {
  * "Pickup Requests" can't drift into "Pickups" on one side only. */
 const NAV_MODULES = {
   overview: { segment: '', label: 'Overview', icon: LuLayoutDashboard },
+  banks: { segment: 'banks', label: 'Banks', icon: LuWallet },
   users: { segment: 'users', label: 'Users', icon: LuUsers },
   staff: { segment: 'staff', label: 'Staff', icon: LuIdCard },
   administrators: {
@@ -194,7 +195,7 @@ const adminNavItemsFor = (role: UserRole | undefined): NavItem[] => [
       title: 'Operations',
       entries: ['pickupRequests', 'collectionPoints', 'vehicles'],
     },
-    { title: 'Finance', entries: ['financeMenu'] },
+    { title: 'Finance', entries: ['financeMenu', 'banks'] },
     {
       title: 'Content',
       entries: ['blogs', 'categories', 'partnerships', 'contact'],
@@ -222,7 +223,7 @@ const adminNavItemsFor = (role: UserRole | undefined): NavItem[] => [
 const SUPER_ADMIN_NAV_ITEMS: NavItem[] = buildNavSections('/super-admin', [
   { title: 'Main', entries: ['overview', 'notifications'] },
   { title: 'Operations', entries: ['pickupRequests', 'collectionPoints'] },
-  { title: 'Finance', entries: ['financeMenu'] },
+  { title: 'Finance', entries: ['financeMenu', 'banks'] },
   {
     title: 'Content',
     entries: ['blogs', 'categories', 'partnerships', 'contact', 'storageFiles'],

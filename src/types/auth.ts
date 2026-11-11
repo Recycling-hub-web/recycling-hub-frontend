@@ -1,4 +1,5 @@
 import type { PayoutMethod } from '../constants/payoutMethods';
+import type { DriverPayoutDetails } from './driverPayout';
 
 // Mirrors apps.accounts.models.user.User.Role on the backend. No
 // resident/end-user role — these six are the complete set. Super Admin
@@ -32,6 +33,7 @@ type RegistrationStatus = 'verified' | 'pending' | 'expired';
 // AccountingProfile — see apps.accounts.serializers.staff.StaffDetailSerializer
 // and its siblings on the backend.
 type EmployeeProfile = {
+  payout_details?: DriverPayoutDetails;
   id: string;
   employee_id: string;
   department: string | null;
@@ -89,6 +91,7 @@ type UserListItem = {
 
 // Row shape from GET/PATCH /accounts/users/<id>/ (UserDetailSerializer).
 type UserDetail = {
+  payout_details?: DriverPayoutDetails | null;
   id: string;
   email: string;
   full_name: string;

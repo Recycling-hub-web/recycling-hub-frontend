@@ -25,6 +25,7 @@ import { InfoRow } from '../../../ui/InfoRow';
 import { Loading } from '../../../ui/loading/Loading';
 import { PageHeader } from '../../../ui/PageHeader';
 import { ActivityLog } from '../../activity/components';
+import { DriverBankDetails } from '../../drivers/DriverBankDetails';
 import { STATUS_BADGE_VARIANT } from '../constants';
 import { reimbursementBlocker } from '../eligibility';
 import { useFinanceRecord } from '../hooks';
@@ -192,6 +193,14 @@ const FinanceRecordDetailsView = ({
           </div>
         )}
       </Card>
+
+      {record.driver && (
+        <DriverBankDetails
+          details={record.driver}
+          canEdit={isAdminRole(user?.role)}
+          onSaved={refetch}
+        />
+      )}
 
       {record.status !== 'pending' && (
         <Card className="mt-4 p-5">

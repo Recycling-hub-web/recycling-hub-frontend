@@ -10,10 +10,7 @@ const reimbursementBlocker = (record: FinanceRecordListItem): string => {
     !record.proof_of_payment?.file_key
   )
     return 'Customer payment and proof have not been recorded';
-  if (
-    !record.driver.payout_method ||
-    !record.driver.payout_account_details.trim()
-  )
+  if (!record.driver.payout_ready)
     return 'Driver payout method and account details are required';
   return '';
 };

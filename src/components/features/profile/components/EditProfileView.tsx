@@ -11,12 +11,10 @@ import {
   splitPhoneNumber,
   validatePhoneNumber,
 } from '../../../../constants/dialCodes';
-import { PAYOUT_METHOD_OPTIONS } from '../../../../constants/payoutMethods';
 import { useAuth } from '../../../../contexts/AuthContext';
 import { ApiError } from '../../../../lib/api';
 import { InputField } from '../../../form/fields/InputField';
 import { PhoneInputField } from '../../../form/fields/PhoneInputField';
-import { SelectField } from '../../../form/fields/SelectField';
 import { PageContainer } from '../../../layout/PageContainer';
 import { AlertBanner } from '../../../ui/AlertBanner';
 import { Button } from '../../../ui/buttons/Button';
@@ -137,10 +135,6 @@ const EditProfileView = () => {
         position: formData.position.trim(),
         branch: formData.branch.trim(),
         joining_date: formData.joining_date || null,
-        ...(isDriver && {
-          payout_method: formData.payout_method,
-          payout_account_details: formData.payout_account_details.trim(),
-        }),
       };
     }
 
@@ -284,25 +278,16 @@ const EditProfileView = () => {
                   {...field}
                 />
                 {isDriver && (
-                  <>
-                    <SelectField
-                      label="Payout method"
-                      field="payout_method"
-                      required={false}
-                      options={[
-                        { value: '', label: 'Not set' },
-                        ...PAYOUT_METHOD_OPTIONS,
-                      ]}
-                      {...field}
-                    />
-                    <InputField
-                      label="Payout account"
-                      field="payout_account_details"
-                      required={false}
-                      placeholder="Bank account number, DuitNow ID, etc."
-                      {...field}
-                    />
-                  </>
+                  <p className="text-sm text-slate-500">
+                    Manage your bank account and payout method on{' '}
+                    <a
+                      href="/profile"
+                      className="font-semibold text-brand-600 underline"
+                    >
+                      your profile
+                    </a>
+                    .
+                  </p>
                 )}
               </div>
               <p className="mb-2 text-xs text-slate-500">

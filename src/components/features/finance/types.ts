@@ -1,3 +1,5 @@
+import type { DriverPayoutDetails } from '../../../types/driverPayout';
+
 type FinanceCollectionRequest = {
   id: string;
   full_name: string;
@@ -20,7 +22,7 @@ type FinanceStatus = 'pending' | 'claimed' | 'verified' | 'reimbursed';
 
 type FinancePaymentMethod = 'duitnow' | 'cash' | 'bank_transfer';
 
-type FinanceDriver = {
+type FinanceDriver = DriverPayoutDetails & {
   id: string;
   full_name: string;
   payout_method: FinancePaymentMethod | '';
