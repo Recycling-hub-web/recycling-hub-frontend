@@ -1,3 +1,4 @@
+export { BetaBadge } from './BetaBadge';
 export type { DetailStatusBadgeProps } from './DetailStatusBadge';
 export { DetailStatusBadge } from './DetailStatusBadge';
 export type { SolidBadgeProps } from './SolidBadge';

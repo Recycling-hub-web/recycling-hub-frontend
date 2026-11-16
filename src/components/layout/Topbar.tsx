@@ -4,6 +4,7 @@ import { LuChevronDown, LuUserRound } from 'react-icons/lu';
 
 import { ASSETS } from '../../constants/content';
 import { useAuth } from '../../contexts/AuthContext';
+import { BetaBadge } from '../ui/badges/BetaBadge';
 import { Dropdown } from '../ui/dropdown/Dropdown';
 import { NotificationsButton } from './NotificationsButton';
 
@@ -32,7 +33,7 @@ const Topbar = () => {
       <Link
         href="/dashboard"
         aria-label="Recycling Hub dashboard"
-        className="mr-auto lg:hidden"
+        className="mr-auto flex items-center gap-2 lg:hidden"
       >
         <Image
           src={ASSETS.logo.combinedColor}
@@ -42,6 +43,7 @@ const Topbar = () => {
           className="h-6 w-auto"
           priority
         />
+        <BetaBadge />
       </Link>
       <div className="ms-auto flex items-center gap-1 lg:gap-3">
         <NotificationsButton />

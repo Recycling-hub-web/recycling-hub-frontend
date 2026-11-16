@@ -7,6 +7,7 @@ import { usePathname } from 'next/navigation';
 import { LuX } from 'react-icons/lu';
 
 import { ASSETS } from '../../constants/content';
+import { BetaBadge } from '../ui/badges/BetaBadge';
 import type { NavItem } from '../ui/navigation';
 import {
   getActiveHref,
@@ -71,7 +72,7 @@ const Sidebar = ({ navItems, open, onClose }: SidebarProps) => {
         }`}
       >
         <div className="flex h-16 shrink-0 items-center justify-between border-b border-slate-200 pe-3 ps-5 lg:justify-center">
-          <Link href="/" className="flex items-center">
+          <Link href="/" className="flex items-center gap-2">
             <Image
               src={ASSETS.logo.combinedColor}
               alt="Recycling Hub"
@@ -88,6 +89,7 @@ const Sidebar = ({ navItems, open, onClose }: SidebarProps) => {
               className="size-7 object-contain sm:hidden"
               priority
             />
+            <BetaBadge />
           </Link>
           <button
             type="button"
