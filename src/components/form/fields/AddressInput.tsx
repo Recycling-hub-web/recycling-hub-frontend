@@ -309,7 +309,8 @@ const AddressInput = ({
         )}
 
         {open && (
-          <div className="absolute z-10 mt-1.5 w-full overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg">
+          // z-30: above the step forms' sticky footers (z-10).
+          <div className="absolute z-30 mt-1.5 w-full overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg">
             {renderDropdownContent()}
           </div>
         )}
