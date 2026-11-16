@@ -31,6 +31,13 @@ import { ProfilePhotoUploader } from '../../staff/components/ProfilePhotoUploade
 import { roleOptionsFor, ROLES_WITH_PROFILE } from '../constants';
 import { useCreateUser, useRoleLimits } from '../hooks';
 
+/** Today as YYYY-MM-DD in the browser's time zone (what a date input shows). */
+const todayLocal = () => {
+  const d = new Date();
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+};
+
 type FormState = {
   full_name: string;
   email: string;
@@ -57,7 +64,8 @@ const INITIAL_STATE: FormState = {
   department: '',
   job_title: '',
   branch: '',
-  joining_date: '',
+  // Always the registration day (set by the backend) — shown, not edited.
+  joining_date: todayLocal(),
   payout_method: '',
   payout_account_details: '',
 };
@@ -128,7 +136,6 @@ const CreateUserView = () => {
               department: formData.department || undefined,
               job_title: formData.job_title || undefined,
               branch: formData.branch || undefined,
-              joining_date: formData.joining_date || undefined,
             }
           : {}),
         ...(showPayoutFields
@@ -273,7 +280,8 @@ const CreateUserView = () => {
                 formData={formData}
                 errors={errors}
                 updateFormData={updateFormData}
-                disabled={submitting}
+                disabled
+                helperText="Set automatically to the day the account is registered."
               />
             </div>
           )}
