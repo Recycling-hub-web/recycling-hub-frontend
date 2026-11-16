@@ -1,3 +1,4 @@
+export { useChangeUserRole } from './useChangeUserRole';
 export { useCreateUser } from './useCreateUser';
 export { useDeleteUser } from './useDeleteUser';
 export { useResendInvite } from './useResendInvite';
