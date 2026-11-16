@@ -213,6 +213,13 @@ const UserDetailsView = ({ userId }: { userId: string }) => {
             label="Created"
             value={<AppDate value={user.created_at} format="long" />}
           />
+          {user.joining_date && (
+            <InfoRow
+              icon={<LuCalendar className="size-4" />}
+              label="Joining date"
+              value={<AppDate value={user.joining_date} format="long" />}
+            />
+          )}
         </div>
       </Card>
 

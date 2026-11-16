@@ -92,6 +92,8 @@ type UserListItem = {
 // Row shape from GET/PATCH /accounts/users/<id>/ (UserDetailSerializer).
 type UserDetail = {
   payout_details?: DriverPayoutDetails | null;
+  /** From the role profile: the registration day unless changed. */
+  joining_date?: string | null;
   id: string;
   email: string;
   full_name: string;

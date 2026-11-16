@@ -43,7 +43,6 @@ type FormState = {
   department: string;
   job_title: string;
   branch: string;
-  joining_date: string;
   payout_method: string;
   payout_account_details: string;
 };
@@ -57,7 +56,6 @@ const INITIAL_STATE: FormState = {
   department: '',
   job_title: '',
   branch: '',
-  joining_date: '',
   payout_method: '',
   payout_account_details: '',
 };
@@ -128,7 +126,6 @@ const CreateUserView = () => {
               department: formData.department || undefined,
               job_title: formData.job_title || undefined,
               branch: formData.branch || undefined,
-              joining_date: formData.joining_date || undefined,
             }
           : {}),
         ...(showPayoutFields
@@ -218,7 +215,7 @@ const CreateUserView = () => {
 
             {/* profile_photo lives on User itself (see Topbar/Sidebar
              * avatars), not a role-specific profile field, so — unlike
-             * department/position/branch/joining_date below — it isn't
+             * department/position/branch below — it isn't
              * gated behind showProfileFields; every role can have one. */}
             <div className="sm:col-span-2">
               <ProfilePhotoUploader
@@ -260,16 +257,6 @@ const CreateUserView = () => {
                 field="branch"
                 required={false}
                 placeholder="e.g. Kuala Lumpur HQ"
-                formData={formData}
-                errors={errors}
-                updateFormData={updateFormData}
-                disabled={submitting}
-              />
-              <InputField
-                label="Joining date"
-                field="joining_date"
-                type="date"
-                required={false}
                 formData={formData}
                 errors={errors}
                 updateFormData={updateFormData}

@@ -34,7 +34,6 @@ type FormState = {
   department: string;
   position: string;
   branch: string;
-  joining_date: string;
 };
 
 const INITIAL_STATE: FormState = {
@@ -45,7 +44,6 @@ const INITIAL_STATE: FormState = {
   department: '',
   position: '',
   branch: '',
-  joining_date: '',
 };
 
 // Full page, not a modal — same footing as CreateUserView/
@@ -98,7 +96,6 @@ const CreateStaffView = () => {
         department: formData.department || undefined,
         position: formData.position || undefined,
         branch: formData.branch || undefined,
-        joining_date: formData.joining_date || undefined,
         profile_photo: photoKey,
       });
       toast.success(
@@ -154,16 +151,6 @@ const CreateStaffView = () => {
               label="Phone number"
               dialCodeField="phone_dial_code"
               numberField="phone_local"
-              required={false}
-              formData={formData}
-              errors={errors}
-              updateFormData={updateFormData}
-              disabled={submitting}
-            />
-            <InputField
-              label="Joining date"
-              field="joining_date"
-              type="date"
               required={false}
               formData={formData}
               errors={errors}

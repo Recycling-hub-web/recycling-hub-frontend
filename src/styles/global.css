@@ -180,7 +180,8 @@ body {
 }
 
 .page-transition-enter {
-  animation: pageFadeIn 0.35s ease-out forwards;
+  /* backwards, not forwards — see page-enter in tailwind.config.js. */
+  animation: pageFadeIn 0.35s ease-out backwards;
 }
 
 /* Authenticated system: phone layout is a task-focused app shell.

@@ -156,7 +156,11 @@ module.exports = {
       },
       animation: {
         'slide-in': 'slide-in 0.25s ease-out forwards',
-        'page-enter': 'page-enter 0.25s ease-out both',
+        // `backwards`, not `both`: holding the last frame keeps a
+        // transform applied after the animation, which makes a stacking
+        // context and traps dropdowns (e.g. address suggestions) under
+        // the step forms' sticky footers.
+        'page-enter': 'page-enter 0.25s ease-out backwards',
         'logout-fade': 'logout-fade 0.3s ease-out both',
         'glow-pulse': 'glow-pulse 6s ease-in-out infinite',
       },
