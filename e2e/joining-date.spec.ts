@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 import { loginAs } from './helpers/auth';
 
 /** New staff get the registration day as their joining date: the create
- * form shows today, locked, and the saved profile has it. */
+ * form doesn't ask for it, and the details page shows it. */
 
 const today = () => {
   const d = new Date();
@@ -16,9 +16,7 @@ test('a new staff member joins on the day they are registered', async ({
 }) => {
   await loginAs(page, 'admin');
   await page.goto('/admin/staff/create');
-  const joining = page.locator('[data-field="joining_date"] input');
-  await expect(joining).toHaveValue(today());
-  await expect(joining).toBeDisabled();
+  await expect(page.locator('[data-field="joining_date"]')).toHaveCount(0);
 
   const email = `e2e-joining-${Date.now()}@example.com`;
   await page.locator('[data-field="full_name"] input').fill('E2E Joining Day');
@@ -31,4 +29,9 @@ test('a new staff member joins on the day they are registered', async ({
     await page.request.get(`/api/v1/accounts/staff/${id}/`)
   ).json();
   expect(profile.joining_date).toBe(today());
+  await expect(page.getByText('Joining date')).toBeVisible();
+
+  // The admin's User details page shows it too.
+  await page.goto(`/admin/users/${profile.user.id}`);
+  await expect(page.getByText('Joining date')).toBeVisible();
 });

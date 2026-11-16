@@ -23,13 +23,6 @@ import { useToast } from '../../../ui/toast/ToastContext';
 import { useCreateStaff } from '../hooks';
 import { ProfilePhotoUploader } from './ProfilePhotoUploader';
 
-/** Today as YYYY-MM-DD in the browser's time zone (what a date input shows). */
-const todayLocal = () => {
-  const d = new Date();
-  const pad = (n: number) => String(n).padStart(2, '0');
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-};
-
 type FormState = {
   full_name: string;
   email: string;
@@ -41,7 +34,6 @@ type FormState = {
   department: string;
   position: string;
   branch: string;
-  joining_date: string;
 };
 
 const INITIAL_STATE: FormState = {
@@ -52,8 +44,6 @@ const INITIAL_STATE: FormState = {
   department: '',
   position: '',
   branch: '',
-  // Always the registration day (set by the backend) — shown, not edited.
-  joining_date: todayLocal(),
 };
 
 // Full page, not a modal — same footing as CreateUserView/
@@ -166,17 +156,6 @@ const CreateStaffView = () => {
               errors={errors}
               updateFormData={updateFormData}
               disabled={submitting}
-            />
-            <InputField
-              label="Joining date"
-              field="joining_date"
-              type="date"
-              required={false}
-              formData={formData}
-              errors={errors}
-              updateFormData={updateFormData}
-              disabled
-              helperText="Set automatically to the day the account is registered."
             />
             <InputField
               label="Department"

@@ -31,13 +31,6 @@ import { ProfilePhotoUploader } from '../../staff/components/ProfilePhotoUploade
 import { roleOptionsFor, ROLES_WITH_PROFILE } from '../constants';
 import { useCreateUser, useRoleLimits } from '../hooks';
 
-/** Today as YYYY-MM-DD in the browser's time zone (what a date input shows). */
-const todayLocal = () => {
-  const d = new Date();
-  const pad = (n: number) => String(n).padStart(2, '0');
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-};
-
 type FormState = {
   full_name: string;
   email: string;
@@ -50,7 +43,6 @@ type FormState = {
   department: string;
   job_title: string;
   branch: string;
-  joining_date: string;
   payout_method: string;
   payout_account_details: string;
 };
@@ -64,8 +56,6 @@ const INITIAL_STATE: FormState = {
   department: '',
   job_title: '',
   branch: '',
-  // Always the registration day (set by the backend) — shown, not edited.
-  joining_date: todayLocal(),
   payout_method: '',
   payout_account_details: '',
 };
@@ -225,7 +215,7 @@ const CreateUserView = () => {
 
             {/* profile_photo lives on User itself (see Topbar/Sidebar
              * avatars), not a role-specific profile field, so — unlike
-             * department/position/branch/joining_date below — it isn't
+             * department/position/branch below — it isn't
              * gated behind showProfileFields; every role can have one. */}
             <div className="sm:col-span-2">
               <ProfilePhotoUploader
@@ -271,17 +261,6 @@ const CreateUserView = () => {
                 errors={errors}
                 updateFormData={updateFormData}
                 disabled={submitting}
-              />
-              <InputField
-                label="Joining date"
-                field="joining_date"
-                type="date"
-                required={false}
-                formData={formData}
-                errors={errors}
-                updateFormData={updateFormData}
-                disabled
-                helperText="Set automatically to the day the account is registered."
               />
             </div>
           )}
