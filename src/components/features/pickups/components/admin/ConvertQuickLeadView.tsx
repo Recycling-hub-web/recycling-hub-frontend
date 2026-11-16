@@ -130,6 +130,10 @@ type ConvertQuickLeadViewProps = {
 // see PickupRequestCreateView/CreateOrderView), so this view only
 // renders anything useful once reached with a `leadId`.
 const ConvertQuickLeadView = ({ basePath }: ConvertQuickLeadViewProps) => {
+  // There's no orders list page — orders live on their pickup request.
+  // Leads come from the Pickup Requests page's Quick Leads tab.
+  const requestsPath = basePath.replace('/pickups', '/pickup-requests');
+  const leadsPath = `${requestsPath}?tab=quick`;
   const router = useRouter();
   const toast = useToast();
   const searchParams = useSearchParams();
@@ -297,7 +301,7 @@ const ConvertQuickLeadView = ({ basePath }: ConvertQuickLeadViewProps) => {
       }
       // Orders live on their request's page — open the new one there.
       router.push(
-        `${basePath.replace('/pickups', '/pickup-requests')}/${order.pickup_request.id}?order=${order.id}`,
+        `${requestsPath}/${order.pickup_request.id}?order=${order.id}`,
       );
     } catch {
       // useConvertQuickPickupRequest already captured the message in
@@ -309,16 +313,16 @@ const ConvertQuickLeadView = ({ basePath }: ConvertQuickLeadViewProps) => {
     return (
       <PageContainer variant="form">
         <Link
-          href={basePath}
+          href={leadsPath}
           className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600 lg:mb-4 lg:min-h-0"
         >
           <LuArrowLeft className="size-4" />
-          Back to orders
+          Back to quick leads
         </Link>
         <Card className="p-5 text-sm text-slate-600">
           This form follows up on a Quick Lead. To create a brand-new pickup
           request, use the{' '}
-          <Link href={basePath} className="font-semibold text-brand-600">
+          <Link href={requestsPath} className="font-semibold text-brand-600">
             Pickup Requests
           </Link>{' '}
           list&apos;s &ldquo;New request&rdquo; action instead.
@@ -333,11 +337,8 @@ const ConvertQuickLeadView = ({ basePath }: ConvertQuickLeadViewProps) => {
     return (
       <PageContainer variant="form">
         <AlertBanner message="This lead has been cancelled and cannot be converted." />
-        <Button
-          href={basePath.replace('/pickups', '/pickup-requests')}
-          variant="secondary"
-        >
-          Back to pickup requests
+        <Button href={leadsPath} variant="secondary">
+          Back to quick leads
         </Button>
       </PageContainer>
     );
@@ -346,11 +347,11 @@ const ConvertQuickLeadView = ({ basePath }: ConvertQuickLeadViewProps) => {
   return (
     <PageContainer variant="form">
       <Link
-        href={basePath}
+        href={leadsPath}
         className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600 lg:mb-4 lg:min-h-0"
       >
         <LuArrowLeft className="size-4" />
-        Back to orders
+        Back to quick leads
       </Link>
 
       <PageHeader
@@ -547,7 +548,7 @@ const ConvertQuickLeadView = ({ basePath }: ConvertQuickLeadViewProps) => {
           </section>
 
           <FormActions className="pt-5">
-            <Button href={basePath} variant="secondary">
+            <Button href={leadsPath} variant="secondary">
               Cancel
             </Button>
             <Button type="submit" disabled={submitting}>
