@@ -154,7 +154,7 @@ const isGroup = (entry: NavEntry): entry is NavGroup => entry in NAV_GROUPS;
 
 /** A sidebar divided into headed sections. A group entry becomes one
  * expandable item whose sub-links are its pages; its own href is the
- * first page's (where quick links and a collapsed group point). */
+ * first page's (where a collapsed group points). */
 const buildNavSections = (
   basePath: string,
   sections: NavSection[],

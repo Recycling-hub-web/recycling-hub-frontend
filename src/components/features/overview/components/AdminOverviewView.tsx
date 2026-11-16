@@ -19,9 +19,9 @@ import { RequestsThisWeekStat } from './RequestsThisWeekStat';
 import { RoleOverviewLayout } from './RoleOverviewLayout';
 
 /** Replaces the old `redirect('/admin/users')` — /admin is now a real
- * dashboard. Quick links reuse adminNavItemsFor (the same role-aware
- * list AdminLayout's sidebar renders) rather than a second, separately-maintained
- * list of admin modules. The pickup volume trend (PickupVolumeChart,
+ * dashboard. The phone command card reuses adminNavItemsFor (the same
+ * role-aware list AdminLayout's sidebar renders) rather than a second,
+ * separately-maintained list of admin modules. The pickup volume trend (PickupVolumeChart,
  * shared with Staff) has its own endpoint and range picker — it's a real
  * cross-module/cross-driver aggregate, not something any one role's
  * own scoped data could produce. The status-breakdown Bar/DonutCharts

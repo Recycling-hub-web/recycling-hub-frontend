@@ -5,14 +5,14 @@ type NavSubItem = {
   href: string;
   label: string;
   /** Only for a group built from whole pages (see NavItem.isGroup) — lets
-   * quick links show each page with its own icon. */
+   * menus show each page with its own icon. */
   icon?: IconType;
 };
 
 type NavItem = {
-  /** The item's main page. With `children`, this is still where quick
-   * links (OverviewQuickLinks) point, while the sidebar renders the item
-   * as an expandable group instead of a link. */
+  /** The item's main page. With `children`, this is still where links to
+   * the item point, while the sidebar renders it as an expandable group
+   * instead of a link. */
   href: string;
   label: string;
   icon: IconType;
@@ -22,7 +22,7 @@ type NavItem = {
   section?: string;
   /** True when `children` are separate pages grouped under one menu
    * entry (e.g. "Pickups" → Pickup Requests + Orders) rather than
-   * sub-pages of one module — quick links then list each page. */
+   * sub-pages of one module — menus then list each page. */
   isGroup?: boolean;
 };
 

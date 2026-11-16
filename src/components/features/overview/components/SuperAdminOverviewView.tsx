@@ -25,9 +25,9 @@ import { RoleOverviewLayout } from './RoleOverviewLayout';
 
 /** Super Admin's own landing page (/super-admin) — separate from
  * AdminOverviewView, which Super Admin no longer lands on by default
- * (see ROLE_HOME). Quick links reuse SUPER_ADMIN_NAV_ITEMS (the same
- * list SuperAdminLayout's sidebar renders) rather than a second, separately-
- * maintained list. Seat limits (admin/super-admin usage) stay on
+ * (see ROLE_HOME). The phone command card reuses SUPER_ADMIN_NAV_ITEMS
+ * (the same list SuperAdminLayout's sidebar renders) rather than a second,
+ * separately-maintained list. Seat limits (admin/super-admin usage) stay on
  * useRoleLimits, their own real backend mechanism; everything else
  * below is organization-wide operational/finance data
  * (useSuperAdminOverviewStats, SuperAdminOverviewStatsView) this page

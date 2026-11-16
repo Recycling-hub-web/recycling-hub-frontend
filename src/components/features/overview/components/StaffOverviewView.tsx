@@ -34,8 +34,8 @@ const LEADS_PREVIEW_SIZE = 5;
 
 /** Same shape as AdminOverviewView, minus the Users stat — Staff has no
  * Users module/access, so the shared AdminOverviewStatsView endpoint
- * simply never returns `total_users` for a staff caller. Quick links
- * reuse OPERATIONAL_ROLES.staff.navItems, the same list
+ * simply never returns `total_users` for a staff caller. The phone
+ * command card reuses OPERATIONAL_ROLES.staff.navItems, the same list
  * OperationalLayout passes to Sidebar.
  *
  * The "Uncontacted leads" stat + preview table below it both come from

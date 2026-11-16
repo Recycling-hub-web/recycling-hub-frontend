@@ -99,10 +99,8 @@ test.describe('Admin overview', () => {
     ).toBeVisible();
     await expect(page.getByText('Finance records by status')).toBeVisible();
 
-    const quickLinks = page.getByTestId('overview-quick-links');
-    await expect(quickLinks).toBeVisible();
-    await quickLinks.getByRole('link', { name: 'Pickup Requests' }).click();
-    await expect(page).toHaveURL(/\/admin\/pickup-requests$/);
+    // No Quick links section — modules are reached from the sidebar.
+    await expect(page.getByTestId('overview-quick-links')).toHaveCount(0);
   });
 });
 
@@ -126,10 +124,8 @@ test.describe('Staff overview', () => {
     await expect(page.getByText('Pickup requests by status')).toBeVisible();
     await expect(page.getByText('Finance records by status')).toBeVisible();
 
-    const quickLinks = page.getByTestId('overview-quick-links');
-    await expect(quickLinks).toBeVisible();
-    await quickLinks.getByRole('link', { name: 'Contact' }).click();
-    await expect(page).toHaveURL(/\/staff\/contact$/);
+    // No Quick links section — modules are reached from the sidebar.
+    await expect(page.getByTestId('overview-quick-links')).toHaveCount(0);
   });
 
   test('uncontacted leads stat and preview table reflect real quick leads', async ({
@@ -299,10 +295,8 @@ test.describe('Super Admin overview', () => {
     ).toBeVisible();
     await expect(page.getByText('Users by role')).toBeVisible();
 
-    const quickLinks = page.getByTestId('overview-quick-links');
-    await expect(quickLinks).toBeVisible();
-    await quickLinks.getByRole('link', { name: 'Pickup Requests' }).click();
-    await expect(page).toHaveURL(/\/super-admin\/pickup-requests$/);
+    // No Quick links section — modules are reached from the sidebar.
+    await expect(page.getByTestId('overview-quick-links')).toHaveCount(0);
   });
 });
 
