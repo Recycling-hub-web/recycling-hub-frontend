@@ -2,7 +2,6 @@ export { AccountingOverviewView } from './AccountingOverviewView';
 export { AdminOverviewView } from './AdminOverviewView';
 export { DriverOverviewView } from './DriverOverviewView';
 export { OrderStatusGaugeCard } from './OrderStatusGaugeCard';
-export { OverviewQuickLinks } from './OverviewQuickLinks';
 export { OverviewStatCard } from './OverviewStatCard';
 export { OverviewStatGrid } from './OverviewStatGrid';
 export { PickupHeatmapCard } from './PickupHeatmapCard';

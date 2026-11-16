@@ -6,7 +6,6 @@ import { PageContainer } from '../../../layout/PageContainer';
 import type { NavItem } from '../../../layout/Sidebar';
 import { PageHeader } from '../../../ui/PageHeader';
 import { MobileCommandCard } from './MobileCommandCard';
-import { OverviewQuickLinks } from './OverviewQuickLinks';
 import { ProfileSummaryCard } from './ProfileSummaryCard';
 
 type RoleOverviewLayoutProps = {
@@ -19,17 +18,15 @@ type RoleOverviewLayoutProps = {
    * no workflow data yet omit it. */
   statGrid?: ReactNode;
   /** Anything bigger than a stat row — a chart (Admin only) or a short
-   * table (Staff/Receiving Officer) — rendered between the stats and
-   * the quick links. */
+   * table (Staff/Receiving Officer) — rendered below the stats. */
   extra?: ReactNode;
 };
 
 /** The page shell every role's Overview composes: welcome header,
- * optional stats, quick links to whatever modules this role actually
- * has, and the user's own profile. Shows the original "more is on the
- * way" placeholder note only while there are no quick links yet — once
- * a role gains its first real module this note quietly disappears on
- * its own. */
+ * optional stats, and the user's own profile (modules are reached from
+ * the sidebar / tab bar). Shows the original "more is on the way"
+ * placeholder note only while the role has no module besides Overview —
+ * once it gains one this note quietly disappears on its own. */
 const RoleOverviewLayout = ({
   navItems,
   ownHref,
@@ -40,7 +37,7 @@ const RoleOverviewLayout = ({
 
   if (!user) return null;
 
-  const hasQuickLinks = navItems.some((item) => item.href !== ownHref);
+  const hasModules = navItems.some((item) => item.href !== ownHref);
 
   return (
     <PageContainer variant="table">
@@ -60,11 +57,9 @@ const RoleOverviewLayout = ({
 
         {extra}
 
-        <OverviewQuickLinks navItems={navItems} ownHref={ownHref} />
-
         <ProfileSummaryCard />
 
-        {!hasQuickLinks && (
+        {!hasModules && (
           <p className="text-sm text-slate-400">
             More of your dashboard — assigned tasks, pickups, and reports — is
             on the way.
