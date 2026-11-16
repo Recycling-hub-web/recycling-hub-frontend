@@ -14,6 +14,7 @@ import {
   LuShieldCheck,
   LuTrash2,
   LuUser,
+  LuUserCog,
 } from 'react-icons/lu';
 
 import { useAuth } from '../../../../contexts/AuthContext';
@@ -34,11 +35,13 @@ import { ActivityLog } from '../../activity/components';
 import { DriverBankDetails } from '../../drivers/DriverBankDetails';
 import {
   canManageUser,
+  creatableRolesFor,
   REGISTRATION_STATUS_BADGE_VARIANT,
   REGISTRATION_STATUS_LABELS,
   ROLE_BADGE_VARIANT,
 } from '../constants';
 import { useDeleteUser, useResendInvite, useUser } from '../hooks';
+import { ChangeRoleModal } from './ChangeRoleModal';
 
 const UserDetailsView = ({ userId }: { userId: string }) => {
   const router = useRouter();
@@ -48,6 +51,7 @@ const UserDetailsView = ({ userId }: { userId: string }) => {
   const { execute: deleteUser, loading: deleting } = useDeleteUser();
   const { execute: resendInvite, loading: resending } = useResendInvite();
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [roleOpen, setRoleOpen] = useState(false);
 
   const handleConfirmDelete = async () => {
     if (!user) return;
@@ -107,6 +111,17 @@ const UserDetailsView = ({ userId }: { userId: string }) => {
           onClick: () => router.push(`/admin/users/${userId}/edit`),
           color: 'neutral',
         },
+        // Nobody changes their own role (backend enforces it too).
+        ...(user && actor && user.id !== actor.id
+          ? [
+              {
+                label: 'Change role',
+                icon: LuUserCog,
+                onClick: () => setRoleOpen(true),
+                color: 'neutral' as const,
+              },
+            ]
+          : []),
         {
           label: 'Delete',
           icon: LuTrash2,
@@ -134,6 +149,19 @@ const UserDetailsView = ({ userId }: { userId: string }) => {
 
   return (
     <PageContainer variant="form">
+      <ChangeRoleModal
+        open={roleOpen}
+        onClose={() => setRoleOpen(false)}
+        onChanged={() => {
+          toast.success(
+            'Role changed',
+            `${user.full_name} has been signed out and will see the new menu next time.`,
+          );
+          refetch();
+        }}
+        user={user}
+        assignableRoles={creatableRolesFor(actor?.role)}
+      />
       <Link
         href="/admin/users"
         className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600 lg:mb-4 lg:min-h-0"

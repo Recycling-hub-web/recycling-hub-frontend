@@ -67,15 +67,10 @@ const createUser = (payload: CreateUserPayload): Promise<UserDetail> =>
 const getUser = (id: string): Promise<UserDetail> =>
   apiFetch(`/accounts/users/${id}/`);
 
-// `email` and `role` are deliberately not editable here even though
-// UserDetailSerializer accepts both on PATCH: role has no backend service
-// migrating the role-specific profile model (StaffProfile/DriverProfile/…)
-// when it changes — unlike creation, which goes through
-// User.objects.create_staff/create_driver/etc. — so a PATCH-ed role change
-// would leave a stale or missing profile row. Email is the login
-// credential; changing it here would take effect with no re-verification
-// step. Both need real backend work first, not a UI field that can quietly
-// corrupt data in the meantime.
+// `email` and `role` aren't part of the edit form. Role changes have their
+// own action (changeUserRole below — the backend moves the profile, checks
+// for open work and signs the person out); email is the login credential
+// and has no re-verification flow for an admin edit.
 const updateUser = (
   id: string,
   payload: Partial<
@@ -91,6 +86,13 @@ const updateUser = (
   },
 ): Promise<UserDetail> =>
   apiFetch(`/accounts/users/${id}/`, { method: 'PATCH', json: payload });
+
+/** Change someone's role (PATCH {role}). The backend refuses while a
+ * driver still has orders or unpaid payments (400 with `role` reasons),
+ * moves them onto the new role's profile, signs them out everywhere and
+ * notifies them and management. */
+const changeUserRole = (id: string, role: UserRole): Promise<UserDetail> =>
+  apiFetch(`/accounts/users/${id}/`, { method: 'PATCH', json: { role } });
 
 const deleteUser = (id: string): Promise<void> =>
   apiFetch(`/accounts/users/${id}/`, { method: 'DELETE' });
@@ -127,6 +129,7 @@ const updateRoleLimits = (
   apiFetch('/accounts/system-settings/', { method: 'PATCH', json: payload });
 
 export {
+  changeUserRole,
   createUser,
   deleteUser,
   getRoleLimits,
