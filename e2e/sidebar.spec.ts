@@ -54,10 +54,11 @@ const MENUS: {
     labels: [
       'Overview',
       'Notifications',
-      'Pickups',
+      'Pickup Requests',
       'Collection Points',
       'Vehicles',
       'Finance',
+      'Banks',
       'Blog Posts',
       'Categories',
       'Partnerships',
@@ -73,14 +74,15 @@ const MENUS: {
     sections: ['Main', 'Operations', 'Finance', 'Content', 'People', 'System'],
     labels: [
       'Overview',
-      'Pickups',
+      'Notifications',
+      'Pickup Requests',
       'Collection Points',
       'Finance',
+      'Banks',
       'Blog Posts',
       'Categories',
       'Partnerships',
       'Contact',
-      'Storage Files',
       'Administrators',
       'Activity Log',
     ],
@@ -93,7 +95,7 @@ const MENUS: {
     labels: [
       'Overview',
       'Notifications',
-      'Pickups',
+      'Pickup Requests',
       'Collection Points',
       'Vehicles',
       'Finance',
@@ -101,7 +103,6 @@ const MENUS: {
       'Categories',
       'Partnerships',
       'Contact',
-      'Storage Files',
     ],
   },
   {
@@ -200,72 +201,7 @@ test('clicking a sidebar link navigates and moves the highlight', async ({
   ).toHaveAttribute('aria-current', 'page');
 });
 
-test.describe('Sub-link group (Pickups)', () => {
-  test('starts collapsed elsewhere, expands on click, and navigates', async ({
-    page,
-  }) => {
-    await loginAs(page, 'admin');
-    await page.goto('/admin');
-
-    await expect(group(page, 'Pickups')).toHaveAttribute(
-      'aria-expanded',
-      'false',
-    );
-    await expect(
-      sidebar(page).getByRole('link', { name: 'Orders' }),
-    ).toHaveCount(0);
-
-    await group(page, 'Pickups').click();
-    await expect(group(page, 'Pickups')).toHaveAttribute(
-      'aria-expanded',
-      'true',
-    );
-    await sidebar(page).getByRole('link', { name: 'Orders' }).click();
-
-    await expect(page).toHaveURL(/\/admin\/pickups$/);
-    await expect(
-      sidebar(page).getByRole('link', { name: 'Orders' }),
-    ).toHaveAttribute('aria-current', 'page');
-    await expect(
-      sidebar(page).getByRole('link', { name: 'Pickup Requests' }),
-    ).not.toHaveAttribute('aria-current', 'page');
-  });
-
-  test('opens on its own when landing on one of its pages', async ({
-    page,
-  }) => {
-    await loginAs(page, 'admin');
-    await page.goto('/admin/pickup-requests');
-
-    await expect(group(page, 'Pickups')).toHaveAttribute(
-      'aria-expanded',
-      'true',
-    );
-    await expect(
-      sidebar(page).getByRole('link', { name: 'Pickup Requests' }),
-    ).toHaveAttribute('aria-current', 'page');
-  });
-
-  test('a sub-page highlights its page, and the group collapses on click', async ({
-    page,
-  }) => {
-    await loginAs(page, 'admin');
-    await page.goto('/admin/pickup-requests/create');
-
-    await expect(
-      sidebar(page).getByRole('link', { name: 'Pickup Requests' }),
-    ).toHaveAttribute('aria-current', 'page');
-
-    await group(page, 'Pickups').click();
-    await expect(group(page, 'Pickups')).toHaveAttribute(
-      'aria-expanded',
-      'false',
-    );
-    await expect(
-      sidebar(page).getByRole('link', { name: 'Pickup Requests' }),
-    ).toHaveCount(0);
-  });
-
+test.describe('Sub-link group (Finance)', () => {
   test('Finance groups Finance Records and Expense Claims', async ({
     page,
   }) => {
@@ -279,4 +215,15 @@ test.describe('Sub-link group (Pickups)', () => {
       sidebar(page).getByRole('link', { name: 'Expense Claims' }),
     ).toBeVisible();
   });
+});
+
+test('no role has a Storage Files link', async ({ page }) => {
+  for (const account of ['admin', 'qaStaff'] as const) {
+    // eslint-disable-next-line no-await-in-loop
+    await loginAs(page, account);
+    // eslint-disable-next-line no-await-in-loop
+    await expect(
+      sidebar(page).getByRole('link', { name: 'Storage Files' }),
+    ).toHaveCount(0);
+  }
 });
