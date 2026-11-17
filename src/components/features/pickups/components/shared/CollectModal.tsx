@@ -1,8 +1,9 @@
 'use client';
 
 import { type FormEvent, useEffect, useState } from 'react';
-import { LuPlus, LuTrash2 } from 'react-icons/lu';
+import { LuPackageCheck, LuPlus, LuTrash2 } from 'react-icons/lu';
 
+import { ApiError } from '../../../../../lib/api';
 import { InputField } from '../../../../form/fields/InputField';
 import { SelectField } from '../../../../form/fields/SelectField';
 import { TextareaField } from '../../../../form/fields/TextareaField';
@@ -40,6 +41,7 @@ type CollectModalProps = {
    * item here, defaulting to its estimated_quantity, plus a category
    * select to correct a miscategorized line. */
   items?: PickupRequestItem[];
+  agreedPrice?: string | null;
 };
 
 type FormState = {
@@ -54,17 +56,18 @@ type NewItemRow = {
   category: string;
   collected_quantity: string;
   quantity_unit: string;
+  price: string;
 };
 
 const EMPTY_NEW_ITEM: NewItemRow = {
   category: '',
   collected_quantity: '',
   quantity_unit: '',
+  price: '',
 };
 
 const PAYMENT_METHOD_OPTIONS = [
   { value: 'duitnow', label: 'DuitNow' },
-  { value: 'cash', label: 'Cash' },
   { value: 'bank_transfer', label: 'Bank transfer' },
 ];
 
@@ -83,6 +86,7 @@ const CollectModal = ({
   onCollected,
   showPaymentFields = false,
   items = [],
+  agreedPrice,
 }: CollectModalProps) => {
   const { execute: collect, loading: submitting } = useCollectPickup();
   const { execute: upload, loading: uploading } = useUploadStorageFile();
@@ -165,6 +169,16 @@ const CollectModal = ({
     );
   };
 
+  const additionalCents = newItems.reduce((total, row) => {
+    const amount = Number(row.price);
+    return (
+      total +
+      (Number.isFinite(amount) && amount >= 0 ? Math.round(amount * 100) : 0)
+    );
+  }, 0);
+  const totalCents =
+    Math.round(Number(agreedPrice ?? 0) * 100) + additionalCents;
+
   const addNewItemRow = () =>
     setNewItems((prev) => [...prev, { ...EMPTY_NEW_ITEM }]);
   const removeNewItemRow = (index: number) =>
@@ -203,7 +217,7 @@ const CollectModal = ({
 
     // New on-site items: only rows with something filled in are sent.
     const nextNewItemErrors = newItems.map((row) => {
-      if (!row.category && !row.collected_quantity) return {};
+      if (!row.category && !row.collected_quantity && !row.price) return {};
       const rowErrors = validateItem(
         {
           category: row.category,
@@ -212,6 +226,12 @@ const CollectModal = ({
         },
         unitsByCategory,
       );
+      if (!row.collected_quantity.trim())
+        rowErrors.collected_quantity = 'Enter the collected quantity.';
+      if (!/^[0-9]{1,8}(?:[.][0-9]{1,2})?$/.test(row.price.trim())) {
+        rowErrors.price =
+          'Enter a valid price, using up to 2 decimal places. Use 0 for no charge.';
+      }
       if (rowErrors.estimated_quantity) {
         rowErrors.collected_quantity = rowErrors.estimated_quantity;
         delete rowErrors.estimated_quantity;
@@ -219,6 +239,9 @@ const CollectModal = ({
       return rowErrors;
     });
     setNewItemErrors(nextNewItemErrors);
+    if (totalCents > 9999999999)
+      nextErrors.price = 'The total payment is too large.';
+    setErrors(nextErrors);
 
     return (
       Object.keys(nextErrors).length === 0 &&
@@ -274,6 +297,7 @@ const CollectModal = ({
       .map((row) => ({
         category: row.category,
         collected_quantity: row.collected_quantity,
+        price: row.price.trim(),
         // Omitted when blank — the API fills in a single-unit category's
         // unit itself.
         ...(row.quantity_unit ? { quantity_unit: row.quantity_unit } : {}),
@@ -288,20 +312,22 @@ const CollectModal = ({
         note: formData.note || undefined,
         ...(anyItemEntries && { items: anyItemEntries }),
         ...(showPaymentFields && {
-          // actual_amount deliberately omitted — defaults server-side
-          // to the agreed price (set at evaluation), which is always
-          // the right amount here.
+          // The server calculates the agreed amount plus validated
+          // on-site item prices; do not trust a client-computed total.
           payment_method: formData.payment_method as
             | 'duitnow'
-            | 'cash'
             | 'bank_transfer',
           proof_of_payment: formData.proof_of_payment,
         }),
       });
       onCollected();
       handleClose();
-    } catch {
-      setApiError('Could not mark this pickup as collected. Please try again.');
+    } catch (error) {
+      setApiError(
+        error instanceof ApiError && error.status === 400
+          ? error.message
+          : 'Could not mark this pickup as collected. Please try again.',
+      );
     }
   };
 
@@ -310,46 +336,74 @@ const CollectModal = ({
       open={open}
       onClose={handleClose}
       title="Mark as collected"
-      subtitle="Confirm what was actually picked up."
+      subtitle="Confirm materials and payment."
+      icon={<LuPackageCheck className="size-5 text-brand-600" />}
+      size="xl"
+      dismissible={!submitting && !uploading}
       footer={
-        <FormActions>
-          <button
-            type="button"
-            onClick={handleClose}
-            disabled={submitting}
-            className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            form="collect-pickup-form"
-            disabled={submitting || uploading}
-            className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {submitting ? 'Saving…' : 'Mark collected'}
-          </button>
-        </FormActions>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          {agreedPrice != null && (
+            <div className="flex items-center justify-between gap-4 sm:block">
+              <p className="text-xs font-medium text-slate-500">
+                Total payment
+              </p>
+              <p className="text-xl font-bold tabular-nums text-brand-800">
+                RM {(totalCents / 100).toFixed(2)}
+              </p>
+            </div>
+          )}
+          <FormActions className="flex-1">
+            <button
+              type="button"
+              onClick={handleClose}
+              disabled={submitting}
+              className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              form="collect-pickup-form"
+              disabled={submitting || uploading}
+              className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {submitting ? 'Saving…' : 'Mark collected'}
+            </button>
+          </FormActions>
+        </div>
       }
     >
       <ValidatedForm
         id="collect-pickup-form"
         onSubmit={handleSubmit}
         noValidate
-        className="space-y-1"
+        className="space-y-5 py-2"
       >
         <AlertBanner message={apiError} />
 
         {items.length > 0 && (
-          <div className="mb-4">
-            <p className="mb-2 text-sm font-medium text-slate-900">
-              Collected quantity per item
-            </p>
+          <section
+            aria-label="Collected materials"
+            className="rounded-2xl border border-slate-200 bg-white p-4"
+          >
+            <div className="mb-4 flex items-start gap-3">
+              <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-brand-50 text-xs font-semibold text-brand-700">
+                1
+              </span>
+              <div>
+                <h3 className="text-sm font-semibold text-slate-900">
+                  Collected materials
+                </h3>
+                <p className="mt-1 text-xs text-slate-500">
+                  Confirm the category and actual quantity for each item.
+                </p>
+              </div>
+            </div>
             <div className="space-y-3">
               {items.map((item) => (
                 <div
                   key={item.id}
-                  className="grid grid-cols-1 gap-x-4 sm:grid-cols-2"
+                  className="grid grid-cols-1 gap-x-4 rounded-xl bg-slate-50 px-3 pt-3 sm:grid-cols-2"
                 >
                   <SelectField
                     label={`Category (${item.category.name})`}
@@ -382,15 +436,28 @@ const CollectModal = ({
                 </div>
               ))}
             </div>
-          </div>
+          </section>
         )}
 
-        <div className="mb-4">
-          <div className="mb-2 flex items-center justify-between gap-3">
-            <p className="text-sm font-medium text-slate-900">
-              Found on-site{' '}
-              <span className="font-normal text-slate-400">(optional)</span>
-            </p>
+        <section
+          aria-label="New materials"
+          className="rounded-2xl border border-slate-200 bg-white p-4"
+        >
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-start gap-3">
+              <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-brand-50 text-xs font-semibold text-brand-700">
+                2
+              </span>
+              <div>
+                <h3 className="text-sm font-semibold text-slate-900">
+                  Found on-site{' '}
+                  <span className="font-normal text-slate-400">· Optional</span>
+                </h3>
+                <p className="mt-1 text-xs text-slate-500">
+                  Add any extra material and its total price.
+                </p>
+              </div>
+            </div>
             <Button
               type="button"
               variant="secondary"
@@ -401,14 +468,33 @@ const CollectModal = ({
               Add another material
             </Button>
           </div>
+          {newItems.length === 0 && (
+            <p className="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-3 text-xs text-slate-500">
+              No additional materials. Add one if you collected more than
+              expected.
+            </p>
+          )}
           {newItems.length > 0 && (
             <div className="space-y-3">
               {newItems.map((row, index) => (
                 // eslint-disable-next-line react/no-array-index-key -- rows have no stable id until submitted
                 <div
                   key={index}
-                  className="grid grid-cols-1 gap-x-4 gap-y-1 rounded-xl border border-slate-200 p-3 sm:grid-cols-3"
+                  className="grid grid-cols-1 gap-x-4 rounded-xl border border-slate-200 bg-slate-50 p-3 pb-0 sm:grid-cols-2"
                 >
+                  <div className="mb-3 flex items-center justify-between sm:col-span-2">
+                    <p className="text-xs font-semibold text-slate-700">
+                      Additional material {index + 1}
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => removeNewItemRow(index)}
+                      aria-label="Remove this material"
+                      className="flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-red-50 hover:text-red-600"
+                    >
+                      <LuTrash2 className="size-4" />
+                    </button>
+                  </div>
                   <SelectField
                     label="Category"
                     field="category"
@@ -432,7 +518,7 @@ const CollectModal = ({
                       updateNewItem(index, field, value)
                     }
                   />
-                  <div className="flex items-end gap-2">
+                  <div className="min-w-0">
                     <SelectField
                       label="Unit"
                       field="quantity_unit"
@@ -448,32 +534,78 @@ const CollectModal = ({
                       }
                       disabled={unitsFor(row.category).length <= 1}
                     />
-                    <button
-                      type="button"
-                      onClick={() => removeNewItemRow(index)}
-                      aria-label="Remove this material"
-                      className="mb-4 inline-flex size-9 shrink-0 items-center justify-center rounded-full text-slate-400 transition hover:bg-red-50 hover:text-red-600"
-                    >
-                      <LuTrash2 className="size-4" />
-                    </button>
+                  </div>
+                  <div className="min-w-0">
+                    <InputField
+                      label="Price"
+                      field="price"
+                      dataField={`new-item-price-${index}`}
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      prefix="RM"
+                      helperText="Total for this material, not per unit. Use 0 for no charge."
+                      formData={row}
+                      errors={newItemErrors[index]}
+                      updateFormData={(field, value) =>
+                        updateNewItem(index, field, value)
+                      }
+                    />
                   </div>
                 </div>
               ))}
             </div>
           )}
+        </section>
+
+        {agreedPrice != null && (
+          <div className="rounded-2xl border border-brand-200 bg-brand-50 p-4 text-sm">
+            <dl className="space-y-2">
+              <div className="flex justify-between gap-3">
+                <dt>Existing amount</dt>
+                <dd>RM {Number(agreedPrice).toFixed(2)}</dd>
+              </div>
+              <div className="flex justify-between gap-3">
+                <dt>New materials</dt>
+                <dd>RM {(additionalCents / 100).toFixed(2)}</dd>
+              </div>
+              <div className="flex justify-between gap-3 border-t border-brand-200 pt-2 font-semibold">
+                <dt>Total payment</dt>
+                <dd>RM {(totalCents / 100).toFixed(2)}</dd>
+              </div>
+            </dl>
+          </div>
+        )}
+        <AlertBanner message={errors.price} />
+        <div className="rounded-2xl border border-slate-200 p-4 pb-0">
+          <TextareaField
+            label="Collection note"
+            field="note"
+            required={false}
+            placeholder="Anything the team should know about this collection?"
+            formData={formData}
+            updateFormData={updateFormData}
+          />
         </div>
 
-        <TextareaField
-          label="Note"
-          field="note"
-          required={false}
-          placeholder="Optional."
-          formData={formData}
-          updateFormData={updateFormData}
-        />
-
         {showPaymentFields && (
-          <>
+          <section
+            aria-label="Payment confirmation"
+            className="rounded-2xl border border-slate-200 bg-white p-4"
+          >
+            <div className="mb-4 flex items-start gap-3">
+              <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-brand-50 text-xs font-semibold text-brand-700">
+                3
+              </span>
+              <div>
+                <h3 className="text-sm font-semibold text-slate-900">
+                  Payment confirmation
+                </h3>
+                <p className="mt-1 text-xs text-slate-500">
+                  Use DuitNow or bank transfer and upload the payment receipt.
+                </p>
+              </div>
+            </div>
             <SelectField
               label="Payment method"
               field="payment_method"
@@ -488,6 +620,7 @@ const CollectModal = ({
               <StatusFileUpload
                 id="collect-proof-input"
                 label="Proof of payment"
+                compact
                 description="Upload a receipt showing the customer was paid."
                 file={proofFile}
                 onFileChange={handleProofChange}
@@ -507,7 +640,7 @@ const CollectModal = ({
                 </p>
               )}
             </div>
-          </>
+          </section>
         )}
       </ValidatedForm>
     </Modal>

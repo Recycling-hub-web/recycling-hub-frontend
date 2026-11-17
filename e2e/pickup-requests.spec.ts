@@ -440,7 +440,7 @@ test('full lifecycle: public submission through to the request showing fulfilled
     .fill('2');
   await collectDialog
     .locator('[data-field="payment_method"] select')
-    .selectOption('cash');
+    .selectOption('bank_transfer');
   await attachPhoto(collectDialog.locator('[data-field="proof_of_payment"]'));
   await collectDialog.getByRole('button', { name: 'Mark collected' }).click();
   await expect(page.getByText(/marked as collected/i)).toBeVisible();

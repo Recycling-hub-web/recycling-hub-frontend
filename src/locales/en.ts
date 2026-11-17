@@ -195,7 +195,7 @@ const en = {
       eyebrow: 'Old electronics, a clear next step',
       headline: 'Free e-waste pickup for homes. Bulk collection for offices.',
       subtext:
-        'Whether you want to recycle old electronics for cash or arrange an office clear-out, choose the collection option that fits your needs.',
+        'Whether you want to get paid for recycling old electronics or arrange an office clear-out, choose the collection option that fits your needs.',
       features: [
         {
           icon: 'plug',

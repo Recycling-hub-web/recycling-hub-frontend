@@ -73,7 +73,7 @@ const DRIVER_FINANCE_STATUS_LABELS: Record<FinanceStatus, string> = {
 
 const FINANCE_PAYMENT_METHOD_LABELS: Record<FinancePaymentMethod, string> = {
   duitnow: 'DuitNow',
-  cash: 'Cash',
+  cash: 'Cash (legacy)',
   bank_transfer: 'Bank transfer',
 };
 

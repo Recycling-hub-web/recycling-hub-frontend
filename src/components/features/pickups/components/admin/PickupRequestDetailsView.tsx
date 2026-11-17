@@ -405,6 +405,7 @@ const PickupRequestDetailsView = ({
         onCollected={() => orderDone('Marked as collected')}
         showPaymentFields={Boolean(actionOrder?.assigned_driver)}
         items={actionOrder?.items ?? []}
+        agreedPrice={actionOrder?.price}
       />
       <CancelModal
         requestId={orderAction?.id ?? ''}

@@ -315,6 +315,9 @@ const OrderLifecycle = ({ order }: { order: CollectionRequestDetails }) => (
               <th>Estimated</th>
               <th>Collected</th>
               <th>Unit</th>
+              {order.items.some((item) => item.on_site_price != null) && (
+                <th>On-site price</th>
+              )}
             </tr>
           </thead>
           <tbody>
@@ -326,6 +329,13 @@ const OrderLifecycle = ({ order }: { order: CollectionRequestDetails }) => (
                 <td>
                   {item.quantity_unit === 'unit' ? 'units' : item.quantity_unit}
                 </td>
+                {order.items.some((row) => row.on_site_price != null) && (
+                  <td>
+                    {item.on_site_price != null
+                      ? `RM ${item.on_site_price}`
+                      : '—'}
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>

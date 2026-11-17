@@ -64,6 +64,7 @@ type PickupRequestItem = {
   estimated_quantity: string | null;
   quantity_unit: string;
   collected_quantity: string | null;
+  on_site_price?: string | null;
 };
 
 /** One of up to 4 reference photos attached at Order creation — see
