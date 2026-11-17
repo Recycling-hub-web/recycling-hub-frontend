@@ -128,6 +128,9 @@ const ActionsDropdown = ({
   const handleItemClick = (onClick: () => void, disabled?: boolean) => {
     if (disabled) return;
     close();
+    // A selected item disappears with the menu. Keep a stable focus
+    // target for a dialog opened by the action to restore on close.
+    buttonRef.current?.focus();
     onClick();
   };
 

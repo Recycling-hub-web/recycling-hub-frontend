@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { ApiError } from '../../../../lib/api';
 import { listQuickPickupRequests } from '../services/pickupService';
@@ -28,24 +28,33 @@ const useQuickPickupRequests = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  const requestGeneration = useRef(0);
+
   const refetch = useCallback(async () => {
+    requestGeneration.current += 1;
+    const generation = requestGeneration.current;
     setLoading(true);
     setError('');
     try {
       const data = await listQuickPickupRequests({ status });
+      if (generation !== requestGeneration.current) return;
       setRequests(data.results);
       setCount(data.count);
     } catch (err) {
+      if (generation !== requestGeneration.current) return;
       setError(
         err instanceof ApiError ? err.message : 'Could not load quick leads.',
       );
     } finally {
-      setLoading(false);
+      if (generation === requestGeneration.current) setLoading(false);
     }
   }, [status]);
 
   useEffect(() => {
     refetch();
+    return () => {
+      requestGeneration.current += 1;
+    };
   }, [refetch]);
 
   return { requests, count, loading, error, refetch };

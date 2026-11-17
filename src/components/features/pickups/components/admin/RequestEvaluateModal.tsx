@@ -138,6 +138,7 @@ const RequestEvaluateModal = ({
       subtitle={`${covered.length} order${covered.length === 1 ? '' : 's'}: ${covered.map((o) => o.code).join(', ')}`}
       icon={<LuClipboardCheck className="size-5" />}
       closeOnBackdrop={!submitting}
+      dismissible={!submitting}
       footer={
         <FormActions>
           <Button variant="secondary" onClick={onClose} disabled={submitting}>

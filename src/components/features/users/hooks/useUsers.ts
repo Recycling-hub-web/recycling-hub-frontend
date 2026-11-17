@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { ApiError } from '../../../../lib/api';
 import type {
@@ -28,22 +28,31 @@ const useUsers = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  const requestGeneration = useRef(0);
+
   const refetch = useCallback(async () => {
+    requestGeneration.current += 1;
+    const generation = requestGeneration.current;
     setLoading(true);
     setError('');
     try {
       const data = await listUsers({ page, role, search, registrationStatus });
+      if (generation !== requestGeneration.current) return;
       setUsers(data.results);
       setCount(data.count);
     } catch (err) {
+      if (generation !== requestGeneration.current) return;
       setError(err instanceof ApiError ? err.message : 'Could not load users.');
     } finally {
-      setLoading(false);
+      if (generation === requestGeneration.current) setLoading(false);
     }
   }, [page, role, search, registrationStatus]);
 
   useEffect(() => {
     refetch();
+    return () => {
+      requestGeneration.current += 1;
+    };
   }, [refetch]);
 
   return { users, count, loading, error, refetch };

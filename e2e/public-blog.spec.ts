@@ -71,10 +71,8 @@ test.describe('Public blog', () => {
     await page.goto('/resources/blog');
     await expect(page.getByText(title)).not.toBeVisible();
 
-    await page.goto(`/resources/blog/${slug}`);
-    await expect(
-      page.getByText(/doesn't exist or isn't published/i),
-    ).toBeVisible();
+    const response = await page.goto(`/resources/blog/${slug}`);
+    expect(response?.status()).toBe(404);
     await expect(page.getByRole('heading', { name: title })).toHaveCount(0);
 
     await apiLoginAs(page.request, 'admin');
