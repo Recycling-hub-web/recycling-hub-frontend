@@ -10,6 +10,7 @@ import { FilterSelect } from '../../../ui/FilterSelect';
 import { Loading } from '../../../ui/loading/Loading';
 import { TablePagination } from '../../../ui/table';
 import { useActivityLog } from '../hooks';
+import { activityLabel, presentActivity, roleLabel } from '../presentation';
 import {
   ACTION_LABELS,
   type ActivityAction,
@@ -44,11 +45,7 @@ type ActivityLogProps = {
   entityId?: string;
 };
 
-/** The one shared activity feed — used both as a per-record "Activity"
- * section (PickupRequestDetailsView, UserDetailsView) and as the
- * system-wide, admin-only Activity Log page. `details` is rendered
- * generically (key: value pairs) since its shape varies by `action`
- * rather than being modeled per-action here. */
+/** Shared, newest-first activity timeline for records and the system log. */
 const ActivityLog = ({ entityType, entityId }: ActivityLogProps) => {
   const standalone = !entityType || !entityId;
   const [page, setPage] = useState(1);
@@ -95,45 +92,81 @@ const ActivityLog = ({ entityType, entityId }: ActivityLogProps) => {
         <EmptyState
           icon={<LuHistory className="size-6" />}
           title="No activity yet"
-          description="Changes to this record will show up here."
+          description={
+            standalone
+              ? 'Activity across the system will show up here.'
+              : 'Changes to this record will show up here.'
+          }
         />
       );
     }
     return (
-      <div className="space-y-2">
-        {entries.map((entry) => (
-          <div
-            key={entry.id}
-            className="flex items-start justify-between gap-4 rounded-xl bg-slate-50 px-4 py-3.5"
-          >
-            <div className="min-w-0">
-              <p className="text-sm font-semibold text-slate-800">
-                {entry.actor_name || 'System'}
-                <span className="font-normal text-slate-500">
-                  {' '}
-                  — {ACTION_LABELS[entry.action]}
+      <div>
+        <p className="mb-3 text-xs text-slate-400">Newest first</p>
+        <ol
+          aria-label="Activity history"
+          className="ml-3 space-y-4 border-l border-slate-200 pl-6"
+        >
+          {entries.map((entry) => {
+            const { title, details } = presentActivity(entry);
+            return (
+              <li key={entry.id} className="relative">
+                <span
+                  aria-hidden="true"
+                  className="absolute -left-9 top-4 flex size-6 items-center justify-center rounded-full bg-white ring-4 ring-white"
+                >
+                  <LuHistory className="size-3.5 text-slate-400" />
                 </span>
-              </p>
-              {Object.keys(entry.details).length > 0 && (
-                <p className="mt-1 truncate text-xs text-slate-500">
-                  {Object.entries(entry.details)
-                    .map(([key, value]) => `${key}: ${value}`)
-                    .join(' · ')}
-                </p>
-              )}
-            </div>
-            <div className="shrink-0 text-right">
-              {standalone && (
-                <p className="text-xs font-medium text-slate-400">
-                  {MODULE_LABELS[entry.module]}
-                </p>
-              )}
-              <p className="mt-0.5 text-xs text-slate-400">
-                <AppDate value={entry.created_at} format="short" />
-              </p>
-            </div>
-          </div>
-        ))}
+                <div className="rounded-xl border border-slate-100 bg-slate-50 px-4 py-3.5">
+                  <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+                    <div className="min-w-0">
+                      <p className="break-words text-sm font-semibold text-slate-800">
+                        {title}
+                      </p>
+                      <p className="mt-1 break-words text-xs text-slate-500">
+                        By{' '}
+                        <span className="font-medium text-slate-700">
+                          {entry.actor_name || 'System'}
+                        </span>
+                        {entry.actor_role &&
+                          ` · ${roleLabel(entry.actor_role) || activityLabel(entry.actor_role)}`}
+                      </p>
+                    </div>
+                    <AppDate
+                      value={entry.created_at}
+                      format="datetime"
+                      className="shrink-0 text-xs text-slate-400"
+                    />
+                  </div>
+                  {standalone && (
+                    <p className="mt-2 break-all text-xs text-slate-500">
+                      {MODULE_LABELS[entry.module] ||
+                        activityLabel(entry.module)}{' '}
+                      · {activityLabel(entry.entity_type)} · {entry.object_id}
+                    </p>
+                  )}
+                  {details.length > 0 && (
+                    <dl className="mt-3 space-y-2 border-t border-slate-200/70 pt-3 text-xs">
+                      {details.map((detail) => (
+                        <div
+                          key={detail.label}
+                          className="grid gap-0.5 sm:grid-cols-[9rem_minmax(0,1fr)] sm:gap-3"
+                        >
+                          <dt className="font-medium text-slate-500">
+                            {detail.label}
+                          </dt>
+                          <dd className="min-w-0 whitespace-pre-wrap break-words text-slate-700">
+                            {detail.value}
+                          </dd>
+                        </div>
+                      ))}
+                    </dl>
+                  )}
+                </div>
+              </li>
+            );
+          })}
+        </ol>
       </div>
     );
   };
@@ -148,7 +181,7 @@ const ActivityLog = ({ entityType, entityId }: ActivityLogProps) => {
             placeholder="Search by actor name…"
             className="sm:max-w-xs"
           />
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <FilterSelect
               value={moduleFilter}
               onChange={(v) => {
