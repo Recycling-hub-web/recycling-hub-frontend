@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { listFinanceRecords } from '../services/financeService';
 
@@ -14,7 +14,11 @@ const usePendingReimbursementSummary = () => {
   const [summary, setSummary] = useState<Summary>(INITIAL);
   const [loading, setLoading] = useState(true);
 
+  const requestGeneration = useRef(0);
+
   const refetch = useCallback(async () => {
+    requestGeneration.current += 1;
+    const generation = requestGeneration.current;
     try {
       const data = await listFinanceRecords({
         status: 'claimed',
@@ -24,16 +28,21 @@ const usePendingReimbursementSummary = () => {
         (sum, r) => sum + Number(r.actual_amount ?? r.price),
         0,
       );
+      if (generation !== requestGeneration.current) return;
       setSummary({ count: data.count, total });
     } catch {
+      if (generation !== requestGeneration.current) return;
       setSummary(INITIAL);
     } finally {
-      setLoading(false);
+      if (generation === requestGeneration.current) setLoading(false);
     }
   }, []);
 
   useEffect(() => {
     refetch();
+    return () => {
+      requestGeneration.current += 1;
+    };
   }, [refetch]);
 
   return { ...summary, loading, refetch };

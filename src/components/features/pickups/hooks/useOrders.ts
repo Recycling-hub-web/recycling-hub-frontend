@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { ApiError } from '../../../../lib/api';
 import { listOrders } from '../services/pickupService';
@@ -36,7 +36,11 @@ const useOrders = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  const requestGeneration = useRef(0);
+
   const refetch = useCallback(async () => {
+    requestGeneration.current += 1;
+    const generation = requestGeneration.current;
     setLoading(true);
     setError('');
     try {
@@ -49,14 +53,16 @@ const useOrders = ({
         evaluationStatus,
         dropOffPoint,
       });
+      if (generation !== requestGeneration.current) return;
       setRequests(data.results);
       setCount(data.count);
     } catch (err) {
+      if (generation !== requestGeneration.current) return;
       setError(
         err instanceof ApiError ? err.message : 'Could not load pickup orders.',
       );
     } finally {
-      setLoading(false);
+      if (generation === requestGeneration.current) setLoading(false);
     }
   }, [
     page,
@@ -70,6 +76,9 @@ const useOrders = ({
 
   useEffect(() => {
     refetch();
+    return () => {
+      requestGeneration.current += 1;
+    };
   }, [refetch]);
 
   return { requests, count, loading, error, refetch };

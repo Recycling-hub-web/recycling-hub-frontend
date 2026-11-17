@@ -9,6 +9,13 @@ type IMetaProps = {
   title: string;
   description: string;
   canonical?: string;
+  noindex?: boolean;
+  openGraph?: {
+    title?: string;
+    description?: string;
+    image?: string;
+    type?: string;
+  };
 };
 
 const SITE_URL = `https://${BRAND.website}`;
@@ -69,10 +76,15 @@ const Meta = (props: IMetaProps) => {
         title={props.title}
         description={props.description}
         canonical={canonical}
+        noindex={props.noindex}
         languageAlternates={languageAlternates}
         openGraph={{
-          title: props.title,
-          description: props.description,
+          title: props.openGraph?.title ?? props.title,
+          description: props.openGraph?.description ?? props.description,
+          type: props.openGraph?.type,
+          images: props.openGraph?.image
+            ? [{ url: props.openGraph.image }]
+            : undefined,
           url: canonical,
           locale: router.locale === 'bm' ? 'ms_MY' : 'en_MY',
           site_name: AppConfig.site_name,

@@ -1,7 +1,7 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { LuX } from 'react-icons/lu';
 
@@ -19,6 +19,7 @@ type ModalProps = {
   footer?: ReactNode;
   size?: ModalSize;
   closeOnBackdrop?: boolean;
+  dismissible?: boolean;
 };
 
 const SIZE_CLASSES: Record<ModalSize, string> = {
@@ -38,10 +39,70 @@ const Modal = ({
   footer,
   size = 'md',
   closeOnBackdrop = true,
+  dismissible = true,
 }: ModalProps) => {
   const system = useSystemExperience();
   const [visible, setVisible] = useState(false);
   const [shown, setShown] = useState(false);
+  const dialogRef = useRef<HTMLDivElement>(null);
+
+  const isTopDialog = () => {
+    const dialogs = document.querySelectorAll(
+      '[role="dialog"][aria-modal="true"]',
+    );
+    return dialogs[dialogs.length - 1] === dialogRef.current;
+  };
+
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!open || !visible || !dialog) return undefined;
+    const opener = document.activeElement;
+    const focusable = () =>
+      Array.from(
+        dialog.querySelectorAll<HTMLElement>(
+          'a[href], button, input, select, textarea, [tabindex]',
+        ),
+      ).filter(
+        (element) =>
+          element.tabIndex >= 0 &&
+          !element.matches(':disabled, [hidden], [aria-hidden="true"]') &&
+          element.getClientRects().length > 0,
+      );
+    const focusFirst = () => (focusable()[0] ?? dialog).focus();
+    focusFirst();
+    const trapTab = (event: KeyboardEvent) => {
+      if (event.key !== 'Tab' || !isTopDialog()) return;
+      const elements = focusable();
+      const first = elements[0];
+      const last = elements[elements.length - 1];
+      if (!first || !last) {
+        event.preventDefault();
+        dialog.focus();
+      } else if (
+        event.shiftKey &&
+        (document.activeElement === first || document.activeElement === dialog)
+      ) {
+        event.preventDefault();
+        last.focus();
+      } else if (
+        !event.shiftKey &&
+        (document.activeElement === last || document.activeElement === dialog)
+      ) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+    const containFocus = (event: FocusEvent) => {
+      if (isTopDialog() && !dialog.contains(event.target as Node)) focusFirst();
+    };
+    document.addEventListener('keydown', trapTab);
+    document.addEventListener('focusin', containFocus);
+    return () => {
+      document.removeEventListener('keydown', trapTab);
+      document.removeEventListener('focusin', containFocus);
+      if (opener instanceof HTMLElement && opener.isConnected) opener.focus();
+    };
+  }, [open, visible]);
 
   useEffect(() => {
     if (open) {
@@ -61,11 +122,11 @@ const Modal = ({
   useEffect(() => {
     if (!open) return undefined;
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape' && dismissible && isTopDialog()) onClose();
     };
     document.addEventListener('keydown', onKeyDown);
     return () => document.removeEventListener('keydown', onKeyDown);
-  }, [open, onClose]);
+  }, [open, onClose, dismissible]);
 
   useEffect(() => {
     if (!open) return undefined;
@@ -84,9 +145,11 @@ const Modal = ({
       className={`${system ? 'system-modal-backdrop' : ''} fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm transition-all duration-300 ${
         shown ? 'bg-black/40' : 'bg-black/0'
       }`}
-      onClick={closeOnBackdrop ? onClose : undefined}
+      onClick={closeOnBackdrop && dismissible ? onClose : undefined}
     >
       <div
+        ref={dialogRef}
+        tabIndex={-1}
         role="dialog"
         aria-modal="true"
         aria-label={title}
@@ -115,6 +178,7 @@ const Modal = ({
             </div>
             <button
               type="button"
+              disabled={!dismissible}
               onClick={onClose}
               aria-label="Close dialog"
               className="ml-3 flex size-7 shrink-0 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"

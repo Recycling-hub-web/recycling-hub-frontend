@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { ApiError } from '../../../../lib/api';
 import { listPartners } from '../services/partnershipService';
@@ -23,7 +23,11 @@ const usePartners = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  const requestGeneration = useRef(0);
+
   const refetch = useCallback(async () => {
+    requestGeneration.current += 1;
+    const generation = requestGeneration.current;
     setLoading(true);
     setError('');
     try {
@@ -33,19 +37,24 @@ const usePartners = ({
         isActive,
         search,
       });
+      if (generation !== requestGeneration.current) return;
       setPartners(data.results);
       setCount(data.count);
     } catch (err) {
+      if (generation !== requestGeneration.current) return;
       setError(
         err instanceof ApiError ? err.message : 'Could not load partners.',
       );
     } finally {
-      setLoading(false);
+      if (generation === requestGeneration.current) setLoading(false);
     }
   }, [page, partnershipType, isActive, search]);
 
   useEffect(() => {
     refetch();
+    return () => {
+      requestGeneration.current += 1;
+    };
   }, [refetch]);
 
   return { partners, count, loading, error, refetch };
