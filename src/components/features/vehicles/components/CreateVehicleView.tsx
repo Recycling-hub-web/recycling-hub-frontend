@@ -75,7 +75,7 @@ const CreateVehicleView = ({ basePath }: CreateVehicleViewProps) => {
       { value: NONE_DRIVER, label: 'Unassigned' },
       ...drivers.map((d) => ({
         value: d.id,
-        label: `${d.user.full_name} — ${d.employee_id}`,
+        label: d.user.full_name,
       })),
     ],
     [drivers],
