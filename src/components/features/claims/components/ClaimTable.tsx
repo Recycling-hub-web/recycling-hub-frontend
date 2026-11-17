@@ -19,14 +19,8 @@ import { CLAIM_CATEGORY_LABELS, CLAIM_STATUS_LABELS } from '../types';
 const PAGE_SIZE = 12;
 
 type ClaimTableProps = {
-  /** Role-scoped base route (`/driver/claims`, `/staff/claims`,
-   * `/accounting/claims`, `/admin/claims`, `/super-admin/claims`) — rows
-   * link into `${basePath}/${id}`. All review actions (Approve/Reject/
-   * Mark as Paid) live on the details page's ActionsDropdown, not here —
-   * so this table renders identically for every role; a driver only
-   * ever sees their own rows (scoped server-side), and staff is
-   * read-only the same way it's read-only everywhere else on this
-   * table. */
+  /** Role-scoped details route. Payment-capable roles also get selection
+   * controls; staff and drivers retain a read-only table. */
   basePath: string;
   claims: ClaimListItem[];
   count: number;
@@ -35,6 +29,10 @@ type ClaimTableProps = {
   loading: boolean;
   error: string;
   onRetry: () => void;
+  selectedIds?: Set<string>;
+  selectedDriverId?: string;
+  onSelect?: (claim: ClaimListItem) => void;
+  onSelectPage?: (claims: ClaimListItem[]) => void;
 };
 
 const ClaimTable = ({
@@ -46,9 +44,20 @@ const ClaimTable = ({
   loading,
   error,
   onRetry,
+  selectedIds = new Set(),
+  selectedDriverId,
+  onSelect,
+  onSelectPage,
 }: ClaimTableProps) => {
   const router = useRouter();
-  const columnCount = 6;
+  const columnCount = onSelect ? 7 : 6;
+  const eligibleOnPage = claims.filter(
+    (claim) =>
+      claim.status === 'pending' && claim.driver.id === selectedDriverId,
+  );
+  const pageSelected =
+    eligibleOnPage.length > 0 &&
+    eligibleOnPage.every((claim) => selectedIds.has(claim.id));
 
   const renderRows = () => {
     if (loading) return <TableLoadingRow colSpan={columnCount} />;
@@ -74,9 +83,26 @@ const ClaimTable = ({
     return claims.map((c) => (
       <tr
         key={c.id}
+        data-claim-id={c.id}
         onClick={() => router.push(`${basePath}/${c.id}`)}
         className="cursor-pointer transition-colors hover:bg-slate-50"
       >
+        {onSelect && (
+          <td className="w-12 p-4" onClick={(event) => event.stopPropagation()}>
+            <input
+              type="checkbox"
+              className="size-4 accent-brand-600"
+              checked={selectedIds.has(c.id)}
+              disabled={
+                c.status !== 'pending' ||
+                Boolean(selectedDriverId && selectedDriverId !== c.driver.id) ||
+                (selectedIds.size >= 100 && !selectedIds.has(c.id))
+              }
+              aria-label={`Select claim for ${c.driver.full_name}: ${CLAIM_CATEGORY_LABELS[c.category]}, RM ${c.amount_approved ?? c.amount_claimed}, ${c.date}`}
+              onChange={() => onSelect(c)}
+            />
+          </td>
+        )}
         <td className="max-w-[160px] truncate px-6 py-4 font-medium text-slate-900">
           {c.driver.full_name}
         </td>
@@ -118,6 +144,23 @@ const ClaimTable = ({
       <table className="min-w-full divide-y divide-slate-200 text-sm">
         <thead className="bg-slate-50">
           <tr>
+            {onSelect && (
+              <th className="w-12 px-4 py-3">
+                <input
+                  type="checkbox"
+                  aria-label="Select this driver's pending claims on this page"
+                  className="size-4 accent-brand-600"
+                  checked={pageSelected}
+                  disabled={
+                    !selectedDriverId ||
+                    eligibleOnPage.length === 0 ||
+                    loading ||
+                    Boolean(error)
+                  }
+                  onChange={() => onSelectPage?.(eligibleOnPage)}
+                />
+              </th>
+            )}
             <th className="px-6 py-3 text-left font-semibold text-slate-500">
               Driver
             </th>

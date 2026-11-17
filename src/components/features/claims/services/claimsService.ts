@@ -70,6 +70,22 @@ const approveClaim = (
     },
   });
 
+type BulkPayClaimsPayload = {
+  claim_ids: string[];
+  driver: string;
+  total_amount: string;
+  payment_proof: string;
+};
+
+const bulkPayClaims = (
+  payload: BulkPayClaimsPayload,
+): Promise<{
+  batch_id: string;
+  count: number;
+  claim_ids: string[];
+  total_amount: string;
+}> => apiFetch('/claims/bulk-pay/', { method: 'POST', json: payload });
+
 // POST /claims/{id}/reject/ — `rejection_reason` is required.
 const rejectClaim = (
   id: string,
@@ -88,6 +104,7 @@ const getMyVehicle = (): Promise<Vehicle> => apiFetch('/claims/vehicles/mine/');
 
 export {
   approveClaim,
+  bulkPayClaims,
   createClaim,
   getClaim,
   getMyVehicle,
