@@ -679,6 +679,7 @@ const DriverPickupsView = () => {
         // collection, never the staff-collector path.
         showPaymentFields
         items={collectTarget?.items ?? []}
+        agreedPrice={collectTarget?.price}
       />
 
       <ConfirmScheduleModal

@@ -131,11 +131,8 @@ const CreateUserView = () => {
         ...(showPayoutFields
           ? {
               payout_method:
-                (formData.payout_method as
-                  | 'duitnow'
-                  | 'cash'
-                  | 'bank_transfer'
-                  | '') || undefined,
+                (formData.payout_method as 'duitnow' | 'bank_transfer' | '') ||
+                undefined,
               payout_account_details:
                 formData.payout_account_details || undefined,
             }

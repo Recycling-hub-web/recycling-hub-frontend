@@ -68,7 +68,7 @@ const seedCollectedOnRoute = async (
   const collectRes = await request.post(`/api/v1/pickups/${id}/collect/`, {
     data: {
       actual_amount: price,
-      payment_method: 'cash',
+      payment_method: 'bank_transfer',
       proof_of_payment: E2E_PHOTO,
     },
   });

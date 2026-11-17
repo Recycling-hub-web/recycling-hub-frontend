@@ -17,6 +17,7 @@ type StatusFileUploadProps = {
   required?: boolean;
   uploading?: boolean;
   progress?: number;
+  compact?: boolean;
 };
 
 const StatusFileUpload = ({
@@ -31,6 +32,7 @@ const StatusFileUpload = ({
   required = false,
   uploading = false,
   progress = 0,
+  compact = false,
 }: StatusFileUploadProps) => {
   const toast = useToast();
 
@@ -78,9 +80,11 @@ const StatusFileUpload = ({
 
       <label
         htmlFor={id}
-        className="group relative flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-white px-6 py-10 text-center transition-all duration-200 hover:border-brand-500 hover:bg-brand-50/40"
+        className={`group relative flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-white px-6 text-center transition-all duration-200 hover:border-brand-500 hover:bg-brand-50/40 ${compact ? 'py-4' : 'py-10'}`}
       >
-        <div className="mb-4 flex size-14 items-center justify-center rounded-lg bg-brand-100 text-brand-600 transition">
+        <div
+          className={`flex items-center justify-center rounded-lg bg-brand-100 text-brand-600 transition ${compact ? 'mb-2 size-10' : 'mb-4 size-14'}`}
+        >
           <svg
             className="size-7"
             fill="none"

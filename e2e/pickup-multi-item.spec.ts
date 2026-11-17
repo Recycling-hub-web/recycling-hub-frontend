@@ -176,7 +176,9 @@ test('driver collecting a multi-item order confirms a quantity per item, and can
     .click();
 
   const dialog = page.getByRole('dialog');
-  await expect(dialog.getByText('Collected quantity per item')).toBeVisible();
+  await expect(
+    dialog.getByRole('heading', { name: 'Collected materials' }),
+  ).toBeVisible();
   // Pre-filled from each item's estimated_quantity (10 and 3), and each
   // row also offers a category select to correct a miscategorized line.
   const ewasteQuantity = page.locator(
@@ -194,7 +196,7 @@ test('driver collecting a multi-item order confirms a quantity per item, and can
   await ewasteQuantity.fill('9');
   await page
     .locator('[data-field="payment_method"] select')
-    .selectOption('cash');
+    .selectOption('bank_transfer');
   await attachPhoto(dialog.locator('[data-field="proof_of_payment"]'));
   await dialog.getByRole('button', { name: 'Mark collected' }).click();
 

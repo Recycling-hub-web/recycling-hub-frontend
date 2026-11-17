@@ -351,6 +351,8 @@ type CollectItemInput =
     }
   | {
       category: string;
+      /** Total price for this new material. */
+      price?: string;
       collected_quantity: string;
       /** "kg" or "unit" — may be omitted when the category allows only
        * one (the API fills it in). */
@@ -368,7 +370,7 @@ type CollectPickupPayload = {
   /** Driver-collected only — ignored by the backend otherwise. See
    * FinanceRecord on the backend, updated by this same collect() call. */
   actual_amount?: string;
-  payment_method?: 'duitnow' | 'cash' | 'bank_transfer';
+  payment_method?: 'duitnow' | 'bank_transfer';
   proof_of_payment?: string;
 };
 

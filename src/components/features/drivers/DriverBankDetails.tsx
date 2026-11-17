@@ -2,6 +2,10 @@
 
 import { useEffect, useState } from 'react';
 
+import {
+  PAYOUT_METHOD_LABELS,
+  type PayoutMethod,
+} from '../../../constants/payoutMethods';
 import { useAuth } from '../../../contexts/AuthContext';
 import { ApiError, apiFetch } from '../../../lib/api';
 import type { DriverPayoutDetails } from '../../../types/driverPayout';
@@ -25,7 +29,6 @@ type BankHistoryEntry = {
 const methods = {
   bank_transfer: 'Bank transfer',
   duitnow: 'DuitNow',
-  cash: 'Cash',
 };
 const identifiers = {
   mobile: 'Mobile number',
@@ -38,7 +41,6 @@ const fields = {
   bank_name: 'Bank name',
   account_holder_name: 'Account holder name',
   bank_account_number: 'Account number',
-  bank_branch: 'Branch (optional)',
   duitnow_id: 'DuitNow ID',
 };
 
@@ -112,7 +114,7 @@ export const DriverBankDetails = ({
         'Bank selection changed'
       );
     if (field === 'payout_method')
-      return methods[value as keyof typeof methods] || value;
+      return PAYOUT_METHOD_LABELS[value as PayoutMethod] || value;
     if (field === 'duitnow_id_type')
       return identifiers[value as keyof typeof identifiers] || value;
     return value;
@@ -133,7 +135,6 @@ export const DriverBankDetails = ({
             'bank',
             'account_holder_name',
             'bank_account_number',
-            'bank_branch',
             'duitnow_id_type',
             'duitnow_id',
           ].map((key) => [key, form[key as keyof DriverPayoutDetails]]),
@@ -159,7 +160,7 @@ export const DriverBankDetails = ({
   };
   const getFields = (method: string): (keyof typeof fields)[] => {
     if (method === 'bank_transfer')
-      return ['account_holder_name', 'bank_account_number', 'bank_branch'];
+      return ['account_holder_name', 'bank_account_number'];
     if (method === 'duitnow') return ['account_holder_name', 'duitnow_id'];
     return [];
   };
@@ -168,7 +169,6 @@ export const DriverBankDetails = ({
   const inputFields = getFields(form.payout_method);
   const lengths = {
     bank_name: 120,
-    bank_branch: 120,
     account_holder_name: 150,
     bank_account_number: 34,
     duitnow_id: 64,
@@ -184,7 +184,11 @@ export const DriverBankDetails = ({
             size="sm"
             variant="secondary"
             onClick={() => {
-              setForm(details);
+              setForm({
+                ...details,
+                payout_method:
+                  details.payout_method === 'cash' ? '' : details.payout_method,
+              });
               setError('');
               setOpen(true);
             }}
@@ -295,7 +299,7 @@ export const DriverBankDetails = ({
         <div>
           <dt className="text-slate-500">Payout method</dt>
           <dd>
-            {methods[details.payout_method as keyof typeof methods] ||
+            {PAYOUT_METHOD_LABELS[details.payout_method as PayoutMethod] ||
               'Not set'}
           </dd>
         </div>
@@ -465,11 +469,11 @@ export const DriverBankDetails = ({
           {inputFields.map((key) => (
             <label key={key} className="block text-sm font-medium">
               {fields[key]}
-              {key !== 'bank_branch' && ' *'}
+              {' *'}
               <input
                 type="text"
                 disabled={saving}
-                required={key !== 'bank_branch'}
+                required
                 maxLength={lengths[key]}
                 inputMode={key === 'bank_account_number' ? 'numeric' : 'text'}
                 className="mt-1 block w-full rounded-lg border border-slate-200 p-3"

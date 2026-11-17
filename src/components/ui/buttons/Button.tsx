@@ -22,6 +22,7 @@ type ButtonProps = {
    * submit trigger rather than requiring a separate onClick that
    * duplicates the form's own submit handler. */
   type?: 'button' | 'submit';
+  form?: string;
   disabled?: boolean;
 };
 
@@ -66,6 +67,7 @@ const Button = ({
   onClick,
   className = '',
   type = 'button',
+  form,
   disabled = false,
 }: ButtonProps) => {
   const cls = `${base} ${sizes[size]} ${variants[variant]} ${className} ${disabled ? 'pointer-events-none opacity-50' : ''}`;
@@ -91,7 +93,13 @@ const Button = ({
   }
 
   return (
-    <button type={type} onClick={onClick} disabled={disabled} className={cls}>
+    <button
+      type={type}
+      form={form}
+      onClick={onClick}
+      disabled={disabled}
+      className={cls}
+    >
       {children}
     </button>
   );

@@ -57,7 +57,7 @@ type CreateUserPayload = {
    * Verify & Reimburse, which refuses to complete without these on
    * file). Settable at creation only — there's no general driver-
    * profile edit surface yet, same gap as department/position/branch. */
-  payout_method?: 'duitnow' | 'cash' | 'bank_transfer';
+  payout_method?: 'duitnow' | 'bank_transfer';
   payout_account_details?: string;
 };
 

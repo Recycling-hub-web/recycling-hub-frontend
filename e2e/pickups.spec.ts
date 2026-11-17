@@ -131,7 +131,7 @@ test.describe('Admin orders', () => {
     // with no driver, and thus no payment fields, no longer exists.
     await page
       .locator('[data-field="payment_method"] select')
-      .selectOption('cash');
+      .selectOption('bank_transfer');
     await page
       .getByRole('button', { name: 'Mark collected', exact: true })
       .click();

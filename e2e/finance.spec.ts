@@ -202,7 +202,7 @@ test('collect modal requires payment method and proof when a driver is assigned'
 
   await page
     .locator('[data-field="payment_method"] select')
-    .selectOption('cash');
+    .selectOption('bank_transfer');
   await attachPhoto(page.locator('[data-field="proof_of_payment"]'));
   await page
     .getByRole('button', { name: 'Mark collected', exact: true })
