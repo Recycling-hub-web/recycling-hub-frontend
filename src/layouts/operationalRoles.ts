@@ -18,7 +18,8 @@ type OperationalRoleConfig = {
 // (every role, same shared NotificationsView — see
 // features/notifications/components), and, for staff,
 // "Pickup Requests"/"Contact"/"Categories"/"Collection
-// Points"/"Storage Files"/"Blog Posts"/"Partnerships"/"Finance Records";
+// Points"/"Blog Posts"/"Partnerships"/"Finance Records" (Storage Files is
+// out of every menu; its page still works by direct URL);
 // for driver, its own scoped "Pickup Requests"; for accounting, "Finance
 // Records" — is wired to real pages today — the rest of each role's
 // section (assigned tasks, reports) lands here as that workflow work
@@ -71,13 +72,7 @@ const OPERATIONAL_ROLES: Record<OperationalRole, OperationalRoleConfig> = {
       { title: 'Finance', entries: ['financeMenu'] },
       {
         title: 'Content',
-        entries: [
-          'blogs',
-          'categories',
-          'partnerships',
-          'contact',
-          'storageFiles',
-        ],
+        entries: ['blogs', 'categories', 'partnerships', 'contact'],
       },
     ]),
   },

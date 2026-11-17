@@ -219,14 +219,16 @@ const adminNavItemsFor = (role: UserRole | undefined): NavItem[] => [
 // stay on the Admin side, and there's no link into
 // /admin/* from here. System Settings (/super-admin/system) is hidden from
 // the menu for now — add 'system' back to show it; the page still works
-// by direct URL.
+// by direct URL. Storage Files is out of every role's menu too (uploads
+// happen from the features that need them); its page also still works by
+// direct URL.
 const SUPER_ADMIN_NAV_ITEMS: NavItem[] = buildNavSections('/super-admin', [
   { title: 'Main', entries: ['overview', 'notifications'] },
   { title: 'Operations', entries: ['pickupRequests', 'collectionPoints'] },
   { title: 'Finance', entries: ['financeMenu', 'banks'] },
   {
     title: 'Content',
-    entries: ['blogs', 'categories', 'partnerships', 'contact', 'storageFiles'],
+    entries: ['blogs', 'categories', 'partnerships', 'contact'],
   },
   { title: 'People', entries: ['administrators'] },
   { title: 'System', entries: ['activity'] },
