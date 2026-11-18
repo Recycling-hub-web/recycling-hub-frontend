@@ -1,16 +1,23 @@
 // ─── Assets ───────────────────────────────────────────────────────────────────
 
+// Logos come from the brand kit in /assets/img/Recycling_Hub_Logo (see its
+// README): horizontal for headers, symbol for small square spots; green on
+// light backgrounds, white on green/dark ones. The 1000px transparent PNGs
+// are sharp on retina at every size we use and work with next/image.
+const LOGO_DIR = '/assets/img/Recycling_Hub_Logo';
+
+/** Intrinsic sizes of the logo PNGs, for next/image's width/height. */
+export const LOGO_SIZE = {
+  horizontal: { width: 1000, height: 195 },
+  symbol: { width: 1000, height: 1000 },
+} as const;
+
 export const ASSETS = {
   logo: {
-    whiteLogo: '/assets/img/brand/logo/white-logo.png',
-    whiteIconBg: '/assets/img/brand/logo/white-icon-bg.png',
-    whiteLogoBg: '/assets/img/brand/logo/white-logo-bg.png',
-    combinedWhite:
-      '/assets/img/brand/logo/combined-logo/combined-logo-white.png',
-    symbolWhite: '/assets/img/brand/logo/symbol/symbol-white.png',
-    combinedColor:
-      '/assets/img/brand/logo/combined-logo/combined-logo-color.png',
-    symbolColor: '/assets/img/brand/logo/symbol/symbol-color.png',
+    combinedColor: `${LOGO_DIR}/01_Horizontal/RecyclingHub_horizontal_green_medium.png`,
+    combinedWhite: `${LOGO_DIR}/01_Horizontal/RecyclingHub_horizontal_white_medium.png`,
+    symbolColor: `${LOGO_DIR}/03_Symbol/RecyclingHub_symbol_green_medium.png`,
+    symbolWhite: `${LOGO_DIR}/03_Symbol/RecyclingHub_symbol_white_medium.png`,
   },
   background: {
     blur: '/assets/background/blur-img-bg-1.png',

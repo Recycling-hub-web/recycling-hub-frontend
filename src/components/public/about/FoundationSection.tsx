@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 
-import { ABOUT_VALUES, ASSETS } from '../../../constants/content';
+import { ABOUT_VALUES, ASSETS, LOGO_SIZE } from '../../../constants/content';
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -109,8 +109,8 @@ const FoundationSection = () => {
                   <Image
                     src={ASSETS.logo.symbolColor}
                     alt=""
-                    width={560}
-                    height={565}
+                    width={LOGO_SIZE.symbol.width}
+                    height={LOGO_SIZE.symbol.height}
                     className="size-7 object-contain"
                   />
                 </div>
@@ -143,8 +143,8 @@ const FoundationSection = () => {
                   <Image
                     src={ASSETS.logo.symbolWhite}
                     alt=""
-                    width={560}
-                    height={565}
+                    width={LOGO_SIZE.symbol.width}
+                    height={LOGO_SIZE.symbol.height}
                     className="size-7 object-contain"
                   />
                 </div>
@@ -177,8 +177,8 @@ const FoundationSection = () => {
                   <Image
                     src={ASSETS.logo.symbolColor}
                     alt=""
-                    width={560}
-                    height={565}
+                    width={LOGO_SIZE.symbol.width}
+                    height={LOGO_SIZE.symbol.height}
                     className="size-7 object-contain"
                   />
                 </div>

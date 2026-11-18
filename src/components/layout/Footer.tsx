@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { ASSETS, BRAND } from '../../constants/content';
+import { ASSETS, BRAND, LOGO_SIZE } from '../../constants/content';
 import { useDictionary } from '../../hooks/useDictionary';
 
 const InstagramIcon = () => (
@@ -29,8 +29,8 @@ const Footer = () => {
               <Image
                 src={ASSETS.logo.combinedColor}
                 alt="Recycling Hub"
-                width={110}
-                height={34}
+                width={LOGO_SIZE.horizontal.width}
+                height={LOGO_SIZE.horizontal.height}
                 className="h-8 w-auto object-contain"
               />
             </Link>

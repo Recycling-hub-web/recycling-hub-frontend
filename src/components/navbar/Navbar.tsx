@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
-import { ASSETS, BRAND } from '../../constants/content';
+import { ASSETS, BRAND, LOGO_SIZE } from '../../constants/content';
 import { useDictionary } from '../../hooks/useDictionary';
 import { PublicButton } from '../ui/buttons/PublicButton';
 import { LanguageSwitcher } from './LanguageSwitcher';
@@ -127,16 +127,16 @@ const Navbar = ({ variant = 'dark' }: NavbarProps) => {
               <Image
                 src={ASSETS.logo.combinedColor}
                 alt="Recycling Hub"
-                width={3100}
-                height={700}
+                width={LOGO_SIZE.horizontal.width}
+                height={LOGO_SIZE.horizontal.height}
                 className="hidden h-8 w-auto object-contain sm:block"
                 priority
               />
               <Image
                 src={ASSETS.logo.symbolColor}
                 alt="Recycling Hub"
-                width={560}
-                height={565}
+                width={LOGO_SIZE.symbol.width}
+                height={LOGO_SIZE.symbol.height}
                 className="size-8 object-contain sm:hidden"
                 priority
               />
@@ -146,16 +146,16 @@ const Navbar = ({ variant = 'dark' }: NavbarProps) => {
               <Image
                 src={ASSETS.logo.combinedWhite}
                 alt="Recycling Hub"
-                width={3100}
-                height={700}
+                width={LOGO_SIZE.horizontal.width}
+                height={LOGO_SIZE.horizontal.height}
                 className="hidden h-8 w-auto object-contain sm:block"
                 priority
               />
               <Image
                 src={ASSETS.logo.symbolWhite}
                 alt="Recycling Hub"
-                width={560}
-                height={565}
+                width={LOGO_SIZE.symbol.width}
+                height={LOGO_SIZE.symbol.height}
                 className="size-8 object-contain sm:hidden"
                 priority
               />

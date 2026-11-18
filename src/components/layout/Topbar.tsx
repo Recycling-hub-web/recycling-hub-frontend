@@ -2,7 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { LuChevronDown, LuUserRound } from 'react-icons/lu';
 
-import { ASSETS } from '../../constants/content';
+import { ASSETS, LOGO_SIZE } from '../../constants/content';
 import { useAuth } from '../../contexts/AuthContext';
 import { BetaBadge } from '../ui/badges/BetaBadge';
 import { Dropdown } from '../ui/dropdown/Dropdown';
@@ -38,8 +38,8 @@ const Topbar = () => {
         <Image
           src={ASSETS.logo.combinedColor}
           alt="Recycling Hub"
-          width={3100}
-          height={700}
+          width={LOGO_SIZE.horizontal.width}
+          height={LOGO_SIZE.horizontal.height}
           className="h-6 w-auto"
           priority
         />
