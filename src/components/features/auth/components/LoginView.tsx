@@ -7,7 +7,7 @@ import type { FormEvent } from 'react';
 import { useEffect, useState } from 'react';
 import { LuKeyRound } from 'react-icons/lu';
 
-import { ASSETS } from '../../../../constants/content';
+import { ASSETS, LOGO_SIZE } from '../../../../constants/content';
 import { useAuth } from '../../../../contexts/AuthContext';
 import { useAuthFlow } from '../../../../contexts/AuthFlowContext';
 import { ApiError } from '../../../../lib/api';
@@ -91,8 +91,8 @@ const LoginView = ({ t }: { t: Dictionary['auth']['login'] }) => {
           <Image
             src={ASSETS.logo.combinedColor}
             alt="Recycling Hub"
-            width={3100}
-            height={700}
+            width={LOGO_SIZE.horizontal.width}
+            height={LOGO_SIZE.horizontal.height}
             className="h-8 w-auto object-contain"
             priority
           />

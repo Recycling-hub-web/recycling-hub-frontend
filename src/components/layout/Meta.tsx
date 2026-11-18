@@ -69,8 +69,22 @@ const Meta = (props: IMetaProps) => {
         <link
           rel="icon"
           href={`${router.basePath}/favicon.ico`}
+          sizes="48x48"
           key="favicon"
         />
+        <link
+          rel="icon"
+          type="image/svg+xml"
+          href={`${router.basePath}/favicon.svg`}
+          key="iconsvg"
+        />
+        <link
+          rel="manifest"
+          href={`${router.basePath}/site.webmanifest`}
+          key="manifest"
+        />
+        {/* Brand green, from the logo kit. */}
+        <meta name="theme-color" content="#2E7D32" key="theme-color" />
       </Head>
       <NextSeo
         title={props.title}

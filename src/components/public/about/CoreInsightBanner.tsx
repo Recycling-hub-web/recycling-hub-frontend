@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 
-import { ASSETS } from '../../../constants/content';
+import { ASSETS, LOGO_SIZE } from '../../../constants/content';
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -35,8 +35,8 @@ const CoreInsightBanner = () => (
             <Image
               src={ASSETS.logo.symbolWhite}
               alt="Recycling Hub"
-              width={240}
-              height={240}
+              width={LOGO_SIZE.symbol.width}
+              height={LOGO_SIZE.symbol.height}
               className="object-contain"
             />
           </div>

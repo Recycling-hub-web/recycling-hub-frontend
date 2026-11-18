@@ -2,7 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 
-import { ASSETS } from '../../../../constants/content';
+import { ASSETS, LOGO_SIZE } from '../../../../constants/content';
 
 type AuthCardProps = {
   icon: ReactNode;
@@ -25,16 +25,16 @@ const AuthCard = ({ icon, title, subtitle, children }: AuthCardProps) => (
         <Image
           src={ASSETS.logo.combinedColor}
           alt="Recycling Hub"
-          width={3100}
-          height={700}
+          width={LOGO_SIZE.horizontal.width}
+          height={LOGO_SIZE.horizontal.height}
           className="hidden h-8 w-auto object-contain sm:block"
           priority
         />
         <Image
           src={ASSETS.logo.symbolColor}
           alt="Recycling Hub"
-          width={560}
-          height={565}
+          width={LOGO_SIZE.symbol.width}
+          height={LOGO_SIZE.symbol.height}
           className="size-8 object-contain sm:hidden"
           priority
         />
