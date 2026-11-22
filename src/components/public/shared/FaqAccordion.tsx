@@ -66,7 +66,7 @@ const FaqAccordion = ({
                 >
                   <span
                     className={`text-base font-medium leading-snug transition-colors duration-200 ${
-                      isOpen ? 'text-brand-600' : 'text-slate-700'
+                      isOpen ? 'text-brand-700' : 'text-slate-700'
                     }`}
                   >
                     {item.question}

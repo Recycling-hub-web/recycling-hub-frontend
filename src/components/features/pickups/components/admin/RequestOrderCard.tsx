@@ -46,7 +46,7 @@ const Section = ({
   children: React.ReactNode;
 }) => (
   <div className="mt-5 border-t border-slate-100 pt-5">
-    <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
+    <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-600">
       {title}
     </p>
     {children}

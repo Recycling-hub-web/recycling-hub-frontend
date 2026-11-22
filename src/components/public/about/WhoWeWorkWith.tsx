@@ -38,7 +38,7 @@ const WhoWeWorkWith = () => (
 
       {/* Accepted device categories */}
       <div className="text-center">
-        <p className="mb-5 text-xs font-semibold uppercase tracking-widest text-slate-400">
+        <p className="mb-5 text-xs font-semibold uppercase tracking-widest text-slate-600">
           Accepted Device Categories
         </p>
         <motion.div

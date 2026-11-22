@@ -19,7 +19,7 @@ const FaqSection = () => {
         <div className="mt-8 text-center">
           <Link
             href={content.seeMoreHref}
-            className="text-sm font-semibold text-brand-600 transition-colors hover:text-brand-700"
+            className="text-sm font-semibold text-brand-700 transition-colors hover:text-brand-700"
           >
             {content.seeMoreLabel} →
           </Link>

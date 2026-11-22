@@ -53,7 +53,7 @@ const SegmentedControl = <T extends string>({
               fullWidth ? 'flex-auto' : ''
             } ${
               active
-                ? `bg-white ring-1 ring-slate-200 ${activeClassName ?? 'text-brand-600'}`
+                ? `bg-white ring-1 ring-slate-200 ${activeClassName ?? 'text-brand-700'}`
                 : 'text-slate-500 hover:text-slate-700'
             }`}
           >

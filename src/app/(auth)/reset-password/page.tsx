@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 
 import { ResetPasswordView } from '../../../components/features/auth/components';
-import { getDictionary } from '../../../lib/dictionary';
 
 export const metadata: Metadata = {
   title: 'Reset Password — Recycling Hub',
@@ -17,11 +16,5 @@ export default function ResetPasswordPage({
 }: {
   searchParams: { token?: string };
 }) {
-  const { auth } = getDictionary('en');
-  return (
-    <ResetPasswordView
-      t={auth.resetPassword}
-      token={searchParams.token ?? ''}
-    />
-  );
+  return <ResetPasswordView token={searchParams.token ?? ''} />;
 }

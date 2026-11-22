@@ -48,7 +48,7 @@ const OldWayCard = () => {
           <h3 className="font-montserrat text-2xl font-extrabold tracking-tight text-neutral-950 md:text-3xl">
             {oldWay.headline}
           </h3>
-          <p className="mt-2 text-sm text-slate-400">{oldWay.subtext}</p>
+          <p className="mt-2 text-sm text-slate-600">{oldWay.subtext}</p>
 
           <div className="mt-8 h-px w-full bg-slate-100" />
 

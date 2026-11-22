@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 
 import { useAuth } from '../../../../contexts/AuthContext';
+import { usePortalLocale } from '../../../../contexts/PortalLocaleContext';
 import { isAdminRole } from '../../../../types/auth';
 import { SearchInput } from '../../../form/filter/SearchInput';
 import { PageContainer } from '../../../layout/PageContainer';
@@ -22,6 +23,7 @@ import { ReimburseModal } from './ReimburseModal';
  * is hidden there, since a driver can't act on it anyway (403 on the
  * backend). */
 const FinanceRecordsView = () => {
+  const { t, locale } = usePortalLocale();
   const { user } = useAuth();
   const canManage =
     user?.role === 'accounting' ||
@@ -53,7 +55,7 @@ const FinanceRecordsView = () => {
   const searching = searchInput.trim() !== search;
   const dateError =
     createdFrom && createdTo && createdFrom > createdTo
-      ? 'The start date must be on or before the end date.'
+      ? t('The start date must be on or before the end date.')
       : '';
 
   const [statusFilter, setStatusFilter] = useState<FinanceStatus | ''>('');
@@ -77,10 +79,12 @@ const FinanceRecordsView = () => {
     }
   }, [outOfRange]);
 
-  let resultsLabel = `${count.toLocaleString()} finance records`;
-  if (dateError || error) resultsLabel = 'Results unavailable';
+  let resultsLabel = t('{count} finance records', {
+    count: count.toLocaleString(locale === 'bm' ? 'ms-MY' : 'en-MY'),
+  });
+  if (dateError || error) resultsLabel = t('Results unavailable');
   if (loading || searching || outOfRange)
-    resultsLabel = 'Loading finance records…';
+    resultsLabel = t('Loading finance records…');
 
   const handleStatusFilterChange = (value: string) => {
     setStatusFilter(value as FinanceStatus | '');
@@ -133,34 +137,38 @@ const FinanceRecordsView = () => {
   return (
     <PageContainer variant="table">
       <PageHeader
-        title="Finance Records"
+        title={t('Finance Records')}
         subtitle={
           user?.role === 'driver'
-            ? 'Payments you have made to customers for collected orders.'
-            : 'Driver payments are recorded automatically — review and reimburse them here.'
+            ? t('Payments you have made to customers for collected orders.')
+            : t(
+                'Driver payments are recorded automatically — review and reimburse them here.',
+              )
         }
         actions={
           canManage && selectedIds.size > 0 ? (
             <button
               type="button"
               onClick={() => setReimburseIds(Array.from(selectedIds))}
-              className="inline-flex items-center justify-center rounded-full bg-brand-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-brand-700"
+              className="inline-flex items-center justify-center rounded-full bg-brand-700 px-6 py-3 text-sm font-semibold text-white transition hover:bg-brand-800"
             >
-              {`Verify & Reimburse selected (${selectedIds.size})`}
+              {t('Verify & Reimburse selected ({count})', {
+                count: selectedIds.size,
+              })}
             </button>
           ) : undefined
         }
       />
 
       <section
-        aria-label="Finance record filters"
+        aria-label={t('Finance record filters')}
         className="mb-4 space-y-3 rounded-2xl border border-slate-200 bg-white p-4"
       >
         <div className="flex flex-wrap items-end gap-3">
           <SearchInput
             value={searchInput}
-            ariaLabel="Search finance records"
-            placeholder="Requester, driver or reference"
+            ariaLabel={t('Search finance records')}
+            placeholder={t('Requester, driver or reference')}
             onChange={(event) => {
               setSearchInput(event.target.value);
               resetPage();
@@ -170,13 +178,16 @@ const FinanceRecordsView = () => {
             <FilterSelect
               value={statusFilter}
               onChange={handleStatusFilterChange}
-              options={STATUS_FILTER_OPTIONS}
-              ariaLabel="Filter finance records by status"
+              options={STATUS_FILTER_OPTIONS.map((option) => ({
+                ...option,
+                label: t(option.label),
+              }))}
+              ariaLabel={t('Filter finance records by status')}
             />
           )}
           <div className="grid w-full grid-cols-2 gap-3 sm:w-auto">
             <label className="flex min-w-0 flex-col gap-1 text-xs font-medium text-slate-700">
-              Created from (MYT)
+              {t('Created from (MYT)')}
               <input
                 type="date"
                 value={createdFrom}
@@ -191,7 +202,7 @@ const FinanceRecordsView = () => {
               />
             </label>
             <label className="flex min-w-0 flex-col gap-1 text-xs font-medium text-slate-700">
-              Created to (MYT)
+              {t('Created to (MYT)')}
               <input
                 type="date"
                 value={createdTo}
@@ -207,17 +218,17 @@ const FinanceRecordsView = () => {
             </label>
           </div>
           <FilterSelect
-            ariaLabel="Sort finance records"
+            ariaLabel={t('Sort finance records')}
             value={ordering}
             onChange={(value) => {
               setOrdering(value);
               resetPage();
             }}
             options={[
-              { value: '-created_at', label: 'Newest first' },
-              { value: 'created_at', label: 'Oldest first' },
-              { value: '-price', label: 'Highest agreed price' },
-              { value: 'price', label: 'Lowest agreed price' },
+              { value: '-created_at', label: t('Newest first') },
+              { value: 'created_at', label: t('Oldest first') },
+              { value: '-price', label: t('Highest agreed price') },
+              { value: 'price', label: t('Lowest agreed price') },
             ]}
           />
         </div>
@@ -240,14 +251,14 @@ const FinanceRecordsView = () => {
               onClick={clearFilters}
               className="min-h-11 rounded-lg px-3 text-sm font-semibold text-brand-800 underline underline-offset-4"
             >
-              Clear all filters
+              {t('Clear all filters')}
             </button>
           )}
         </div>
         {hasFilters && (
           <div
             className="flex flex-wrap gap-2"
-            aria-label="Active finance filters"
+            aria-label={t('Active finance filters')}
           >
             {searchInput.trim() && (
               <button
@@ -258,9 +269,9 @@ const FinanceRecordsView = () => {
                   resetPage();
                 }}
                 className="min-h-11 rounded-full bg-brand-50 px-3 text-sm text-brand-800"
-                aria-label="Remove search filter"
+                aria-label={t('Remove search filter')}
               >
-                Search: {searchInput.trim()} ×
+                {t('Search:')} {searchInput.trim()} ×
               </button>
             )}
             {statusFilter && (
@@ -268,13 +279,13 @@ const FinanceRecordsView = () => {
                 type="button"
                 onClick={() => handleStatusFilterChange('')}
                 className="min-h-11 rounded-full bg-brand-50 px-3 text-sm text-brand-800"
-                aria-label="Remove status filter"
+                aria-label={t('Remove status filter')}
               >
-                {
+                {t(
                   STATUS_FILTER_OPTIONS.find(
                     (option) => option.value === statusFilter,
-                  )?.label
-                }{' '}
+                  )?.label ?? '',
+                )}{' '}
                 ×
               </button>
             )}
@@ -287,9 +298,10 @@ const FinanceRecordsView = () => {
                   resetPage();
                 }}
                 className="min-h-11 rounded-full bg-brand-50 px-3 text-sm text-brand-800"
-                aria-label="Remove date filter"
+                aria-label={t('Remove date filter')}
               >
-                {createdFrom || 'Any date'} – {createdTo || 'Today and later'} ×
+                {createdFrom || t('Any date')} –{' '}
+                {createdTo || t('Today and later')} ×
               </button>
             )}
           </div>

@@ -66,7 +66,7 @@ const ImageFileUploader = ({
                 className="size-14 shrink-0 rounded-lg object-cover"
               />
             ) : (
-              <span className="flex size-14 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-400">
+              <span className="flex size-14 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-600">
                 <LuImage className="size-5" />
               </span>
             )}
@@ -78,7 +78,7 @@ const ImageFileUploader = ({
               onClick={() => onChange(null)}
               disabled={disabled || uploading}
               aria-label={`Remove ${label.toLowerCase()}`}
-              className="inline-flex size-8 shrink-0 items-center justify-center rounded-full text-slate-400 transition hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex size-8 shrink-0 items-center justify-center rounded-full text-slate-600 transition hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
             >
               <LuTrash2 className="size-4" />
             </button>

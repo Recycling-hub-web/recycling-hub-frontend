@@ -395,7 +395,7 @@ const OrderDocuments = ({ documents }: { documents: DocumentEntry[] }) => (
                 href={doc.file.public_url}
                 target="_blank"
                 rel="noreferrer"
-                className="mt-3 inline-block text-sm font-semibold text-brand-600 underline"
+                className="mt-3 inline-block text-sm font-semibold text-brand-700 underline"
               >
                 Open {doc.title.toLowerCase()}
               </a>

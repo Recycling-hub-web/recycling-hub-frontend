@@ -128,7 +128,7 @@ const ArrayObjectField = ({
       </div>
 
       {arrayValue.length === 0 && (
-        <div className="rounded-lg border-2 border-dashed border-slate-200 py-6 text-center text-sm text-slate-400">
+        <div className="rounded-lg border-2 border-dashed border-slate-200 py-6 text-center text-sm text-slate-600">
           No entries yet. Click &ldquo;{addLabel}&rdquo; to add one.
         </div>
       )}

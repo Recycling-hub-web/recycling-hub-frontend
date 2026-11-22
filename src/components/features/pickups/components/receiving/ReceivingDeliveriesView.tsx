@@ -112,7 +112,7 @@ const ReceivingDeliveriesView = () => {
               disabled={closing && closingId === r.id}
               onClick={() => handleClose(r.id)}
               aria-label={`Verify and close delivery from ${r.pickup_request.full_name}`}
-              className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex size-8 items-center justify-center rounded-full text-slate-600 transition hover:bg-slate-100 hover:text-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
               <LuCheckCheck className="size-4" />
             </button>

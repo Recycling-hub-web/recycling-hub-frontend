@@ -258,7 +258,7 @@ const RichTextEditor = ({
               <button
                 type="button"
                 onClick={applyLink}
-                className="flex size-8 shrink-0 items-center justify-center rounded-md bg-brand-600 text-white transition hover:bg-brand-700"
+                className="flex size-8 shrink-0 items-center justify-center rounded-md bg-brand-700 text-white transition hover:bg-brand-800"
               >
                 <Check className="size-3.5" />
               </button>

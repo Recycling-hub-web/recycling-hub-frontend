@@ -127,7 +127,7 @@ const EditPartnerView = ({ partnerId, basePath }: EditPartnerViewProps) => {
     <PageContainer variant="form">
       <Link
         href={`${basePath}/${partner.id}`}
-        className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600 lg:mb-4 lg:min-h-0"
+        className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-700 lg:mb-4 lg:min-h-0"
       >
         <LuArrowLeft className="size-4" />
         Back to partner

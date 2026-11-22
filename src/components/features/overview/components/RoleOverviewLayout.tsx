@@ -60,7 +60,7 @@ const RoleOverviewLayout = ({
         <ProfileSummaryCard />
 
         {!hasModules && (
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-slate-600">
             More of your dashboard — assigned tasks, pickups, and reports — is
             on the way.
           </p>

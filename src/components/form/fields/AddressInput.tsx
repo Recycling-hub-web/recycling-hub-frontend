@@ -298,7 +298,7 @@ const AddressInput = ({
           } ${fieldStateClasses(disabled, Boolean(error))}`}
         />
         {verified && (
-          <span className="absolute inset-y-0 end-9 flex items-center text-xs font-medium text-brand-600">
+          <span className="absolute inset-y-0 end-9 flex items-center text-xs font-medium text-brand-700">
             ✓
           </span>
         )}
@@ -313,7 +313,7 @@ const AddressInput = ({
             type="button"
             onClick={handleClear}
             aria-label="Clear address"
-            className="absolute inset-y-0 end-0 flex w-11 items-center justify-center text-slate-400 transition-colors hover:text-slate-600"
+            className="absolute inset-y-0 end-0 flex w-11 items-center justify-center text-slate-600 transition-colors hover:text-slate-600"
           >
             <LuX className="size-4" />
           </button>

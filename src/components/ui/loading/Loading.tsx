@@ -1,3 +1,7 @@
+'use client';
+
+import { usePortalLocale } from '../../../contexts/PortalLocaleContext';
+
 type LoadingSize = 'sm' | 'md' | 'lg';
 
 type LoadingProps = {
@@ -23,6 +27,7 @@ const Loading = ({
   text = 'Loading...',
   fullPage = false,
 }: LoadingProps) => {
+  const { t } = usePortalLocale();
   const wrapperClassName = fullPage
     ? 'fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm'
     : 'flex flex-col items-center justify-center py-10';
@@ -34,9 +39,9 @@ const Loading = ({
       />
       {text && (
         <p
-          className={`mt-3 font-medium text-slate-400 ${TEXT_SIZE_CLASSES[size]}`}
+          className={`mt-3 font-medium text-slate-600 ${TEXT_SIZE_CLASSES[size]}`}
         >
-          {text}
+          {t(text === 'Loading...' ? 'Loading…' : text)}
         </p>
       )}
     </div>

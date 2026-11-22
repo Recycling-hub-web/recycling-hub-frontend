@@ -164,7 +164,7 @@ const UserDetailsView = ({ userId }: { userId: string }) => {
       />
       <Link
         href="/admin/users"
-        className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600 lg:mb-4 lg:min-h-0"
+        className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-700 lg:mb-4 lg:min-h-0"
       >
         <LuArrowLeft className="size-4" />
         Back to users
@@ -189,7 +189,7 @@ const UserDetailsView = ({ userId }: { userId: string }) => {
             className="size-14 shrink-0 rounded-full object-cover"
           />
         ) : (
-          <span className="flex size-14 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+          <span className="flex size-14 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-600">
             <LuUser className="size-6" />
           </span>
         )}

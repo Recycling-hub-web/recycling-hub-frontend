@@ -5,18 +5,16 @@ import type { FormEvent } from 'react';
 import { useState } from 'react';
 import { LuCircleCheck, LuKeyRound } from 'react-icons/lu';
 
-import type { Dictionary } from '../../../../lib/dictionary';
+import { usePortalLocale } from '../../../../contexts/PortalLocaleContext';
 import { InputField } from '../../../form/fields/InputField';
 import { ValidatedForm } from '../../../form/ValidatedForm';
 import { Button } from '../../../ui/buttons/Button';
 import { useForgotPassword } from '../hooks';
 import { AuthCard } from './AuthCard';
 
-const ForgotPasswordView = ({
-  t,
-}: {
-  t: Dictionary['auth']['forgotPassword'];
-}) => {
+const ForgotPasswordView = () => {
+  const { auth } = usePortalLocale();
+  const t = auth.forgotPassword;
   const { execute: submitForgotPassword, loading: submitting } =
     useForgotPassword();
   const [formData, setFormData] = useState({ email: '' });
@@ -73,7 +71,7 @@ const ForgotPasswordView = ({
 
         <Link
           href="/login"
-          className="block w-full text-center text-xs font-medium text-slate-500 hover:text-brand-600"
+          className="block w-full text-center text-xs font-medium text-slate-500 hover:text-brand-700"
         >
           {t.backToLogin}
         </Link>

@@ -28,7 +28,7 @@ const PageHeader = ({
     <div className="flex min-w-0 items-center gap-3">
       {icon && (
         <div
-          className={`flex shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600 ${
+          className={`flex shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-700 ${
             bordered ? 'size-10' : 'size-11'
           }`}
         >
@@ -43,7 +43,7 @@ const PageHeader = ({
         </h1>
         {subtitle && (
           <p
-            className={`break-words text-slate-400 sm:truncate ${bordered ? 'text-xs' : 'mt-0.5 text-sm'}`}
+            className={`break-words text-slate-600 sm:truncate ${bordered ? 'text-xs' : 'mt-0.5 text-sm'}`}
           >
             {subtitle}
           </p>

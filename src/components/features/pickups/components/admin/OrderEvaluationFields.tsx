@@ -20,7 +20,7 @@ const EVALUATE_NOW_OPTIONS: SegmentedOption<EvaluationDecision>[] = [
     value: 'approved',
     label: 'Approve',
     icon: LuCircleCheck,
-    activeClassName: 'text-brand-600',
+    activeClassName: 'text-brand-700',
   },
   {
     value: 'rejected',
@@ -115,7 +115,7 @@ const OrderEvaluationFields = ({
     >
       <h3 id={headingId} className="text-sm font-semibold text-neutral-950">
         Evaluation{' '}
-        <span className="font-normal text-slate-400">(optional)</span>
+        <span className="font-normal text-slate-600">(optional)</span>
       </h3>
       <p className="mt-0.5 text-xs text-slate-500">
         Already know the outcome? Decide it now for the whole request and skip

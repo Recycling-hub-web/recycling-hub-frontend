@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { LuWallet, LuWalletCards } from 'react-icons/lu';
 
 import { useAuth } from '../../../../contexts/AuthContext';
+import { usePortalLocale } from '../../../../contexts/PortalLocaleContext';
 import { formatMYR } from '../../../../lib/money';
 import { StatusBadge } from '../../../ui/badges/StatusBadge';
 import { AppDate } from '../../../ui/date/AppDate';
@@ -82,6 +83,7 @@ const FinanceRecordTable = ({
   hasFilters = false,
   onClearFilters,
 }: FinanceRecordTableProps) => {
+  const { t, locale } = usePortalLocale();
   const router = useRouter();
   const { user } = useAuth();
   const isDriver = user?.role === 'driver';
@@ -109,13 +111,13 @@ const FinanceRecordTable = ({
           icon={<LuWallet className="size-6" />}
           title={
             hasFilters
-              ? 'No matching finance records'
-              : 'No finance records yet'
+              ? t('No matching finance records')
+              : t('No finance records yet')
           }
           subtitle={
             hasFilters
-              ? 'Try a different search, status or date range.'
-              : 'Priced, approved pickup requests will show up here.'
+              ? t('Try a different search, status or date range.')
+              : t('Priced, approved pickup requests will show up here.')
           }
           action={
             hasFilters && onClearFilters ? (
@@ -124,7 +126,7 @@ const FinanceRecordTable = ({
                 onClick={onClearFilters}
                 className="min-h-11 rounded-full border border-slate-300 px-4 text-sm font-semibold text-brand-800"
               >
-                Clear filters
+                {t('Clear filters')}
               </button>
             ) : undefined
           }
@@ -149,7 +151,9 @@ const FinanceRecordTable = ({
                 checked={selectedIds.has(r.id)}
                 onChange={() => onToggleSelect(r.id)}
                 className="size-4 rounded border-slate-300"
-                aria-label={`Select ${r.collection_request.full_name}`}
+                aria-label={t('Select {name}', {
+                  name: r.collection_request.full_name,
+                })}
               />
             )}
           </td>
@@ -161,7 +165,9 @@ const FinanceRecordTable = ({
           <Link
             href={`${basePath}/${r.id}`}
             onClick={(event) => event.stopPropagation()}
-            aria-label={`View finance record for ${r.collection_request.full_name}`}
+            aria-label={t('View finance record for {name}', {
+              name: r.collection_request.full_name,
+            })}
             className="rounded underline decoration-slate-300 underline-offset-4 hover:text-brand-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-700"
           >
             {r.collection_request.full_name}
@@ -178,7 +184,7 @@ const FinanceRecordTable = ({
         </td>
         <td className="px-6 py-4 text-slate-700">
           {r.payment_method
-            ? FINANCE_PAYMENT_METHOD_LABELS[r.payment_method]
+            ? t(FINANCE_PAYMENT_METHOD_LABELS[r.payment_method])
             : '—'}
         </td>
         <td className="px-6 py-4">
@@ -190,20 +196,24 @@ const FinanceRecordTable = ({
             }
           >
             {isDriver
-              ? DRIVER_FINANCE_STATUS_LABELS[r.status]
-              : FINANCE_STATUS_LABELS[r.status]}
+              ? t(DRIVER_FINANCE_STATUS_LABELS[r.status])
+              : t(FINANCE_STATUS_LABELS[r.status])}
           </StatusBadge>
           {canManage &&
             r.driver &&
             r.status !== 'reimbursed' &&
             reimbursementBlocker(r) && (
               <p className="mt-1 max-w-48 text-xs text-amber-700">
-                {reimbursementBlocker(r)}
+                {t(reimbursementBlocker(r))}
               </p>
             )}
         </td>
         <td className="px-6 py-4 text-slate-500">
-          <AppDate value={r.created_at} format="short" />
+          <AppDate
+            value={r.created_at}
+            format="short"
+            locale={locale === 'bm' ? 'ms-MY' : 'en-GB'}
+          />
         </td>
         {canManage && (
           <td
@@ -214,10 +224,12 @@ const FinanceRecordTable = ({
             {!reimbursementBlocker(r) && (
               <button
                 type="button"
-                title="Verify & Reimburse"
-                aria-label={`Verify and reimburse ${r.collection_request.full_name}`}
+                title={t('Verify & Reimburse')}
+                aria-label={t('Verify and reimburse {name}', {
+                  name: r.collection_request.full_name,
+                })}
                 onClick={() => onRequestReimburse([r.id])}
-                className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-brand-50 hover:text-brand-600"
+                className="inline-flex size-8 items-center justify-center rounded-full text-slate-600 transition hover:bg-brand-50 hover:text-brand-700"
               >
                 <LuWalletCards className="size-4" />
               </button>
@@ -253,35 +265,35 @@ const FinanceRecordTable = ({
                     checked={allClaimedSelected}
                     onChange={onToggleSelectAll}
                     className="size-4 rounded border-slate-300"
-                    aria-label="Select all records awaiting review"
+                    aria-label={t('Select all records awaiting review')}
                   />
                 )}
               </th>
             )}
             <th className="px-6 py-3 text-left font-semibold text-slate-500">
-              Requester
+              {t('Requester')}
             </th>
             <th className="px-6 py-3 text-left font-semibold text-slate-500">
-              Driver
+              {t('Driver')}
             </th>
             <th className="px-6 py-3 text-right font-semibold text-slate-500">
-              Agreed price (MYR)
+              {t('Agreed price (MYR)')}
             </th>
             <th className="px-6 py-3 text-right font-semibold text-slate-500">
-              Actual paid (MYR)
+              {t('Actual paid (MYR)')}
             </th>
             <th className="px-6 py-3 text-left font-semibold text-slate-500">
-              Method
+              {t('Method')}
             </th>
             <th className="px-6 py-3 text-left font-semibold text-slate-500">
-              Status
+              {t('Status')}
             </th>
             <th className="px-6 py-3 text-left font-semibold text-slate-500">
-              Date
+              {t('Date')}
             </th>
             {canManage && (
               <th className="px-6 py-3 text-left font-semibold text-slate-500">
-                Action
+                {t('Action')}
               </th>
             )}
           </tr>

@@ -4,8 +4,10 @@ import { LuChevronDown, LuUserRound } from 'react-icons/lu';
 
 import { ASSETS, LOGO_SIZE } from '../../constants/content';
 import { useAuth } from '../../contexts/AuthContext';
+import { usePortalLocale } from '../../contexts/PortalLocaleContext';
 import { BetaBadge } from '../ui/badges/BetaBadge';
 import { Dropdown } from '../ui/dropdown/Dropdown';
+import { PortalLanguageSwitcher } from '../ui/PortalLanguageSwitcher';
 import { NotificationsButton } from './NotificationsButton';
 
 // Same initials fallback as Sidebar's own account card — kept as a
@@ -27,6 +29,7 @@ const getInitials = (name: string) =>
  * not here. */
 const Topbar = () => {
   const { user } = useAuth();
+  const { t } = usePortalLocale();
 
   return (
     <header className="system-app-header flex h-16 shrink-0 items-center bg-white px-4 shadow-sm lg:rounded-xl lg:px-6">
@@ -46,6 +49,9 @@ const Topbar = () => {
         <BetaBadge />
       </Link>
       <div className="ms-auto flex items-center gap-1 lg:gap-3">
+        <div className="hidden sm:block">
+          <PortalLanguageSwitcher />
+        </div>
         <NotificationsButton />
         {user && (
           <Dropdown
@@ -54,7 +60,7 @@ const Topbar = () => {
             button={
               <button
                 type="button"
-                aria-label="Account menu"
+                aria-label={t('Account menu')}
                 className="system-profile-trigger flex min-h-11 min-w-11 items-center gap-2 rounded-full p-0.5 pe-2 transition-colors hover:bg-slate-50"
               >
                 <span className="flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-slate-100 bg-slate-50 text-xs font-bold text-slate-600">
@@ -85,7 +91,7 @@ const Topbar = () => {
                 className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 hover:text-slate-900"
               >
                 <LuUserRound className="size-4 text-slate-400" />
-                My Profile
+                {t('My Profile')}
               </Link>
             </div>
           </Dropdown>

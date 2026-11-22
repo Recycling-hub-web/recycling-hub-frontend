@@ -109,7 +109,7 @@ const RequestQuotePage: NextPageWithLayout = () => {
                       if (error) setError('');
                     }}
                     placeholder={content.form.fullNamePlaceholder}
-                    className="rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-neutral-950 placeholder:text-slate-400 focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20 disabled:bg-slate-50 disabled:text-slate-400"
+                    className="rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-neutral-950 placeholder:text-slate-600 focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20 disabled:bg-slate-50 disabled:text-slate-400"
                   />
                 </div>
 
@@ -129,7 +129,7 @@ const RequestQuotePage: NextPageWithLayout = () => {
                       if (error) setError('');
                     }}
                     placeholder={content.form.emailPlaceholder}
-                    className="rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-neutral-950 placeholder:text-slate-400 focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20 disabled:bg-slate-50 disabled:text-slate-400"
+                    className="rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-neutral-950 placeholder:text-slate-600 focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20 disabled:bg-slate-50 disabled:text-slate-400"
                   />
                 </div>
 
@@ -146,7 +146,7 @@ const RequestQuotePage: NextPageWithLayout = () => {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder={content.form.phonePlaceholder}
-                    className="rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-neutral-950 placeholder:text-slate-400 focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20 disabled:bg-slate-50 disabled:text-slate-400"
+                    className="rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-neutral-950 placeholder:text-slate-600 focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20 disabled:bg-slate-50 disabled:text-slate-400"
                   />
                 </div>
 
@@ -163,7 +163,7 @@ const RequestQuotePage: NextPageWithLayout = () => {
                     value={company}
                     onChange={(e) => setCompany(e.target.value)}
                     placeholder={content.form.companyPlaceholder}
-                    className="rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-neutral-950 placeholder:text-slate-400 focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20 disabled:bg-slate-50 disabled:text-slate-400"
+                    className="rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-neutral-950 placeholder:text-slate-600 focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20 disabled:bg-slate-50 disabled:text-slate-400"
                   />
                 </div>
 
@@ -201,7 +201,7 @@ const RequestQuotePage: NextPageWithLayout = () => {
                     onChange={(e) => setDetails(e.target.value)}
                     rows={4}
                     placeholder={content.form.detailsPlaceholder}
-                    className="resize-none rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-neutral-950 placeholder:text-slate-400 focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20 disabled:bg-slate-50 disabled:text-slate-400"
+                    className="resize-none rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-neutral-950 placeholder:text-slate-600 focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20 disabled:bg-slate-50 disabled:text-slate-400"
                   />
                 </div>
               </div>
@@ -215,7 +215,7 @@ const RequestQuotePage: NextPageWithLayout = () => {
               )}
 
               <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-slate-600">
                   {content.form.whatsappNote}
                 </p>
                 <button
@@ -231,13 +231,13 @@ const RequestQuotePage: NextPageWithLayout = () => {
           </FadeIn>
 
           <FadeIn delay={0.1}>
-            <p className="mt-6 text-center text-xs text-slate-400">
+            <p className="mt-6 text-center text-xs text-slate-600">
               {content.footerNote.prefix}
               <a
                 href={BRAND.whatsapp}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-medium text-brand-600 underline underline-offset-2"
+                className="font-medium text-brand-700 underline underline-offset-2"
               >
                 {content.footerNote.linkText}
               </a>

@@ -29,7 +29,7 @@ const ConnectorsStrip = () => {
     <section className="border-y border-slate-100 bg-white py-12 md:py-16">
       <div className="mx-auto max-w-7xl px-5 md:px-8">
         <FadeIn>
-          <p className="mb-8 text-center text-xs font-semibold uppercase tracking-[0.15em] text-slate-400">
+          <p className="mb-8 text-center text-xs font-semibold uppercase tracking-[0.15em] text-slate-600">
             {content.eyebrow}
           </p>
         </FadeIn>
@@ -45,7 +45,7 @@ const ConnectorsStrip = () => {
             <motion.span
               key={item}
               variants={pillItem}
-              className="rounded-full border border-brand-100 bg-brand-50 px-3 py-1.5 text-xs font-semibold text-brand-600 sm:px-5 sm:py-2 sm:text-sm"
+              className="rounded-full border border-brand-100 bg-brand-50 px-3 py-1.5 text-xs font-semibold text-brand-700 sm:px-5 sm:py-2 sm:text-sm"
             >
               {item}
             </motion.span>

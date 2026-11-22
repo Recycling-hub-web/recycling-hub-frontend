@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { LuX } from 'react-icons/lu';
 
 import { ASSETS, LOGO_SIZE } from '../../constants/content';
+import { usePortalLocale } from '../../contexts/PortalLocaleContext';
 import { BetaBadge } from '../ui/badges/BetaBadge';
 import type { NavItem } from '../ui/navigation';
 import {
@@ -48,6 +49,7 @@ const groupBySection = (items: NavItem[]) =>
 
 const Sidebar = ({ navItems, open, onClose }: SidebarProps) => {
   const pathname = usePathname();
+  const { t, locale } = usePortalLocale();
   const activeHref = getActiveHref(navItems, pathname);
 
   return (
@@ -72,7 +74,10 @@ const Sidebar = ({ navItems, open, onClose }: SidebarProps) => {
         }`}
       >
         <div className="flex h-16 shrink-0 items-center justify-between border-b border-slate-200 pe-3 ps-5 lg:justify-center">
-          <Link href="/" className="flex items-center gap-2">
+          <Link
+            href={locale === 'bm' ? '/bm' : '/'}
+            className="flex items-center gap-2"
+          >
             <Image
               src={ASSETS.logo.combinedColor}
               alt="Recycling Hub"
@@ -95,7 +100,7 @@ const Sidebar = ({ navItems, open, onClose }: SidebarProps) => {
             type="button"
             onClick={onClose}
             aria-label="Close menu"
-            className="flex size-8 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 lg:hidden"
+            className="flex size-8 items-center justify-center rounded-lg text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-600 lg:hidden"
           >
             <LuX className="size-4" />
           </button>
@@ -109,11 +114,14 @@ const Sidebar = ({ navItems, open, onClose }: SidebarProps) => {
           <SmoothScroll className="flex min-h-0 flex-1 flex-col overflow-y-auto px-3 py-4">
             <div>
               {groupBySection(navItems).map(({ title, items }, index) => (
-                <div key={title} className={index > 0 ? 'mt-4' : ''}>
-                  <p className="mb-2 px-4 text-xs font-semibold uppercase tracking-wider text-slate-400">
-                    {title}
+                <div key={t(title)} className={index > 0 ? 'mt-4' : ''}>
+                  <p className="mb-2 px-4 text-xs font-semibold uppercase tracking-wider text-slate-600">
+                    {t(title)}
                   </p>
-                  <ul data-nav-section={title} className="flex flex-col gap-1">
+                  <ul
+                    data-nav-section={t(title)}
+                    className="flex flex-col gap-1"
+                  >
                     {items.map(({ children, ...item }) =>
                       children?.length ? (
                         <SidebarNavGroup

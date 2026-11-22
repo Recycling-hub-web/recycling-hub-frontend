@@ -136,7 +136,7 @@ const ApproveRejectModal = ({
             type="submit"
             form="approve-reject-form"
             disabled={submitting || uploading}
-            className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-lg bg-brand-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-800 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {submitButtonLabel}
           </button>
@@ -164,7 +164,7 @@ const ApproveRejectModal = ({
               updateFormData={(_field, value) => setAmountApproved(value)}
               disabled={submitting || uploading}
             />
-            <p className="-mt-3 mb-4 text-xs text-slate-400">
+            <p className="-mt-3 mb-4 text-xs text-slate-600">
               Leave blank to use RM
               {claim.amount_approved ?? claim.amount_claimed}.
             </p>

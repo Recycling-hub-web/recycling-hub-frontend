@@ -314,7 +314,7 @@ const ConvertQuickLeadView = ({ basePath }: ConvertQuickLeadViewProps) => {
       <PageContainer variant="form">
         <Link
           href={leadsPath}
-          className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600 lg:mb-4 lg:min-h-0"
+          className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-700 lg:mb-4 lg:min-h-0"
         >
           <LuArrowLeft className="size-4" />
           Back to quick leads
@@ -322,7 +322,7 @@ const ConvertQuickLeadView = ({ basePath }: ConvertQuickLeadViewProps) => {
         <Card className="p-5 text-sm text-slate-600">
           This form follows up on a Quick Lead. To create a brand-new pickup
           request, use the{' '}
-          <Link href={requestsPath} className="font-semibold text-brand-600">
+          <Link href={requestsPath} className="font-semibold text-brand-700">
             Pickup Requests
           </Link>{' '}
           list&apos;s &ldquo;New request&rdquo; action instead.
@@ -348,7 +348,7 @@ const ConvertQuickLeadView = ({ basePath }: ConvertQuickLeadViewProps) => {
     <PageContainer variant="form">
       <Link
         href={leadsPath}
-        className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600 lg:mb-4 lg:min-h-0"
+        className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-700 lg:mb-4 lg:min-h-0"
       >
         <LuArrowLeft className="size-4" />
         Back to quick leads
@@ -416,7 +416,7 @@ const ConvertQuickLeadView = ({ basePath }: ConvertQuickLeadViewProps) => {
                 onClear={() => setSelectedLocation(null)}
               />
               {selectedLocation && (
-                <p className="-mt-3 mb-4 text-xs text-slate-400">
+                <p className="-mt-3 mb-4 text-xs text-slate-600">
                   Verified at {selectedLocation.latitude.toFixed(5)},{' '}
                   {selectedLocation.longitude.toFixed(5)}
                 </p>
@@ -475,7 +475,7 @@ const ConvertQuickLeadView = ({ basePath }: ConvertQuickLeadViewProps) => {
               className="text-sm font-semibold text-neutral-950"
             >
               Evaluation{' '}
-              <span className="font-normal text-slate-400">(optional)</span>
+              <span className="font-normal text-slate-600">(optional)</span>
             </h3>
             <p className="mt-0.5 text-xs text-slate-500">
               Already know the outcome? Decide it now and skip the Evaluate step

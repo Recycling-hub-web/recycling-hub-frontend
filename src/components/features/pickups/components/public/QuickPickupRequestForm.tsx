@@ -146,7 +146,7 @@ const QuickPickupRequestForm = () => {
                         aria-pressed={active}
                         className={`flex flex-1 items-center justify-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-medium transition ${
                           active
-                            ? 'bg-white text-brand-600 shadow-sm'
+                            ? 'bg-white text-brand-700 shadow-sm'
                             : 'text-slate-500 hover:text-slate-700'
                         }`}
                       >

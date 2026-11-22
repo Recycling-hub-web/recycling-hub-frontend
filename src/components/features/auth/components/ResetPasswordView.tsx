@@ -2,18 +2,14 @@
 
 import { LuLockKeyhole } from 'react-icons/lu';
 
-import type { Dictionary } from '../../../../lib/dictionary';
+import { usePortalLocale } from '../../../../contexts/PortalLocaleContext';
 import { Button } from '../../../ui/buttons/Button';
 import { useResetPassword } from '../hooks';
 import { PasswordSetupForm } from './PasswordSetupForm';
 
-const ResetPasswordView = ({
-  t,
-  token,
-}: {
-  t: Dictionary['auth']['resetPassword'];
-  token: string;
-}) => {
+const ResetPasswordView = ({ token }: { token: string }) => {
+  const { auth } = usePortalLocale();
+  const t = auth.resetPassword;
   const { execute: resetPassword } = useResetPassword();
 
   return (

@@ -103,7 +103,7 @@ const Navbar = ({ variant = 'dark' }: NavbarProps) => {
       : 'bg-white border-b border-slate-100 shadow-sm';
   };
 
-  const getLinkActiveCls = () => (light ? 'text-brand-600' : 'text-white');
+  const getLinkActiveCls = () => (light ? 'text-brand-700' : 'text-white');
   const getLinkCls = () =>
     light
       ? 'text-slate-500 hover:text-neutral-950'
@@ -289,7 +289,7 @@ const Navbar = ({ variant = 'dark' }: NavbarProps) => {
                     }
                     className={`group flex items-center gap-2 rounded-lg px-3.5 py-2.5 text-sm font-medium transition-colors duration-150 ${
                       active
-                        ? 'bg-brand-50 text-brand-600'
+                        ? 'bg-brand-50 text-brand-700'
                         : 'text-slate-500 hover:bg-neutral-100 hover:text-neutral-950'
                     }`}
                   >
@@ -324,7 +324,7 @@ const Navbar = ({ variant = 'dark' }: NavbarProps) => {
                     }
                     className={`group flex items-center gap-2 rounded-lg px-3.5 py-2.5 text-sm font-medium transition-colors duration-150 ${
                       active
-                        ? 'bg-brand-50 text-brand-600'
+                        ? 'bg-brand-50 text-brand-700'
                         : 'text-slate-500 hover:bg-neutral-100 hover:text-neutral-950'
                     }`}
                   >

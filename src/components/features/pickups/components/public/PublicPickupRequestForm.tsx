@@ -261,7 +261,7 @@ const PublicPickupRequestForm = () => {
                         {...field}
                       />
                       {form.selectedLocation && (
-                        <p className="-mt-3 mb-4 text-xs text-slate-400">
+                        <p className="-mt-3 mb-4 text-xs text-slate-600">
                           {copy.addressVerifiedAt}{' '}
                           {form.selectedLocation.latitude.toFixed(5)},{' '}
                           {form.selectedLocation.longitude.toFixed(5)}

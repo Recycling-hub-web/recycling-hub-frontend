@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { LuX } from 'react-icons/lu';
 
+import { usePortalLocale } from '../../../contexts/PortalLocaleContext';
 import { useSystemExperience } from '../../../contexts/SystemExperienceContext';
 
 type ModalSize = 'sm' | 'md' | 'lg' | 'xl';
@@ -41,6 +42,7 @@ const Modal = ({
   closeOnBackdrop = true,
   dismissible = true,
 }: ModalProps) => {
+  const { t } = usePortalLocale();
   const system = useSystemExperience();
   const [visible, setVisible] = useState(false);
   const [shown, setShown] = useState(false);
@@ -166,11 +168,11 @@ const Modal = ({
             <div className="flex min-w-0 items-center gap-2.5">
               {icon}
               <div className="min-w-0">
-                <h2 className="truncate text-sm font-bold text-slate-900">
+                <h2 className="break-words text-sm font-bold text-slate-900">
                   {title}
                 </h2>
                 {subtitle && (
-                  <p className="mt-0.5 truncate text-xs text-slate-400">
+                  <p className="mt-0.5 break-words text-xs leading-relaxed text-slate-600">
                     {subtitle}
                   </p>
                 )}
@@ -180,8 +182,8 @@ const Modal = ({
               type="button"
               disabled={!dismissible}
               onClick={onClose}
-              aria-label="Close dialog"
-              className="ml-3 flex size-7 shrink-0 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
+              aria-label={t('Close dialog')}
+              className="ml-3 flex size-7 shrink-0 items-center justify-center rounded-lg text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-600"
             >
               <LuX className="size-4" />
             </button>

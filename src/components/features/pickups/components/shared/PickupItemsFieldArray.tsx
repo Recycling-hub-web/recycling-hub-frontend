@@ -120,7 +120,7 @@ const PickupItemsFieldArray = ({
           <div key={index} className="rounded-xl border border-slate-200 p-4">
             {items.length > 1 && (
               <div className="mb-3 flex items-center justify-between gap-3">
-                <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                <p className="text-xs font-semibold uppercase tracking-wider text-slate-600">
                   {labels.itemHeading} {index + 1}
                 </p>
                 <Button

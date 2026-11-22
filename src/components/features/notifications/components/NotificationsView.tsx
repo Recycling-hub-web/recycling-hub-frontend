@@ -101,7 +101,7 @@ const NotificationsView = () => {
             {item.body && (
               <p className="mt-0.5 text-sm text-slate-500">{item.body}</p>
             )}
-            <p className="mt-1 text-xs text-slate-400">
+            <p className="mt-1 text-xs text-slate-600">
               <AppDate value={item.created_at} format="relative" />
             </p>
           </button>
@@ -167,7 +167,7 @@ const NotificationsView = () => {
           type="button"
           onClick={refetch}
           disabled={loading}
-          className="text-sm font-medium text-brand-600 disabled:opacity-50"
+          className="text-sm font-medium text-brand-700 disabled:opacity-50"
         >
           Refresh
         </button>

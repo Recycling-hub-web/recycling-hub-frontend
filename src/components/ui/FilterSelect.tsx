@@ -28,7 +28,7 @@ const FilterSelect = ({
 }: FilterSelectProps) => (
   <div className={`relative inline-flex items-center ${className}`}>
     {icon && (
-      <span className="pointer-events-none absolute left-3.5 top-1/2 flex -translate-y-1/2 items-center text-slate-400">
+      <span className="pointer-events-none absolute left-3.5 top-1/2 flex -translate-y-1/2 items-center text-slate-600">
         {icon}
       </span>
     )}
@@ -49,7 +49,7 @@ const FilterSelect = ({
       ))}
     </select>
 
-    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
+    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-600">
       <LuChevronDown className="size-4" />
     </span>
   </div>

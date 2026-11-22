@@ -98,7 +98,7 @@ export const OptimizedRoutePreview = ({
                 aria-hidden="true"
                 className="absolute inset-y-0 left-4 w-px bg-slate-200"
               />
-              <span className="relative flex size-8 shrink-0 items-center justify-center rounded-full bg-brand-600 text-xs font-bold text-white">
+              <span className="relative flex size-8 shrink-0 items-center justify-center rounded-full bg-brand-700 text-xs font-bold text-white">
                 {i + 1}
               </span>
               <div className="min-w-0 flex-1">
@@ -116,7 +116,7 @@ export const OptimizedRoutePreview = ({
                 <Link
                   href={`/driver/pickups/${req.id}`}
                   aria-label={`View order ${req.code}`}
-                  className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 text-slate-500 transition-colors hover:border-brand-600 hover:text-brand-600"
+                  className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 text-slate-500 transition-colors hover:border-brand-600 hover:text-brand-700"
                 >
                   <LuEye className="size-4" aria-hidden="true" />
                 </Link>

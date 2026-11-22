@@ -84,7 +84,7 @@ const PickupPhotosUploader = ({
     <div className="mb-4" data-field="photos">
       <label className="block text-sm font-medium text-slate-900">
         {label} {required && <span className="text-red-600">*</span>}{' '}
-        <span className="font-normal text-slate-400">
+        <span className="font-normal text-slate-600">
           ({required ? 1 : 0}–{MAX_ORDER_PHOTOS})
         </span>
       </label>
@@ -106,7 +106,7 @@ const PickupPhotosUploader = ({
                   className="size-16 rounded-xl border border-slate-200 object-cover"
                 />
               ) : (
-                <span className="flex size-16 items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50 text-slate-400">
+                <span className="flex size-16 items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50 text-slate-600">
                   <LuImage className="size-6" />
                 </span>
               )}

@@ -85,7 +85,7 @@ const ClaimDetailsView = ({ claimId }: ClaimDetailsViewProps) => {
     <PageContainer variant="form">
       <Link
         href={basePath}
-        className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600 lg:mb-4 lg:min-h-0"
+        className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-700 lg:mb-4 lg:min-h-0"
       >
         <LuArrowLeft className="size-4" />
         Back to expense claims
@@ -140,7 +140,7 @@ const ClaimDetailsView = ({ claimId }: ClaimDetailsViewProps) => {
 
         {claim.receipt?.public_url && (
           <div className="mt-5 border-t border-slate-100 pt-5">
-            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-600">
               Receipt
             </p>
             {/* eslint-disable-next-line @next/next/no-img-element -- remote/presigned URL, not a static asset */}
@@ -154,7 +154,7 @@ const ClaimDetailsView = ({ claimId }: ClaimDetailsViewProps) => {
 
         {claim.payment_proof && (
           <div className="mt-5 border-t border-slate-100 pt-5">
-            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-600">
               Payment proof
             </p>
             {claim.payment_proof.public_url ? (
@@ -162,7 +162,7 @@ const ClaimDetailsView = ({ claimId }: ClaimDetailsViewProps) => {
                 href={claim.payment_proof.public_url}
                 target="_blank"
                 rel="noreferrer"
-                className="text-sm font-semibold text-brand-600 underline"
+                className="text-sm font-semibold text-brand-700 underline"
               >
                 View payment proof
               </a>
@@ -176,7 +176,7 @@ const ClaimDetailsView = ({ claimId }: ClaimDetailsViewProps) => {
 
         {claim.status === 'rejected' && claim.rejection_reason && (
           <div className="mt-5 border-t border-slate-100 pt-5">
-            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-600">
               Rejection reason
             </p>
             <p className="text-sm text-slate-700">{claim.rejection_reason}</p>

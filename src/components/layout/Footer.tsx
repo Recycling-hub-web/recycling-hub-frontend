@@ -44,13 +44,13 @@ const Footer = () => {
                 href={BRAND.whatsapp}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-fit text-neutral-950 transition-colors hover:text-brand-600"
+                className="w-fit text-neutral-950 transition-colors hover:text-brand-700"
               >
                 {dict.contact.form.sidePanel.whatsappLabel}: {BRAND.phone}
               </a>
               <a
                 href={`mailto:${BRAND.email}`}
-                className="w-fit text-neutral-950 hover:text-brand-600"
+                className="w-fit text-neutral-950 hover:text-brand-700"
               >
                 {BRAND.email}
               </a>
@@ -65,7 +65,7 @@ const Footer = () => {
                 href={BRAND.social.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex size-8 items-center justify-center rounded-lg bg-neutral-100 text-slate-500 transition-colors hover:bg-brand-50 hover:text-brand-600"
+                className="flex size-8 items-center justify-center rounded-lg bg-neutral-100 text-slate-500 transition-colors hover:bg-brand-50 hover:text-brand-700"
                 aria-label="Instagram"
               >
                 <InstagramIcon />
@@ -74,7 +74,7 @@ const Footer = () => {
                 href={BRAND.social.facebook}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex size-8 items-center justify-center rounded-lg bg-neutral-100 text-slate-500 transition-colors hover:bg-brand-50 hover:text-brand-600"
+                className="flex size-8 items-center justify-center rounded-lg bg-neutral-100 text-slate-500 transition-colors hover:bg-brand-50 hover:text-brand-700"
                 aria-label="Facebook"
               >
                 <FacebookIcon />

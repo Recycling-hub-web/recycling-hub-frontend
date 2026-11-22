@@ -35,7 +35,7 @@ import { ChangePasswordModal } from './ChangePasswordModal';
 import { ProfileIdentity } from './ProfileIdentity';
 
 const NotSet = () => (
-  <span className="font-medium text-slate-400">Not set</span>
+  <span className="font-medium text-slate-600">Not set</span>
 );
 
 const Section = ({

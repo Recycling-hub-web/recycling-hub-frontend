@@ -10,17 +10,20 @@ import { LuKeyRound } from 'react-icons/lu';
 import { ASSETS, LOGO_SIZE } from '../../../../constants/content';
 import { useAuth } from '../../../../contexts/AuthContext';
 import { useAuthFlow } from '../../../../contexts/AuthFlowContext';
+import { usePortalLocale } from '../../../../contexts/PortalLocaleContext';
 import { ApiError } from '../../../../lib/api';
-import type { Dictionary } from '../../../../lib/dictionary';
 import { returnPathForRole, safeReturnPath } from '../../../../lib/returnPath';
 import { InputField } from '../../../form/fields/InputField';
 import { PasswordField } from '../../../form/fields/PasswordField';
 import { ValidatedForm } from '../../../form/ValidatedForm';
 import { AlertBanner } from '../../../ui/AlertBanner';
 import { Button } from '../../../ui/buttons/Button';
+import { PortalLanguageSwitcher } from '../../../ui/PortalLanguageSwitcher';
 
 // The refreshed session role determines which return destinations are allowed.
-const LoginView = ({ t }: { t: Dictionary['auth']['login'] }) => {
+const LoginView = () => {
+  const { auth, locale } = usePortalLocale();
+  const t = auth.login;
   const router = useRouter();
   const next = safeReturnPath(useSearchParams()?.get('next'));
   const { user, login, refreshUser } = useAuth();
@@ -77,7 +80,13 @@ const LoginView = ({ t }: { t: Dictionary['auth']['login'] }) => {
       />
 
       <div className="relative w-full max-w-md rounded-2xl border border-slate-200 bg-white p-10 shadow-sm">
-        <Link href="/" className="flex justify-center">
+        <div className="mb-4 flex justify-end">
+          <PortalLanguageSwitcher />
+        </div>
+        <Link
+          href={locale === 'bm' ? '/bm' : '/'}
+          className="flex justify-center"
+        >
           <Image
             src={ASSETS.logo.combinedColor}
             alt="Recycling Hub"
@@ -120,7 +129,7 @@ const LoginView = ({ t }: { t: Dictionary['auth']['login'] }) => {
           <div className="flex justify-end">
             <Link
               href="/forgot-password"
-              className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-brand-600"
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-brand-700"
             >
               <LuKeyRound className="size-3.5" />
               {t.forgotPassword}

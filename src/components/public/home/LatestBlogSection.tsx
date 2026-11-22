@@ -37,7 +37,7 @@ const LatestBlogSection = () => {
         <FadeIn>
           <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.15em] text-brand-600">
+              <p className="text-xs font-semibold uppercase tracking-[0.15em] text-brand-700">
                 From the blog
               </p>
               <h2 className="mt-2 font-montserrat text-2xl font-extrabold text-neutral-950 sm:text-3xl">
@@ -71,7 +71,7 @@ const LatestBlogSection = () => {
                 )}
                 <div className="flex flex-1 flex-col p-6">
                   {post.published_at && (
-                    <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">
+                    <p className="text-xs font-semibold uppercase tracking-widest text-slate-600">
                       <AppDate value={post.published_at} format="long" />
                     </p>
                   )}
@@ -81,7 +81,7 @@ const LatestBlogSection = () => {
                   <p className="mt-3 flex-1 text-sm leading-relaxed text-slate-500">
                     {post.excerpt}
                   </p>
-                  <p className="mt-5 flex items-center gap-1 text-xs font-semibold text-brand-600">
+                  <p className="mt-5 flex items-center gap-1 text-xs font-semibold text-brand-700">
                     Read more <LuArrowRight className="size-3.5" />
                   </p>
                 </div>

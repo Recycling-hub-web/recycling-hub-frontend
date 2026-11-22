@@ -28,7 +28,7 @@ const ConfirmedPickupCell = ({
       <span className="whitespace-nowrap text-amber-600">Not confirmed</span>
     );
   }
-  return <span className="text-slate-400">—</span>;
+  return <span className="text-slate-600">—</span>;
 };
 
 export { ConfirmedPickupCell };

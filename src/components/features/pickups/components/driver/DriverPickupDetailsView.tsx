@@ -96,7 +96,7 @@ const DriverPickupDetailsView = ({
     <PageContainer variant="form">
       <Link
         href="/driver/pickups"
-        className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600 lg:mb-4 lg:min-h-0"
+        className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-700 lg:mb-4 lg:min-h-0"
       >
         <LuArrowLeft className="size-4" />
         Back to pickups
@@ -211,7 +211,7 @@ const DriverPickupDetailsView = ({
                           value={request.scheduled_at}
                           format="datetime"
                         />
-                        <span className="block text-xs text-slate-400">
+                        <span className="block text-xs text-slate-600">
                           Confirmed{' '}
                           <AppDate
                             value={request.pickup_confirmed_at}
@@ -259,7 +259,7 @@ const DriverPickupDetailsView = ({
 
             {request.pickup_request.note && (
               <div className="mt-5 border-t border-slate-100 pt-5">
-                <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-600">
                   Requester&apos;s note
                 </p>
                 <p className="whitespace-pre-wrap text-sm leading-relaxed text-slate-700">
@@ -270,7 +270,7 @@ const DriverPickupDetailsView = ({
 
             {request.pickup_request.collection_point && (
               <div className="mt-5 border-t border-slate-100 pt-5">
-                <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-600">
                   Drop-off collection point
                 </p>
                 <p className="text-sm text-slate-700">

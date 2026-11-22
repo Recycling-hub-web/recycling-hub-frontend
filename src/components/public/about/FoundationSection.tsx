@@ -52,7 +52,7 @@ const FoundationSection = () => {
           transition={{ duration: 0.5, ease }}
           className="mb-20 text-center"
         >
-          <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">
+          <p className="text-xs font-semibold uppercase tracking-widest text-slate-600">
             Who We Are
           </p>
           <h2 className="mt-3 font-montserrat text-4xl font-bold tracking-tight text-neutral-950 md:text-5xl">
@@ -77,7 +77,7 @@ const FoundationSection = () => {
                         className={`block font-montserrat font-bold transition-all duration-500 ${
                           activeIndex === i
                             ? 'text-4xl text-neutral-950'
-                            : 'text-2xl text-slate-300 hover:text-slate-400'
+                            : 'text-2xl text-slate-300 hover:text-slate-600'
                         }`}
                       >
                         {label}

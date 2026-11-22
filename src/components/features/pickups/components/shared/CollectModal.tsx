@@ -365,7 +365,7 @@ const CollectModal = ({
               type="submit"
               form="collect-pickup-form"
               disabled={submitting || uploading}
-              className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-50"
+              className="rounded-lg bg-brand-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-800 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {submitting ? 'Saving…' : 'Mark collected'}
             </button>
@@ -451,7 +451,7 @@ const CollectModal = ({
               <div>
                 <h3 className="text-sm font-semibold text-slate-900">
                   Found on-site{' '}
-                  <span className="font-normal text-slate-400">· Optional</span>
+                  <span className="font-normal text-slate-600">· Optional</span>
                 </h3>
                 <p className="mt-1 text-xs text-slate-500">
                   Add any extra material and its total price.
@@ -490,7 +490,7 @@ const CollectModal = ({
                       type="button"
                       onClick={() => removeNewItemRow(index)}
                       aria-label="Remove this material"
-                      className="flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-red-50 hover:text-red-600"
+                      className="flex size-8 items-center justify-center rounded-full text-slate-600 transition hover:bg-red-50 hover:text-red-600"
                     >
                       <LuTrash2 className="size-4" />
                     </button>

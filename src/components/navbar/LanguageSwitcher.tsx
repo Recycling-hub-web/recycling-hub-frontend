@@ -1,5 +1,8 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useEffect } from 'react';
+
+import { parseLocale, saveLocale } from '../../lib/locale';
 
 const LOCALES = [
   { code: 'en', label: 'EN' },
@@ -14,6 +17,9 @@ type LanguageSwitcherProps = {
 const LanguageSwitcher = ({ light, className = '' }: LanguageSwitcherProps) => {
   const router = useRouter();
   const activeLocale = router.locale ?? 'en';
+  useEffect(() => {
+    if (router.isReady) saveLocale(parseLocale(router.locale));
+  }, [router.locale, router.isReady]);
   // router.asPath includes the query string, which isn't known during the
   // initial static render — using it unconditionally causes a hydration
   // mismatch on pages with a query (e.g. /request-quote?service=...). Fall
@@ -24,10 +30,10 @@ const LanguageSwitcher = ({ light, className = '' }: LanguageSwitcherProps) => {
     ? 'border-slate-200 bg-white'
     : 'border-white/20 bg-white/5';
   const idleCls = light
-    ? 'text-slate-400 hover:text-neutral-950'
+    ? 'text-slate-600 hover:text-neutral-950'
     : 'text-white/50 hover:text-white';
   const activeCls = light
-    ? 'bg-brand-50 text-brand-600'
+    ? 'bg-brand-50 text-brand-700'
     : 'bg-white/15 text-white';
 
   return (
@@ -41,6 +47,7 @@ const LanguageSwitcher = ({ light, className = '' }: LanguageSwitcherProps) => {
             key={code}
             href={currentPath}
             locale={code}
+            onClick={() => saveLocale(code)}
             aria-current={active}
             className={`rounded-full px-2.5 py-1 transition-colors duration-150 ${
               active ? activeCls : idleCls

@@ -60,7 +60,7 @@ const ProfilePhotoUploader = ({
               className="size-16 shrink-0 rounded-full object-cover"
             />
           ) : (
-            <span className="flex size-16 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+            <span className="flex size-16 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-600">
               <LuUser className="size-6" />
             </span>
           )}
@@ -81,7 +81,7 @@ const ProfilePhotoUploader = ({
                 onClick={() => onChange(null)}
                 disabled={disabled || uploading}
                 aria-label="Remove profile photo"
-                className="inline-flex size-9 items-center justify-center rounded-full text-slate-400 transition hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex size-9 items-center justify-center rounded-full text-slate-600 transition hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <LuTrash2 className="size-4" />
               </button>

@@ -43,7 +43,7 @@ const SplitHeroSection = () => {
             <ul className="mt-7 flex flex-col gap-3">
               {individual.features.map((feature) => (
                 <li key={feature} className="flex items-center gap-2.5">
-                  <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-brand-600 text-white">
+                  <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-brand-700 text-white">
                     <LuCheck size={12} strokeWidth={3} />
                   </span>
                   <span className="text-sm font-medium text-neutral-800">
@@ -55,7 +55,7 @@ const SplitHeroSection = () => {
 
             <Link
               href={individual.ctaHref}
-              className="group mt-8 inline-flex items-center gap-3 rounded-full bg-brand-600 py-3 pl-6 pr-3 text-sm font-semibold text-white transition-colors hover:bg-brand-700"
+              className="group mt-8 inline-flex items-center gap-3 rounded-full bg-brand-700 py-3 pl-6 pr-3 text-sm font-semibold text-white transition-colors hover:bg-brand-800"
             >
               {individual.cta}
               <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-white/20 transition-transform group-hover:translate-x-0.5">
@@ -88,7 +88,7 @@ const SplitHeroSection = () => {
             <ul className="mt-7 flex flex-col gap-3">
               {business.features.map((feature) => (
                 <li key={feature} className="flex items-center gap-2.5">
-                  <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-brand-600 text-white">
+                  <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-brand-700 text-white">
                     <LuCheck size={12} strokeWidth={3} />
                   </span>
                   <span className="text-sm font-medium text-neutral-800">
@@ -100,10 +100,10 @@ const SplitHeroSection = () => {
 
             <Link
               href={business.ctaHref}
-              className="group mt-8 inline-flex items-center gap-3 rounded-full border-2 border-brand-600 bg-white py-2.5 pl-6 pr-2.5 text-sm font-semibold text-brand-700 transition-colors hover:bg-brand-600 hover:text-white"
+              className="group mt-8 inline-flex items-center gap-3 rounded-full border-2 border-brand-600 bg-white py-2.5 pl-6 pr-2.5 text-sm font-semibold text-brand-700 transition-colors hover:bg-brand-700 hover:text-white"
             >
               {business.cta}
-              <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-brand-600 text-white transition-transform group-hover:translate-x-0.5 group-hover:bg-white group-hover:text-brand-600">
+              <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-brand-700 text-white transition-transform group-hover:translate-x-0.5 group-hover:bg-white group-hover:text-brand-700">
                 <LuArrowUpRight size={16} />
               </span>
             </Link>

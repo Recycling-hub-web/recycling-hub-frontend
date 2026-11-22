@@ -98,7 +98,7 @@ const TrackTracePage: NextPageWithLayout = () => {
               return (
                 <FadeIn key={title} delay={i * 0.1}>
                   <div className="flex h-full flex-col rounded-2xl border border-slate-200 bg-neutral-50 p-6 md:p-8">
-                    <div className="mb-5 flex size-12 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
+                    <div className="mb-5 flex size-12 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
                       <Icon size={22} />
                     </div>
                     <h3 className="font-montserrat text-base font-extrabold text-neutral-950">
@@ -150,7 +150,7 @@ const TrackTracePage: NextPageWithLayout = () => {
                       if (error) setError('');
                     }}
                     placeholder={content.form.fullNamePlaceholder}
-                    className="rounded-lg border border-slate-200 px-3.5 py-2.5 text-sm text-neutral-950 placeholder:text-slate-400 focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20 disabled:bg-slate-50 disabled:text-slate-400"
+                    className="rounded-lg border border-slate-200 px-3.5 py-2.5 text-sm text-neutral-950 placeholder:text-slate-600 focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20 disabled:bg-slate-50 disabled:text-slate-400"
                   />
                 </div>
 
@@ -170,7 +170,7 @@ const TrackTracePage: NextPageWithLayout = () => {
                       if (error) setError('');
                     }}
                     placeholder="you@example.com"
-                    className="rounded-lg border border-slate-200 px-3.5 py-2.5 text-sm text-neutral-950 placeholder:text-slate-400 focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20 disabled:bg-slate-50 disabled:text-slate-400"
+                    className="rounded-lg border border-slate-200 px-3.5 py-2.5 text-sm text-neutral-950 placeholder:text-slate-600 focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20 disabled:bg-slate-50 disabled:text-slate-400"
                   />
                 </div>
 
@@ -187,7 +187,7 @@ const TrackTracePage: NextPageWithLayout = () => {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder={content.form.phonePlaceholder}
-                    className="rounded-lg border border-slate-200 px-3.5 py-2.5 text-sm text-neutral-950 placeholder:text-slate-400 focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20 disabled:bg-slate-50 disabled:text-slate-400"
+                    className="rounded-lg border border-slate-200 px-3.5 py-2.5 text-sm text-neutral-950 placeholder:text-slate-600 focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20 disabled:bg-slate-50 disabled:text-slate-400"
                   />
                 </div>
 
@@ -225,7 +225,7 @@ const TrackTracePage: NextPageWithLayout = () => {
                     value={reference}
                     onChange={(e) => setReference(e.target.value)}
                     placeholder={content.form.referencePlaceholder}
-                    className="rounded-lg border border-slate-200 px-3.5 py-2.5 text-sm text-neutral-950 placeholder:text-slate-400 focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20 disabled:bg-slate-50 disabled:text-slate-400"
+                    className="rounded-lg border border-slate-200 px-3.5 py-2.5 text-sm text-neutral-950 placeholder:text-slate-600 focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20 disabled:bg-slate-50 disabled:text-slate-400"
                   />
                 </div>
 
@@ -247,7 +247,7 @@ const TrackTracePage: NextPageWithLayout = () => {
               )}
 
               <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-slate-600">
                   {content.form.whatsappNote}
                 </p>
                 <button
@@ -268,7 +268,7 @@ const TrackTracePage: NextPageWithLayout = () => {
       <section className="bg-white py-12 md:py-16">
         <div className="mx-auto max-w-2xl px-5 text-center md:px-8">
           <div className="mb-4 flex justify-center">
-            <span className="flex size-11 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
+            <span className="flex size-11 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
               <LuClipboardCheck size={20} />
             </span>
           </div>

@@ -61,7 +61,7 @@ const LogoUploader = ({
               className="size-16 shrink-0 rounded-xl border border-slate-200 object-contain p-1.5"
             />
           ) : (
-            <span className="flex size-16 shrink-0 items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50 text-slate-400">
+            <span className="flex size-16 shrink-0 items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50 text-slate-600">
               <LuImage className="size-6" />
             </span>
           )}

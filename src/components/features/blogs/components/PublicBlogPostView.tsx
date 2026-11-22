@@ -20,7 +20,7 @@ const PublicBlogPostView = ({ post }: PublicBlogPostViewProps) => {
       <div className="mx-auto max-w-3xl px-5 md:px-8">
         <Link
           href="/resources/blog"
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-700"
         >
           <LuArrowLeft className="size-4" />
           Back to the blog
@@ -31,7 +31,7 @@ const PublicBlogPostView = ({ post }: PublicBlogPostViewProps) => {
             {post.title}
           </h1>
           {post.published_at && (
-            <p className="mt-3 text-sm text-slate-400">
+            <p className="mt-3 text-sm text-slate-600">
               <AppDate value={post.published_at} format="long" />
             </p>
           )}

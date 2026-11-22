@@ -1,5 +1,5 @@
 {
-  "batch": "Implementation progress: batches 1 and 2",
+  "batch": "Implementation progress: batches 1, 2 and 3",
   "original_audit": "UI-UX-Audit-2026-11-22.html",
   "scope": "Local frontend and finance API changes. No deployment, account changes, real business submissions or payments.",
   "findings": [
@@ -42,8 +42,8 @@
     {
       "id": "07",
       "title": "Text and primary-button contrast need stronger tokens",
-      "status": "partially implemented",
-      "implementation": "Shared Button/PublicButton primary colours use brand-700; hero accents and footer supporting text use darker slate. Remaining bespoke actions/text need the broader contrast sweep."
+      "status": "implemented",
+      "implementation": "Extended the existing brand-700/800 action colours across bespoke public and operations controls; readable light-surface slate-400 copy and placeholders use slate-600. Corrected active navigation, progress labels, activity dates and supporting text. Preserved decorative graphics and disabled-state styles. Computed browser contrast checks cover sign-in action and helper copy; white on brand-700 is 5.84:1 and slate-600 on white is 7.58:1. This addresses the audited tokens, not a claim that every page is WCAG certified."
     },
     {
       "id": "08",
@@ -127,7 +127,7 @@
       "id": "21",
       "title": "Public language choice does not carry into operations",
       "status": "partially implemented",
-      "implementation": "Public callback type labels, country calling-code labels, validation summaries and confirmations now have EN/BM copy. Full auth/operations locale routing and translations remain outstanding."
+      "implementation": "Public EN/BM choice persists through a shared language preference cookie into portal sign-in and auth screens. Added a small shared locale provider and reusable switcher, translated shared role navigation, notification controls, finance filters/table/pagination and reimbursement UI. Switching language preserves credentials, OTP entry and finance filters; portal role URLs and permissions are unchanged. Auth dictionaries are reused rather than duplicated. Other operational pages and server-provided error/notification content still need translation; BM mode displays an availability notice on unsupported pages."
     },
     {
       "id": "22",
@@ -155,12 +155,12 @@
     }
   ],
   "verification": {
-    "typescript": "passed after batch 2",
-    "changed_file_eslint": "passed; backend Black/isort/Flake8 checks also passed",
-    "mocked_regression_suite": "35 frontend tests passed, including 20 audit regression tests across both batches",
-    "final_public_flow_recheck": "Reviewed updated finance desktop/mobile, confirmation and 1200px navigation screenshots; visible header controls fit inside the viewport.",
+    "typescript": "Passed after batch 3; production build also checked types.",
+    "changed_file_eslint": "Passed for all changed frontend source and regression files after batch 3. Backend unchanged in this batch.",
+    "mocked_regression_suite": "39 frontend tests passed against the production build after batch 3. Coverage includes public-to-auth BM preference, credential and OTP state retention during language switches, finance filters and reimbursement copy, mobile menu/layout and computed sign-in text contrast.",
+    "final_public_flow_recheck": "Reviewed BM finance desktop/mobile screenshots; mobile content fits at 390px, filters and names remain intact, and shared modal subtitles wrap instead of truncating.",
     "repository_lint": "Still fails only in unchanged scripts/verify-seo-batch.cjs, scripts/verify-service-navbar.cjs and scripts/verify-services.cjs (83 errors, 8 warnings).",
-    "production_build": "Passed: next build --no-lint after batch 2. Type checking and production compilation passed; full lint was checked separately and remains limited by the three unchanged verification scripts.",
+    "production_build": "Passed: next build --no-lint after batch 3. A Google Fonts stylesheet download was unavailable during optimization; build completed using the existing font configuration. Full-repository lint limitation from batch 2 remains recorded separately.",
     "backend_finance_suite": "50 tests passed (43 existing, 7 new) using an isolated in-memory SQLite database; real network calls blocked"
   },
   "evidence": [
@@ -171,7 +171,11 @@
     "after-batch-2/finance-desktop.png",
     "after-batch-2/finance-mobile.png",
     "after-batch-2/callback-confirmation-mobile.png",
-    "after-batch-2/navigation-1200.png"
+    "after-batch-2/navigation-1200.png",
+    "batch3-finance-bm-desktop.png",
+    "batch3-finance-bm-mobile.png",
+    "batch3-reimbursement-bm.png",
+    "batch3-login-contrast.png"
   ],
   "limitations": [
     "Protected flows were tested with synthetic identities and intercepted API responses. Real backend/production role workflows were not exercised.",
@@ -179,8 +183,7 @@
     "Original audit report and original findings remain unchanged as a baseline."
   ],
   "remaining_work": [
-    "Complete auth and operational portal locale routing and translations; public EN/BM improvements do not constitute full portal localization.",
-    "Finish the bespoke-action and supporting-text contrast sweep beyond the shared components already corrected.",
+    "Translate the remaining operational workflow pages and backend-provided messages; keep the explicit BM availability notice until each module is ready.",
     "Validate production role workflows and real delivery/upload integrations with authorized test accounts before release."
   ],
   "release_notes": [

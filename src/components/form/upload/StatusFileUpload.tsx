@@ -2,6 +2,7 @@ import { Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
 import { ALLOWED_FILE_TYPES } from '../../../constants/uploads';
+import { usePortalLocale } from '../../../contexts/PortalLocaleContext';
 import { useToast } from '../../ui/toast/ToastContext';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
@@ -35,6 +36,7 @@ const StatusFileUpload = ({
   progress,
   compact = false,
 }: StatusFileUploadProps) => {
+  const { t } = usePortalLocale();
   const toast = useToast();
   const [validationError, setValidationError] = useState('');
   const unavailable = disabled || uploading;
@@ -52,18 +54,21 @@ const StatusFileUpload = ({
       );
 
     if (!isAllowed) {
-      const msg = `Invalid file type "${selected.name}". Only ${ALLOWED_FILE_TYPES.label} files are allowed.`;
+      const msg = t(
+        'Invalid file type "{name}". Only {types} files are allowed.',
+        { name: selected.name, types: ALLOWED_FILE_TYPES.label },
+      );
       setValidationError(msg);
-      toast.error('Invalid file type', msg);
+      toast.error(t('Invalid file type'), msg);
       onError?.(msg);
       e.target.value = '';
       return;
     }
 
     if (selected.size > MAX_FILE_SIZE) {
-      const msg = 'File size must not exceed 10MB.';
+      const msg = t('File size must not exceed 10MB.');
       setValidationError(msg);
-      toast.error('File too large', msg);
+      toast.error(t('File too large'), msg);
       onError?.(msg);
       e.target.value = '';
       return;
@@ -96,7 +101,7 @@ const StatusFileUpload = ({
         className={`group relative flex cursor-pointer focus-within:ring-2 focus-within:ring-brand-700 focus-within:ring-offset-2 ${unavailable ? 'cursor-not-allowed opacity-60' : ''} flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-white px-6 text-center transition-all duration-200 hover:border-brand-500 hover:bg-brand-50/40 ${compact ? 'py-4' : 'py-10'}`}
       >
         <div
-          className={`flex items-center justify-center rounded-lg bg-brand-100 text-brand-600 transition ${compact ? 'mb-2 size-10' : 'mb-4 size-14'}`}
+          className={`flex items-center justify-center rounded-lg bg-brand-100 text-brand-700 transition ${compact ? 'mb-2 size-10' : 'mb-4 size-14'}`}
         >
           <svg
             className="size-7"
@@ -115,7 +120,7 @@ const StatusFileUpload = ({
 
         <p className="text-sm font-semibold text-slate-800">{label}</p>
         <p id={`${id}-requirements`} className="mt-2 text-xs text-slate-600">
-          {ALLOWED_FILE_TYPES.label} – Max 10MB
+          {ALLOWED_FILE_TYPES.label} {t('– Max 10MB')}
         </p>
 
         <input
@@ -155,12 +160,14 @@ const StatusFileUpload = ({
                 className="flex items-center justify-center gap-2 rounded-lg border border-red-600 px-4 py-2 text-sm font-medium text-red-600 transition hover:border-red-700 hover:text-red-700 disabled:opacity-50"
               >
                 <Trash2 className="size-4" />
-                Remove
+                {t('Remove')}
               </button>
             )}
             {uploading && (
-              <span className="text-xs font-medium text-brand-600">
-                {safeProgress === undefined ? 'Uploading…' : `${safeProgress}%`}
+              <span className="text-xs font-medium text-brand-700">
+                {safeProgress === undefined
+                  ? t('Uploading…')
+                  : `${safeProgress}%`}
               </span>
             )}
           </div>
@@ -168,7 +175,7 @@ const StatusFileUpload = ({
           {uploading && (
             <div
               role="progressbar"
-              aria-label={`Uploading ${file.name}`}
+              aria-label={t('Uploading {name}', { name: file.name })}
               aria-valuemin={0}
               aria-valuemax={100}
               aria-valuenow={safeProgress}

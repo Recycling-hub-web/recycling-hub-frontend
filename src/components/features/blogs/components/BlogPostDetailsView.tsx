@@ -126,7 +126,7 @@ const BlogPostDetailsView = ({
     <PageContainer variant="form">
       <Link
         href={basePath}
-        className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600 lg:mb-4 lg:min-h-0"
+        className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-700 lg:mb-4 lg:min-h-0"
       >
         <LuArrowLeft className="size-4" />
         Back to blog posts
@@ -212,7 +212,7 @@ const BlogPostDetailsView = ({
         </div>
 
         <div className="mt-5 border-t border-slate-100 pt-5">
-          <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
+          <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-600">
             {post.excerpt ? 'Excerpt' : 'Content'}
           </p>
           <p className="whitespace-pre-wrap text-sm leading-relaxed text-slate-700">
@@ -222,7 +222,7 @@ const BlogPostDetailsView = ({
 
         {media.length > 0 && (
           <div className="mt-5 border-t border-slate-100 pt-5">
-            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-600">
               Media
             </p>
             <div className="flex flex-wrap gap-2">
@@ -238,7 +238,7 @@ const BlogPostDetailsView = ({
                 ) : (
                   <span
                     key={item.id}
-                    className="flex size-16 items-center justify-center rounded-lg bg-slate-100 text-slate-400"
+                    className="flex size-16 items-center justify-center rounded-lg bg-slate-100 text-slate-600"
                   >
                     <LuNewspaper className="size-5" />
                   </span>
@@ -250,7 +250,7 @@ const BlogPostDetailsView = ({
 
         {post.related_blogs.length > 0 && (
           <div className="mt-5 border-t border-slate-100 pt-5">
-            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-600">
               Related posts
             </p>
             <div className="flex flex-wrap gap-2">
@@ -269,7 +269,7 @@ const BlogPostDetailsView = ({
 
         {(post.title_ar || post.content_ar) && (
           <div className="mt-5 border-t border-slate-100 pt-5">
-            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-600">
               Arabic translation (auto-generated)
             </p>
             {post.title_ar && (

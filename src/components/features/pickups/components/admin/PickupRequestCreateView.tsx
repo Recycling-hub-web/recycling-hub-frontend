@@ -141,7 +141,7 @@ const PickupRequestCreateView = ({
     <PageContainer variant="form">
       <Link
         href={basePath}
-        className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600 lg:mb-4 lg:min-h-0"
+        className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-700 lg:mb-4 lg:min-h-0"
       >
         <LuArrowLeft className="size-4" />
         Back to pickup requests
@@ -246,7 +246,7 @@ const PickupRequestCreateView = ({
                     {...field}
                   />
                   {form.selectedLocation && (
-                    <p className="-mt-3 mb-4 text-xs text-slate-400">
+                    <p className="-mt-3 mb-4 text-xs text-slate-600">
                       Verified at {form.selectedLocation.latitude.toFixed(5)},{' '}
                       {form.selectedLocation.longitude.toFixed(5)}
                     </p>

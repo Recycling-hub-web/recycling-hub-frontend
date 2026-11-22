@@ -5,9 +5,11 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { LuMenu, LuX } from 'react-icons/lu';
 
+import { usePortalLocale } from '../../contexts/PortalLocaleContext';
 import { useNotifications } from '../features/notifications/hooks';
 import type { NavItem } from '../ui/navigation';
 import { getActiveHref } from '../ui/navigation';
+import { PortalLanguageSwitcher } from '../ui/PortalLanguageSwitcher';
 import { SidebarUserCard } from './SidebarUserCard';
 
 type Props = {
@@ -28,6 +30,7 @@ const MAIN_WORK_PATTERN = /\/(pickup-requests|pickups|deliveries|finance)$/;
  * is gone, replaced by this Menu tab). */
 const SystemMobileNavigation = ({ navItems }: Props) => {
   const pathname = usePathname();
+  const { t } = usePortalLocale();
   const sheet = useRef<HTMLDialogElement>(null);
   const [open, setOpen] = useState(false);
   const { count: unreadCount } = useNotifications();
@@ -82,7 +85,7 @@ const SystemMobileNavigation = ({ navItems }: Props) => {
     <>
       <nav
         className="system-mobile-tabs lg:hidden"
-        aria-label="Primary navigation"
+        aria-label={t('Primary navigation')}
       >
         {tabs.map(({ href, label, icon: Icon }) => (
           <Link
@@ -96,7 +99,7 @@ const SystemMobileNavigation = ({ navItems }: Props) => {
                 <span className="system-notification-dot absolute right-0 top-0 flex size-2 rounded-full bg-red-500" />
               )}
             </span>
-            <span>{label}</span>
+            <span>{t(label)}</span>
           </Link>
         ))}
         <button
@@ -105,7 +108,7 @@ const SystemMobileNavigation = ({ navItems }: Props) => {
           aria-current={menuActive ? 'page' : undefined}
         >
           <LuMenu aria-hidden="true" />
-          <span>Menu</span>
+          <span>{t('Menu')}</span>
         </button>
       </nav>
       <dialog
@@ -121,18 +124,21 @@ const SystemMobileNavigation = ({ navItems }: Props) => {
           <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-slate-200" />
           <div className="mb-4 flex items-center justify-between">
             <h2 id="system-menu-title" className="text-xl font-bold">
-              Your workspace
+              {t('Your workspace')}
             </h2>
             <button
               type="button"
               className="flex size-11 items-center justify-center rounded-full bg-slate-50"
-              aria-label="Close menu"
+              aria-label={t('Close menu')}
               onClick={() => sheet.current?.close()}
             >
               <LuX size={22} />
             </button>
           </div>
-          <nav aria-label="All sections" className="space-y-2">
+          <div className="mb-4">
+            <PortalLanguageSwitcher />
+          </div>
+          <nav aria-label={t('All sections')} className="space-y-2">
             {pages.map(({ href, label, icon: Icon }) => (
               <Link
                 key={href}
@@ -142,7 +148,7 @@ const SystemMobileNavigation = ({ navItems }: Props) => {
                 className="flex min-h-12 items-center gap-3 rounded-xl bg-slate-50 px-4 text-sm font-medium text-slate-700"
               >
                 <Icon size={20} />
-                {label}
+                {t(label)}
               </Link>
             ))}
           </nav>

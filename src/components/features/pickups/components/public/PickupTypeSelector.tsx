@@ -31,7 +31,7 @@ const Option = ({
     onClick={onClick}
     className={`group flex w-full items-center gap-4 p-6 text-left transition hover:bg-slate-50 ${className}`}
   >
-    <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
+    <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
       {icon}
     </span>
     <span className="min-w-0 flex-1">

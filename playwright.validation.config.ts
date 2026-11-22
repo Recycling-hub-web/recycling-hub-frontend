@@ -7,6 +7,7 @@ export default defineConfig({
     'input-validation.spec.ts',
     'ui-audit-fixes.spec.ts',
     'ui-audit-followup.spec.ts',
+    'ui-locale-contrast.spec.ts',
     'driver-route-selection.spec.ts',
     'system-notifications.spec.ts',
   ],

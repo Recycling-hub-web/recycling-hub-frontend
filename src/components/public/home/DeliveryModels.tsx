@@ -62,7 +62,7 @@ const DeliveryModels = () => {
                 <span className="font-montserrat text-2xl font-extrabold text-neutral-950">
                   {model.price}
                 </span>
-                <span className="text-sm text-slate-400">{model.period}</span>
+                <span className="text-sm text-slate-600">{model.period}</span>
               </div>
 
               <p className="mt-4 text-sm leading-relaxed text-slate-500">

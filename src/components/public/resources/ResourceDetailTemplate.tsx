@@ -40,7 +40,7 @@ const ResourceDetailTemplate = ({ slug }: ResourceDetailTemplateProps) => {
                 transition={{ duration: 0.45, delay: i * 0.06, ease }}
                 className="flex items-start gap-3 rounded-xl border border-slate-100 bg-neutral-50 px-5 py-4"
               >
-                <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-brand-50 text-brand-600">
+                <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-brand-50 text-brand-700">
                   <LuCheck size={12} strokeWidth={3} />
                 </span>
                 <span className="text-sm leading-relaxed text-slate-700">

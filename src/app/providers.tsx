@@ -8,6 +8,8 @@ import { SmoothScroll } from '../components/ui/SmoothScroll';
 import { ToastProvider } from '../components/ui/toast/ToastContext';
 import { AuthProvider } from '../contexts/AuthContext';
 import { AuthFlowProvider } from '../contexts/AuthFlowContext';
+import { PortalLocaleProvider } from '../contexts/PortalLocaleContext';
+import type { PortalLocale } from '../lib/locale';
 
 /** App Router equivalent of src/pages/_app.tsx's page-transition effect.
  * `next/navigation` has no `router.events` (Pages Router only) — there's
@@ -48,16 +50,24 @@ const PageTransition = ({ children }: { children: ReactNode }) => {
  * AuthFlowProvider > ToastProvider > ReactLenis) so context consumers
  * shared between both routers (AuthCard, RequireAuth, ProfileSummaryCard,
  * etc.) behave identically regardless of which router served the page. */
-const Providers = ({ children }: { children: ReactNode }) => (
-  <AuthProvider>
-    <AuthFlowProvider>
-      <ToastProvider>
-        <SmoothScroll root>
-          <PageTransition>{children}</PageTransition>
-        </SmoothScroll>
-      </ToastProvider>
-    </AuthFlowProvider>
-  </AuthProvider>
+const Providers = ({
+  children,
+  locale,
+}: {
+  children: ReactNode;
+  locale: PortalLocale;
+}) => (
+  <PortalLocaleProvider initialLocale={locale}>
+    <AuthProvider>
+      <AuthFlowProvider>
+        <ToastProvider>
+          <SmoothScroll root>
+            <PageTransition>{children}</PageTransition>
+          </SmoothScroll>
+        </ToastProvider>
+      </AuthFlowProvider>
+    </AuthProvider>
+  </PortalLocaleProvider>
 );
 
 export { Providers };

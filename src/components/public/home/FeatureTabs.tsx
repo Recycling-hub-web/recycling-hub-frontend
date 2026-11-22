@@ -53,7 +53,7 @@ const FeatureTabs = () => {
               onClick={() => setActiveTab(i)}
               className={`shrink-0 rounded-full px-4 py-1.5 text-sm font-medium transition-colors duration-200 ${
                 activeTab === i
-                  ? 'bg-brand-600 text-white'
+                  ? 'bg-brand-700 text-white'
                   : 'text-slate-500 hover:text-neutral-950'
               }`}
             >
@@ -103,7 +103,7 @@ const FeatureTabs = () => {
                         <p className="text-sm font-semibold text-neutral-950">
                           {tab.authorLabel}
                         </p>
-                        <p className="text-xs text-slate-400">
+                        <p className="text-xs text-slate-600">
                           {tab.authorRole}
                         </p>
                       </div>
@@ -116,7 +116,7 @@ const FeatureTabs = () => {
                   <div className="flex flex-1 flex-col overflow-hidden rounded-2xl bg-white shadow-sm">
                     <div className="h-1 w-full bg-brand-600" />
                     <div className="flex min-h-[280px] flex-1 items-center justify-center bg-slate-50 p-8">
-                      <p className="text-center text-sm text-slate-400">
+                      <p className="text-center text-sm text-slate-600">
                         {tab.mockupLabel}
                       </p>
                     </div>

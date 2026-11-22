@@ -159,7 +159,7 @@ const ClaimForm = ({ basePath }: ClaimFormProps) => {
             className="size-16 shrink-0 rounded-xl border border-slate-200 object-cover"
           />
         ) : (
-          <span className="flex size-16 shrink-0 items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50 text-slate-400">
+          <span className="flex size-16 shrink-0 items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50 text-slate-600">
             <LuReceipt className="size-6" />
           </span>
         )}
@@ -191,7 +191,7 @@ const ClaimForm = ({ basePath }: ClaimFormProps) => {
     <PageContainer variant="form">
       <Link
         href={basePath}
-        className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600 lg:mb-4 lg:min-h-0"
+        className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-700 lg:mb-4 lg:min-h-0"
       >
         <LuArrowLeft className="size-4" />
         Back to expense claims
@@ -264,7 +264,7 @@ const ClaimForm = ({ basePath }: ClaimFormProps) => {
               !hasNoVehicle &&
               !isFleetCard &&
               vehicle && (
-                <div className="mb-4 flex items-center gap-1.5 text-xs text-slate-400 sm:col-span-2">
+                <div className="mb-4 flex items-center gap-1.5 text-xs text-slate-600 sm:col-span-2">
                   <LuTruck className="size-3.5" />
                   Your vehicle: {vehicle.plate_number}
                 </div>
@@ -286,7 +286,7 @@ const ClaimForm = ({ basePath }: ClaimFormProps) => {
                 />
                 <div className="sm:col-span-2">
                   {renderReceiptUploader(receiptSuggested)}
-                  <p className="-mt-3 mb-4 text-xs text-slate-400">
+                  <p className="-mt-3 mb-4 text-xs text-slate-600">
                     A receipt is required for claims of RM
                     {TOOL_RECEIPT_THRESHOLD} or more.
                   </p>

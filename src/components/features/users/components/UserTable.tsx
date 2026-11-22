@@ -194,7 +194,7 @@ const UserTable = ({
                   disabled={resendLoading}
                   onClick={() => onResendInvite(u)}
                   aria-label={`Resend invite to ${u.full_name}`}
-                  className={`inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition ${resendLoading ? 'cursor-not-allowed opacity-50' : 'hover:bg-slate-100 hover:text-slate-700'}`}
+                  className={`inline-flex size-8 items-center justify-center rounded-full text-slate-600 transition ${resendLoading ? 'cursor-not-allowed opacity-50' : 'hover:bg-slate-100 hover:text-slate-700'}`}
                 >
                   <LuSend className="size-4" />
                 </button>
@@ -202,7 +202,7 @@ const UserTable = ({
             <Link
               href={`/admin/users/${u.id}`}
               aria-label={`View ${u.full_name}`}
-              className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+              className="inline-flex size-8 items-center justify-center rounded-full text-slate-600 transition hover:bg-slate-100 hover:text-slate-700"
             >
               <LuEye className="size-4" />
             </Link>
@@ -213,7 +213,7 @@ const UserTable = ({
                 <Link
                   href={`/admin/users/${u.id}/edit`}
                   aria-label={`Edit ${u.full_name}`}
-                  className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+                  className="inline-flex size-8 items-center justify-center rounded-full text-slate-600 transition hover:bg-slate-100 hover:text-slate-700"
                 >
                   <LuPencil className="size-4" />
                 </Link>
@@ -221,7 +221,7 @@ const UserTable = ({
                   type="button"
                   onClick={() => onDeleteRequest(u)}
                   aria-label={`Delete ${u.full_name}`}
-                  className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-red-50 hover:text-red-600"
+                  className="inline-flex size-8 items-center justify-center rounded-full text-slate-600 transition hover:bg-red-50 hover:text-red-600"
                 >
                   <LuTrash2 className="size-4" />
                 </button>

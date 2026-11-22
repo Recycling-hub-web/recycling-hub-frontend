@@ -102,7 +102,7 @@ const ActivityLog = ({ entityType, entityId }: ActivityLogProps) => {
     }
     return (
       <div>
-        <p className="mb-3 text-xs text-slate-400">Newest first</p>
+        <p className="mb-3 text-xs text-slate-600">Newest first</p>
         <ol
           aria-label="Activity history"
           className="ml-3 space-y-4 border-l border-slate-200 pl-6"
@@ -135,7 +135,7 @@ const ActivityLog = ({ entityType, entityId }: ActivityLogProps) => {
                     <AppDate
                       value={entry.created_at}
                       format="datetime"
-                      className="shrink-0 text-xs text-slate-400"
+                      className="shrink-0 text-xs text-slate-600"
                     />
                   </div>
                   {standalone && (

@@ -142,7 +142,7 @@ const ReceivingOverviewView = () => {
                 </h2>
                 <Link
                   href="/receiving/deliveries"
-                  className="text-xs font-medium text-brand-600 hover:underline"
+                  className="text-xs font-medium text-brand-700 hover:underline"
                 >
                   View all
                 </Link>

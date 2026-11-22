@@ -42,8 +42,8 @@ const StepIndicator = ({
         const isDone = completed.has(step.id) && !isCurrent;
         const clickable = !isCurrent && index <= Math.max(reached, current);
 
-        let circle = 'border-slate-200 bg-white text-slate-400';
-        if (isCurrent) circle = 'border-brand-600 bg-brand-600 text-white';
+        let circle = 'border-slate-200 bg-white text-slate-600';
+        if (isCurrent) circle = 'border-brand-700 bg-brand-700 text-white';
         else if (isDone) circle = 'border-brand-600 bg-brand-50 text-brand-700';
 
         const content = (

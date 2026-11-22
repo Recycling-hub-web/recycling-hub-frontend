@@ -267,7 +267,7 @@ const PickupRequestsListContent = ({
         </td>
         <td className="px-6 py-4 text-slate-700">
           {r.orders.length === 0 ? (
-            <span className="text-slate-400">No orders yet</span>
+            <span className="text-slate-600">No orders yet</span>
           ) : (
             `${r.orders.length} order${r.orders.length === 1 ? '' : 's'}`
           )}

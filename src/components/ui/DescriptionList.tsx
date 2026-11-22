@@ -34,7 +34,7 @@ const DescriptionList = ({
         <dt className="text-sm text-slate-500">{label}</dt>
         <dd className="break-words text-sm font-medium text-neutral-950">
           {isEmpty(value) ? (
-            <span className="font-normal text-slate-400">{fallback}</span>
+            <span className="font-normal text-slate-600">{fallback}</span>
           ) : (
             value
           )}

@@ -216,11 +216,11 @@ const RouteDropOffView = () => {
         >
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div className="flex min-w-0 items-start gap-3">
-              <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
+              <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
                 <LuMapPin className="size-5" />
               </span>
               <div className="min-w-0">
-                <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                <p className="text-xs font-semibold uppercase tracking-wider text-slate-600">
                   Drop-off store
                 </p>
                 {chosenStore ? (
@@ -328,7 +328,7 @@ const RouteDropOffView = () => {
               className="size-14 shrink-0 rounded-xl border border-slate-200 object-cover"
             />
           ) : (
-            <span className="flex size-14 shrink-0 items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50 text-slate-400">
+            <span className="flex size-14 shrink-0 items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50 text-slate-600">
               <LuPackageCheck className="size-5" />
             </span>
           )}

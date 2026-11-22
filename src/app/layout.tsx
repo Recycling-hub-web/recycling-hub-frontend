@@ -1,23 +1,16 @@
 import '../styles/global.css';
 
 import type { Metadata, Viewport } from 'next';
+import { cookies } from 'next/headers';
 
+import { LOCALE_COOKIE, parseLocale } from '../lib/locale';
 import { Providers } from './providers';
 
 // Root layout for the App Router side of the app (src/app/) — same
 // responsibility src/pages/_document.tsx + _app.tsx have for the Pages
 // Router side (fonts, global CSS, provider tree).
 //
-// English-only for now, deliberately: Next's App Router cannot resolve
-// non-default-locale (bm) subpaths while next.config.js's legacy `i18n`
-// block is still active for the still-unmigrated src/pages/ public site —
-// confirmed empirically (a bare [locale] segment 404s on every /bm/*
-// request; Next's i18n routing layer strips/normalizes the locale prefix
-// before App Router's own dynamic-segment matching ever sees it, and only
-// the default locale's normalization happens to degenerate into something
-// App Router can still resolve). Real bm support for these routes is
-// follow-up work alongside the Phase 3 public-site i18n redesign (see the
-// App Router migration plan), not a gap introduced casually here.
+// Portal routes keep stable URLs and obtain their locale from the shared preference.
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
@@ -46,8 +39,9 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const locale = parseLocale(cookies().get(LOCALE_COOKIE)?.value);
   return (
-    <html lang="en">
+    <html lang={locale === 'bm' ? 'ms' : 'en'}>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
@@ -65,7 +59,7 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <Providers>{children}</Providers>
+        <Providers locale={locale}>{children}</Providers>
       </body>
     </html>
   );

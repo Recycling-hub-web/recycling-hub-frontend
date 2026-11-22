@@ -7,8 +7,8 @@ import { LuShieldCheck } from 'react-icons/lu';
 
 import { useAuth } from '../../../../contexts/AuthContext';
 import { useAuthFlow } from '../../../../contexts/AuthFlowContext';
+import { usePortalLocale } from '../../../../contexts/PortalLocaleContext';
 import { ApiError } from '../../../../lib/api';
-import type { Dictionary } from '../../../../lib/dictionary';
 import {
   loginPathFor,
   returnPathForRole,
@@ -27,7 +27,9 @@ import { AuthCard } from './AuthCard';
 // user mash it into a guaranteed-to-fail request every time.
 const RESEND_COOLDOWN_SECONDS = 60;
 
-const VerifyOtpView = ({ t }: { t: Dictionary['auth']['verifyOtp'] }) => {
+const VerifyOtpView = () => {
+  const { auth } = usePortalLocale();
+  const t = auth.verifyOtp;
   const router = useRouter();
   const next = safeReturnPath(useSearchParams()?.get('next'));
   const { user, refreshUser } = useAuth();
@@ -145,7 +147,7 @@ const VerifyOtpView = ({ t }: { t: Dictionary['auth']['verifyOtp'] }) => {
           type="button"
           onClick={handleResend}
           disabled={resending || cooldown > 0}
-          className="w-full text-center text-xs font-medium text-slate-500 hover:text-brand-600 disabled:cursor-not-allowed disabled:opacity-60"
+          className="w-full text-center text-xs font-medium text-slate-500 hover:text-brand-700 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {resendLabel()}
         </button>

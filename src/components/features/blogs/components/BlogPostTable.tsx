@@ -97,7 +97,7 @@ const BlogPostTable = ({
                 className="size-8 shrink-0 rounded-lg object-cover"
               />
             ) : (
-              <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-400">
+              <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-600">
                 <LuNewspaper className="size-4" />
               </span>
             )}
@@ -111,12 +111,12 @@ const BlogPostTable = ({
                 <Link
                   href={`/resources/blog/${p.slug}`}
                   onClick={(e) => e.stopPropagation()}
-                  className="block truncate text-xs text-slate-400 hover:text-brand-600 hover:underline"
+                  className="block truncate text-xs text-slate-600 hover:text-brand-700 hover:underline"
                 >
                   /{p.slug}
                 </Link>
               ) : (
-                <span className="block truncate text-xs text-slate-400">
+                <span className="block truncate text-xs text-slate-600">
                   /{p.slug}
                 </span>
               )}
@@ -146,14 +146,14 @@ const BlogPostTable = ({
             <Link
               href={`${basePath}/${p.id}`}
               aria-label={`View post ${p.title}`}
-              className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+              className="inline-flex size-8 items-center justify-center rounded-full text-slate-600 transition hover:bg-slate-100 hover:text-slate-700"
             >
               <LuEye className="size-4" />
             </Link>
             <Link
               href={`${basePath}/${p.id}/edit`}
               aria-label={`Edit post ${p.title}`}
-              className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+              className="inline-flex size-8 items-center justify-center rounded-full text-slate-600 transition hover:bg-slate-100 hover:text-slate-700"
             >
               <LuPencil className="size-4" />
             </Link>
@@ -161,7 +161,7 @@ const BlogPostTable = ({
               type="button"
               onClick={() => onDeleteRequest(p)}
               aria-label={`Delete post ${p.title}`}
-              className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-red-50 hover:text-red-600"
+              className="inline-flex size-8 items-center justify-center rounded-full text-slate-600 transition hover:bg-red-50 hover:text-red-600"
             >
               <LuTrash2 className="size-4" />
             </button>

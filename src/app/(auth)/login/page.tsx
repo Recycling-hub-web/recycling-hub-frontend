@@ -3,7 +3,6 @@ import { Suspense } from 'react';
 
 import { LoginView } from '../../../components/features/auth/components';
 import { Loading } from '../../../components/ui/loading/Loading';
-import { getDictionary } from '../../../lib/dictionary';
 
 export const metadata: Metadata = {
   title: 'Sign In — Recycling Hub',
@@ -11,7 +10,6 @@ export const metadata: Metadata = {
 };
 
 export default function LoginPage() {
-  const { auth } = getDictionary('en');
   return (
     <Suspense
       fallback={
@@ -20,7 +18,7 @@ export default function LoginPage() {
         </div>
       }
     >
-      <LoginView t={auth.login} />
+      <LoginView />
     </Suspense>
   );
 }

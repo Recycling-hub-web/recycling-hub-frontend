@@ -134,7 +134,7 @@ const QuickLeadTable = ({
                   <Link
                     href={`${basePath}/${lead.collection_request}`}
                     aria-label="View request"
-                    className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+                    className="inline-flex size-8 items-center justify-center rounded-full text-slate-600 transition hover:bg-slate-100 hover:text-slate-700"
                   >
                     <LuEye className="size-4" />
                   </Link>
@@ -147,7 +147,7 @@ const QuickLeadTable = ({
                         onClick={() => onMarkContacted(lead)}
                         disabled={markingContactedId === lead.id}
                         aria-label={`Mark lead from ${lead.phone_number} as contacted`}
-                        className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="inline-flex size-8 items-center justify-center rounded-full text-slate-600 transition hover:bg-slate-100 hover:text-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
                       >
                         <LuCheck className="size-4" />
                       </button>
@@ -155,7 +155,7 @@ const QuickLeadTable = ({
                     <Link
                       href={`${basePath}/create?leadId=${lead.id}`}
                       aria-label={`Follow up on lead from ${lead.phone_number}`}
-                      className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-brand-50 hover:text-brand-600"
+                      className="inline-flex size-8 items-center justify-center rounded-full text-slate-600 transition hover:bg-brand-50 hover:text-brand-700"
                     >
                       <LuPhoneCall className="size-4" />
                     </Link>
@@ -163,7 +163,7 @@ const QuickLeadTable = ({
                       type="button"
                       onClick={() => setCancellingLead(lead)}
                       aria-label={`Cancel lead from ${lead.phone_number}`}
-                      className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-red-50 hover:text-red-600"
+                      className="inline-flex size-8 items-center justify-center rounded-full text-slate-600 transition hover:bg-red-50 hover:text-red-600"
                     >
                       <LuX className="size-4" />
                     </button>

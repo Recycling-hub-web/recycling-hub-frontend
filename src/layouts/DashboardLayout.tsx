@@ -9,6 +9,7 @@ import { Sidebar } from '../components/layout/Sidebar';
 import { SystemMobileNavigation } from '../components/layout/SystemMobileNavigation';
 import { Topbar } from '../components/layout/Topbar';
 import type { NavItem } from '../components/ui/navigation';
+import { PortalLanguageAvailability } from '../components/ui/PortalLanguageAvailability';
 import { SmoothScroll } from '../components/ui/SmoothScroll';
 import { SystemExperienceContext } from '../contexts/SystemExperienceContext';
 import type { UserRole } from '../types/auth';
@@ -54,6 +55,7 @@ const DashboardLayout = ({
                 <SmoothScroll
                   className={`system-app-content h-full overflow-y-auto overflow-x-hidden ${contentPadding}`}
                 >
+                  <PortalLanguageAvailability />
                   {children}
                 </SmoothScroll>
               </main>

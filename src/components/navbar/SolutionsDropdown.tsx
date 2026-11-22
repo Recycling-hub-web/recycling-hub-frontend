@@ -52,7 +52,7 @@ const SolutionsDropdown = ({ light }: SolutionsDropdownProps) => {
     setOpen(false);
   }, [router.pathname]);
 
-  const triggerActiveCls = light ? 'text-brand-600' : 'text-white';
+  const triggerActiveCls = light ? 'text-brand-700' : 'text-white';
   const triggerIdleCls = light
     ? 'text-slate-500 hover:text-neutral-950'
     : 'text-white/75 hover:text-white';
@@ -158,7 +158,7 @@ const SolutionsDropdown = ({ light }: SolutionsDropdownProps) => {
 
             <Link
               href="/solutions"
-              className="mt-1 flex items-center justify-between rounded-xl border-t border-slate-100 px-4 py-3 text-sm font-semibold text-brand-600 transition-colors duration-150 hover:bg-neutral-100"
+              className="mt-1 flex items-center justify-between rounded-xl border-t border-slate-100 px-4 py-3 text-sm font-semibold text-brand-700 transition-colors duration-150 hover:bg-neutral-100"
             >
               {dict.nav.viewAllSolutions}
               <LuArrowRight size={15} />
@@ -192,7 +192,7 @@ const SolutionsMobileAccordion = () => {
         onClick={() => setOpen((o) => !o)}
         className={`flex w-full items-center justify-between rounded-lg px-3.5 py-2.5 text-sm font-medium transition-colors duration-150 ${
           isActiveSolutions
-            ? 'bg-brand-50 text-brand-600'
+            ? 'bg-brand-50 text-brand-700'
             : 'text-slate-500 hover:bg-neutral-100 hover:text-neutral-950'
         }`}
       >
@@ -242,7 +242,7 @@ const SolutionsMobileAccordion = () => {
                     href={href}
                     className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors duration-150 ${
                       active
-                        ? 'font-semibold text-brand-600'
+                        ? 'font-semibold text-brand-700'
                         : 'text-slate-500 hover:bg-neutral-100 hover:text-neutral-950'
                     }`}
                   >
@@ -253,7 +253,7 @@ const SolutionsMobileAccordion = () => {
               })}
               <Link
                 href="/solutions"
-                className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-semibold text-brand-600 transition-colors hover:bg-neutral-100"
+                className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-semibold text-brand-700 transition-colors hover:bg-neutral-100"
               >
                 {dict.nav.viewAllSolutions}
               </Link>

@@ -4,6 +4,7 @@ import type { FormHTMLAttributes } from 'react';
 import { useState } from 'react';
 
 import { validatePhoneNumber } from '../../constants/dialCodes';
+import { usePortalLocale } from '../../contexts/PortalLocaleContext';
 import { fieldLimit, validatePhoneText, validateText } from './validation';
 
 type ValidatedFormProps = FormHTMLAttributes<HTMLFormElement> & {
@@ -22,6 +23,7 @@ export const ValidatedForm = ({
   errorSummaryLabel = 'Check the following fields.',
   ...props
 }: ValidatedFormProps) => {
+  const { t, locale } = usePortalLocale();
   const [error, setError] = useState('');
   return (
     <form
@@ -115,6 +117,18 @@ export const ValidatedForm = ({
           ) {
             element.setCustomValidity('Enter a valid decimal number.');
           }
+          if (locale === 'bm') {
+            if (element.validity.valueMissing)
+              element.setCustomValidity(t('This field is required.'));
+            else if (
+              element.validity.typeMismatch &&
+              element instanceof HTMLInputElement &&
+              element.type === 'email'
+            )
+              element.setCustomValidity(t('Enter a valid email address.'));
+            else if (element.validity.customError)
+              element.setCustomValidity(t(element.validationMessage));
+          }
           if (!element.validity.valid) {
             element.setAttribute('aria-invalid', 'true');
             firstInvalid ??= element;
@@ -149,7 +163,7 @@ export const ValidatedForm = ({
           role="alert"
           className="mb-4 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800"
         >
-          <p className="font-semibold">{errorSummaryLabel}</p>
+          <p className="font-semibold">{t(errorSummaryLabel)}</p>
           <ul className="mt-2 space-y-1">
             {Object.entries(fieldErrors)
               .filter(([, message]) => message)
