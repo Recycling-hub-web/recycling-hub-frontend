@@ -6,9 +6,13 @@ import { Children, type ReactNode } from 'react';
  * is the caller's job. */
 const OverviewStatGrid = ({ children }: { children: ReactNode }) => {
   const count = Children.count(children);
+  let columns = 'lg:grid-cols-4';
+  if (count <= 1) columns = 'lg:grid-cols-1';
+  else if (count === 2) columns = 'lg:grid-cols-2';
+  else if (count === 3 || count >= 5) columns = 'lg:grid-cols-3';
   return (
     <div
-      className={`grid grid-cols-1 gap-3 sm:grid-cols-2 ${count >= 5 ? 'lg:grid-cols-3' : 'lg:grid-cols-4'}`}
+      className={`grid grid-cols-1 gap-3 sm:grid-cols-2 ${columns}`}
       data-testid="overview-stat-grid"
     >
       {children}

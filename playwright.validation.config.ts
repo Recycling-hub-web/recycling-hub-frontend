@@ -9,6 +9,7 @@ export default defineConfig({
     'ui-audit-followup.spec.ts',
     'ui-locale-contrast.spec.ts',
     'ui-finance-detail-locale.spec.ts',
+    'ui-accounting-overview-locale.spec.ts',
     'driver-route-selection.spec.ts',
     'system-notifications.spec.ts',
   ],

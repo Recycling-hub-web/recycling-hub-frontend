@@ -1,8 +1,10 @@
 import { portalFinanceBm } from './portalFinance';
+import { portalOverviewBm } from './portalOverview';
 
 /** UI copy only: records, names and user-authored content are never translated. */
 export const portalBm: Record<string, string> = {
   ...portalFinanceBm,
+  ...portalOverviewBm,
   'Loading notifications…': 'Sedang memuatkan pemberitahuan…',
   'Could not load notifications.': 'Tidak dapat memuatkan pemberitahuan.',
   '{count} unread': '{count} belum dibaca',

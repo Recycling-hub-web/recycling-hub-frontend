@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
+import { usePortalLocale } from '../../../../contexts/PortalLocaleContext';
 import { InputField } from '../../../form/fields/InputField';
 import type { SegmentedOption } from '../../../ui/buttons/SegmentedControl';
 import { SegmentedControl } from '../../../ui/buttons/SegmentedControl';
@@ -72,28 +73,6 @@ const INTERVAL_LABELS: Record<PickupVolume['interval'], string> = {
 // Dates arrive as plain "YYYY-MM-DD" — read and format them as UTC so a
 // viewer's own time zone can never shift a label to the neighbouring day.
 const asDate = (iso: string) => new Date(`${iso}T00:00:00Z`);
-const DAY_FORMAT = new Intl.DateTimeFormat('en-GB', {
-  day: 'numeric',
-  month: 'short',
-  timeZone: 'UTC',
-});
-const MONTH_FORMAT = new Intl.DateTimeFormat('en-GB', {
-  month: 'short',
-  year: 'numeric',
-  timeZone: 'UTC',
-});
-const FULL_FORMAT = new Intl.DateTimeFormat('en-GB', {
-  day: 'numeric',
-  month: 'short',
-  year: 'numeric',
-  timeZone: 'UTC',
-});
-
-const pointLabel = (iso: string, interval: PickupVolume['interval']) =>
-  interval === 'month'
-    ? MONTH_FORMAT.format(asDate(iso))
-    : DAY_FORMAT.format(asDate(iso));
-
 const todayIso = () => {
   // Local calendar date, as YYYY-MM-DD.
   const now = new Date();
@@ -122,7 +101,29 @@ const PickupVolumeChart = ({
   unitLabel = 'requests created',
   emptyMessage = 'No pickup requests in this range.',
 }: PickupVolumeChartProps) => {
+  const { t, locale } = usePortalLocale();
   const { query, select, data, loading, error, retry } = useVolume();
+  const formats = useMemo(() => {
+    const dateLocale = locale === 'bm' ? 'ms-MY' : 'en-GB';
+    return {
+      day: new Intl.DateTimeFormat(dateLocale, {
+        day: 'numeric',
+        month: 'short',
+        timeZone: 'UTC',
+      }),
+      month: new Intl.DateTimeFormat(dateLocale, {
+        month: 'short',
+        year: 'numeric',
+        timeZone: 'UTC',
+      }),
+      full: new Intl.DateTimeFormat(dateLocale, {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+        timeZone: 'UTC',
+      }),
+    };
+  }, [locale]);
   const [custom, setCustom] = useState({ from: '', to: '' });
   const [customError, setCustomError] = useState('');
 
@@ -168,16 +169,18 @@ const PickupVolumeChart = ({
   const description = data
     ? `${
         data.range === 'custom'
-          ? `${FULL_FORMAT.format(asDate(data.from))} – ${FULL_FORMAT.format(
+          ? `${formats.full.format(asDate(data.from))} – ${formats.full.format(
               asDate(data.to),
             )}`
-          : RANGE_LABELS[data.range]
-      } · ${INTERVAL_LABELS[data.interval]}`
+          : t(RANGE_LABELS[data.range])
+      } · ${t(INTERVAL_LABELS[data.interval])}`
     : '';
 
   const chartData =
     data?.points.map((point) => ({
-      x: pointLabel(point.date, data.interval),
+      x: (data.interval === 'month' ? formats.month : formats.day).format(
+        asDate(point.date),
+      ),
       count: point.count,
     })) ?? [];
 
@@ -185,7 +188,7 @@ const PickupVolumeChart = ({
     <SectionContainer className="lg:col-span-2">
       <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h2 className="text-sm font-semibold text-slate-900">{title}</h2>
+          <h2 className="text-sm font-semibold text-slate-900">{t(title)}</h2>
           <p className="mt-0.5 text-xs text-slate-500">{description || ' '}</p>
         </div>
         <div className="text-end">
@@ -193,24 +196,32 @@ const PickupVolumeChart = ({
             className="text-xl font-semibold tabular-nums text-neutral-950"
             data-testid="pickup-volume-total"
           >
-            {data ? data.total.toLocaleString('en-MY') : '—'}
+            {data
+              ? data.total.toLocaleString(locale === 'bm' ? 'ms-MY' : 'en-MY')
+              : '—'}
           </p>
-          <p className="text-xs text-slate-500">{unitLabel}</p>
+          <p className="text-xs text-slate-500">{t(unitLabel)}</p>
         </div>
       </div>
 
       {/* Seven options don't fit a phone — a dropdown there, the
           segmented control from sm up. */}
       <FilterSelect
-        ariaLabel="Date range"
+        ariaLabel={t('Date range')}
         value={activeRange}
         onChange={(value) => onRangeChange(value as PickupVolumeRange)}
-        options={RANGE_SELECT_OPTIONS}
+        options={RANGE_SELECT_OPTIONS.map((option) => ({
+          ...option,
+          label: t(option.label),
+        }))}
         className="mb-4 w-full sm:hidden"
       />
       <SegmentedControl
-        ariaLabel="Date range"
-        options={RANGE_OPTIONS}
+        ariaLabel={t('Date range')}
+        options={RANGE_OPTIONS.map((option) => ({
+          ...option,
+          label: t(option.label),
+        }))}
         value={activeRange}
         onChange={onRangeChange}
         fullWidth
@@ -220,15 +231,15 @@ const PickupVolumeChart = ({
       {activeRange === 'custom' && (
         <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
           <InputField
-            label="From"
+            label={t('From')}
             field="from"
             type="date"
             formData={custom}
             updateFormData={onCustomChange}
-            errors={customError ? { from: customError } : undefined}
+            errors={customError ? { from: t(customError) } : undefined}
           />
           <InputField
-            label="To"
+            label={t('To')}
             field="to"
             type="date"
             formData={custom}
@@ -240,11 +251,11 @@ const PickupVolumeChart = ({
       <LineChart
         data={chartData}
         xKey="x"
-        series={[{ key: 'count', label: seriesLabel }]}
+        series={[{ key: 'count', label: t(seriesLabel) }]}
         loading={loading && !data}
-        error={error}
+        error={t(error)}
         onRetry={retry}
-        emptyMessage={emptyMessage}
+        emptyMessage={t(emptyMessage)}
       />
     </SectionContainer>
   );

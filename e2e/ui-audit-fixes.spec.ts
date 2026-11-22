@@ -266,7 +266,7 @@ test('accounting error does not masquerade as zero and recovers on retry', async
   await expect(page.getByText('Could not load accounting totals.')).toHaveCount(
     4,
   );
-  await expect(page.getByText('RM0.00', { exact: true })).toHaveCount(0);
+  await expect(page.getByText(/^RM\s*0\.00$/)).toHaveCount(0);
   await expect(page.getByRole('status', { name: 'Loading chart' })).toHaveCount(
     0,
   );
@@ -275,7 +275,7 @@ test('accounting error does not masquerade as zero and recovers on retry', async
     .getByRole('button', { name: 'Retry', exact: true })
     .first()
     .click();
-  await expect(page.getByText('RM75.00', { exact: true })).toBeVisible();
+  await expect(page.getByText(/^RM\s*75\.00$/)).toBeVisible();
   await expect(page.getByText('Could not load accounting totals.')).toHaveCount(
     0,
   );

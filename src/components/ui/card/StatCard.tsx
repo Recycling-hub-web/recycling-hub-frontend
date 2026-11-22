@@ -1,7 +1,10 @@
+'use client';
+
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { LuArrowUpRight, LuRefreshCw, LuTriangleAlert } from 'react-icons/lu';
 
+import { usePortalLocale } from '../../../contexts/PortalLocaleContext';
 import { TrendBadge, type TrendBadgeProps } from '../badges/TrendBadge';
 import { Sparkbars } from '../charts/Sparkbars';
 import { IconTile, type IconTileTone } from './IconTile';
@@ -44,6 +47,7 @@ const StatCard = ({
   onRetry,
   className = '',
 }: StatCardProps) => {
+  const { t } = usePortalLocale();
   const solid = variant === 'highlight';
 
   let body: ReactNode;
@@ -55,7 +59,7 @@ const StatCard = ({
           aria-hidden
         />
         <span className={solid ? 'text-white/90' : 'text-slate-600'}>
-          {error}
+          {t(error)}
         </span>
         {onRetry && (
           <button
@@ -68,7 +72,7 @@ const StatCard = ({
             }`}
           >
             <LuRefreshCw className="size-3.5" aria-hidden />
-            Retry
+            {t('Retry')}
           </button>
         )}
       </div>
@@ -89,7 +93,7 @@ const StatCard = ({
       <>
         <div className="mt-4 flex flex-wrap items-center gap-3">
           <p
-            className={`text-3xl font-bold tracking-tight sm:text-4xl ${solid ? 'text-white' : 'text-neutral-950'}`}
+            className={`min-w-0 max-w-full break-words text-3xl font-bold tracking-tight sm:text-4xl ${solid ? 'text-white' : 'text-neutral-950'}`}
           >
             {value}
           </p>
