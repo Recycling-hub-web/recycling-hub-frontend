@@ -24,20 +24,33 @@ const wazeNavigateUrl = (address: string) =>
 // store's address for the route's end point: bare coordinates make Google
 // label the pin after whatever business is nearest (e.g. a restaurant in
 // the same mall) instead of the store itself.
+//
+// Built with URLSearchParams so the waypoint separator `|` and the commas
+// in coordinates are encoded (%7C, %2C), as Google's Maps URLs require.
+// Desktop browsers forgive them raw, but the Google Maps mobile app
+// doesn't: it showed "3 stops" and then no route at all.
 const googleMapsMultiStopUrl = (
   origin: LatLng,
   stops: LatLng[],
   destination: LatLng | string,
-) =>
-  `https://www.google.com/maps/dir/?api=1` +
-  `&origin=${origin.lat},${origin.lng}` +
-  `&destination=${
-    typeof destination === 'string'
-      ? encodeURIComponent(destination)
-      : `${destination.lat},${destination.lng}`
-  }` +
-  `&waypoints=${stops.map((s) => `${s.lat},${s.lng}`).join('|')}` +
-  `&travelmode=driving`;
+) => {
+  const params = new URLSearchParams({
+    api: '1',
+    origin: `${origin.lat},${origin.lng}`,
+    destination:
+      typeof destination === 'string'
+        ? destination
+        : `${destination.lat},${destination.lng}`,
+    travelmode: 'driving',
+  });
+  if (stops.length) {
+    params.set(
+      'waypoints',
+      stops.map((stop) => `${stop.lat},${stop.lng}`).join('|'),
+    );
+  }
+  return `https://www.google.com/maps/dir/?${params.toString()}`;
+};
 
 const googleMapsEmbedUrl = (
   origin: LatLng,
