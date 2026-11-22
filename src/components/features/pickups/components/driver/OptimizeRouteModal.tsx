@@ -15,25 +15,57 @@ import type {
 } from '../../types';
 import { OptimizedRoutePreview } from './OptimizedRoutePreview';
 
-const getCurrentPosition = (): Promise<LatLng> =>
+// What went wrong, and what the driver can do about it. Each cause gets
+// its own message: they used to all say "permission is required", even
+// when permission was granted and GPS was just slow.
+const LOCATION_ERRORS: Record<number, string> = {
+  1: 'Location is blocked. Allow location for this site in your browser. On an iPhone, also turn on Settings → Privacy & Security → Location Services → your browser (e.g. Chrome or Safari) → "While Using the App". Then try again.',
+  2: "Couldn't find your location. Check that Location Services are on for your phone and browser, then try again.",
+  3: 'Finding your location took too long. Move closer to a window or turn on Wi-Fi, then try again.',
+};
+
+const requestPosition = (options: PositionOptions): Promise<LatLng> =>
   new Promise((resolve, reject) => {
-    if (!navigator.geolocation) {
-      reject(new Error('Location services are not available on this device.'));
-      return;
-    }
     navigator.geolocation.getCurrentPosition(
       (position) =>
         resolve({
           lat: position.coords.latitude,
           lng: position.coords.longitude,
         }),
-      () =>
-        reject(
-          new Error('Location permission is required to optimize a route.'),
-        ),
-      { enableHighAccuracy: true, timeout: 10000 },
+      reject,
+      options,
     );
   });
+
+/** The driver's position, for the route's starting point. Tries precise
+ * GPS first; if that's slow or unavailable (common on iPhones indoors),
+ * settles for a network-based or recent position, which is plenty to
+ * order the stops. A refused permission isn't retried. */
+const getCurrentPosition = async (): Promise<LatLng> => {
+  if (typeof navigator === 'undefined' || !navigator.geolocation) {
+    throw new Error('Location services are not available on this device.');
+  }
+  try {
+    return await requestPosition({
+      enableHighAccuracy: true,
+      timeout: 15000,
+      maximumAge: 60000,
+    });
+  } catch (first) {
+    const { code } = first as GeolocationPositionError;
+    if (code === 1) throw new Error(LOCATION_ERRORS[1]);
+    try {
+      return await requestPosition({
+        enableHighAccuracy: false,
+        timeout: 20000,
+        maximumAge: 300000,
+      });
+    } catch (second) {
+      const retryCode = (second as GeolocationPositionError).code;
+      throw new Error(LOCATION_ERRORS[retryCode] ?? LOCATION_ERRORS[2]);
+    }
+  }
+};
 
 export const OptimizeRouteModal = ({
   open,
