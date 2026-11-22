@@ -1,6 +1,5 @@
 'use client';
 
-import { ReactLenis } from 'lenis/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -14,6 +13,7 @@ import {
   SidebarNavGroup,
   SidebarNavLink,
 } from '../ui/navigation';
+import { SmoothScroll } from '../ui/SmoothScroll';
 import { SidebarUserCard } from './SidebarUserCard';
 
 type SidebarProps = {
@@ -106,10 +106,7 @@ const Sidebar = ({ navItems, open, onClose }: SidebarProps) => {
               (DashboardLayout's <main>), so the menu eases like the page
               instead of jumping — and the site-wide Lenis no longer eats
               wheel events over it. */}
-          <ReactLenis
-            className="flex min-h-0 flex-1 flex-col overflow-y-auto px-3 py-4"
-            options={{ lerp: 0.1, duration: 1.2, smoothWheel: true }}
-          >
+          <SmoothScroll className="flex min-h-0 flex-1 flex-col overflow-y-auto px-3 py-4">
             <div>
               {groupBySection(navItems).map(({ title, items }, index) => (
                 <div key={title} className={index > 0 ? 'mt-4' : ''}>
@@ -138,7 +135,7 @@ const Sidebar = ({ navItems, open, onClose }: SidebarProps) => {
                 </div>
               ))}
             </div>
-          </ReactLenis>
+          </SmoothScroll>
         </div>
 
         <SidebarUserCard />

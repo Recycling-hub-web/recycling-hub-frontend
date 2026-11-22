@@ -10,6 +10,7 @@ import {
   LuTruck,
 } from 'react-icons/lu';
 
+import { useDictionary } from '../../../../../hooks/useDictionary';
 import { AddressInput } from '../../../../form/fields/AddressInput';
 import { InputField } from '../../../../form/fields/InputField';
 import { PhoneInputField } from '../../../../form/fields/PhoneInputField';
@@ -24,6 +25,7 @@ import { StepIndicator } from '../../../../ui/navigation/StepIndicator';
 import { usePublicPickupRequestForm } from '../../hooks/usePublicPickupRequestForm';
 import { fillTemplate } from '../../models/publicPickupRequestModel';
 import { PickupPhotosUploader } from '../shared/PickupPhotosUploader';
+import { PickupRequestConfirmation } from './PickupRequestConfirmation';
 
 type NextStepsProps = {
   title: string;
@@ -82,6 +84,7 @@ const prefersReducedMotion = () =>
  * usePublicPickupRequestForm and its model; copy in EN + BM. */
 const PublicPickupRequestForm = () => {
   const form = usePublicPickupRequestForm();
+  const { countryCallingCode } = useDictionary();
   const {
     copy,
     steps,
@@ -118,8 +121,12 @@ const PublicPickupRequestForm = () => {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const element = e.currentTarget;
     if (isLastStep) form.submit();
     else form.next();
+    requestAnimationFrame(() => {
+      element.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus();
+    });
   };
 
   const field = {
@@ -143,6 +150,15 @@ const PublicPickupRequestForm = () => {
     </button>
   );
 
+  if (form.receipt)
+    return (
+      <PickupRequestConfirmation
+        kind="business"
+        receipt={form.receipt}
+        onAnother={form.startAnother}
+      />
+    );
+
   return (
     <section className="bg-white pb-16 md:pb-20">
       <div className="mx-auto max-w-6xl px-5 md:px-8">
@@ -163,7 +179,7 @@ const PublicPickupRequestForm = () => {
 
               <div
                 ref={stepTopRef}
-                className="border-b border-slate-100 px-6 py-3 md:px-8"
+                className="scroll-mt-24 border-b border-slate-100 px-6 py-3 md:scroll-mt-28 md:px-8"
               >
                 <StepIndicator
                   label={copy.stepsLabel}
@@ -175,7 +191,13 @@ const PublicPickupRequestForm = () => {
                 />
               </div>
 
-              <ValidatedForm onSubmit={handleSubmit} noValidate>
+              <ValidatedForm
+                onSubmit={handleSubmit}
+                validationMode="external"
+                fieldErrors={errors}
+                errorSummaryLabel={copy.errorSummary}
+                noValidate
+              >
                 <div
                   key={stepId}
                   className="p-6 motion-safe:animate-page-enter md:px-8"
@@ -214,6 +236,7 @@ const PublicPickupRequestForm = () => {
                       />
                       <PhoneInputField
                         label={copy.phone}
+                        dialCodeLabel={countryCallingCode}
                         dialCodeField="phone_dial_code"
                         numberField="phone_local"
                         placeholder={copy.phonePlaceholder}
@@ -346,9 +369,8 @@ const PublicPickupRequestForm = () => {
                   )}
                 </div>
 
-                {/* Sticky footer. On phones the right padding keeps the
-                    buttons clear of the floating WhatsApp button. */}
-                <div className="sticky bottom-0 z-10 flex flex-wrap items-center justify-between gap-3 rounded-b-3xl border-t border-slate-100 bg-white/95 px-6 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pe-[5.5rem] backdrop-blur sm:pe-6 md:px-8">
+                {/* Keep step navigation within reach while reviewing long forms. */}
+                <div className="sticky bottom-0 z-10 flex flex-wrap items-center justify-between gap-3 rounded-b-3xl border-t border-slate-100 bg-white/95 px-6 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur md:px-8">
                   <p className="text-sm text-slate-500" aria-live="polite">
                     <span className="font-semibold text-neutral-950">
                       {fillTemplate(copy.stepOf, {

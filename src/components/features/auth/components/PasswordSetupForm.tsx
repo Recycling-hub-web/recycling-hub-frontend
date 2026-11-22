@@ -105,12 +105,14 @@ const PasswordSetupForm = ({
 
       <ValidatedForm className="mt-6 space-y-4" onSubmit={handleSubmit}>
         <PasswordField
+          autoComplete="new-password"
           label={copy.passwordLabel}
           field="password"
           formData={formData}
           updateFormData={updateFormData}
         />
         <PasswordField
+          autoComplete="new-password"
           label={copy.confirmLabel}
           field="confirm"
           formData={formData}

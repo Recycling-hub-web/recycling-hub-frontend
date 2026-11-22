@@ -307,3 +307,12 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .note-field-panel, .note-field-panel[data-expanded="true"] { transition: none; }
 }
+
+/* User motion preferences apply to public and authenticated shells alike. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

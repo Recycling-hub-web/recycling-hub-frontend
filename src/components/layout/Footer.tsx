@@ -55,7 +55,7 @@ const Footer = () => {
                 {BRAND.email}
               </a>
               <span className="text-xs text-slate-500">{BRAND.legalName}</span>
-              <span className="text-xs text-slate-400">
+              <span className="text-xs text-slate-600">
                 {BRAND.businessHours}
               </span>
             </div>
@@ -84,7 +84,7 @@ const Footer = () => {
 
           {/* Services */}
           <div>
-            <h4 className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-400">
+            <h4 className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-600">
               {dict.footer.servicesHeading}
             </h4>
             <ul className="flex flex-col gap-2.5">
@@ -103,7 +103,7 @@ const Footer = () => {
 
           {/* Company */}
           <div>
-            <h4 className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-400">
+            <h4 className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-600">
               {dict.footer.companyHeading}
             </h4>
             <ul className="flex flex-col gap-2.5">
@@ -122,7 +122,7 @@ const Footer = () => {
 
           {/* Legal */}
           <div>
-            <h4 className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-400">
+            <h4 className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-600">
               {dict.footer.legalHeading}
             </h4>
             <ul className="flex flex-col gap-2.5">
@@ -140,7 +140,7 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="mt-12 border-t border-slate-200 pt-6 text-center text-xs text-slate-400">
+        <div className="mt-12 border-t border-slate-200 pt-6 text-center text-xs text-slate-600">
           © {new Date().getFullYear()} {BRAND.name}.{' '}
           {dict.footer.copyrightLine} · {BRAND.website}
         </div>

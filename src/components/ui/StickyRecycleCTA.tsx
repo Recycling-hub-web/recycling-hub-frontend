@@ -27,7 +27,8 @@ const StickyRecycleCTA = () => {
     !mounted ||
     pathname === '/request-pickup' ||
     pathname === '/request-quote' ||
-    pathname === '/contact'
+    pathname === '/contact' ||
+    pathname === '/track-trace'
   ) {
     return null;
   }

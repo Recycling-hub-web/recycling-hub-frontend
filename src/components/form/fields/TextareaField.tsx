@@ -1,6 +1,10 @@
 import { useId, useState } from 'react';
 
-import { fieldStateClasses, getNestedValue } from '../utils';
+import {
+  fieldErrorAttributes,
+  fieldStateClasses,
+  getNestedValue,
+} from '../utils';
 import { fieldLimit } from '../validation';
 
 type TextareaFieldProps = {
@@ -76,6 +80,7 @@ const TextareaField = ({
             name={field}
             required={required}
             aria-required={required}
+            {...fieldErrorAttributes(inputId, errors?.[field])}
             maxLength={fieldLimit(field, true)}
             value={value}
             onChange={(e) => updateFormData(field, e.target.value)}
@@ -86,7 +91,9 @@ const TextareaField = ({
           />
 
           {errors?.[field] && (
-            <p className="mt-1 text-xs text-red-600">{errors[field]}</p>
+            <p id={`${inputId}-error`} className="mt-1 text-xs text-red-600">
+              {errors[field]}
+            </p>
           )}
         </div>
       </div>

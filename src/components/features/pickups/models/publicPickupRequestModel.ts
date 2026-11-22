@@ -3,6 +3,7 @@ import {
   validatePhoneNumber,
 } from '../../../../constants/dialCodes';
 import type { Dictionary } from '../../../../locales/en';
+import { fieldLimit, validateText } from '../../../form/validation';
 import type { OrderPhoto } from '../components/shared/PickupPhotosUploader';
 import type { PickupRequestCreatePayload } from '../services/pickupService';
 
@@ -35,6 +36,7 @@ type PublicFieldName =
   | 'email'
   | 'phone_local'
   | 'pickup_address'
+  | 'note'
   | 'photos';
 
 const PUBLIC_INITIAL_STATE: PublicFormState = {
@@ -49,7 +51,7 @@ const PUBLIC_INITIAL_STATE: PublicFormState = {
 const PUBLIC_STEP_FIELDS: Record<PublicStepId, PublicFieldName[]> = {
   details: ['full_name', 'email', 'phone_local'],
   collect: ['pickup_address', 'photos'],
-  note: [],
+  note: ['note'],
   review: [],
 };
 
@@ -64,6 +66,11 @@ const validatePublicField = (
   photos: OrderPhoto[],
   copy: FormCopy,
 ): string => {
+  if (['full_name', 'email', 'pickup_address', 'note'].includes(field)) {
+    const value = data[field as keyof PublicFormState];
+    if (validateText(value, false, fieldLimit(field)))
+      return copy.errorTextInvalid;
+  }
   switch (field) {
     case 'full_name':
       return data.full_name.trim() ? '' : copy.errorFullNameRequired;

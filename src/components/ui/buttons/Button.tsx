@@ -29,9 +29,9 @@ type ButtonProps = {
 // Flat colors only — no ring/ring-offset halo. Variants that need to
 // read as "outlined" use a plain 1px border instead.
 const variants: Record<ButtonVariant, string> = {
-  primary: 'bg-brand-600 text-white hover:bg-brand-700',
+  primary: 'bg-brand-700 text-white hover:bg-brand-800',
   secondary:
-    'border border-slate-200 bg-white text-neutral-950 hover:border-brand-600 hover:bg-brand-600 hover:text-white',
+    'border border-slate-200 bg-white text-neutral-950 hover:border-brand-600 hover:bg-brand-800 hover:text-white',
   white: 'bg-white text-neutral-950 hover:bg-white/90',
   'outline-white':
     'border border-white/60 bg-white/10 text-white hover:border-white hover:bg-white/20',
@@ -50,7 +50,7 @@ const sizes: Record<ButtonSize, string> = {
 // smoothly together rather than snapping. No shadows — buttons stay
 // flat, lifting slightly on hover instead.
 const base =
-  'inline-flex items-center justify-center rounded-full font-semibold transition-all duration-300 ease-out cursor-pointer hover:-translate-y-0.5 active:translate-y-0';
+  'inline-flex items-center justify-center rounded-full font-semibold transition-all duration-300 ease-out cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-700 hover:-translate-y-0.5 active:translate-y-0';
 
 const isExternal = (href: string) =>
   href.startsWith('http') ||

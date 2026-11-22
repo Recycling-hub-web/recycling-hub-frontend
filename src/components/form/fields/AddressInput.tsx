@@ -10,7 +10,11 @@ import {
   type SelectedAddress,
   toSelectedAddress,
 } from '../../../lib/geoapify';
-import { fieldStateClasses, getNestedValue } from '../utils';
+import {
+  fieldErrorAttributes,
+  fieldStateClasses,
+  getNestedValue,
+} from '../utils';
 
 const DEBOUNCE_MS = 300;
 const MIN_QUERY_LENGTH = 3;
@@ -85,6 +89,7 @@ const AddressInput = ({
 }: AddressInputProps) => {
   const value = (getNestedValue(formData, field) as string | undefined) ?? '';
   const error = errors?.[field];
+  const inputId = useId();
   const listboxId = useId();
 
   const [suggestions, setSuggestions] = useState<GeoapifyFeature[]>([]);
@@ -258,7 +263,10 @@ const AddressInput = ({
 
   return (
     <div className={`mb-4 ${className}`} data-field={dataField ?? field}>
-      <label className="block text-sm font-medium text-slate-900">
+      <label
+        htmlFor={inputId}
+        className="block text-sm font-medium text-slate-900"
+      >
         {label} {required && <span className="text-red-600">*</span>}
       </label>
       <div className="relative mt-2" ref={wrapperRef}>
@@ -267,8 +275,11 @@ const AddressInput = ({
           aria-hidden="true"
         />
         <input
+          id={inputId}
           type="text"
           name={field}
+          aria-required={required}
+          {...fieldErrorAttributes(inputId, error)}
           required={required}
           maxLength={1000}
           role="combobox"
@@ -315,7 +326,11 @@ const AddressInput = ({
           </div>
         )}
       </div>
-      {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
+      {error && (
+        <p id={`${inputId}-error`} className="mt-1 text-xs text-red-600">
+          {error}
+        </p>
+      )}
     </div>
   );
 };

@@ -1,4 +1,5 @@
 import { Trash2 } from 'lucide-react';
+import { useState } from 'react';
 
 import { ALLOWED_FILE_TYPES } from '../../../constants/uploads';
 import { useToast } from '../../ui/toast/ToastContext';
@@ -31,10 +32,14 @@ const StatusFileUpload = ({
   disabled = false,
   required = false,
   uploading = false,
-  progress = 0,
+  progress,
   compact = false,
 }: StatusFileUploadProps) => {
   const toast = useToast();
+  const [validationError, setValidationError] = useState('');
+  const unavailable = disabled || uploading;
+  const safeProgress =
+    progress === undefined ? undefined : Math.min(100, Math.max(0, progress));
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = e.target.files?.[0];
@@ -48,6 +53,7 @@ const StatusFileUpload = ({
 
     if (!isAllowed) {
       const msg = `Invalid file type "${selected.name}". Only ${ALLOWED_FILE_TYPES.label} files are allowed.`;
+      setValidationError(msg);
       toast.error('Invalid file type', msg);
       onError?.(msg);
       e.target.value = '';
@@ -56,12 +62,14 @@ const StatusFileUpload = ({
 
     if (selected.size > MAX_FILE_SIZE) {
       const msg = 'File size must not exceed 10MB.';
+      setValidationError(msg);
       toast.error('File too large', msg);
       onError?.(msg);
       e.target.value = '';
       return;
     }
 
+    setValidationError('');
     onError?.('');
     onFileChange(selected);
     e.target.value = '';
@@ -70,17 +78,22 @@ const StatusFileUpload = ({
   return (
     <div className="space-y-2">
       <div>
-        <label className="block text-sm font-medium text-slate-900">
+        <label
+          htmlFor={id}
+          className="block text-sm font-medium text-slate-900"
+        >
           {label} {required && <span className="text-red-500">*</span>}
         </label>
         {description && (
-          <p className="mt-0.5 text-xs text-slate-400">{description}</p>
+          <p id={`${id}-description`} className="mt-0.5 text-xs text-slate-600">
+            {description}
+          </p>
         )}
       </div>
 
       <label
         htmlFor={id}
-        className={`group relative flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-white px-6 text-center transition-all duration-200 hover:border-brand-500 hover:bg-brand-50/40 ${compact ? 'py-4' : 'py-10'}`}
+        className={`group relative flex cursor-pointer focus-within:ring-2 focus-within:ring-brand-700 focus-within:ring-offset-2 ${unavailable ? 'cursor-not-allowed opacity-60' : ''} flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-white px-6 text-center transition-all duration-200 hover:border-brand-500 hover:bg-brand-50/40 ${compact ? 'py-4' : 'py-10'}`}
       >
         <div
           className={`flex items-center justify-center rounded-lg bg-brand-100 text-brand-600 transition ${compact ? 'mb-2 size-10' : 'mb-4 size-14'}`}
@@ -101,7 +114,7 @@ const StatusFileUpload = ({
         </div>
 
         <p className="text-sm font-semibold text-slate-800">{label}</p>
-        <p className="mt-2 text-xs text-slate-600">
+        <p id={`${id}-requirements`} className="mt-2 text-xs text-slate-600">
           {ALLOWED_FILE_TYPES.label} – Max 10MB
         </p>
 
@@ -109,20 +122,36 @@ const StatusFileUpload = ({
           id={id}
           type="file"
           accept={ALLOWED_FILE_TYPES.extensions.join(',')}
-          className="hidden"
-          disabled={disabled}
+          className="sr-only"
+          aria-label={label}
+          aria-required={required}
+          aria-invalid={Boolean(validationError)}
+          aria-describedby={`${id}-requirements${description ? ` ${id}-description` : ''}${validationError ? ` ${id}-error` : ''}`}
+          disabled={unavailable}
           onChange={handleChange}
         />
       </label>
 
+      {validationError && (
+        <p id={`${id}-error`} role="alert" className="text-sm text-red-700">
+          {validationError}
+        </p>
+      )}
+
       {file && (
         <div className="rounded-xl border border-slate-200 bg-white px-4 py-3">
           <div className="flex items-center justify-between">
-            <span className="truncate text-sm text-slate-500">{file.name}</span>
+            <span
+              role="status"
+              className="min-w-0 truncate text-sm text-slate-600"
+            >
+              {file.name}
+            </span>
             {!uploading && (
               <button
                 type="button"
                 onClick={onRemove}
+                disabled={unavailable}
                 className="flex items-center justify-center gap-2 rounded-lg border border-red-600 px-4 py-2 text-sm font-medium text-red-600 transition hover:border-red-700 hover:text-red-700 disabled:opacity-50"
               >
                 <Trash2 className="size-4" />
@@ -131,16 +160,26 @@ const StatusFileUpload = ({
             )}
             {uploading && (
               <span className="text-xs font-medium text-brand-600">
-                {progress}%
+                {safeProgress === undefined ? 'Uploading…' : `${safeProgress}%`}
               </span>
             )}
           </div>
 
           {uploading && (
-            <div className="mt-3 h-1.5 w-full rounded-lg bg-slate-100">
+            <div
+              role="progressbar"
+              aria-label={`Uploading ${file.name}`}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={safeProgress}
+              className="mt-3 h-1.5 w-full rounded-lg bg-slate-100"
+            >
               <div
                 className="h-full rounded-lg bg-brand-500 transition-all duration-300"
-                style={{ width: `${progress}%` }}
+                style={{
+                  width:
+                    safeProgress === undefined ? '100%' : `${safeProgress}%`,
+                }}
               />
             </div>
           )}

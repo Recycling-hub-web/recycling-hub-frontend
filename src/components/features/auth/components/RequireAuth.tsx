@@ -5,6 +5,7 @@ import type { ReactNode } from 'react';
 import { useEffect } from 'react';
 
 import { useAuth } from '../../../../contexts/AuthContext';
+import { loginPathFor } from '../../../../lib/returnPath';
 import type { UserRole } from '../../../../types/auth';
 import { Loading } from '../../../ui/loading/Loading';
 
@@ -29,9 +30,11 @@ const RequireAuth = ({ children, roles }: RequireAuthProps) => {
   useEffect(() => {
     if (loading) return;
     if (!user) {
-      // Every post-login path always lands on the user's overview page
-      // (see LoginView/VerifyOtpView) — no `?next=` to preserve here.
-      router.replace('/login');
+      router.replace(
+        loginPathFor(
+          `${window.location.pathname}${window.location.search}${window.location.hash}`,
+        ),
+      );
     } else if (roles && !roles.includes(user.role)) {
       router.replace('/unauthorized');
     }

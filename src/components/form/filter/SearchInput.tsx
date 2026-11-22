@@ -6,6 +6,7 @@ type SearchInputProps = {
   onChange: ChangeEventHandler<HTMLInputElement>;
   placeholder?: string;
   className?: string;
+  ariaLabel?: string;
 };
 
 const SearchInput = ({
@@ -13,11 +14,13 @@ const SearchInput = ({
   onChange,
   placeholder = 'Search...',
   className = '',
+  ariaLabel,
 }: SearchInputProps) => (
   <div className={`relative min-w-[200px] flex-1 ${className}`}>
     <LuSearch className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
     <input
-      type="text"
+      type="search"
+      aria-label={ariaLabel ?? placeholder}
       value={value}
       onChange={onChange}
       placeholder={placeholder}

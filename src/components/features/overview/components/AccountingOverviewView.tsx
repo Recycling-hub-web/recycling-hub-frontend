@@ -48,12 +48,16 @@ const AccountingOverviewView = () => {
             label="Unverified records"
             value={stats.loading ? null : stats.count}
             href="/accounting/finance"
+            error={stats.error}
+            onRetry={stats.refetch}
           />
           <OverviewStatCard
             icon={LuWallet}
             label="Amount pending"
             value={stats.loading ? null : `RM${stats.amountPending.toFixed(2)}`}
             href="/accounting/finance"
+            error={stats.error}
+            onRetry={stats.refetch}
           />
           <OverviewStatCard
             icon={LuCalendarCheck}
@@ -64,6 +68,8 @@ const AccountingOverviewView = () => {
                 : `RM${stats.amountReimbursedThisMonth.toFixed(2)}`
             }
             href="/accounting/finance"
+            error={stats.error}
+            onRetry={stats.refetch}
           />
         </OverviewStatGrid>
       }
@@ -82,7 +88,9 @@ const AccountingOverviewView = () => {
             </h2>
             <DonutChart
               data={financeStatusData}
-              loading={!stats.financeStatusCounts}
+              loading={stats.loading}
+              error={stats.error}
+              onRetry={stats.refetch}
             />
           </SectionContainer>
         </div>

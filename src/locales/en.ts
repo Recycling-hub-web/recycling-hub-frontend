@@ -55,6 +55,8 @@ const en = {
   },
 
   nav: {
+    collectionSupportShort: 'Status & certificates',
+    collectionSupport: 'Collection status & certificates',
     whoWeHelp: 'Who we help',
     serviceGroupMain: 'Collection & recycling',
     serviceGroupSupport: 'Business support',
@@ -1281,6 +1283,18 @@ const en = {
     ],
   },
 
+  countryCallingCode: 'Country calling code',
+  messageHandoff: {
+    notice:
+      'Your message is ready. Send it in WhatsApp to contact our team. Nothing has been submitted through this website.',
+    preview: 'Message to send',
+    copy: 'Copy message',
+    copied: 'Message copied.',
+    copyFailed: 'Select and copy the message below, or use the email option.',
+    email: 'Continue by email',
+    emailNote: 'Review and send the email in your email app.',
+  },
+
   trackTrace: {
     hero: {
       eyebrow: 'Track & Trace',
@@ -1318,7 +1332,7 @@ const en = {
       'Collection Status Update',
     ],
     sectionHeading2: {
-      eyebrow: 'Submit a Request',
+      eyebrow: 'Prepare a Request',
       headline: 'Tell Us What You Need',
     },
     form: {
@@ -1336,11 +1350,10 @@ const en = {
         'Approximate pickup date, address, or anything else that helps us find your collection',
       errorNameRequired: 'Please enter your full name.',
       errorEmailInvalid: 'Enter a valid email address.',
-      submitButton: 'Submit Request',
-      submittedButton: 'Request Sent',
-      successPrefix: "Request received — we'll email your ",
-      successSuffix: ' within 2 business days.',
-      whatsappNote: 'Prefer to talk it through? WhatsApp us instead.',
+      submitButton: 'Continue in WhatsApp',
+      submittedButton: 'Open WhatsApp again',
+      whatsappNote:
+        'Review and send your message in WhatsApp. It is not sent by this website.',
     },
     closingNote:
       "Requests are handled by our team, not an automated system — if your reference number is hard to find, just describe the collection as best you can and we'll match it on our end.",
@@ -1398,6 +1411,25 @@ const en = {
       description:
         'Tell us what you have and where to collect it. Free household pickup requires at least 3 devices; the team will confirm the arrangements.',
     },
+    confirmation: {
+      callbackTitle: 'Callback request received',
+      businessTitle: 'Collection request received',
+      reference: 'Request reference',
+      phone: 'Contact number',
+      keepReference: 'Keep this reference when contacting our team.',
+      callbackNext:
+        'Our team will call the number you provided. Your pickup is not booked yet.',
+      businessNext:
+        'Our team will review your details and call to agree the scope, quotation and collection time. Your pickup is not booked yet.',
+      another: 'Make another request',
+    },
+    businessHero: {
+      eyebrow: 'Business and bulk collection',
+      headline: 'Request a business',
+      headlineAccent: 'collection.',
+      description:
+        'Share your collection address and photos. Our team will confirm the scope, quotation and pickup time by phone before collection is arranged.',
+    },
     typeSelector: {
       changeOption: 'Change request type',
       heading: 'What are you recycling?',
@@ -1414,6 +1446,9 @@ const en = {
       },
     },
     quickForm: {
+      individual: 'Individual',
+      business: 'Business',
+      errorSummary: 'Please check your contact number.',
       heading: 'Request a Callback',
       subheading:
         "Leave your number and we'll call you back. Household pickup requires at least 3 devices.",
@@ -1427,6 +1462,9 @@ const en = {
       errorMessage: 'Something went wrong. Please try again.',
     },
     form: {
+      errorSummary: 'Please correct the following fields.',
+      errorTextInvalid:
+        'Remove unsupported characters and check the field length.',
       heading: 'Pickup Request Details',
       subheading:
         "Fill in your details and we'll be in touch to confirm a collection time.",

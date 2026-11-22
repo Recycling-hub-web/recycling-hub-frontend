@@ -1,0 +1,191 @@
+{
+  "batch": "Implementation progress: batches 1 and 2",
+  "original_audit": "UI-UX-Audit-2026-11-22.html",
+  "scope": "Local frontend and finance API changes. No deployment, account changes, real business submissions or payments.",
+  "findings": [
+    {
+      "id": "01",
+      "title": "Certificate requests can disappear behind a success message",
+      "status": "implemented",
+      "implementation": "Replaced simulated certificate success with an explicit WhatsApp draft; fields remain editable, with selectable text and email fallback. Backend ticket persistence remains future work."
+    },
+    {
+      "id": "02",
+      "title": "Quote confirmation precedes the actual WhatsApp message",
+      "status": "implemented",
+      "implementation": "Preserved existing honest quote copy; kept the page open during handoff and added copy/email fallbacks with no delivery claim."
+    },
+    {
+      "id": "03",
+      "title": "Financial dashboard failures look like real zero balances",
+      "status": "implemented",
+      "implementation": "Accounting and driver overview errors stop loading, show explicit failure/retry, and never substitute successful zero balances for failures."
+    },
+    {
+      "id": "04",
+      "title": "Read-only finance rows have no keyboard route to detail",
+      "status": "implemented",
+      "implementation": "Finance requester names are native detail links with keyboard access and normal link behavior."
+    },
+    {
+      "id": "05",
+      "title": "Proof uploads cannot be reached using the keyboard",
+      "status": "implemented",
+      "implementation": "Proof picker is tabbable with visible focus, associated requirements/errors and determinate or indeterminate progress semantics."
+    },
+    {
+      "id": "06",
+      "title": "Collection-point toggles are mouse-only",
+      "status": "implemented",
+      "implementation": "Both toggle entry points use the same native checkbox switch, stable setting name and visible focus."
+    },
+    {
+      "id": "07",
+      "title": "Text and primary-button contrast need stronger tokens",
+      "status": "partially implemented",
+      "implementation": "Shared Button/PublicButton primary colours use brand-700; hero accents and footer supporting text use darker slate. Remaining bespoke actions/text need the broader contrast sweep."
+    },
+    {
+      "id": "08",
+      "title": "Floating WhatsApp button overlaps the phone callback action",
+      "status": "implemented",
+      "implementation": "Floating WhatsApp is suppressed on pickup, quote, contact and certificate forms; sticky pickup CTA is suppressed on certificates too."
+    },
+    {
+      "id": "09",
+      "title": "The initial pickup choice has no way back",
+      "status": "implemented",
+      "implementation": "Change request type returns to the selector; mounted forms preserve drafts while switching."
+    },
+    {
+      "id": "10",
+      "title": "Business requests inherit household-focused page framing",
+      "status": "implemented",
+      "implementation": "Business flow has its own hero and an in-flow scope/quotation/phone scheduling explanation."
+    },
+    {
+      "id": "11",
+      "title": "Track & Trace is difficult to discover for returning customers",
+      "status": "implemented",
+      "implementation": "Added a visible status/certificate destination to desktop and mobile navigation, with a concise visible label and complete accessible name. Verified that the header fits at 1200px."
+    },
+    {
+      "id": "12",
+      "title": "Validation rules and error presentation have two competing owners",
+      "status": "implemented",
+      "implementation": "Public step and callback forms now own their domain validation via an explicit ValidatedForm mode. Blur and Continue use the same localized errors, summary links focus the affected field, and unsupported text/length rules remain enforced."
+    },
+    {
+      "id": "13",
+      "title": "Inline field errors are not programmatically connected",
+      "status": "implemented",
+      "implementation": "Inline domain errors are linked to the audited input, password, phone, select, textarea and address controls through stable IDs and invalid state."
+    },
+    {
+      "id": "14",
+      "title": "Several search and filter controls lack accessible names",
+      "status": "implemented",
+      "implementation": "Shared search inputs expose persistent accessible names, finance status/sort controls have explicit names, and calling-code selectors are named, including localized public EN/BM labels."
+    },
+    {
+      "id": "15",
+      "title": "Finance records cannot be located beyond a status filter",
+      "status": "implemented",
+      "implementation": "Added backend-supported requester/driver/order/request-reference search, inclusive MYT creation dates and allowlisted sorting. The UI debounces search, clears selection on filter changes, displays active filters and provides Clear all."
+    },
+    {
+      "id": "16",
+      "title": "Finance table omits currency context and numeric alignment",
+      "status": "implemented",
+      "implementation": "Finance amounts use one MYR formatter with two decimal places, grouping, tabular numerals, right alignment and explicit currency headings. Unknown amounts remain a dash."
+    },
+    {
+      "id": "17",
+      "title": "Pagination can override the server total with a partial page",
+      "status": "implemented",
+      "implementation": "Pagination uses the server total instead of inferring a total from a partial page. Loading and empty ranges are coherent, and finance resets to page 1 if a requested page disappears. Covered partial-page totals and HTTP 404 recovery."
+    },
+    {
+      "id": "18",
+      "title": "Filtered finance results use a first-use empty message",
+      "status": "implemented",
+      "implementation": "Filtered finance results now say No matching finance records with Clear filters, while genuinely empty accounts keep their onboarding explanation."
+    },
+    {
+      "id": "19",
+      "title": "Driver route summary counts only the fetched page",
+      "status": "implemented",
+      "implementation": "Open-route stop count uses the existing server aggregate rather than the fetched preview page."
+    },
+    {
+      "id": "20",
+      "title": "Session recovery discards the intended destination",
+      "status": "implemented",
+      "implementation": "Middleware and client guards preserve local return destinations. Password and OTP login resolve destinations against the refreshed user role; malformed, external and wrong-role destinations fall back to the role home."
+    },
+    {
+      "id": "21",
+      "title": "Public language choice does not carry into operations",
+      "status": "partially implemented",
+      "implementation": "Public callback type labels, country calling-code labels, validation summaries and confirmations now have EN/BM copy. Full auth/operations locale routing and translations remain outstanding."
+    },
+    {
+      "id": "22",
+      "title": "Successful public requests leave no durable on-page receipt",
+      "status": "implemented",
+      "implementation": "Accepted callback and business requests show an on-page confirmation with the server-acknowledged ID, masked contact number and next steps. Starting another request is explicit; redundant success toasts were removed."
+    },
+    {
+      "id": "23",
+      "title": "Public animation does not consistently respect reduced motion",
+      "status": "implemented",
+      "implementation": "Added a shared reduced-motion preference and scrolling wrapper. Hero/reveal content honors the preference, Lenis uses native wheel behavior, and global CSS suppresses decorative animations/transitions. Changing the preference preserves drafts."
+    },
+    {
+      "id": "24",
+      "title": "An old invoice prototype remains publicly reachable",
+      "status": "implemented",
+      "implementation": "The obsolete invoice prototype now returns 404 using getStaticProps, preserving its source as an internal archive."
+    },
+    {
+      "id": "25",
+      "title": "Password visibility control is too small and suppresses focus",
+      "status": "implemented",
+      "implementation": "Password visibility has a 44px target, visible focus, input end padding and explicit password autocomplete modes."
+    }
+  ],
+  "verification": {
+    "typescript": "passed after batch 2",
+    "changed_file_eslint": "passed; backend Black/isort/Flake8 checks also passed",
+    "mocked_regression_suite": "35 frontend tests passed, including 20 audit regression tests across both batches",
+    "final_public_flow_recheck": "Reviewed updated finance desktop/mobile, confirmation and 1200px navigation screenshots; visible header controls fit inside the viewport.",
+    "repository_lint": "Still fails only in unchanged scripts/verify-seo-batch.cjs, scripts/verify-service-navbar.cjs and scripts/verify-services.cjs (83 errors, 8 warnings).",
+    "production_build": "Passed: next build --no-lint after batch 2. Type checking and production compilation passed; full lint was checked separately and remains limited by the three unchanged verification scripts.",
+    "backend_finance_suite": "50 tests passed (43 existing, 7 new) using an isolated in-memory SQLite database; real network calls blocked"
+  },
+  "evidence": [
+    "after-batch-1/callback-mobile.png",
+    "after-batch-1/business-mobile.png",
+    "after-batch-1/login-mobile.png",
+    "after-batch-1/track-trace-handoff.png",
+    "after-batch-2/finance-desktop.png",
+    "after-batch-2/finance-mobile.png",
+    "after-batch-2/callback-confirmation-mobile.png",
+    "after-batch-2/navigation-1200.png"
+  ],
+  "limitations": [
+    "Protected flows were tested with synthetic identities and intercepted API responses. Real backend/production role workflows were not exercised.",
+    "Real file transfer and external WhatsApp/email delivery were not attempted.",
+    "Original audit report and original findings remain unchanged as a baseline."
+  ],
+  "remaining_work": [
+    "Complete auth and operational portal locale routing and translations; public EN/BM improvements do not constitute full portal localization.",
+    "Finish the bespoke-action and supporting-text contrast sweep beyond the shared components already corrected.",
+    "Validate production role workflows and real delivery/upload integrations with authorized test accounts before release."
+  ],
+  "release_notes": [
+    "Deploy the frontend and finance API updates together so search, dates and ordering are honored by the server.",
+    "No database schema migration is required for the finance filter additions.",
+    "Original audit HTML/PDF and original findings remain the baseline; this progress file records implementation status."
+  ]
+}

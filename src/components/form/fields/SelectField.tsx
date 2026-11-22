@@ -1,6 +1,6 @@
 import { useId } from 'react';
 
-import { getNestedValue } from '../utils';
+import { fieldErrorAttributes, getNestedValue } from '../utils';
 
 type SelectOption =
   | string
@@ -59,6 +59,7 @@ const SelectField = ({
         name={field}
         required={required}
         aria-required={required}
+        {...fieldErrorAttributes(inputId, errors?.[field])}
         value={value}
         onChange={(e) => updateFormData(field, e.target.value)}
         onBlur={onBlur}
@@ -91,7 +92,9 @@ const SelectField = ({
       </select>
 
       {errors?.[field] && (
-        <p className="mt-1 text-xs text-red-600">{errors[field]}</p>
+        <p id={`${inputId}-error`} className="mt-1 text-xs text-red-600">
+          {errors[field]}
+        </p>
       )}
     </div>
   );

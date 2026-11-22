@@ -12,6 +12,10 @@ type ListFinanceRecordsParams = {
   page?: number;
   pageSize?: number;
   status?: FinanceStatus;
+  search?: string;
+  createdFrom?: string;
+  createdTo?: string;
+  ordering?: string;
 };
 
 // GET /finance/ — accounting/admin/staff see every record; a driver
@@ -20,12 +24,20 @@ const listFinanceRecords = ({
   page = 1,
   pageSize,
   status,
+  search,
+  createdFrom,
+  createdTo,
+  ordering,
 }: ListFinanceRecordsParams = {}): Promise<
   Paginated<FinanceRecordListItem>
 > => {
   const params = new URLSearchParams({ page: String(page) });
   if (pageSize) params.set('page_size', String(pageSize));
   if (status) params.set('status', status);
+  if (search) params.set('search', search);
+  if (createdFrom) params.set('created_from', createdFrom);
+  if (createdTo) params.set('created_to', createdTo);
+  if (ordering) params.set('ordering', ordering);
   return apiFetch(`/finance/?${params.toString()}`);
 };
 

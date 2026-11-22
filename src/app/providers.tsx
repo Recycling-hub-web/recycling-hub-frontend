@@ -1,10 +1,10 @@
 'use client';
 
-import { ReactLenis } from 'lenis/react';
 import { usePathname } from 'next/navigation';
 import type { ReactNode } from 'react';
 import { useEffect, useRef } from 'react';
 
+import { SmoothScroll } from '../components/ui/SmoothScroll';
 import { ToastProvider } from '../components/ui/toast/ToastContext';
 import { AuthProvider } from '../contexts/AuthContext';
 import { AuthFlowProvider } from '../contexts/AuthFlowContext';
@@ -52,12 +52,9 @@ const Providers = ({ children }: { children: ReactNode }) => (
   <AuthProvider>
     <AuthFlowProvider>
       <ToastProvider>
-        <ReactLenis
-          root
-          options={{ lerp: 0.1, duration: 1.2, smoothWheel: true }}
-        >
+        <SmoothScroll root>
           <PageTransition>{children}</PageTransition>
-        </ReactLenis>
+        </SmoothScroll>
       </ToastProvider>
     </AuthFlowProvider>
   </AuthProvider>

@@ -5,6 +5,8 @@ export default defineConfig({
   testDir: './e2e',
   testMatch: [
     'input-validation.spec.ts',
+    'ui-audit-fixes.spec.ts',
+    'ui-audit-followup.spec.ts',
     'driver-route-selection.spec.ts',
     'system-notifications.spec.ts',
   ],

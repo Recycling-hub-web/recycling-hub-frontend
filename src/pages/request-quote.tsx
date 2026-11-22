@@ -4,6 +4,10 @@ import { type FormEvent, type ReactElement, useEffect, useState } from 'react';
 import { ValidatedForm } from '../components/form/ValidatedForm';
 import { Meta } from '../components/layout/Meta';
 import { PublicSeoSchema } from '../components/layout/PublicSeoSchema';
+import {
+  MessageHandoff,
+  openWhatsAppDraft,
+} from '../components/public/shared/MessageHandoff';
 import { FadeIn } from '../components/ui/FadeIn';
 import { ReusableHero } from '../components/ui/hero';
 import { BRAND, SERVICES } from '../constants/content';
@@ -36,6 +40,16 @@ const RequestQuotePage: NextPageWithLayout = () => {
     }
   }, [router.query.service]);
 
+  const message = [
+    content.hero.headline,
+    `${content.form.fullName}: ${fullName.trim()}`,
+    `${content.form.email}: ${email.trim()}`,
+    `${content.form.phone}: ${phone.trim()}`,
+    `${content.form.company}: ${company.trim()}`,
+    `${content.form.serviceLabel}: ${services.cards[service as keyof typeof services.cards].title}`,
+    `${content.form.detailsLabel}: ${details.trim()}`,
+  ].join('\n');
+
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!fullName.trim()) {
@@ -47,19 +61,9 @@ const RequestQuotePage: NextPageWithLayout = () => {
       return;
     }
     setError('');
-    const message = [
-      content.hero.headline,
-      `${content.form.fullName}: ${fullName.trim()}`,
-      `${content.form.email}: ${email.trim()}`,
-      `${content.form.phone}: ${phone.trim()}`,
-      `${content.form.company}: ${company.trim()}`,
-      `${content.form.serviceLabel}: ${services.cards[service as keyof typeof services.cards].title}`,
-      `${content.form.detailsLabel}: ${details.trim()}`,
-    ].join('\n');
+
     setSubmitted(true);
-    window.location.assign(
-      `https://wa.me/${BRAND.phone.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`,
-    );
+    openWhatsAppDraft(message);
   };
 
   return (
@@ -204,9 +208,10 @@ const RequestQuotePage: NextPageWithLayout = () => {
 
               {error && <p className="mt-4 text-sm text-red-500">{error}</p>}
               {submitted && (
-                <p className="mt-4 text-sm font-medium text-brand-600">
-                  {content.form.successMessage}
-                </p>
+                <MessageHandoff
+                  message={message}
+                  subject={content.hero.headline}
+                />
               )}
 
               <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
@@ -215,7 +220,7 @@ const RequestQuotePage: NextPageWithLayout = () => {
                 </p>
                 <button
                   type="submit"
-                  className="inline-flex w-full items-center justify-center rounded-full bg-brand-600 px-6 py-3 text-sm font-semibold text-white ring-2 ring-brand-600 ring-offset-2 transition-all duration-300 ease-out hover:bg-brand-700 hover:ring-brand-700 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+                  className="inline-flex w-full items-center justify-center rounded-full bg-brand-700 px-6 py-3 text-sm font-semibold text-white ring-2 ring-brand-700 ring-offset-2 transition-all duration-300 ease-out hover:bg-brand-800 hover:ring-brand-800 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
                 >
                   {submitted
                     ? content.form.submittedButton
@@ -246,7 +251,9 @@ const RequestQuotePage: NextPageWithLayout = () => {
 };
 
 RequestQuotePage.getLayout = (page: ReactElement) => (
-  <PublicLayout navVariant="light">{page}</PublicLayout>
+  <PublicLayout navVariant="light" floatingContact={false}>
+    {page}
+  </PublicLayout>
 );
 
 export default RequestQuotePage;

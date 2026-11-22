@@ -1,6 +1,10 @@
 import { useId } from 'react';
 
-import { fieldStateClasses, getNestedValue } from '../utils';
+import {
+  fieldErrorAttributes,
+  fieldStateClasses,
+  getNestedValue,
+} from '../utils';
 import { fieldLimit } from '../validation';
 
 type InputFieldProps = {
@@ -90,6 +94,7 @@ const InputField = ({
           name={field}
           required={required}
           aria-required={required}
+          {...fieldErrorAttributes(inputId, error)}
           maxLength={maxLength ?? fieldLimit(field)}
           min={min ?? (isNonnegative ? 0 : undefined)}
           max={max ?? (isAmount ? 99999999.99 : undefined)}
@@ -111,7 +116,11 @@ const InputField = ({
         />
       </div>
 
-      {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
+      {error && (
+        <p id={`${inputId}-error`} className="mt-1 text-xs text-red-600">
+          {error}
+        </p>
+      )}
       {!error && disabled && helperText && (
         <p className="mt-1 text-xs text-slate-400">{helperText}</p>
       )}

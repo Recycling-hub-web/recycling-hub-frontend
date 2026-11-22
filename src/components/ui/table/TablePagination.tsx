@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { LuArrowLeft, LuArrowRight } from 'react-icons/lu';
 
 type TablePaginationProps = {
@@ -26,17 +27,19 @@ const TablePagination = ({
   itemLabel,
   loading,
 }: TablePaginationProps) => {
-  const displayTotal =
-    itemCount < itemsPerPage
-      ? (currentPage - 1) * itemsPerPage + itemCount
-      : totalCount;
-  const totalPages = Math.max(Math.ceil(displayTotal / itemsPerPage), 1);
+  const totalPages = Math.max(Math.ceil(totalCount / itemsPerPage), 1);
+  useEffect(() => {
+    if (!loading && currentPage > totalPages) onPageChange(totalPages);
+  }, [loading, currentPage, totalPages, onPageChange]);
 
+  const empty = itemCount === 0 || totalCount === 0 || currentPage > totalPages;
+  const emptyLabel =
+    totalCount === 0 ? `0 ${itemLabel}` : `No ${itemLabel} on this page`;
   return (
     <div className="flex flex-col items-center justify-between gap-2 border-t border-slate-200 p-6 text-sm text-slate-500 sm:flex-row">
-      {itemCount === 0 && !loading ? (
-        <span />
-      ) : (
+      {loading && <span role="status">Loading {itemLabel}…</span>}
+      {!loading && empty && <span>{emptyLabel}</span>}
+      {!loading && !empty && (
         <span>
           Showing{' '}
           <span className="font-medium text-slate-700">
@@ -44,9 +47,9 @@ const TablePagination = ({
           </span>{' '}
           to{' '}
           <span className="font-medium text-slate-700">
-            {(currentPage - 1) * itemsPerPage + itemCount}
+            {Math.min((currentPage - 1) * itemsPerPage + itemCount, totalCount)}
           </span>{' '}
-          of <span className="font-medium text-slate-700">{displayTotal}</span>{' '}
+          of <span className="font-medium text-slate-700">{totalCount}</span>{' '}
           {itemLabel}
         </span>
       )}
@@ -61,7 +64,7 @@ const TablePagination = ({
           Prev
         </button>
         <span>
-          Page {currentPage} of {totalPages}
+          Page {Math.min(currentPage, totalPages)} of {totalPages}
         </span>
         <button
           type="button"

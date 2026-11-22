@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import type { FormEvent } from 'react';
 import { useEffect, useState } from 'react';
 import { LuShieldCheck } from 'react-icons/lu';
@@ -9,7 +9,11 @@ import { useAuth } from '../../../../contexts/AuthContext';
 import { useAuthFlow } from '../../../../contexts/AuthFlowContext';
 import { ApiError } from '../../../../lib/api';
 import type { Dictionary } from '../../../../lib/dictionary';
-import { ROLE_HOME } from '../../../../types/auth';
+import {
+  loginPathFor,
+  returnPathForRole,
+  safeReturnPath,
+} from '../../../../lib/returnPath';
 import { OtpInputField } from '../../../form/fields/OtpInputField';
 import { ValidatedForm } from '../../../form/ValidatedForm';
 import { AlertBanner } from '../../../ui/AlertBanner';
@@ -25,6 +29,7 @@ const RESEND_COOLDOWN_SECONDS = 60;
 
 const VerifyOtpView = ({ t }: { t: Dictionary['auth']['verifyOtp'] }) => {
   const router = useRouter();
+  const next = safeReturnPath(useSearchParams()?.get('next'));
   const { user, refreshUser } = useAuth();
   const { pendingOtp, setPendingOtp } = useAuthFlow();
   const { execute: verifyOtp, loading: submitting } = useVerifyOtp();
@@ -65,18 +70,18 @@ const VerifyOtpView = ({ t }: { t: Dictionary['auth']['verifyOtp'] }) => {
   // broken form.
   useEffect(() => {
     if (user) {
-      router.replace(ROLE_HOME[user.role]);
+      router.replace(returnPathForRole(next, user.role));
     } else if (!pendingOtp) {
-      router.replace('/login');
+      router.replace(loginPathFor(next));
     }
-  }, [user, pendingOtp, router]);
+  }, [user, pendingOtp, router, next]);
 
   if (user || !pendingOtp) return null;
 
   const goToDestination = async () => {
     await refreshUser();
     setPendingOtp(null);
-    router.replace('/dashboard');
+    // The user effect resolves the return path against the refreshed role.
   };
 
   const handleSubmit = async (e: FormEvent) => {

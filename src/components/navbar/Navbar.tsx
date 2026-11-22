@@ -71,6 +71,7 @@ const Navbar = ({ variant = 'dark' }: NavbarProps) => {
     { label: dict.nav.home, href: '/' },
     { label: dict.nav.about, href: '/about' },
     { label: dict.nav.resources, href: '/resources' },
+    { label: dict.nav.collectionSupportShort, href: '/track-trace' },
     { label: dict.nav.contact, href: '/contact' },
   ];
 
@@ -176,6 +177,11 @@ const Navbar = ({ variant = 'dark' }: NavbarProps) => {
               <Link
                 key={link.href}
                 href={link.href}
+                aria-label={
+                  link.href === '/track-trace'
+                    ? dict.nav.collectionSupport
+                    : undefined
+                }
                 onMouseEnter={() => setHoveredHref(link.href)}
                 className={`group relative flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-xs font-medium transition-colors duration-200 lg:text-sm ${
                   active ? getLinkActiveCls() : getLinkCls()
@@ -206,6 +212,11 @@ const Navbar = ({ variant = 'dark' }: NavbarProps) => {
               <Link
                 key={link.href}
                 href={link.href}
+                aria-label={
+                  link.href === '/track-trace'
+                    ? dict.nav.collectionSupport
+                    : undefined
+                }
                 onMouseEnter={() => setHoveredHref(link.href)}
                 className={`group relative flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-xs font-medium transition-colors duration-200 lg:text-sm ${
                   active ? getLinkActiveCls() : getLinkCls()
@@ -271,6 +282,11 @@ const Navbar = ({ variant = 'dark' }: NavbarProps) => {
                   <Link
                     key={link.href}
                     href={link.href}
+                    aria-label={
+                      link.href === '/track-trace'
+                        ? dict.nav.collectionSupport
+                        : undefined
+                    }
                     className={`group flex items-center gap-2 rounded-lg px-3.5 py-2.5 text-sm font-medium transition-colors duration-150 ${
                       active
                         ? 'bg-brand-50 text-brand-600'
@@ -301,6 +317,11 @@ const Navbar = ({ variant = 'dark' }: NavbarProps) => {
                   <Link
                     key={link.href}
                     href={link.href}
+                    aria-label={
+                      link.href === '/track-trace'
+                        ? dict.nav.collectionSupport
+                        : undefined
+                    }
                     className={`group flex items-center gap-2 rounded-lg px-3.5 py-2.5 text-sm font-medium transition-colors duration-150 ${
                       active
                         ? 'bg-brand-50 text-brand-600'

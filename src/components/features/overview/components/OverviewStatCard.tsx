@@ -10,6 +10,8 @@ type OverviewStatCardProps = {
   value: number | string | null;
   /** Optional — when set, the whole tile is a link to that module. */
   href?: string;
+  error?: string;
+  onRetry?: () => void;
 };
 
 /** One KPI tile on a role's Overview — the shared ui/card/StatCard with
@@ -19,12 +21,16 @@ const OverviewStatCard = ({
   label,
   value,
   href,
+  error,
+  onRetry,
 }: OverviewStatCardProps) => (
   <StatCard
     icon={<Icon />}
     label={label}
     value={typeof value === 'number' ? value.toLocaleString() : value}
-    href={href}
+    href={error ? undefined : href}
+    error={error}
+    onRetry={onRetry}
   />
 );
 

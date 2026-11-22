@@ -16,7 +16,7 @@ import {
   XCircle,
   Zap,
 } from 'lucide-react';
-import type { NextPage } from 'next';
+import type { GetStaticProps, NextPage } from 'next';
 import Head from 'next/head';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -595,5 +595,8 @@ const DashboardPreview: NextPage = () => (
     </div>
   </>
 );
+
+// Obsolete invoice prototype; preserve the source as an internal design archive.
+export const getStaticProps: GetStaticProps = async () => ({ notFound: true });
 
 export default DashboardPreview;

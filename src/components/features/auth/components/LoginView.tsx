@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import type { FormEvent } from 'react';
 import { useEffect, useState } from 'react';
 import { LuKeyRound } from 'react-icons/lu';
@@ -12,22 +12,17 @@ import { useAuth } from '../../../../contexts/AuthContext';
 import { useAuthFlow } from '../../../../contexts/AuthFlowContext';
 import { ApiError } from '../../../../lib/api';
 import type { Dictionary } from '../../../../lib/dictionary';
-import { ROLE_HOME } from '../../../../types/auth';
+import { returnPathForRole, safeReturnPath } from '../../../../lib/returnPath';
 import { InputField } from '../../../form/fields/InputField';
 import { PasswordField } from '../../../form/fields/PasswordField';
 import { ValidatedForm } from '../../../form/ValidatedForm';
 import { AlertBanner } from '../../../ui/AlertBanner';
 import { Button } from '../../../ui/buttons/Button';
 
-// Single-form redesign — login's own layout now, not the shared AuthCard
-// every other auth screen (verify-otp, forgot-password, …) still uses (a
-// split-screen version was tried first and dropped in favor of this).
-// Ported logic is unchanged from the original AuthCard version: same
-// next/navigation swap notes apply (no router.query — `next` comes from
-// useSearchParams; no router.asPath equivalent, not needed here), same
-// `t` prop supplied by the Server Component page.tsx.
+// The refreshed session role determines which return destinations are allowed.
 const LoginView = ({ t }: { t: Dictionary['auth']['login'] }) => {
   const router = useRouter();
+  const next = safeReturnPath(useSearchParams()?.get('next'));
   const { user, login, refreshUser } = useAuth();
   const { setPendingOtp } = useAuthFlow();
 
@@ -38,14 +33,11 @@ const LoginView = ({ t }: { t: Dictionary['auth']['login'] }) => {
   const updateFormData = (field: string, value: string) =>
     setFormData((prev) => ({ ...prev, [field]: value }));
 
-  // Already signed in — send them straight to their role's overview page
-  // instead of showing the form again. Every post-login path always lands
-  // on the overview page, deliberately, not wherever they were headed
-  // before being bounced to /login.
+  // Resolve the intended destination only after the session role is known.
   useEffect(() => {
     if (!user) return;
-    router.replace(ROLE_HOME[user.role]);
-  }, [user, router]);
+    router.replace(returnPathForRole(next, user.role));
+  }, [user, router, next]);
 
   if (user) return null;
 
@@ -57,15 +49,13 @@ const LoginView = ({ t }: { t: Dictionary['auth']['login'] }) => {
       const result = await login(formData.email, formData.password);
       if (result.requiresOtp) {
         setPendingOtp({ email: formData.email, channel: result.channel });
-        router.push('/verify-otp');
+        router.push(
+          next ? `/verify-otp?next=${encodeURIComponent(next)}` : '/verify-otp',
+        );
       } else {
-        // AuthContext doesn't auto-refetch after login() — without this,
-        // `user` stays null and RequireAuth on the destination page would
-        // immediately bounce back to /login. /dashboard (not a role-
-        // specific route here) resolves to the right one once `user` is
-        // populated, same as the OTP path below.
+        // Load the authenticated role before resolving the destination.
         await refreshUser();
-        router.replace('/dashboard');
+        // The user effect resolves the return path against the refreshed role.
       }
     } catch (err) {
       setError(err instanceof ApiError ? err.message : t.genericError);

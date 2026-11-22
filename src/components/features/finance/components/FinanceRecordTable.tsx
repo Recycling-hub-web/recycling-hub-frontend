@@ -1,9 +1,11 @@
 'use client';
 
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { LuWallet, LuWalletCards } from 'react-icons/lu';
 
 import { useAuth } from '../../../../contexts/AuthContext';
+import { formatMYR } from '../../../../lib/money';
 import { StatusBadge } from '../../../ui/badges/StatusBadge';
 import { AppDate } from '../../../ui/date/AppDate';
 import {
@@ -35,7 +37,7 @@ type FinanceRecordTableProps = {
   onPageChange: (page: number) => void;
   loading: boolean;
   error: string;
-  onRetry: () => void;
+  onRetry?: () => void;
   /** Bulk multi-select, scoped to this table only — no other table in
    * this project needs it yet, so this isn't a shared/generic
    * capability (see features/finance's Verify & Reimburse flow). Only
@@ -52,6 +54,8 @@ type FinanceRecordTableProps = {
    * per-row action, since a driver can't Verify & Reimburse anyway
    * (403 on the backend). */
   canManage: boolean;
+  hasFilters?: boolean;
+  onClearFilters?: () => void;
 };
 
 /** One row per approved, priced pickup request (see FinanceRecord on
@@ -75,6 +79,8 @@ const FinanceRecordTable = ({
   onToggleSelectAll,
   onRequestReimburse,
   canManage,
+  hasFilters = false,
+  onClearFilters,
 }: FinanceRecordTableProps) => {
   const router = useRouter();
   const { user } = useAuth();
@@ -101,8 +107,27 @@ const FinanceRecordTable = ({
         <TableEmptyRow
           colSpan={columnCount}
           icon={<LuWallet className="size-6" />}
-          title="No finance records yet"
-          subtitle="Priced, approved pickup requests will show up here."
+          title={
+            hasFilters
+              ? 'No matching finance records'
+              : 'No finance records yet'
+          }
+          subtitle={
+            hasFilters
+              ? 'Try a different search, status or date range.'
+              : 'Priced, approved pickup requests will show up here.'
+          }
+          action={
+            hasFilters && onClearFilters ? (
+              <button
+                type="button"
+                onClick={onClearFilters}
+                className="min-h-11 rounded-full border border-slate-300 px-4 text-sm font-semibold text-brand-800"
+              >
+                Clear filters
+              </button>
+            ) : undefined
+          }
         />
       );
     }
@@ -113,7 +138,11 @@ const FinanceRecordTable = ({
         className="cursor-pointer transition-colors hover:bg-slate-50"
       >
         {canManage && (
-          <td className="p-4" onClick={(e) => e.stopPropagation()}>
+          <td
+            data-card-role="select"
+            className="p-4"
+            onClick={(e) => e.stopPropagation()}
+          >
             {!reimbursementBlocker(r) && (
               <input
                 type="checkbox"
@@ -125,14 +154,28 @@ const FinanceRecordTable = ({
             )}
           </td>
         )}
-        <td className="max-w-[180px] truncate px-6 py-4 font-medium text-slate-900">
-          {r.collection_request.full_name}
+        <td
+          data-card-role="title"
+          className="max-w-[180px] truncate px-6 py-4 font-medium text-slate-900"
+        >
+          <Link
+            href={`${basePath}/${r.id}`}
+            onClick={(event) => event.stopPropagation()}
+            aria-label={`View finance record for ${r.collection_request.full_name}`}
+            className="rounded underline decoration-slate-300 underline-offset-4 hover:text-brand-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-700"
+          >
+            {r.collection_request.full_name}
+          </Link>
         </td>
         <td className="max-w-[160px] truncate px-6 py-4 text-slate-700">
           {r.driver ? r.driver.full_name : '—'}
         </td>
-        <td className="px-6 py-4 font-medium text-slate-900">{r.price}</td>
-        <td className="px-6 py-4 text-slate-700">{r.actual_amount ?? '—'}</td>
+        <td className="px-6 py-4 text-right font-medium tabular-nums text-slate-900">
+          {formatMYR(r.price)}
+        </td>
+        <td className="px-6 py-4 text-right tabular-nums text-slate-700">
+          {formatMYR(r.actual_amount)}
+        </td>
         <td className="px-6 py-4 text-slate-700">
           {r.payment_method
             ? FINANCE_PAYMENT_METHOD_LABELS[r.payment_method]
@@ -163,7 +206,11 @@ const FinanceRecordTable = ({
           <AppDate value={r.created_at} format="short" />
         </td>
         {canManage && (
-          <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
+          <td
+            data-card-role="actions"
+            className="px-6 py-4"
+            onClick={(e) => e.stopPropagation()}
+          >
             {!reimbursementBlocker(r) && (
               <button
                 type="button"
@@ -217,11 +264,11 @@ const FinanceRecordTable = ({
             <th className="px-6 py-3 text-left font-semibold text-slate-500">
               Driver
             </th>
-            <th className="px-6 py-3 text-left font-semibold text-slate-500">
-              Agreed price
+            <th className="px-6 py-3 text-right font-semibold text-slate-500">
+              Agreed price (MYR)
             </th>
-            <th className="px-6 py-3 text-left font-semibold text-slate-500">
-              Actual paid
+            <th className="px-6 py-3 text-right font-semibold text-slate-500">
+              Actual paid (MYR)
             </th>
             <th className="px-6 py-3 text-left font-semibold text-slate-500">
               Method
