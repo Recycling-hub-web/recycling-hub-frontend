@@ -90,7 +90,7 @@ const SidebarNavGroup = ({
                         : 'font-medium text-slate-500 hover:bg-slate-50 hover:text-slate-900'
                     }`}
                   >
-                    {itemLabel}
+                    {t(itemLabel)}
                   </Link>
                 </li>
               );

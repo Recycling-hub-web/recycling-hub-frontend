@@ -14,6 +14,8 @@ import {
 } from 'react-icons/lu';
 
 import { useAuth } from '../../../../contexts/AuthContext';
+import { usePortalLocale } from '../../../../contexts/PortalLocaleContext';
+import { formatMYR } from '../../../../lib/money';
 import { isAdminRole } from '../../../../types/auth';
 import { PageContainer } from '../../../layout/PageContainer';
 import { AlertBanner } from '../../../ui/AlertBanner';
@@ -47,6 +49,7 @@ type FinanceRecordDetailsViewProps = {
 const FinanceRecordDetailsView = ({
   recordId,
 }: FinanceRecordDetailsViewProps) => {
+  const { t, locale } = usePortalLocale();
   const { user } = useAuth();
   const canManage =
     user?.role === 'accounting' ||
@@ -63,18 +66,21 @@ const FinanceRecordDetailsView = ({
   const { record, loading, error, refetch } = useFinanceRecord(recordId);
   const [reimburseOpen, setReimburseOpen] = useState(false);
 
-  if (loading) return <Loading text="Loading finance record…" />;
+  if (loading) return <Loading text={t('Loading finance record…')} />;
 
   if (error || !record) {
     return (
-      <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-        {error || 'Finance record not found.'}{' '}
+      <div
+        role="alert"
+        className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"
+      >
+        {t(error || 'Finance record not found.')}{' '}
         <button
           type="button"
           onClick={refetch}
           className="font-semibold underline"
         >
-          Retry
+          {t('Retry')}
         </button>
       </div>
     );
@@ -89,17 +95,19 @@ const FinanceRecordDetailsView = ({
         className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-700 lg:mb-4 lg:min-h-0"
       >
         <LuArrowLeft className="size-4" />
-        Back to finance records
+        {t('Back to finance records')}
       </Link>
 
       <PageHeader
         title={record.collection_request.full_name}
-        subtitle={`${record.collection_request.items_summary} — finance record`}
+        subtitle={t('{items} — finance record', {
+          items: record.collection_request.items_summary,
+        })}
         actions={
           canReimburse ? (
             <Button onClick={() => setReimburseOpen(true)}>
               <LuWalletCards className="mr-1.5 size-4" />
-              Verify & Reimburse
+              {t('Verify & Reimburse')}
             </Button>
           ) : undefined
         }
@@ -115,47 +123,50 @@ const FinanceRecordDetailsView = ({
           }
         >
           {user?.role === 'driver'
-            ? DRIVER_FINANCE_STATUS_LABELS[record.status]
-            : FINANCE_STATUS_LABELS[record.status]}
+            ? t(DRIVER_FINANCE_STATUS_LABELS[record.status])
+            : t(FINANCE_STATUS_LABELS[record.status])}
         </StatusBadge>
       </div>
 
       {canManage && record.driver && record.status !== 'reimbursed' && (
-        <AlertBanner message={reimbursementBlocker(record)} variant="warning" />
+        <AlertBanner
+          message={t(reimbursementBlocker(record))}
+          variant="warning"
+        />
       )}
       <Card className="p-5">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <InfoRow
             icon={<LuUser className="size-4" />}
-            label="Requester"
+            label={t('Requester')}
             value={record.collection_request.full_name}
           />
           <InfoRow
             icon={<LuMapPin className="size-4" />}
-            label="Pickup address"
+            label={t('Pickup address')}
             value={record.collection_request.pickup_address}
           />
           <InfoRow
             icon={<LuTruck className="size-4" />}
-            label="Driver"
+            label={t('Driver')}
             value={record.driver ? record.driver.full_name : '—'}
           />
           <InfoRow
             icon={<LuPackage className="size-4" />}
-            label="Agreed price"
-            value={record.price}
+            label={t('Agreed price')}
+            value={formatMYR(record.price)}
           />
           <InfoRow
             icon={<LuPackage className="size-4" />}
-            label="Actual paid"
-            value={record.actual_amount ?? '—'}
+            label={t('Actual paid')}
+            value={formatMYR(record.actual_amount)}
           />
           <InfoRow
             icon={<LuWalletCards className="size-4" />}
-            label="Payment method"
+            label={t('Payment method')}
             value={
               record.payment_method
-                ? FINANCE_PAYMENT_METHOD_LABELS[record.payment_method]
+                ? t(FINANCE_PAYMENT_METHOD_LABELS[record.payment_method])
                 : '—'
             }
           />
@@ -164,13 +175,13 @@ const FinanceRecordDetailsView = ({
         {record.items.length > 0 && (
           <div className="mt-5 border-t border-slate-100 pt-5">
             <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-600">
-              Itemized price breakdown
+              {t('Itemized price breakdown')}
             </p>
             <ul className="space-y-0.5 text-sm text-slate-700">
               {record.items.map((item) => (
                 <li key={item.id} className="flex justify-between gap-4">
                   <span>{item.category}</span>
-                  <span>{item.price}</span>
+                  <span>{formatMYR(item.price)}</span>
                 </li>
               ))}
             </ul>
@@ -180,7 +191,7 @@ const FinanceRecordDetailsView = ({
         {record.proof_of_payment?.public_url && (
           <div className="mt-5 border-t border-slate-100 pt-5">
             <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-600">
-              Proof of payment (driver → customer)
+              {t('Proof of payment (driver → customer)')}
             </p>
             <a
               href={record.proof_of_payment.public_url}
@@ -188,7 +199,7 @@ const FinanceRecordDetailsView = ({
               rel="noreferrer"
               className="text-sm font-semibold text-brand-700 underline"
             >
-              View payment proof
+              {t('View payment proof')}
             </a>
           </div>
         )}
@@ -206,43 +217,61 @@ const FinanceRecordDetailsView = ({
         <Card className="mt-4 p-5">
           <p className="mb-3 text-sm font-semibold text-slate-900">
             {user?.role === 'driver'
-              ? 'Customer payment & reimbursement'
-              : 'Payment review & reimbursement'}
+              ? t('Customer payment & reimbursement')
+              : t('Payment review & reimbursement')}
           </p>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {record.claimed_at && (
               <InfoRow
                 icon={<LuCalendar className="size-4" />}
-                label="Payment recorded at"
-                value={<AppDate value={record.claimed_at} format="long" />}
+                label={t('Payment recorded at')}
+                value={
+                  <AppDate
+                    value={record.claimed_at}
+                    format="long"
+                    locale={locale === 'bm' ? 'ms-MY' : 'en-GB'}
+                  />
+                }
               />
             )}
             {record.verified_by && (
               <InfoRow
                 icon={<LuUserCheck className="size-4" />}
-                label="Verified by"
+                label={t('Verified by')}
                 value={record.verified_by}
               />
             )}
             {record.verified_at && (
               <InfoRow
                 icon={<LuCalendar className="size-4" />}
-                label="Verified at"
-                value={<AppDate value={record.verified_at} format="long" />}
+                label={t('Verified at')}
+                value={
+                  <AppDate
+                    value={record.verified_at}
+                    format="long"
+                    locale={locale === 'bm' ? 'ms-MY' : 'en-GB'}
+                  />
+                }
               />
             )}
             {record.reimbursed_by && (
               <InfoRow
                 icon={<LuUserCheck className="size-4" />}
-                label="Reimbursed by"
+                label={t('Reimbursed by')}
                 value={record.reimbursed_by}
               />
             )}
             {record.reimbursed_at && (
               <InfoRow
                 icon={<LuCalendar className="size-4" />}
-                label="Reimbursed at"
-                value={<AppDate value={record.reimbursed_at} format="long" />}
+                label={t('Reimbursed at')}
+                value={
+                  <AppDate
+                    value={record.reimbursed_at}
+                    format="long"
+                    locale={locale === 'bm' ? 'ms-MY' : 'en-GB'}
+                  />
+                }
               />
             )}
           </div>
@@ -250,7 +279,7 @@ const FinanceRecordDetailsView = ({
           {record.reimbursement_proof?.public_url && (
             <div className="mt-5 border-t border-slate-100 pt-5">
               <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-600">
-                Reimbursement proof (accounting → driver)
+                {t('Reimbursement proof (accounting → driver)')}
               </p>
               <a
                 href={record.reimbursement_proof.public_url}
@@ -258,7 +287,7 @@ const FinanceRecordDetailsView = ({
                 rel="noreferrer"
                 className="text-sm font-semibold text-brand-700 underline"
               >
-                View reimbursement proof
+                {t('View reimbursement proof')}
               </a>
             </div>
           )}
@@ -266,7 +295,9 @@ const FinanceRecordDetailsView = ({
       )}
 
       <Card className="mt-4 p-5">
-        <p className="mb-3 text-sm font-semibold text-slate-900">Activity</p>
+        <p className="mb-3 text-sm font-semibold text-slate-900">
+          {t('Activity')}
+        </p>
         <ActivityLog entityType="financerecord" entityId={record.id} />
       </Card>
 

@@ -1,5 +1,5 @@
 {
-  "batch": "Implementation progress: batches 1, 2 and 3",
+  "batch": "Implementation progress: batches 1, 2, 3 and 4",
   "original_audit": "UI-UX-Audit-2026-11-22.html",
   "scope": "Local frontend and finance API changes. No deployment, account changes, real business submissions or payments.",
   "findings": [
@@ -127,7 +127,7 @@
       "id": "21",
       "title": "Public language choice does not carry into operations",
       "status": "partially implemented",
-      "implementation": "Public EN/BM choice persists through a shared language preference cookie into portal sign-in and auth screens. Added a small shared locale provider and reusable switcher, translated shared role navigation, notification controls, finance filters/table/pagination and reimbursement UI. Switching language preserves credentials, OTP entry and finance filters; portal role URLs and permissions are unchanged. Auth dictionaries are reused rather than duplicated. Other operational pages and server-provided error/notification content still need translation; BM mode displays an availability notice on unsupported pages."
+      "implementation": "Public EN/BM choice persists through a shared language preference cookie into portal sign-in and auth screens. Added a small shared locale provider and reusable switcher, translated shared role navigation, notification controls, finance filters/table/pagination and reimbursement UI. Switching language preserves credentials, OTP entry and finance filters; portal role URLs and permissions are unchanged. Auth dictionaries are reused rather than duplicated. Other operational pages and server-provided error/notification content still need translation; BM mode displays an availability notice on unsupported pages. Batch 4 extends BM to finance detail labels/statuses, dated payment history, payout viewing/editing/history and activity interface labels. Prices and item totals now use the same MYR formatter as the list. Known audit labels/enums are translated for display; names, bank account strings, identifiers, notes and the stored audit payload remain untouched. Nested desktop sidebar links now translate too. Full operational and backend-message localization is still incomplete."
     },
     {
       "id": "22",
@@ -155,12 +155,12 @@
     }
   ],
   "verification": {
-    "typescript": "Passed after batch 3; production build also checked types.",
-    "changed_file_eslint": "Passed for all changed frontend source and regression files after batch 3. Backend unchanged in this batch.",
-    "mocked_regression_suite": "39 frontend tests passed against the production build after batch 3. Coverage includes public-to-auth BM preference, credential and OTP state retention during language switches, finance filters and reimbursement copy, mobile menu/layout and computed sign-in text contrast.",
-    "final_public_flow_recheck": "Reviewed BM finance desktop/mobile screenshots; mobile content fits at 390px, filters and names remain intact, and shared modal subtitles wrap instead of truncating.",
+    "typescript": "Passed after batch 4 via production build type validation.",
+    "changed_file_eslint": "Passed for all changed frontend source and regression files after batch 4. Backend unchanged in batches 3 and 4.",
+    "mocked_regression_suite": "45 frontend tests passed against the production build after batch 4. Six new cases cover immutable activity-data presentation, BM accounting and driver list-to-detail navigation, administrator payout updates with leading zeros, detail error recovery and bank-loading retry/required validation. API responses and writes are mocked.",
+    "final_public_flow_recheck": "Reviewed batch 4 BM finance detail at 390px and payout validation at desktop width. Content stays inside the viewport, localized statuses and MYR values are readable, and account zeros remain intact. Earlier batch evidence remains unchanged.",
     "repository_lint": "Still fails only in unchanged scripts/verify-seo-batch.cjs, scripts/verify-service-navbar.cjs and scripts/verify-services.cjs (83 errors, 8 warnings).",
-    "production_build": "Passed: next build --no-lint after batch 3. A Google Fonts stylesheet download was unavailable during optimization; build completed using the existing font configuration. Full-repository lint limitation from batch 2 remains recorded separately.",
+    "production_build": "Passed: next build --no-lint after batch 4, including production compilation and TypeScript validation. Google Fonts stylesheet optimization was unavailable during the build; the build completed with the existing font configuration. Full-repository lint limitation from batch 2 remains recorded separately.",
     "backend_finance_suite": "50 tests passed (43 existing, 7 new) using an isolated in-memory SQLite database; real network calls blocked"
   },
   "evidence": [
@@ -175,7 +175,9 @@
     "batch3-finance-bm-desktop.png",
     "batch3-finance-bm-mobile.png",
     "batch3-reimbursement-bm.png",
-    "batch3-login-contrast.png"
+    "batch3-login-contrast.png",
+    "batch4-finance-details-bm-mobile.png",
+    "batch4-payout-validation-bm.png"
   ],
   "limitations": [
     "Protected flows were tested with synthetic identities and intercepted API responses. Real backend/production role workflows were not exercised.",
@@ -183,12 +185,19 @@
     "Original audit report and original findings remain unchanged as a baseline."
   ],
   "remaining_work": [
-    "Translate the remaining operational workflow pages and backend-provided messages; keep the explicit BM availability notice until each module is ready.",
+    "Translate remaining operational workflows (dashboards, claims, pickup operations, profile and administration) and backend-provided messages; keep the BM availability notice until each module is ready.",
+    "Review less common server-defined activity fields and enum labels during module translation; unknown values retain their original text.",
     "Validate production role workflows and real delivery/upload integrations with authorized test accounts before release."
   ],
   "release_notes": [
     "Deploy the frontend and finance API updates together so search, dates and ordering are honored by the server.",
     "No database schema migration is required for the finance filter additions.",
     "Original audit HTML/PDF and original findings remain the baseline; this progress file records implementation status."
+  ],
+  "batch4_changes": [
+    "Completed the finance list-to-detail BM flow and applied consistent MYR formatting to detail and itemized amounts.",
+    "Localized shared payout controls, bank history and activity labels while preserving original data values.",
+    "Separated the bank field label from its retry button and error so the retry control has its own accessible name; associated the bank-loading error with its select.",
+    "Corrected nested sidebar translation and removed the partial-language notice on supported finance detail routes."
   ]
 }

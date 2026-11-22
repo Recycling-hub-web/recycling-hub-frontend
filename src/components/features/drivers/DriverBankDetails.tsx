@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 
 import {
   PAYOUT_METHOD_LABELS,
   type PayoutMethod,
 } from '../../../constants/payoutMethods';
 import { useAuth } from '../../../contexts/AuthContext';
+import { usePortalLocale } from '../../../contexts/PortalLocaleContext';
 import { ApiError, apiFetch } from '../../../lib/api';
 import type { DriverPayoutDetails } from '../../../types/driverPayout';
 import { ValidatedForm } from '../../form/ValidatedForm';
@@ -44,6 +45,13 @@ const fields = {
   duitnow_id: 'DuitNow ID',
 };
 
+const payoutFieldLabels: Record<string, string> = {
+  ...fields,
+  payout_method: 'Payout method',
+  bank: 'Bank name',
+  duitnow_id_type: 'DuitNow ID type',
+};
+
 export const DriverBankDetails = ({
   details,
   canEdit = false,
@@ -55,7 +63,9 @@ export const DriverBankDetails = ({
   canManageBanks?: boolean;
   onSaved: () => void;
 }) => {
+  const { t, locale } = usePortalLocale();
   const { user } = useAuth();
+  const bankFieldId = useId();
   const banksPath =
     user?.role === 'super_admin' ? '/super-admin/banks' : '/admin/banks';
   const [banks, setBanks] = useState<Bank[]>([]);
@@ -67,7 +77,7 @@ export const DriverBankDetails = ({
     try {
       setBanks(await apiFetch<Bank[]>('/accounts/banks/'));
     } catch {
-      setBanksError('Could not load banks. Please try again.');
+      setBanksError(t('Could not load banks. Please try again.'));
     } finally {
       setBanksLoading(false);
     }
@@ -101,22 +111,22 @@ export const DriverBankDetails = ({
       setHasMore(Boolean(result.next));
       setNextPage(page + 1);
     } catch {
-      setHistoryError('Could not load bank history. Please try again.');
+      setHistoryError(t('Could not load bank history. Please try again.'));
     } finally {
       setHistoryLoading(false);
     }
   };
   const historyValue = (field: string, value: string) => {
-    if (!value) return 'Not set';
+    if (!value) return t('Not set');
     if (field === 'bank')
       return (
         banks.find((bank) => bank.id === value)?.name ||
-        'Bank selection changed'
+        t('Bank selection changed')
       );
     if (field === 'payout_method')
-      return PAYOUT_METHOD_LABELS[value as PayoutMethod] || value;
+      return t(PAYOUT_METHOD_LABELS[value as PayoutMethod] || value);
     if (field === 'duitnow_id_type')
-      return identifiers[value as keyof typeof identifiers] || value;
+      return t(identifiers[value as keyof typeof identifiers] || value);
     return value;
   };
   const toast = useToast();
@@ -141,7 +151,7 @@ export const DriverBankDetails = ({
         ),
       });
       setOpen(false);
-      toast.success('Payout details updated');
+      toast.success(t('Payout details updated'));
       onSaved();
     } catch (err) {
       if (err instanceof ApiError && err.data && typeof err.data === 'object') {
@@ -149,11 +159,11 @@ export const DriverBankDetails = ({
           Object.entries(err.data)
             .map(
               ([key, value]) =>
-                `${fields[key as keyof typeof fields] || key.replaceAll('_', ' ')}: ${Array.isArray(value) ? value.join(' ') : String(value)}`,
+                `${t(payoutFieldLabels[key] || key.replaceAll('_', ' '))}: ${Array.isArray(value) ? value.join(' ') : String(value)}`,
             )
             .join(' '),
         );
-      } else setError('Could not save payout details. Please try again.');
+      } else setError(t('Could not save payout details. Please try again.'));
     } finally {
       setSaving(false);
     }
@@ -177,7 +187,7 @@ export const DriverBankDetails = ({
     <Card className="mt-4 p-5">
       <div className="mb-4 flex items-center justify-between gap-3">
         <h2 className="text-sm font-semibold text-slate-900">
-          Driver bank & payout details
+          {t('Driver bank & payout details')}
         </h2>
         {canEdit && (
           <Button
@@ -193,14 +203,14 @@ export const DriverBankDetails = ({
               setOpen(true);
             }}
           >
-            Edit payout details
+            {t('Edit payout details')}
           </Button>
         )}
       </div>
       {canManageBanks && (
         <div className="mb-4 flex flex-wrap gap-2">
           <Button size="sm" variant="secondary" href={banksPath}>
-            Manage banks
+            {t('Manage banks')}
           </Button>
           <Button
             size="sm"
@@ -209,19 +219,20 @@ export const DriverBankDetails = ({
               loadHistory();
             }}
           >
-            Bank history
+            {t('Bank history')}
           </Button>
         </div>
       )}
       <Modal
         open={historyOpen}
         onClose={() => setHistoryOpen(false)}
-        title="Bank details history"
+        title={t('Bank details history')}
         size="xl"
       >
         <p className="mb-4 text-xs text-slate-500">
-          Changes recorded by admins and drivers, newest first. History starts
-          when this feature is enabled.
+          {t(
+            'Changes recorded by admins and drivers, newest first. History starts when this feature is enabled.',
+          )}
         </p>
         {historyError && (
           <p role="alert" className="mb-3 text-sm text-red-700">
@@ -233,13 +244,13 @@ export const DriverBankDetails = ({
                 loadHistory(history.length ? nextPage : 1);
               }}
             >
-              Retry
+              {t('Retry')}
             </button>
           </p>
         )}
         {!historyLoading && !historyError && history.length === 0 && (
           <p className="text-sm text-slate-500">
-            No bank details changes recorded yet.
+            {t('No bank details changes recorded yet.')}
           </p>
         )}
         <ol className="space-y-4">
@@ -249,28 +260,38 @@ export const DriverBankDetails = ({
               className="rounded-lg border border-slate-200 p-4"
             >
               <p className="mb-3 text-sm font-semibold">
-                {entry.changed_by_name || 'Unknown user'} ·{' '}
-                <AppDate value={entry.created_at} format="long" />
+                {entry.changed_by_name || t('Unknown user')} ·{' '}
+                <AppDate
+                  value={entry.created_at}
+                  format="long"
+                  locale={locale === 'bm' ? 'ms-MY' : 'en-GB'}
+                />
                 {' · '}
                 <time dateTime={entry.created_at}>
-                  {new Date(entry.created_at).toLocaleTimeString([], {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}
+                  {new Date(entry.created_at).toLocaleTimeString(
+                    locale === 'bm' ? 'ms-MY' : 'en-MY',
+                    {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    },
+                  )}
                 </time>
               </p>
               <dl className="space-y-3 text-sm">
                 {entry.changed_fields.map((field) => (
                   <div key={field}>
                     <dt className="font-medium">
-                      {fields[field as keyof typeof fields] ||
-                        field.replaceAll('_', ' ')}
+                      {t(
+                        payoutFieldLabels[field] || field.replaceAll('_', ' '),
+                      )}
                     </dt>
                     <dd className="break-all text-slate-500">
-                      Previous: {historyValue(field, entry.before[field] || '')}
+                      {t('Previous:')}{' '}
+                      {historyValue(field, entry.before[field] || '')}
                     </dd>
                     <dd className="break-all">
-                      Updated: {historyValue(field, entry.after[field] || '')}
+                      {t('Updated:')}{' '}
+                      {historyValue(field, entry.after[field] || '')}
                     </dd>
                   </div>
                 ))}
@@ -280,7 +301,7 @@ export const DriverBankDetails = ({
         </ol>
         {historyLoading && (
           <p role="status" className="mt-3 text-sm">
-            Loading history…
+            {t('Loading history…')}
           </p>
         )}
         {hasMore && !historyLoading && !historyError && (
@@ -291,52 +312,58 @@ export const DriverBankDetails = ({
               loadHistory(nextPage);
             }}
           >
-            Load more
+            {t('Load more')}
           </Button>
         )}
       </Modal>
       <dl className="grid gap-4 text-sm sm:grid-cols-2">
         <div>
-          <dt className="text-slate-500">Payout method</dt>
+          <dt className="text-slate-500">{t('Payout method')}</dt>
           <dd>
-            {PAYOUT_METHOD_LABELS[details.payout_method as PayoutMethod] ||
-              'Not set'}
+            {t(
+              PAYOUT_METHOD_LABELS[details.payout_method as PayoutMethod] ||
+                'Not set',
+            )}
           </dd>
         </div>
         {visible.map((key) => (
           <div key={key}>
-            <dt className="text-slate-500">{fields[key]}</dt>
+            <dt className="text-slate-500">{t(fields[key])}</dt>
             <dd className="break-all">{details[key] || '—'}</dd>
           </div>
         ))}
         {details.payout_method === 'duitnow' && (
           <div>
-            <dt className="text-slate-500">DuitNow ID type</dt>
+            <dt className="text-slate-500">{t('DuitNow ID type')}</dt>
             <dd>
-              {identifiers[
-                details.duitnow_id_type as keyof typeof identifiers
-              ] || '—'}
+              {t(
+                identifiers[
+                  details.duitnow_id_type as keyof typeof identifiers
+                ] || '—',
+              )}
             </dd>
           </div>
         )}
       </dl>
       {!details.payout_ready && (
         <p className="mt-4 text-sm text-amber-700">
-          Complete payout details before reimbursement.
+          {t('Complete payout details before reimbursement.')}
           {details.payout_account_details &&
-            ` Previous payout instructions: ${details.payout_account_details}`}
+            t(' Previous payout instructions: {instructions}', {
+              instructions: details.payout_account_details,
+            })}
         </p>
       )}
       <Modal
         open={open}
         onClose={close}
-        title="Edit driver payout details"
+        title={t('Edit driver payout details')}
         size="xl"
         closeOnBackdrop={!saving}
         footer={
           <div className="flex justify-end gap-3">
             <Button variant="secondary" onClick={close} disabled={saving}>
-              Cancel
+              {t('Cancel')}
             </Button>
             <Button
               type="submit"
@@ -348,7 +375,7 @@ export const DriverBankDetails = ({
               }}
               disabled={saving}
             >
-              {saving ? 'Saving…' : 'Save details'}
+              {saving ? t('Saving…') : t('Save details')}
             </Button>
           </div>
         }
@@ -370,7 +397,7 @@ export const DriverBankDetails = ({
             </p>
           )}
           <label className="block text-sm font-medium">
-            Payout method *
+            {t('Payout method *')}
             <select
               required
               disabled={saving}
@@ -380,17 +407,17 @@ export const DriverBankDetails = ({
                 setForm({ ...form, payout_method: event.target.value })
               }
             >
-              <option value="">Select method</option>
+              <option value="">{t('Select method')}</option>
               {Object.entries(methods).map(([value, label]) => (
                 <option key={value} value={value}>
-                  {label}
+                  {t(label)}
                 </option>
               ))}
             </select>
           </label>
           {form.payout_method === 'duitnow' && (
             <label className="block text-sm font-medium">
-              DuitNow ID type *
+              {t('DuitNow ID type *')}
               <select
                 required
                 disabled={saving}
@@ -400,31 +427,39 @@ export const DriverBankDetails = ({
                   setForm({ ...form, duitnow_id_type: event.target.value })
                 }
               >
-                <option value="">Select ID type</option>
+                <option value="">{t('Select ID type')}</option>
                 {Object.entries(identifiers).map(([value, label]) => (
                   <option key={value} value={value}>
-                    {label}
+                    {t(label)}
                   </option>
                 ))}
               </select>
             </label>
           )}
           {form.payout_method === 'bank_transfer' && (
-            <label className="block text-sm font-medium">
-              Bank *
+            <div className="block text-sm font-medium">
+              <label htmlFor={bankFieldId}>{t('Bank *')}</label>
               {banksError && (
-                <span role="alert" className="block text-red-700">
+                <span
+                  id={`${bankFieldId}-error`}
+                  role="alert"
+                  className="block text-red-700"
+                >
                   {banksError}{' '}
                   <button
                     type="button"
                     className="underline"
                     onClick={loadBanks}
                   >
-                    Retry
+                    {t('Retry')}
                   </button>
                 </span>
               )}
               <select
+                id={bankFieldId}
+                aria-describedby={
+                  banksError ? `${bankFieldId}-error` : undefined
+                }
                 required
                 disabled={saving || banksLoading || Boolean(banksError)}
                 className="mt-1 block w-full rounded-lg border border-slate-200 p-3"
@@ -441,11 +476,11 @@ export const DriverBankDetails = ({
                 }}
               >
                 <option value="">
-                  {banksLoading ? 'Loading banks…' : 'Select bank'}
+                  {banksLoading ? t('Loading banks…') : t('Select bank')}
                 </option>
                 {form.bank && !banks.some((bank) => bank.id === form.bank) && (
                   <option value={form.bank}>
-                    {form.bank_name} (current bank)
+                    {form.bank_name} {t('(current bank)')}
                   </option>
                 )}
                 {banks
@@ -453,7 +488,7 @@ export const DriverBankDetails = ({
                   .map((bank) => (
                     <option key={bank.id} value={bank.id}>
                       {bank.name}
-                      {!bank.is_active && ' (inactive)'}
+                      {!bank.is_active && t(' (inactive)')}
                     </option>
                   ))}
               </select>
@@ -461,14 +496,14 @@ export const DriverBankDetails = ({
                 !banksError &&
                 !banks.some((bank) => bank.is_active) && (
                   <span className="mt-1 block text-xs text-amber-700">
-                    An administrator needs to add an active bank.
+                    {t('An administrator needs to add an active bank.')}
                   </span>
                 )}
-            </label>
+            </div>
           )}
           {inputFields.map((key) => (
             <label key={key} className="block text-sm font-medium">
-              {fields[key]}
+              {t(fields[key])}
               {' *'}
               <input
                 type="text"
@@ -485,10 +520,9 @@ export const DriverBankDetails = ({
             </label>
           ))}
           <p className="text-xs text-slate-500">
-            Enter the account holder name exactly as registered with the bank.
-            Keep leading zeros in account numbers. Only local banks are
-            supported. For a DuitNow mobile ID, use international format (for
-            example +60123456789).
+            {t(
+              'Enter the account holder name exactly as registered with the bank. Keep leading zeros in account numbers. Only local banks are supported. For a DuitNow mobile ID, use international format (for example +60123456789).',
+            )}
           </p>
         </ValidatedForm>
       </Modal>
