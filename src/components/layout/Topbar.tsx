@@ -7,7 +7,6 @@ import { useAuth } from '../../contexts/AuthContext';
 import { usePortalLocale } from '../../contexts/PortalLocaleContext';
 import { BetaBadge } from '../ui/badges/BetaBadge';
 import { Dropdown } from '../ui/dropdown/Dropdown';
-import { PortalLanguageSwitcher } from '../ui/PortalLanguageSwitcher';
 import { NotificationsButton } from './NotificationsButton';
 
 // Same initials fallback as Sidebar's own account card — kept as a
@@ -49,9 +48,6 @@ const Topbar = () => {
         <BetaBadge />
       </Link>
       <div className="ms-auto flex items-center gap-1 lg:gap-3">
-        <div className="hidden sm:block">
-          <PortalLanguageSwitcher />
-        </div>
         <NotificationsButton />
         {user && (
           <Dropdown

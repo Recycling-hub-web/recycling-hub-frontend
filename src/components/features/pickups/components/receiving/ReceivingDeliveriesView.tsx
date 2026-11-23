@@ -18,11 +18,8 @@ import {
 import { useToast } from '../../../../ui/toast/ToastContext';
 import { STATUS_BADGE_VARIANT } from '../../constants';
 import { useCloseDelivery, useCollectionPoints, useOrders } from '../../hooks';
-import {
-  itemsSummary,
-  PICKUP_STATUS_LABELS,
-  type PickupStatus,
-} from '../../types';
+import { PICKUP_STATUS_LABELS, type PickupStatus } from '../../types';
+import { formatQuantity } from '../../units';
 
 const STATUS_FILTER_OPTIONS = [
   { value: '', label: 'All' },
@@ -106,8 +103,26 @@ const ReceivingDeliveriesView = () => {
           {r.pickup_request.full_name}
         </td>
         <td className="px-6 py-4 text-slate-700">
-          {itemsSummary(r.items, t)} —{' '}
-          {r.delivered_quantity ?? r.items[0]?.collected_quantity ?? '—'}
+          <ul className="space-y-1">
+            {r.items.map((item) => (
+              <li key={item.id}>
+                {item.category.name} — collected{' '}
+                {formatQuantity(item.collected_quantity, item.quantity_unit)}
+              </li>
+            ))}
+          </ul>
+          {r.items.length === 0 && '—'}
+          {r.delivered_quantity != null && (
+            <p className="mt-1 text-xs text-slate-600">
+              Delivered total:{' '}
+              {new Set(r.items.map((item) => item.quantity_unit)).size === 1
+                ? formatQuantity(
+                    r.delivered_quantity,
+                    r.items[0]?.quantity_unit,
+                  )
+                : `${r.delivered_quantity} (unit not specified)`}
+            </p>
+          )}
         </td>
         <td className="px-6 py-4 text-slate-700">
           {r.route?.collection_point?.name ?? '—'}
@@ -124,9 +139,8 @@ const ReceivingDeliveriesView = () => {
               disabled={closing}
               aria-busy={closing && closingId === r.id}
               onClick={() => handleClose(r.id)}
-              aria-label={t('Verify and close delivery from {value0}', {
-                value0: r.pickup_request.full_name,
-              })}
+              aria-label={`Verify and close ${r.code} from ${r.pickup_request.full_name}`}
+              title={`Verify and close ${r.code}`}
               className="inline-flex size-11 items-center justify-center rounded-full text-slate-600 transition hover:bg-slate-100 hover:text-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
               <LuCheckCheck className="size-4" />

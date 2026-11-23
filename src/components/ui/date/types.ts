@@ -28,6 +28,8 @@ type AppDateProps = {
    * @default "en-GB"
    */
   locale?: string;
+  /** Optional IANA timezone for operational timestamps. */
+  timeZone?: string;
   /**
    * Rendered when `value` is absent or invalid.
    * @default "—"

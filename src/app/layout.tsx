@@ -1,16 +1,14 @@
 import '../styles/global.css';
 
 import type { Metadata, Viewport } from 'next';
-import { cookies } from 'next/headers';
 
-import { LOCALE_COOKIE, parseLocale } from '../lib/locale';
 import { Providers } from './providers';
 
 // Root layout for the App Router side of the app (src/app/) — same
 // responsibility src/pages/_document.tsx + _app.tsx have for the Pages
 // Router side (fonts, global CSS, provider tree).
 //
-// Portal routes keep stable URLs and obtain their locale from the shared preference.
+// Operations and authentication use English; the public Pages Router has its own locale.
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
@@ -39,9 +37,9 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const locale = parseLocale(cookies().get(LOCALE_COOKIE)?.value);
+  const locale = 'en';
   return (
-    <html lang={locale === 'bm' ? 'ms' : 'en'}>
+    <html lang="en">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link

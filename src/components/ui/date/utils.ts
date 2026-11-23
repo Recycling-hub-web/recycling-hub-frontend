@@ -68,10 +68,18 @@ const FORMAT_OPTIONS: Record<
  * All absolute formats delegate to `Intl.DateTimeFormat`; relative uses
  * `Intl.RelativeTimeFormat` via `formatRelative`.
  */
-function formatDate(date: Date, format: DateFormat, locale: string): string {
+function formatDate(
+  date: Date,
+  format: DateFormat,
+  locale: string,
+  timeZone?: string,
+): string {
   if (format === 'relative') return formatRelative(date, locale);
 
-  return new Intl.DateTimeFormat(locale, FORMAT_OPTIONS[format]).format(date);
+  return new Intl.DateTimeFormat(locale, {
+    ...FORMAT_OPTIONS[format],
+    timeZone,
+  }).format(date);
 }
 
 // ─── Machine-readable ISO string for <time datetime="..."> ───────────────────

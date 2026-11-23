@@ -151,15 +151,17 @@ const CategoryTable = ({
   return (
     <TableWrapper
       footer={
-        <TablePagination
-          currentPage={page}
-          onPageChange={onPageChange}
-          itemsPerPage={PAGE_SIZE}
-          itemCount={categories.length}
-          totalCount={count}
-          itemLabel="categories"
-          loading={loading}
-        />
+        !error && (
+          <TablePagination
+            currentPage={page}
+            onPageChange={onPageChange}
+            itemsPerPage={PAGE_SIZE}
+            itemCount={categories.length}
+            totalCount={count}
+            itemLabel="categories"
+            loading={loading}
+          />
+        )
       }
     >
       <table className="min-w-full divide-y divide-slate-200 text-sm">

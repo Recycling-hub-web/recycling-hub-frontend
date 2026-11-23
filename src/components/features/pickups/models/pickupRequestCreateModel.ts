@@ -2,6 +2,7 @@ import {
   joinPhoneNumber,
   validatePhoneNumber,
 } from '../../../../constants/dialCodes';
+import { fieldLimit, validateText } from '../../../form/validation';
 import type { DraftOrder } from '../components/admin/NewOrdersFieldArray';
 import {
   type DraftEvaluation,
@@ -78,23 +79,45 @@ const REQUEST_TYPE_OPTIONS = REQUEST_TYPE_FILTER_OPTIONS.filter(
   (opt) => opt.value,
 );
 
-/** Which validated fields live on which step. Note has no rule. */
+/** Fields validated together on each step, including optional text guardrails. */
 const STEP_FIELDS: Record<StepId, FieldName[]> = {
   customer: ['full_name', 'request_type', 'email', 'phone_local'],
-  pickup: ['pickup_address'],
+  pickup: ['pickup_address', 'note'],
   orders: [],
   review: [],
 };
 
 /** One field's error ('' when fine) — the original form's rules. */
 const validateField = (field: FieldName, data: FormState): string => {
+  if (
+    field === 'full_name' ||
+    field === 'email' ||
+    field === 'pickup_address' ||
+    field === 'note'
+  ) {
+    const textError = validateText(
+      data[field],
+      false,
+      fieldLimit(field, field === 'note'),
+    );
+    if (textError) return textError;
+  }
   switch (field) {
     case 'full_name':
       return data.full_name.trim() ? '' : 'Full name is required.';
     case 'email':
-      return data.request_type === 'business' && !data.email.trim()
-        ? 'Email is required for business requests.'
-        : '';
+      if (data.request_type === 'business' && !data.email.trim())
+        return 'Email is required for business requests.';
+      if (
+        data.email.trim() &&
+        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email.trim())
+      )
+        return 'Enter a valid email address.';
+      return '';
+    case 'request_type':
+      return ['individual', 'business'].includes(data.request_type)
+        ? ''
+        : 'Choose a request type.';
     case 'phone_local':
       return validatePhoneNumber(data.phone_dial_code, data.phone_local) ?? '';
     case 'pickup_address':

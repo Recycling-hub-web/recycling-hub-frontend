@@ -18,7 +18,6 @@ import { PasswordField } from '../../../form/fields/PasswordField';
 import { ValidatedForm } from '../../../form/ValidatedForm';
 import { AlertBanner } from '../../../ui/AlertBanner';
 import { Button } from '../../../ui/buttons/Button';
-import { PortalLanguageSwitcher } from '../../../ui/PortalLanguageSwitcher';
 
 // The refreshed session role determines which return destinations are allowed.
 const LoginView = () => {
@@ -80,9 +79,6 @@ const LoginView = () => {
       />
 
       <div className="relative w-full max-w-md rounded-2xl border border-slate-200 bg-white p-10 shadow-sm">
-        <div className="mb-4 flex justify-end">
-          <PortalLanguageSwitcher />
-        </div>
         <Link
           href={locale === 'bm' ? '/bm' : '/'}
           className="flex justify-center"

@@ -129,10 +129,10 @@ for (const otp of [false, true]) {
       await expect(page).toHaveURL(/\/verify-otp\?next=/);
       const digits = page.locator('input[inputmode="numeric"]');
       await digits.first().fill('1');
-      await page.getByRole('button', { name: 'BM', exact: true }).click();
-      await expect(page.locator('html')).toHaveAttribute('lang', 'ms');
-      await expect(digits.first()).toHaveValue('1');
-      await page.getByRole('button', { name: 'EN', exact: true }).click();
+      await expect(page.getByRole('group', { name: 'Language' })).toHaveCount(
+        0,
+      );
+      await expect(page.locator('html')).toHaveAttribute('lang', 'en');
       await expect(digits.first()).toHaveValue('1');
       if ((await digits.count()) === 1) await digits.fill('123456');
       else {

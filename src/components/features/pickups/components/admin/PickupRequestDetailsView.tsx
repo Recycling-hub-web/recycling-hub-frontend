@@ -300,11 +300,12 @@ const PickupRequestDetailsView = ({
             />
             <InfoRow
               icon={<LuCalendar className="size-4" />}
-              label={t('Requested for')}
+              label="Customer requested time (Malaysia)"
               value={
                 <AppDate
                   value={request.requested_at}
-                  format="long"
+                  format="datetime"
+                  timeZone="Asia/Kuala_Lumpur"
                   locale={locale === 'bm' ? 'ms-MY' : 'en-GB'}
                 />
               }

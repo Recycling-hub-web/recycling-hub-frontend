@@ -6,7 +6,6 @@ import type { ReactNode } from 'react';
 
 import { ASSETS, LOGO_SIZE } from '../../../../constants/content';
 import { usePortalLocale } from '../../../../contexts/PortalLocaleContext';
-import { PortalLanguageSwitcher } from '../../../ui/PortalLanguageSwitcher';
 
 type AuthCardProps = {
   icon: ReactNode;
@@ -27,9 +26,6 @@ const AuthCard = ({ icon, title, subtitle, children }: AuthCardProps) => {
   return (
     <div className="flex min-h-screen items-center justify-center bg-neutral-50 px-4">
       <div className="w-full max-w-sm rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
-        <div className="mb-4 flex justify-end">
-          <PortalLanguageSwitcher />
-        </div>
         <Link
           href={locale === 'bm' ? '/bm' : '/'}
           className="flex justify-center"

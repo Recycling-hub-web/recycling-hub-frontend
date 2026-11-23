@@ -1,0 +1,165 @@
+{
+  "date": "2026-11-23",
+  "batch": "Re-audit implementation batches 1–2",
+  "user_direction": "Operations/authentication are English-only. Hide the language switch; replace the mobile bottom sheet with a grouped left sidebar. Public-site EN/BM routing is unchanged.",
+  "changes": [
+    "English-only portal server markup and provider; old BM cookies do not translate portal copy or alter public preferences. Removed portal/auth language controls and empty wrappers plus the partial-translation notice.",
+    "Replaced mobile menu sheet with a full-height left sidebar, branded header, grouped sections and native dialog focus containment. Escape, close button, backdrop and desktop-resize dismissal retained.",
+    "Clamped action menus within viewport gutters, added bounded scrolling, initial focus, arrow/Home/End keys and Escape restoration.",
+    "Receiving queue and aggregate errors now have independent retry states; failed queue counts never become successful zeros.",
+    "Protected administrator status actions share the row capability guard. Category/user/vehicle list failures hide pagination counts.",
+    "Receiving material lines show collected quantities and units; delivered total is separately labelled, and action names include order codes."
+  ],
+  "findings": [
+    {
+      "id": "01",
+      "title": "Failed delivery queue becomes a real zero",
+      "status": "implemented"
+    },
+    {
+      "id": "02",
+      "title": "Dashboard aggregates can load forever after failure",
+      "status": "partial"
+    },
+    {
+      "id": "03",
+      "title": "Mobile request actions open outside the viewport",
+      "status": "implemented"
+    },
+    {
+      "id": "04",
+      "title": "Menu semantics promise keyboard behavior that is missing",
+      "status": "implemented"
+    },
+    {
+      "id": "05",
+      "title": "Account status control ignores the visible permission gate",
+      "status": "implemented"
+    },
+    {
+      "id": "06",
+      "title": "Draft edits disappear on back navigation",
+      "status": "pending"
+    },
+    {
+      "id": "07",
+      "title": "Material lookup has no recoverable error state",
+      "status": "implemented"
+    },
+    {
+      "id": "08",
+      "title": "Photo pickers lack visible keyboard focus and linked guidance",
+      "status": "implemented"
+    },
+    {
+      "id": "09",
+      "title": "Image upload requirements are not explained before selection",
+      "status": "pending"
+    },
+    {
+      "id": "10",
+      "title": "Receiving quantity omits its measurement unit",
+      "status": "partial"
+    },
+    {
+      "id": "11",
+      "title": "Verification action lacks an inspection step",
+      "status": "pending"
+    },
+    {
+      "id": "12",
+      "title": "Repeated receiving buttons are not uniquely named",
+      "status": "implemented"
+    },
+    {
+      "id": "13",
+      "title": "BM selection still produces mixed-language screens",
+      "status": "superseded by English-only product direction"
+    },
+    {
+      "id": "14",
+      "title": "Generic translation notice consumes mobile form space",
+      "status": "partial"
+    },
+    {
+      "id": "15",
+      "title": "Optional-note disclosure has untranslated and duplicated labels",
+      "status": "pending"
+    },
+    {
+      "id": "16",
+      "title": "List context is lost on refresh or returning from detail",
+      "status": "pending"
+    },
+    {
+      "id": "17",
+      "title": "Vehicle lookup requires paging through the fleet",
+      "status": "pending"
+    },
+    {
+      "id": "18",
+      "title": "Error state still claims a zero-result list",
+      "status": "implemented"
+    },
+    {
+      "id": "19",
+      "title": "Category parent can disappear when it is off-page",
+      "status": "pending"
+    },
+    {
+      "id": "20",
+      "title": "Tabs do not expose selected state or panel relationships",
+      "status": "pending"
+    },
+    {
+      "id": "21",
+      "title": "Requested time is hidden behind a date-only display",
+      "status": "implemented"
+    },
+    {
+      "id": "22",
+      "title": "Shared validation mixes browser bubbles with form errors",
+      "status": "implemented"
+    },
+    {
+      "id": "23",
+      "title": "Responsive table behavior depends on English headings",
+      "status": "pending"
+    },
+    {
+      "id": "24",
+      "title": "Permission restrictions lack a user-facing explanation",
+      "status": "pending"
+    }
+  ],
+  "remaining_details": {
+    "10": "Collected line units and separately labelled delivered total added; full evidence/item reconciliation remains a receiving workflow redesign.",
+    "13": "No further portal BM translation work is planned. Public-site bilingual content remains.",
+    "14": "Removed repeated translation notice; further mobile header/stepper compacting remains.",
+    "02": "Receiving aggregate failures fixed; admin/staff/super-admin aggregate hooks remain to be updated.",
+    "08": "Implemented for profile and pickup-photo pickers. Other upload variants retain their own controls and can be unified later.",
+    "09": "Pending: consistent supported-format/size hints and preflight validation against authenticated/public backend policies. File acceptance and backend upload contracts are unchanged in batch 2."
+  },
+  "verification": {
+    "targeted": "10 focused mocked browser checks passed before the final build.",
+    "regression": "50 tests passed against the final isolated production build using playwright.validation.config.ts.",
+    "typescript": "Passed after batch 2, both check-types and final production build.",
+    "eslint": "Passed for all changed source and regression files plus the new PhotoPicker and PickupCategoryStatus components.",
+    "production_build": "Passed after batch 2: isolated next build --no-lint, including route generation and TypeScript validation. Existing font/dependency warnings remain.",
+    "legacy_tests": "The validation profile now targets the English-only portal plus unchanged public and operational cases. Historical portal BM-switching test files are retained but excluded; their remaining business-workflow assertions need migration to English in later batches. Public BM cases remain in the active profile.",
+    "batch2": "Five new checks passed: simultaneous step errors and material retry preserving quantity, profile file-picker focus/error/same-file retry, order-photo required feedback, explicit Malaysia timestamp and optional-note/email guardrails."
+  },
+  "evidence": [
+    "fix-sidebar-mobile.png",
+    "fix-actions-mobile.png",
+    "fix-receiving-error.png",
+    "batch2-step-validation.png"
+  ],
+  "scope": "Local frontend only. No backend changes, real business submissions, push, deployment or commit.",
+  "batch2_changes": [
+    "Material lookup hook exposes cancellation-safe error/loading/retry state. Shared lookup feedback distinguishes empty catalogues from outages in create/edit/convert/collection views and preserves draft fields.",
+    "Added shared native PhotoPicker with visible focus, unique input IDs, linked help and errors, aria-required/invalid/busy states and same-file retry. Profile and pickup photos use it; photo removal is disabled during upload to prevent stale photo arrays.",
+    "Stepped request creation uses external validation with one summary and inline field map. Failed navigation focuses the first invalid field above sticky controls without stealing focus on blur. Text, optional-note, email and phone guardrails remain active.",
+    "Request details show customer-requested date and time explicitly in Asia/Kuala_Lumpur, independent of browser timezone. Shared AppDate accepts an optional timezone while retaining defaults for existing callers."
+  ]
+}

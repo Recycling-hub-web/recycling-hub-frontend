@@ -39,6 +39,7 @@ import {
   orderToPayload,
   validateOrders,
 } from '../../models/pickupRequestCreateModel';
+import { PickupCategoryStatus } from '../shared/PickupCategoryStatus';
 import { type DraftOrder, NewOrdersFieldArray } from './NewOrdersFieldArray';
 
 type FormState = {
@@ -348,6 +349,12 @@ const PickupRequestEditView = ({
                     { count: request.orders.length, remaining: ordersLeft },
                   )}
                 </p>
+                <PickupCategoryStatus
+                  loading={categories.loading}
+                  error={categories.error}
+                  count={categories.options.length}
+                  onRetry={categories.refetch}
+                />
                 <NewOrdersFieldArray
                   orders={orders}
                   onChange={setOrders}

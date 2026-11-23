@@ -155,6 +155,13 @@ const UserTable = ({
             <td className="px-6 py-4">
               <button
                 type="button"
+                disabled={!canManageUser(actor, u)}
+                aria-label={`${u.is_active ? 'Deactivate' : 'Activate'} ${u.full_name}`}
+                title={
+                  !canManageUser(actor, u)
+                    ? 'Only a super administrator can change this account.'
+                    : undefined
+                }
                 onClick={(e) => {
                   e.stopPropagation();
                   onToggleActive(u);
@@ -236,15 +243,19 @@ const UserTable = ({
   return (
     <TableWrapper
       footer={
-        <TablePagination
-          currentPage={page}
-          onPageChange={onPageChange}
-          itemsPerPage={PAGE_SIZE}
-          itemCount={users.length}
-          totalCount={count}
-          itemLabel={variant === 'pending' ? 'pending registrations' : 'users'}
-          loading={loading}
-        />
+        !error && (
+          <TablePagination
+            currentPage={page}
+            onPageChange={onPageChange}
+            itemsPerPage={PAGE_SIZE}
+            itemCount={users.length}
+            totalCount={count}
+            itemLabel={
+              variant === 'pending' ? 'pending registrations' : 'users'
+            }
+            loading={loading}
+          />
+        )
       }
     >
       <table className="min-w-full divide-y divide-slate-200 text-sm">

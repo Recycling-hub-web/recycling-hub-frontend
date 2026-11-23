@@ -25,6 +25,7 @@ import {
   type QuantityUnit,
   validateItem,
 } from '../../units';
+import { PickupCategoryStatus } from './PickupCategoryStatus';
 
 type CollectModalProps = {
   requestId: string;
@@ -96,6 +97,8 @@ const CollectModal = ({
     options: categoryOptions,
     unitsByCategory,
     loading: loadingCategories,
+    error: categoriesError,
+    refetch: retryCategories,
   } = usePickupCategories();
   const initialState: FormState = {
     note: '',
@@ -382,6 +385,12 @@ const CollectModal = ({
         noValidate
         className="space-y-5 py-2"
       >
+        <PickupCategoryStatus
+          loading={loadingCategories}
+          error={categoriesError}
+          count={categoryOptions.length}
+          onRetry={retryCategories}
+        />
         <AlertBanner message={t(apiError ?? '')} />
 
         {items.length > 0 && (

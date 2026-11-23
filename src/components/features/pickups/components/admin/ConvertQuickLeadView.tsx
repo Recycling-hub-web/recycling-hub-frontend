@@ -39,6 +39,7 @@ import {
 import type { PickupRequestItemInput } from '../../services/pickupService';
 import type { PickupRequestItem, PickupRequestType } from '../../types';
 import { hasItemErrors, validateItems } from '../../units';
+import { PickupCategoryStatus } from '../shared/PickupCategoryStatus';
 import { PickupItemsFieldArray } from '../shared/PickupItemsFieldArray';
 import { isValidPrice, PricingEditor } from '../shared/PricingEditor';
 import { EVALUATE_NOW_OPTIONS } from './OrderEvaluationFields';
@@ -153,6 +154,8 @@ const ConvertQuickLeadView = ({ basePath }: ConvertQuickLeadViewProps) => {
     options: categoryOptions,
     unitsByCategory,
     loading: loadingCategories,
+    error: categoriesError,
+    refetch: retryCategories,
   } = usePickupCategories();
   const [formData, setFormData] = useState<FormState>(INITIAL_STATE);
   const [items, setItems] = useState<PickupRequestItemInput[]>([
@@ -448,6 +451,12 @@ const ConvertQuickLeadView = ({ basePath }: ConvertQuickLeadViewProps) => {
               errors={localizeErrors(errors, t)}
               updateFormData={updateFormData}
               disabled={submitting}
+            />
+            <PickupCategoryStatus
+              loading={loadingCategories}
+              error={categoriesError}
+              count={categoryOptions.length}
+              onRetry={retryCategories}
             />
             <PickupItemsFieldArray
               items={items}

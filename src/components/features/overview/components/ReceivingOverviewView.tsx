@@ -41,6 +41,9 @@ const ReceivingOverviewView = () => {
     loading,
     error,
     refetch,
+    totalsLoading,
+    totalsError,
+    retryTotals,
   } = useReceivingOverviewStats();
 
   const pickupStatusData = pickupStatusCounts
@@ -95,12 +98,16 @@ const ReceivingOverviewView = () => {
             icon={LuPackageCheck}
             label="Awaiting close"
             value={awaitingCloseCount}
+            error={error}
+            onRetry={refetch}
             href="/receiving/deliveries"
           />
           <OverviewStatCard
             icon={LuCalendarCheck}
             label="Closed this month"
             value={closedThisMonth}
+            error={totalsError}
+            onRetry={retryTotals}
             href="/receiving/deliveries"
           />
         </OverviewStatGrid>
@@ -129,12 +136,14 @@ const ReceivingOverviewView = () => {
                     color: '#007535',
                   },
                 ]}
-                loading={!pickupStatusCounts}
+                loading={totalsLoading}
+                error={totalsError}
+                onRetry={retryTotals}
               />
             </SectionContainer>
           </div>
 
-          {(loading || deliveries.length > 0) && (
+          {(loading || error || deliveries.length > 0) && (
             <div>
               <div className="mb-3 flex items-center justify-between">
                 <h2 className="text-sm font-semibold text-slate-900">

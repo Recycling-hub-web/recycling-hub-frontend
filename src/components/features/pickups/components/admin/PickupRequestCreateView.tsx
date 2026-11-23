@@ -29,6 +29,7 @@ import {
   requestTypeLabel,
   STEPS,
 } from '../../models/pickupRequestCreateModel';
+import { PickupCategoryStatus } from '../shared/PickupCategoryStatus';
 import type { DraftOrder } from './NewOrdersFieldArray';
 import { NewOrdersFieldArray } from './NewOrdersFieldArray';
 import {
@@ -122,6 +123,26 @@ const PickupRequestCreateView = ({
     heading.focus({ preventScroll: true });
   }, [stepIndex]);
 
+  const errorsRef = useRef(errors);
+  errorsRef.current = errors;
+  useEffect(() => {
+    const firstInvalid = Object.keys(errorsRef.current).find(
+      (key) => errorsRef.current[key],
+    );
+    if (!firstInvalid) return undefined;
+    const frame = requestAnimationFrame(() => {
+      const field = document.querySelector<HTMLElement>(
+        `[data-field="${firstInvalid}"]`,
+      );
+      const control = field?.querySelector<HTMLElement>(
+        'input, select, textarea',
+      );
+      control?.focus({ preventScroll: true });
+      field?.scrollIntoView({ block: 'center', behavior: 'auto' });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [form.validationAttempt]);
+
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (isLastStep) form.submit();
@@ -181,7 +202,12 @@ const PickupRequestCreateView = ({
           />
         </div>
 
-        <ValidatedForm onSubmit={handleSubmit} noValidate>
+        <ValidatedForm
+          onSubmit={handleSubmit}
+          validationMode="external"
+          fieldErrors={errors}
+          noValidate
+        >
           <div
             key={step.id}
             className="p-5 motion-safe:animate-page-enter"
@@ -281,6 +307,12 @@ const PickupRequestCreateView = ({
 
             {step.id === 'orders' && (
               <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
+                <PickupCategoryStatus
+                  loading={form.categories.loading}
+                  error={form.categories.error}
+                  count={form.categories.options.length}
+                  onRetry={form.categories.refetch}
+                />
                 <NewOrdersFieldArray
                   orders={form.orders}
                   onChange={form.setOrders}

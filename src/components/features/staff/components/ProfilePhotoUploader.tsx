@@ -1,8 +1,8 @@
 'use client';
 
-import { LuTrash2, LuUpload, LuUser } from 'react-icons/lu';
+import { LuTrash2, LuUser } from 'react-icons/lu';
 
-import { AlertBanner } from '../../../ui/AlertBanner';
+import { PhotoPicker } from '../../../form/upload/PhotoPicker';
 import { useUploadStorageFile } from '../../storageFiles/hooks';
 
 type ProfilePhoto = { file_key: string; public_url: string | null } | null;
@@ -49,8 +49,6 @@ const ProfilePhotoUploader = ({
       </label>
 
       <div className="mt-2">
-        <AlertBanner message={error} />
-
         <div className="flex items-center gap-4">
           {value?.public_url ? (
             // eslint-disable-next-line @next/next/no-img-element -- remote/presigned URL, not a static asset
@@ -66,15 +64,14 @@ const ProfilePhotoUploader = ({
           )}
 
           <div className="flex items-center gap-2">
-            <label
-              htmlFor="profile-photo-input"
-              className={`flex cursor-pointer items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 transition hover:border-brand-300 hover:bg-slate-50 ${
-                disabled || uploading ? 'pointer-events-none opacity-50' : ''
-              }`}
-            >
-              <LuUpload className="size-4" />
-              {uploadLabel}
-            </label>
+            <PhotoPicker
+              label={uploadLabel}
+              accessibleLabel="Profile photo"
+              disabled={disabled || uploading}
+              busy={uploading}
+              error={error}
+              onSelect={handleFileChange}
+            />
             {value && (
               <button
                 type="button"
@@ -88,14 +85,6 @@ const ProfilePhotoUploader = ({
             )}
           </div>
         </div>
-        <input
-          id="profile-photo-input"
-          type="file"
-          accept="image/*"
-          className="sr-only"
-          disabled={disabled || uploading}
-          onChange={(e) => handleFileChange(e.target.files?.[0])}
-        />
       </div>
     </div>
   );

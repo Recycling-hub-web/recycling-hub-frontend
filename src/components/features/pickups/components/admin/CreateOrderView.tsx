@@ -24,6 +24,7 @@ import {
 } from '../../hooks';
 import type { PickupRequestItemInput } from '../../services/pickupService';
 import { hasItemErrors, validateItems } from '../../units';
+import { PickupCategoryStatus } from '../shared/PickupCategoryStatus';
 import { PickupItemsFieldArray } from '../shared/PickupItemsFieldArray';
 import {
   type OrderPhoto,
@@ -62,6 +63,8 @@ const CreateOrderView = ({
     options: categoryOptions,
     unitsByCategory,
     loading: loadingCategories,
+    error: categoriesError,
+    refetch: retryCategories,
   } = usePickupCategories();
   const [items, setItems] = useState<PickupRequestItemInput[]>([]);
   const [itemErrors, setItemErrors] = useState<Record<string, string>[]>([]);
@@ -138,6 +141,12 @@ const CreateOrderView = ({
           <AlertBanner message={t(error ?? '')} />
 
           <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
+            <PickupCategoryStatus
+              loading={loadingCategories}
+              error={categoriesError}
+              count={categoryOptions.length}
+              onRetry={retryCategories}
+            />
             <PickupItemsFieldArray
               items={items}
               onChange={setItems}
