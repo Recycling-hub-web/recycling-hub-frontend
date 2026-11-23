@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { apiFetch } from '../../../../lib/api';
 import type { QuantityUnit, UnitsByCategory } from '../units';
@@ -20,31 +20,46 @@ const usePickupCategories = () => {
   const [unitsByCategory, setUnitsByCategory] = useState<UnitsByCategory>({});
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    apiFetch<
-      Paginated<{
-        id: string;
-        name: string;
-        allowed_quantity_units?: QuantityUnit[];
-      }>
-    >('/categories/?module=materials&is_active=true&page_size=200')
-      .then((data) => {
-        setOptions(data.results.map((c) => ({ value: c.id, label: c.name })));
-        setUnitsByCategory(
-          Object.fromEntries(
-            data.results.map((c) => [
-              c.id,
-              c.allowed_quantity_units?.length
-                ? c.allowed_quantity_units
-                : ['kg'],
-            ]),
-          ),
-        );
-      })
-      .finally(() => setLoading(false));
+  const [error, setError] = useState('');
+  const generation = useRef(0);
+  const refetch = useCallback(async () => {
+    generation.current += 1;
+    const request = generation.current;
+    setLoading(true);
+    setError('');
+    try {
+      const data = await apiFetch<
+        Paginated<{
+          id: string;
+          name: string;
+          allowed_quantity_units?: QuantityUnit[];
+        }>
+      >('/categories/?module=materials&is_active=true&page_size=200');
+      if (request !== generation.current) return;
+      setOptions(data.results.map((c) => ({ value: c.id, label: c.name })));
+      setUnitsByCategory(
+        Object.fromEntries(
+          data.results.map((c) => [
+            c.id,
+            c.allowed_quantity_units?.length
+              ? c.allowed_quantity_units
+              : ['kg'],
+          ]),
+        ),
+      );
+    } catch {
+      if (request === generation.current)
+        setError('Could not load materials. Please try again.');
+    } finally {
+      if (request === generation.current) setLoading(false);
+    }
   }, []);
-
-  return { options, unitsByCategory, loading };
+  useEffect(() => {
+    refetch();
+    return () => {
+      generation.current += 1;
+    };
+  }, [refetch]);
+  return { options, unitsByCategory, loading, error, refetch };
 };
-
 export { usePickupCategories };

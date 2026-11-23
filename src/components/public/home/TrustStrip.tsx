@@ -12,7 +12,7 @@ const TrustStrip = () => {
     <section className="border-b border-slate-100 bg-white py-12 md:py-14">
       <div className="mx-auto max-w-7xl px-5 md:px-8">
         <FadeIn>
-          <p className="mb-10 text-center text-xs font-semibold uppercase tracking-[0.15em] text-slate-400">
+          <p className="mb-10 text-center text-xs font-semibold uppercase tracking-[0.15em] text-slate-600">
             {home.trustStrip.label}
           </p>
         </FadeIn>

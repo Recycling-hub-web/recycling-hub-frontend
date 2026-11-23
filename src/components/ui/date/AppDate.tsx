@@ -21,13 +21,14 @@ const AppDate = ({
   value,
   format = 'short',
   locale = 'en-GB',
+  timeZone,
   fallback = '—',
   className,
 }: AppDateProps) => {
   const parsed = useMemo(() => parseDate(value), [value]);
   const formatted = useMemo(
-    () => (parsed ? formatDate(parsed, format, locale) : null),
-    [parsed, format, locale],
+    () => (parsed ? formatDate(parsed, format, locale, timeZone) : null),
+    [parsed, format, locale, timeZone],
   );
 
   if (!parsed) {
@@ -39,6 +40,7 @@ const AppDate = ({
       dateTime={toISOString(parsed)}
       className={className}
       title={new Intl.DateTimeFormat(locale, {
+        timeZone,
         day: 'numeric',
         month: 'long',
         year: 'numeric',

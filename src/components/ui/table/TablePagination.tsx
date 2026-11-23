@@ -1,4 +1,7 @@
+import { useEffect } from 'react';
 import { LuArrowLeft, LuArrowRight } from 'react-icons/lu';
+
+import { usePortalLocale } from '../../../contexts/PortalLocaleContext';
 
 type TablePaginationProps = {
   currentPage: number;
@@ -26,28 +29,39 @@ const TablePagination = ({
   itemLabel,
   loading,
 }: TablePaginationProps) => {
-  const displayTotal =
-    itemCount < itemsPerPage
-      ? (currentPage - 1) * itemsPerPage + itemCount
-      : totalCount;
-  const totalPages = Math.max(Math.ceil(displayTotal / itemsPerPage), 1);
+  const { t } = usePortalLocale();
+  const translatedItems = t(itemLabel);
+  const totalPages = Math.max(Math.ceil(totalCount / itemsPerPage), 1);
+  useEffect(() => {
+    if (!loading && currentPage > totalPages) onPageChange(totalPages);
+  }, [loading, currentPage, totalPages, onPageChange]);
 
+  const empty = itemCount === 0 || totalCount === 0 || currentPage > totalPages;
+  const emptyLabel =
+    totalCount === 0
+      ? `0 ${translatedItems}`
+      : t('No {items} on this page', { items: translatedItems });
   return (
     <div className="flex flex-col items-center justify-between gap-2 border-t border-slate-200 p-6 text-sm text-slate-500 sm:flex-row">
-      {itemCount === 0 && !loading ? (
-        <span />
-      ) : (
+      {loading && (
+        <span role="status">
+          {t('Loading {items}…', { items: translatedItems })}
+        </span>
+      )}
+      {!loading && empty && <span>{emptyLabel}</span>}
+      {!loading && !empty && (
         <span>
-          Showing{' '}
+          {t('Showing')}{' '}
           <span className="font-medium text-slate-700">
             {(currentPage - 1) * itemsPerPage + 1}
           </span>{' '}
-          to{' '}
+          {t('to')}{' '}
           <span className="font-medium text-slate-700">
-            {(currentPage - 1) * itemsPerPage + itemCount}
+            {Math.min((currentPage - 1) * itemsPerPage + itemCount, totalCount)}
           </span>{' '}
-          of <span className="font-medium text-slate-700">{displayTotal}</span>{' '}
-          {itemLabel}
+          {t('of')}{' '}
+          <span className="font-medium text-slate-700">{totalCount}</span>{' '}
+          {translatedItems}
         </span>
       )}
       <div className="flex items-center gap-2">
@@ -58,10 +72,13 @@ const TablePagination = ({
           className={navButtonClassName}
         >
           <LuArrowLeft className="size-4" />
-          Prev
+          {t('Prev')}
         </button>
         <span>
-          Page {currentPage} of {totalPages}
+          {t('Page {page} of {pages}', {
+            page: Math.min(currentPage, totalPages),
+            pages: totalPages,
+          })}
         </span>
         <button
           type="button"
@@ -69,7 +86,7 @@ const TablePagination = ({
           disabled={loading || currentPage >= totalPages}
           className={navButtonClassName}
         >
-          Next
+          {t('Next')}
           <LuArrowRight className="size-4" />
         </button>
       </div>

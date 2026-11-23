@@ -193,7 +193,7 @@ const HowItWorks = () => {
                     transition={{ duration: 0.6, delay: 0.1, ease: EASE }}
                     className="flex flex-col justify-center"
                   >
-                    <p className="mb-1 text-sm font-semibold text-slate-400">
+                    <p className="mb-1 text-sm font-semibold text-slate-600">
                       {step.subtitle}
                     </p>
                     <h3 className="mb-5 font-montserrat text-2xl font-black uppercase tracking-tight text-slate-900 md:text-3xl">

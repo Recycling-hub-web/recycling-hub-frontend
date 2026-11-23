@@ -103,7 +103,7 @@ const PartnerTable = ({
                 className="size-8 shrink-0 rounded-lg border border-slate-100 object-contain p-0.5"
               />
             ) : (
-              <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-400">
+              <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-600">
                 <LuBuilding2 className="size-4" />
               </span>
             )}
@@ -131,14 +131,14 @@ const PartnerTable = ({
             <Link
               href={`${basePath}/${p.id}`}
               aria-label={`View partner ${p.name}`}
-              className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+              className="inline-flex size-8 items-center justify-center rounded-full text-slate-600 transition hover:bg-slate-100 hover:text-slate-700"
             >
               <LuEye className="size-4" />
             </Link>
             <Link
               href={`${basePath}/${p.id}/edit`}
               aria-label={`Edit partner ${p.name}`}
-              className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+              className="inline-flex size-8 items-center justify-center rounded-full text-slate-600 transition hover:bg-slate-100 hover:text-slate-700"
             >
               <LuPencil className="size-4" />
             </Link>
@@ -146,7 +146,7 @@ const PartnerTable = ({
               type="button"
               onClick={() => onDeleteRequest(p)}
               aria-label={`Delete partner ${p.name}`}
-              className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-red-50 hover:text-red-600"
+              className="inline-flex size-8 items-center justify-center rounded-full text-slate-600 transition hover:bg-red-50 hover:text-red-600"
             >
               <LuTrash2 className="size-4" />
             </button>

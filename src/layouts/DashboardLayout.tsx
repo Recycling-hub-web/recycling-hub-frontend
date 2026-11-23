@@ -1,6 +1,5 @@
 'use client';
 
-import { ReactLenis } from 'lenis/react';
 import type { ReactNode } from 'react';
 
 import { RequireAuth } from '../components/features/auth/components';
@@ -10,6 +9,7 @@ import { Sidebar } from '../components/layout/Sidebar';
 import { SystemMobileNavigation } from '../components/layout/SystemMobileNavigation';
 import { Topbar } from '../components/layout/Topbar';
 import type { NavItem } from '../components/ui/navigation';
+import { SmoothScroll } from '../components/ui/SmoothScroll';
 import { SystemExperienceContext } from '../contexts/SystemExperienceContext';
 import type { UserRole } from '../types/auth';
 
@@ -51,12 +51,11 @@ const DashboardLayout = ({
                  * leaves the window nothing to scroll. This instance re-targets
                  * Lenis's smooth-scroll at this <main> instead, so dashboard
                  * pages keep the same smooth-scroll feel. */}
-                <ReactLenis
+                <SmoothScroll
                   className={`system-app-content h-full overflow-y-auto overflow-x-hidden ${contentPadding}`}
-                  options={{ lerp: 0.1, duration: 1.2, smoothWheel: true }}
                 >
                   {children}
-                </ReactLenis>
+                </SmoothScroll>
               </main>
               <div className="hidden lg:block">
                 <AppFooter />

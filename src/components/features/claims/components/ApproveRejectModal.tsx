@@ -2,7 +2,9 @@
 
 import { type FormEvent, useState } from 'react';
 
+import { usePortalLocale } from '../../../../contexts/PortalLocaleContext';
 import { ApiError } from '../../../../lib/api';
+import { formatMYR } from '../../../../lib/money';
 import { InputField } from '../../../form/fields/InputField';
 import { TextareaField } from '../../../form/fields/TextareaField';
 import { StatusFileUpload } from '../../../form/upload/StatusFileUpload';
@@ -36,6 +38,7 @@ const ApproveRejectModal = ({
   onClose,
   onDone,
 }: ApproveRejectModalProps) => {
+  const { t } = usePortalLocale();
   const { execute: approve, loading: approving } = useApproveClaim();
   const { execute: reject, loading: rejecting } = useRejectClaim();
   const [amountApproved, setAmountApproved] = useState('');
@@ -116,11 +119,15 @@ const ApproveRejectModal = ({
     <Modal
       open={open}
       onClose={handleClose}
-      title={mode === 'approve' ? 'Approve & mark as paid' : 'Reject claim'}
+      title={
+        mode === 'approve' ? t('Approve & mark as paid') : t('Reject claim')
+      }
       subtitle={
         mode === 'approve'
-          ? 'Confirm payment with proof. Approval and payment are saved together.'
-          : 'A reason is required so the driver knows why.'
+          ? t(
+              'Confirm payment with proof. Approval and payment are saved together.',
+            )
+          : t('A reason is required so the driver knows why.')
       }
       footer={
         <FormActions>
@@ -130,15 +137,15 @@ const ApproveRejectModal = ({
             disabled={submitting || uploading}
             className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Cancel
+            {t('Cancel')}
           </button>
           <button
             type="submit"
             form="approve-reject-form"
             disabled={submitting || uploading}
-            className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-lg bg-brand-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-800 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {submitButtonLabel}
+            {t(submitButtonLabel)}
           </button>
         </FormActions>
       }
@@ -149,30 +156,37 @@ const ApproveRejectModal = ({
         noValidate
         className="space-y-1"
       >
-        <AlertBanner message={error} />
+        <AlertBanner message={t(error)} />
 
         {mode === 'approve' ? (
           <>
             <InputField
-              label="Amount approved"
+              label={t('Amount approved')}
               field="amount_approved"
               type="number"
               prefix="RM"
               required={false}
-              placeholder={`Default: ${claim.amount_approved ?? claim.amount_claimed}`}
+              placeholder={t('Default: {amount}', {
+                amount: formatMYR(
+                  claim.amount_approved ?? claim.amount_claimed,
+                ),
+              })}
               formData={{ amount_approved: amountApproved }}
               updateFormData={(_field, value) => setAmountApproved(value)}
               disabled={submitting || uploading}
             />
-            <p className="-mt-3 mb-4 text-xs text-slate-400">
-              Leave blank to use RM
-              {claim.amount_approved ?? claim.amount_claimed}.
+            <p className="-mt-3 mb-4 text-xs text-slate-600">
+              {t('Leave blank to use {amount}.', {
+                amount: formatMYR(
+                  claim.amount_approved ?? claim.amount_claimed,
+                ),
+              })}
             </p>
             <div className="mb-4" data-field="payment_proof">
               <StatusFileUpload
                 id="claim-payment-proof-input"
-                label="Payment proof"
-                description="Upload a receipt showing the driver was paid."
+                label={t('Payment proof')}
+                description={t('Upload a receipt showing the driver was paid.')}
                 file={proofFile}
                 onFileChange={handleProofChange}
                 onRemove={() => {
@@ -190,9 +204,9 @@ const ApproveRejectModal = ({
           </>
         ) : (
           <TextareaField
-            label="Rejection reason"
+            label={t('Rejection reason')}
             field="rejection_reason"
-            placeholder="Why this claim is being rejected"
+            placeholder={t('Why this claim is being rejected')}
             formData={{ rejection_reason: rejectionReason }}
             updateFormData={(_field, value) => setRejectionReason(value)}
             disabled={submitting || uploading}

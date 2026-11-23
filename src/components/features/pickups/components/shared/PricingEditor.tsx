@@ -1,5 +1,6 @@
 'use client';
 
+import { usePortalLocale } from '../../../../../contexts/PortalLocaleContext';
 import { MoneyInput } from '../../../../form/fields/MoneyInput';
 import { Switch } from '../../../../ui/buttons/Switch';
 
@@ -52,6 +53,7 @@ const PricingEditor = ({
   error,
   disabled = false,
 }: PricingEditorProps) => {
+  const { t } = usePortalLocale();
   const canItemize = lines.length > 1;
   const perItem = canItemize && itemized;
   const itemizedTotal = lines.reduce(
@@ -63,7 +65,8 @@ const PricingEditor = ({
   return (
     <div className="mb-4">
       <p className="text-sm font-medium text-slate-900">
-        Price <span className="text-red-600">*</span>
+        {t('Price')}
+        <span className="text-red-600">*</span>
       </p>
 
       <div className="mt-2 overflow-hidden rounded-xl border border-slate-200 bg-white">
@@ -71,18 +74,18 @@ const PricingEditor = ({
           <div className="flex items-center justify-between gap-4 border-b border-slate-100 px-4 py-3">
             <div>
               <p className="text-sm font-medium text-slate-800">
-                Price each item
+                {t('Price each item')}
               </p>
               <p className="text-xs text-slate-500">
                 {perItem
-                  ? 'Added up into the total below.'
-                  : 'One total for the whole pickup.'}
+                  ? t('Added up into the total below.')
+                  : t('One total for the whole pickup.')}
               </p>
             </div>
             <Switch
               checked={itemized}
               onChange={onItemizedChange}
-              label="Price each item"
+              label={t('Price each item')}
               disabled={disabled}
             />
           </div>
@@ -106,7 +109,7 @@ const PricingEditor = ({
                 <MoneyInput
                   value={prices[line.key] ?? ''}
                   onChange={(value) => onPriceChange(line.key, value)}
-                  ariaLabel={`Price for ${line.label}`}
+                  ariaLabel={t('Price for {value0}', { value0: line.label })}
                   dataField={line.dataField}
                   invalid={Boolean(error) && !isValidPrice(prices[line.key])}
                   disabled={disabled}
@@ -119,17 +122,18 @@ const PricingEditor = ({
 
         <div className="flex items-center justify-between gap-3 border-t border-slate-200 bg-slate-50 px-4 py-3">
           <p className="text-sm font-semibold text-slate-800">
-            {perItem ? 'Total' : 'Total price'}
+            {perItem ? t('Total') : t('Total price')}
           </p>
           {perItem ? (
             <p className="text-base font-semibold tabular-nums text-neutral-950">
-              RM {itemizedTotal.toFixed(2)}
+              {t('RM')}
+              {itemizedTotal.toFixed(2)}
             </p>
           ) : (
             <MoneyInput
               value={total}
               onChange={onTotalChange}
-              ariaLabel="Total price"
+              ariaLabel={t('Total price')}
               dataField={totalDataField}
               invalid={Boolean(error)}
               disabled={disabled}
@@ -139,7 +143,7 @@ const PricingEditor = ({
         </div>
       </div>
 
-      {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
+      {error && <p className="mt-1 text-xs text-red-600">{t(error ?? '')}</p>}
     </div>
   );
 };

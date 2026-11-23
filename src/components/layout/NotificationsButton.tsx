@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { LuBell, LuCheckCheck } from 'react-icons/lu';
 
 import { useAuth } from '../../contexts/AuthContext';
+import { usePortalLocale } from '../../contexts/PortalLocaleContext';
 import { useNotifications } from '../features/notifications/hooks';
 import {
   NOTIFICATION_MODULE_LABELS,
@@ -24,6 +25,7 @@ import { Loading } from '../ui/loading/Loading';
 // not websockets). Still the same Dropdown/bell shell, just a real
 // body instead of a hardcoded EmptyState.
 const NotificationsButton = () => {
+  const { t, locale } = usePortalLocale();
   const router = useRouter();
   const { user } = useAuth();
   const {
@@ -57,11 +59,11 @@ const NotificationsButton = () => {
       button={
         <button
           type="button"
-          aria-label="Notifications"
+          aria-label={t('Notifications')}
           className="relative flex size-11 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 lg:size-9"
         >
           <LuBell className="size-5" />
-          <span className="sr-only">{count} unread</span>
+          <span className="sr-only">{t('{count} unread', { count })}</span>
           {count > 0 && (
             <span className="system-notification-dot absolute right-2.5 top-2.5 flex size-2 rounded-full bg-red-500 lg:right-1.5 lg:top-1.5" />
           )}
@@ -70,37 +72,41 @@ const NotificationsButton = () => {
     >
       <div data-testid="notifications-panel">
         <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
-          <p className="text-sm font-semibold text-slate-900">Notifications</p>
+          <p className="text-sm font-semibold text-slate-900">
+            {t('Notifications')}
+          </p>
           {count > 0 && (
             <button
               type="button"
               onClick={markAllRead}
               disabled={markingAll}
-              className="inline-flex items-center gap-1 text-xs font-medium text-slate-500 transition-colors hover:text-brand-600"
+              className="inline-flex items-center gap-1 text-xs font-medium text-slate-500 transition-colors hover:text-brand-700"
             >
               <LuCheckCheck className="size-3.5" />
-              Mark all read
+              {t('Mark all read')}
             </button>
           )}
         </div>
         {loading && <Loading text="Loading notifications…" />}
         {error && (
           <div className="p-4 text-sm text-red-700" role="status">
-            {error}{' '}
+            {t(error)}{' '}
             <button
               type="button"
               onClick={refetch}
               className="font-semibold underline"
             >
-              Retry
+              {t('Retry')}
             </button>
           </div>
         )}
         {!loading && !error && notifications.length === 0 && (
           <EmptyState
             icon={<LuBell className="size-6" />}
-            title="No notifications yet"
-            description="You're all caught up — new activity will show up here."
+            title={t('No notifications yet')}
+            description={t(
+              "You're all caught up — new activity will show up here.",
+            )}
           />
         )}
         {notifications.length > 0 && (
@@ -120,7 +126,7 @@ const NotificationsButton = () => {
               >
                 {item.module && (
                   <p className="mb-1 text-xs font-medium text-brand-700">
-                    {NOTIFICATION_MODULE_LABELS[item.module] || item.module}
+                    {t(NOTIFICATION_MODULE_LABELS[item.module] || item.module)}
                   </p>
                 )}
                 <p className="text-sm font-semibold text-slate-900">
@@ -129,8 +135,12 @@ const NotificationsButton = () => {
                 {item.body && (
                   <p className="mt-0.5 text-xs text-slate-500">{item.body}</p>
                 )}
-                <p className="mt-1 text-xs text-slate-400">
-                  <AppDate value={item.created_at} format="relative" />
+                <p className="mt-1 text-xs text-slate-600">
+                  <AppDate
+                    value={item.created_at}
+                    format="relative"
+                    locale={locale === 'bm' ? 'ms-MY' : 'en-GB'}
+                  />
                 </p>
               </button>
             ))}
@@ -138,9 +148,9 @@ const NotificationsButton = () => {
         )}
         <Link
           href={notificationInboxPath(user?.role)}
-          className="block border-t border-slate-100 px-4 py-3 text-center text-sm font-semibold text-brand-600"
+          className="block border-t border-slate-100 px-4 py-3 text-center text-sm font-semibold text-brand-700"
         >
-          View all notifications
+          {t('View all notifications')}
         </Link>
       </div>
     </Dropdown>

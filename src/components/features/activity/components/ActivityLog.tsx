@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { LuHistory } from 'react-icons/lu';
 
+import { usePortalLocale } from '../../../../contexts/PortalLocaleContext';
 import { SearchInput } from '../../../form/filter/SearchInput';
 import { AppDate } from '../../../ui/date/AppDate';
 import { EmptyState } from '../../../ui/empty/EmptyState';
@@ -47,6 +48,7 @@ type ActivityLogProps = {
 
 /** Shared, newest-first activity timeline for records and the system log. */
 const ActivityLog = ({ entityType, entityId }: ActivityLogProps) => {
+  const { t, locale } = usePortalLocale();
   const standalone = !entityType || !entityId;
   const [page, setPage] = useState(1);
   const [moduleFilter, setModuleFilter] = useState<ActivityModule | ''>('');
@@ -72,17 +74,17 @@ const ActivityLog = ({ entityType, entityId }: ActivityLogProps) => {
   });
 
   const renderBody = () => {
-    if (loading) return <Loading text="Loading activity…" />;
+    if (loading) return <Loading text={t('Loading activity…')} />;
     if (error) {
       return (
         <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-          {error}{' '}
+          {t(error)}{' '}
           <button
             type="button"
             onClick={refetch}
             className="font-semibold underline"
           >
-            Retry
+            {t('Retry')}
           </button>
         </div>
       );
@@ -91,24 +93,24 @@ const ActivityLog = ({ entityType, entityId }: ActivityLogProps) => {
       return (
         <EmptyState
           icon={<LuHistory className="size-6" />}
-          title="No activity yet"
+          title={t('No activity yet')}
           description={
             standalone
-              ? 'Activity across the system will show up here.'
-              : 'Changes to this record will show up here.'
+              ? t('Activity across the system will show up here.')
+              : t('Changes to this record will show up here.')
           }
         />
       );
     }
     return (
       <div>
-        <p className="mb-3 text-xs text-slate-400">Newest first</p>
+        <p className="mb-3 text-xs text-slate-600">{t('Newest first')}</p>
         <ol
-          aria-label="Activity history"
+          aria-label={t('Activity history')}
           className="ml-3 space-y-4 border-l border-slate-200 pl-6"
         >
           {entries.map((entry) => {
-            const { title, details } = presentActivity(entry);
+            const { title, details } = presentActivity(entry, t);
             return (
               <li key={entry.id} className="relative">
                 <span
@@ -124,25 +126,29 @@ const ActivityLog = ({ entityType, entityId }: ActivityLogProps) => {
                         {title}
                       </p>
                       <p className="mt-1 break-words text-xs text-slate-500">
-                        By{' '}
+                        {t('By')}{' '}
                         <span className="font-medium text-slate-700">
-                          {entry.actor_name || 'System'}
+                          {entry.actor_name || t('System')}
                         </span>
                         {entry.actor_role &&
-                          ` · ${roleLabel(entry.actor_role) || activityLabel(entry.actor_role)}`}
+                          ` · ${t(roleLabel(entry.actor_role) || activityLabel(entry.actor_role))}`}
                       </p>
                     </div>
                     <AppDate
                       value={entry.created_at}
                       format="datetime"
-                      className="shrink-0 text-xs text-slate-400"
+                      locale={locale === 'bm' ? 'ms-MY' : 'en-GB'}
+                      className="shrink-0 text-xs text-slate-600"
                     />
                   </div>
                   {standalone && (
                     <p className="mt-2 break-all text-xs text-slate-500">
-                      {MODULE_LABELS[entry.module] ||
-                        activityLabel(entry.module)}{' '}
-                      · {activityLabel(entry.entity_type)} · {entry.object_id}
+                      {t(
+                        MODULE_LABELS[entry.module] ||
+                          activityLabel(entry.module),
+                      )}{' '}
+                      · {t(activityLabel(entry.entity_type))} ·{' '}
+                      {entry.object_id}
                     </p>
                   )}
                   {details.length > 0 && (
@@ -178,7 +184,7 @@ const ActivityLog = ({ entityType, entityId }: ActivityLogProps) => {
           <SearchInput
             value={actorInput}
             onChange={(e) => setActorInput(e.target.value)}
-            placeholder="Search by actor name…"
+            placeholder={t('Search by actor name…')}
             className="sm:max-w-xs"
           />
           <div className="flex flex-wrap gap-2">
@@ -188,7 +194,10 @@ const ActivityLog = ({ entityType, entityId }: ActivityLogProps) => {
                 setModuleFilter(v as ActivityModule | '');
                 setPage(1);
               }}
-              options={MODULE_FILTER_OPTIONS}
+              options={MODULE_FILTER_OPTIONS.map((option) => ({
+                ...option,
+                label: t(option.label),
+              }))}
             />
             <FilterSelect
               value={actionFilter}
@@ -196,7 +205,10 @@ const ActivityLog = ({ entityType, entityId }: ActivityLogProps) => {
                 setActionFilter(v as ActivityAction | '');
                 setPage(1);
               }}
-              options={ACTION_FILTER_OPTIONS}
+              options={ACTION_FILTER_OPTIONS.map((option) => ({
+                ...option,
+                label: t(option.label),
+              }))}
             />
           </div>
         </div>
@@ -211,7 +223,7 @@ const ActivityLog = ({ entityType, entityId }: ActivityLogProps) => {
           itemsPerPage={PAGE_SIZE}
           itemCount={entries.length}
           totalCount={count}
-          itemLabel="activity entries"
+          itemLabel={t('activity entries')}
           loading={loading}
         />
       )}

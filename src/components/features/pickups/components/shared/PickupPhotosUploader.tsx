@@ -1,10 +1,11 @@
 'use client';
 
-import { useId, useState } from 'react';
-import { LuImage, LuUpload, LuX } from 'react-icons/lu';
+import { useState } from 'react';
+import { LuImage, LuX } from 'react-icons/lu';
 
+import { usePortalLocale } from '../../../../../contexts/PortalLocaleContext';
 import { ApiError } from '../../../../../lib/api';
-import { AlertBanner } from '../../../../ui/AlertBanner';
+import { PhotoPicker } from '../../../../form/upload/PhotoPicker';
 import { useUploadStorageFile } from '../../../storageFiles/hooks';
 
 const MAX_ORDER_PHOTOS = 4;
@@ -47,7 +48,7 @@ const PickupPhotosUploader = ({
   upload,
   onUploadingChange,
 }: PickupPhotosUploaderProps) => {
-  const inputId = useId();
+  const { t } = usePortalLocale();
   const { execute: storageUpload } = useUploadStorageFile();
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState('');
@@ -55,7 +56,7 @@ const PickupPhotosUploader = ({
   const atCap = value.length >= MAX_ORDER_PHOTOS;
 
   const handleFileChange = async (file: File | undefined) => {
-    if (!file || atCap) return;
+    if (!file || atCap || uploading) return;
     setUploading(true);
     onUploadingChange?.(true);
     setUploadError('');
@@ -83,18 +84,13 @@ const PickupPhotosUploader = ({
   return (
     <div className="mb-4" data-field="photos">
       <label className="block text-sm font-medium text-slate-900">
-        {label} {required && <span className="text-red-600">*</span>}{' '}
-        <span className="font-normal text-slate-400">
+        {t(label)} {required && <span className="text-red-600">*</span>}{' '}
+        <span className="font-normal text-slate-600">
           ({required ? 1 : 0}–{MAX_ORDER_PHOTOS})
         </span>
       </label>
-      {helperText && (
-        <p className="mt-0.5 text-xs text-slate-500">{helperText}</p>
-      )}
 
       <div className="mt-2">
-        <AlertBanner message={uploadError} />
-
         <div className="flex flex-wrap items-center gap-3">
           {value.map((photo, index) => (
             <div key={photo.file_key} className="group relative">
@@ -106,16 +102,16 @@ const PickupPhotosUploader = ({
                   className="size-16 rounded-xl border border-slate-200 object-cover"
                 />
               ) : (
-                <span className="flex size-16 items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50 text-slate-400">
+                <span className="flex size-16 items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50 text-slate-600">
                   <LuImage className="size-6" />
                 </span>
               )}
               <button
                 type="button"
                 onClick={() => removeAt(index)}
-                disabled={disabled}
-                aria-label={`Remove photo ${index + 1}`}
-                className="absolute -right-1.5 -top-1.5 flex size-5 items-center justify-center rounded-full bg-white text-slate-500 shadow ring-1 ring-slate-200 transition hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
+                disabled={disabled || uploading}
+                aria-label={t('Remove photo {value0}', { value0: index + 1 })}
+                className="absolute -right-2 -top-2 flex size-7 items-center justify-center rounded-full bg-white text-slate-500 shadow ring-1 ring-slate-200 transition hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <LuX className="size-3" />
               </button>
@@ -123,29 +119,18 @@ const PickupPhotosUploader = ({
           ))}
 
           {!atCap && (
-            <label
-              htmlFor={inputId}
-              className={`flex cursor-pointer items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 transition hover:border-brand-300 hover:bg-slate-50 ${
-                disabled || uploading ? 'pointer-events-none opacity-50' : ''
-              }`}
-            >
-              <LuUpload className="size-4" />
-              {uploading ? 'Uploading…' : addLabel}
-            </label>
+            <PhotoPicker
+              label={uploading ? t('Uploading…') : t(addLabel)}
+              accessibleLabel={t(label)}
+              disabled={disabled || uploading}
+              busy={uploading}
+              required={required && value.length === 0}
+              description={helperText ? t(helperText) : undefined}
+              error={t(uploadError || error || '')}
+              onSelect={handleFileChange}
+            />
           )}
         </div>
-        <input
-          id={inputId}
-          type="file"
-          accept="image/*"
-          className="sr-only"
-          disabled={disabled || uploading || atCap}
-          onChange={(e) => {
-            handleFileChange(e.target.files?.[0]);
-            e.target.value = '';
-          }}
-        />
-        {error && <p className="mt-1.5 text-xs text-red-600">{error}</p>}
       </div>
     </div>
   );

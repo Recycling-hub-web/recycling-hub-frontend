@@ -14,7 +14,6 @@
 // lawyer — the PDPA 2010 / DOE-SW110 references, liability limitation, and
 // governing-law clauses especially need verification. The English text at
 // /terms and /privacy remains authoritative until that review happens.
-
 import {
   BRAND,
   type ResourceSlug,
@@ -22,6 +21,7 @@ import {
   type SolutionSlug,
 } from '../constants/content';
 import type { Dictionary } from './en';
+import { authBm } from './portalAuth';
 
 const bm: Dictionary = {
   seo: {
@@ -48,6 +48,8 @@ const bm: Dictionary = {
   },
 
   nav: {
+    collectionSupportShort: 'Status & sijil',
+    collectionSupport: 'Status kutipan & sijil',
     whoWeHelp: 'Siapa yang kami bantu',
     serviceGroupMain: 'Kutipan & kitar semula',
     serviceGroupSupport: 'Sokongan perniagaan',
@@ -1284,6 +1286,18 @@ const bm: Dictionary = {
     ],
   },
 
+  countryCallingCode: 'Kod panggilan negara',
+  messageHandoff: {
+    notice:
+      'Mesej anda sudah sedia. Hantarkannya di WhatsApp untuk menghubungi pasukan kami. Tiada permintaan dihantar melalui laman ini.',
+    preview: 'Mesej untuk dihantar',
+    copy: 'Salin mesej',
+    copied: 'Mesej disalin.',
+    copyFailed: 'Pilih dan salin mesej di bawah, atau gunakan pilihan e-mel.',
+    email: 'Teruskan melalui e-mel',
+    emailNote: 'Semak dan hantar e-mel dalam aplikasi e-mel anda.',
+  },
+
   trackTrace: {
     hero: {
       eyebrow: 'Jejak & Kesan',
@@ -1321,7 +1335,7 @@ const bm: Dictionary = {
       'Kemas Kini Status Kutipan',
     ],
     sectionHeading2: {
-      eyebrow: 'Hantar Permintaan',
+      eyebrow: 'Sediakan Permintaan',
       headline: 'Beritahu Kami Apa Yang Anda Perlukan',
     },
     form: {
@@ -1339,11 +1353,10 @@ const bm: Dictionary = {
         'Anggaran tarikh kutipan, alamat, atau apa-apa lagi yang membantu kami mencari kutipan anda',
       errorNameRequired: 'Sila masukkan nama penuh anda.',
       errorEmailInvalid: 'Masukkan alamat e-mel yang sah.',
-      submitButton: 'Hantar Permintaan',
-      submittedButton: 'Permintaan Dihantar',
-      successPrefix: 'Permintaan diterima — kami akan e-melkan ',
-      successSuffix: ' anda dalam masa 2 hari bekerja.',
-      whatsappNote: 'Lebih suka berbincang terus? WhatsApp kami sahaja.',
+      submitButton: 'Teruskan di WhatsApp',
+      submittedButton: 'Buka WhatsApp semula',
+      whatsappNote:
+        'Semak dan hantar mesej di WhatsApp. Laman ini tidak menghantarnya.',
     },
     closingNote:
       'Permintaan dikendalikan oleh pasukan kami, bukan sistem automatik — jika nombor rujukan anda sukar dicari, terangkan sahaja kutipan tersebut sebaik mungkin dan kami akan padankan di pihak kami.',
@@ -1401,6 +1414,25 @@ const bm: Dictionary = {
       description:
         'Beritahu kami jenis peranti dan lokasi kutipan. Pickup rumah percuma memerlukan sekurang-kurangnya 3 peranti; pasukan kami akan mengesahkan urusannya.',
     },
+    confirmation: {
+      callbackTitle: 'Permintaan panggilan balik diterima',
+      businessTitle: 'Permintaan kutipan diterima',
+      reference: 'Rujukan permintaan',
+      phone: 'Nombor hubungan',
+      keepReference: 'Simpan rujukan ini apabila menghubungi pasukan kami.',
+      callbackNext:
+        'Pasukan kami akan menghubungi nombor yang anda berikan. Pickup anda belum ditempah.',
+      businessNext:
+        'Pasukan kami akan menyemak butiran anda dan menghubungi anda untuk bersetuju tentang skop, sebut harga dan masa kutipan. Pickup anda belum ditempah.',
+      another: 'Buat permintaan lain',
+    },
+    businessHero: {
+      eyebrow: 'Kutipan perniagaan dan pukal',
+      headline: 'Minta kutipan',
+      headlineAccent: 'perniagaan.',
+      description:
+        'Kongsi alamat kutipan dan foto. Pasukan kami akan mengesahkan skop, sebut harga dan masa pickup melalui telefon sebelum kutipan diatur.',
+    },
     typeSelector: {
       changeOption: 'Tukar jenis permintaan',
       heading: 'Apa yang anda ingin kitar semula?',
@@ -1417,6 +1449,9 @@ const bm: Dictionary = {
       },
     },
     quickForm: {
+      individual: 'Individu',
+      business: 'Perniagaan',
+      errorSummary: 'Sila semak nombor hubungan anda.',
       heading: 'Minta Panggilan Balik',
       subheading:
         'Tinggalkan nombor anda dan kami akan hubungi anda. Pickup rumah memerlukan sekurang-kurangnya 3 peranti.',
@@ -1431,6 +1466,9 @@ const bm: Dictionary = {
       errorMessage: 'Sesuatu tidak kena. Sila cuba lagi.',
     },
     form: {
+      errorSummary: 'Sila betulkan medan berikut.',
+      errorTextInvalid:
+        'Buang aksara yang tidak disokong dan semak panjang medan.',
       heading: 'Butiran Permintaan Kutipan',
       subheading:
         'Isikan butiran anda dan kami akan hubungi anda untuk sahkan masa kutipan.',
@@ -1907,94 +1945,7 @@ const bm: Dictionary = {
     },
   },
 
-  auth: {
-    login: {
-      title: 'Log Masuk',
-      subtitle: 'Log masuk ke operasi Recycling Hub.',
-      emailLabel: 'E-mel',
-      emailPlaceholder: 'anda@recyclinghub.eco',
-      passwordLabel: 'Kata Laluan',
-      passwordPlaceholder: '••••••••',
-      showPassword: 'Papar Kata Laluan',
-      hidePassword: 'Sembunyi Kata Laluan',
-      forgotPassword: 'Lupa Kata Laluan?',
-      submit: 'Log Masuk',
-      submitting: 'Sedang Log Masuk…',
-      genericError: 'E-mel atau kata laluan tidak sah.',
-    },
-    verifyOtp: {
-      title: 'Masukkan Kod Anda',
-      subtitle: 'Kami telah menghantar kod pengesahan 6-digit ke e-mel anda.',
-      codeLabel: 'Kod 6-Digit',
-      submit: 'Sahkan',
-      submitting: 'Sedang Mengesahkan…',
-      resend: 'Tidak Menerima Kod? Hantar Semula',
-      resendSending: 'Sedang Menghantar…',
-      resendSent: 'Kod baharu telah dihantar.',
-      resendIn: 'Hantar semula dalam',
-      backToLogin: 'Kembali Ke Log Masuk',
-      noPendingFlow: 'Sesi log masuk anda telah tamat — sila log masuk semula.',
-      genericError: 'Kod tidak sah atau telah tamat tempoh.',
-      incompleteCodeError: 'Masukkan semua 6 digit.',
-    },
-    forgotPassword: {
-      title: 'Lupa Kata Laluan Anda?',
-      subtitle:
-        'Masukkan e-mel anda dan kami akan menghantar pautan untuk menetapkan semula.',
-      emailLabel: 'E-mel',
-      emailPlaceholder: 'anda@recyclinghub.eco',
-      submit: 'Hantar Pautan Tetapan Semula',
-      submitting: 'Sedang Menghantar…',
-      successTitle: 'Semak E-mel Anda',
-      successMessage:
-        'Jika akaun itu wujud, kami telah menghantar pautan tetapan semula kata laluan ke e-melnya.',
-      backToLogin: 'Kembali Ke Log Masuk',
-    },
-    resetPassword: {
-      title: 'Tetapkan Semula Kata Laluan Anda',
-      subtitle: 'Pilih kata laluan baharu untuk akaun anda.',
-      passwordLabel: 'Kata Laluan Baharu',
-      confirmLabel: 'Sahkan Kata Laluan Baharu',
-      submit: 'Tetapkan Semula Kata Laluan',
-      submitting: 'Sedang Menetapkan Semula…',
-      successTitle: 'Kata Laluan Dikemas Kini',
-      successMessage:
-        'Kata laluan anda telah ditetapkan semula — anda kini boleh log masuk.',
-      signInNow: 'Log Masuk',
-      invalidToken:
-        'Pautan ini tidak sah atau telah tamat tempoh. Minta pautan baharu di bawah.',
-      requestNewLink: 'Minta Pautan Baharu',
-      passwordMismatch: 'Kata laluan tidak sepadan.',
-    },
-    setPassword: {
-      title: 'Tetapkan Kata Laluan Anda',
-      subtitle:
-        'Seorang pentadbir telah mencipta akaun untuk anda di Recycling Hub. Tetapkan kata laluan untuk melengkapkan pengaktifan akaun.',
-      passwordLabel: 'Kata Laluan',
-      confirmLabel: 'Sahkan Kata Laluan',
-      submit: 'Tetapkan Kata Laluan',
-      submitting: 'Sedang Menetapkan Kata Laluan…',
-      successTitle: 'Akaun Diaktifkan',
-      successMessage:
-        'Kata laluan anda telah ditetapkan — anda kini boleh log masuk.',
-      signInNow: 'Log Masuk',
-      invalidToken:
-        'Pautan jemputan ini tidak sah atau telah tamat tempoh. Hubungi pentadbir anda untuk pautan baharu.',
-      passwordMismatch: 'Kata laluan tidak sepadan.',
-    },
-    accountLocked: {
-      title: 'Akaun Disekat Sementara',
-      message:
-        'Kami telah menyekat akaun ini buat sementara waktu selepas beberapa percubaan log masuk yang gagal, untuk melindunginya. Sila cuba lagi sebentar lagi.',
-      backToLogin: 'Kembali Ke Log Masuk',
-    },
-    unauthorized: {
-      title: 'Anda Tiada Akses Kepada Ini',
-      message:
-        'Akaun anda tidak mempunyai kebenaran untuk melihat halaman ini.',
-      backToDashboard: 'Kembali Ke Papan Pemuka Saya',
-    },
-  },
+  auth: authBm,
 };
 
 export { bm };

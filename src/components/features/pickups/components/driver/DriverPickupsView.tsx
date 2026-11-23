@@ -13,6 +13,7 @@ import {
   LuWallet,
 } from 'react-icons/lu';
 
+import { usePortalLocale } from '../../../../../contexts/PortalLocaleContext';
 import { PageContainer } from '../../../../layout/PageContainer';
 import { StatusBadge } from '../../../../ui/badges/StatusBadge';
 import { Button } from '../../../../ui/buttons/Button';
@@ -67,6 +68,7 @@ const NAVIGABLE_STATUSES = ['pending', 'scheduled'];
 /** Driver-scoped available, active, and collected orders. History is
  * filtered and paginated by the API, so older orders stay accessible. */
 const DriverPickupsView = () => {
+  const { t, locale } = usePortalLocale();
   const router = useRouter();
   const toast = useToast();
   const [activeTab, setActiveTab] = useState<Tab>('mine');
@@ -132,7 +134,7 @@ const DriverPickupsView = () => {
 
   const handleScheduleConfirmed = () => {
     setConfirmTarget(null);
-    toast.success('Pickup time confirmed');
+    toast.success(t('Pickup time confirmed'));
     refetchMine();
   };
 
@@ -171,13 +173,13 @@ const DriverPickupsView = () => {
     setClaimingId(request.id);
     try {
       await claim(request.id);
-      toast.success('Pickup claimed');
+      toast.success(t('Pickup claimed'));
       if (available.length === 1 && availablePage > 1)
         setAvailablePage(availablePage - 1);
       else refetchAvailable();
       refetchMine();
     } catch {
-      toast.error('Could not claim this pickup — it may already be taken.');
+      toast.error(t('Could not claim this pickup — it may already be taken.'));
     } finally {
       setClaimingId(null);
     }
@@ -187,7 +189,7 @@ const DriverPickupsView = () => {
     selectionRun.current += 1;
     setSelectingAll(false);
     setRoutePreview(null);
-    toast.success('Marked as collected');
+    toast.success(t('Marked as collected'));
     setSelectedIds(new Set());
     selectedOrders.current.clear();
     if (mine.length === 1 && minePage > 1) setMinePage(minePage - 1);
@@ -218,7 +220,7 @@ const DriverPickupsView = () => {
       }
       if (prev.size >= MAX_OPTIMIZE_STOPS) {
         toast.error(
-          `You can optimize at most ${MAX_OPTIMIZE_STOPS} stops at once.`,
+          t(`You can optimize at most ${MAX_OPTIMIZE_STOPS} stops at once.`),
         );
         return prev;
       }
@@ -273,10 +275,12 @@ const DriverPickupsView = () => {
       chosen.forEach((order) => selectedOrders.current.set(order.id, order));
       setSelectedIds(new Set(chosen.map((order) => order.id)));
       if (!chosen.length)
-        toast.error('No pickups on your open route are available to select.');
+        toast.error(
+          t('No pickups on your open route are available to select.'),
+        );
     } catch {
       if (selectionRun.current === run)
-        toast.error('Could not select pickups. Please try again.');
+        toast.error(t('Could not select pickups. Please try again.'));
     } finally {
       if (selectionRun.current === run) setSelectingAll(false);
     }
@@ -289,11 +293,14 @@ const DriverPickupsView = () => {
   // My Pickups first (and the default) — a driver's own route is what
   // they open this page for most of the time.
   const tabItems: { key: Tab; label: string }[] = [
-    { key: 'mine', label: 'My Pickups' },
-    { key: 'history', label: 'History' },
+    { key: 'mine', label: t('My Pickups') },
+    { key: 'history', label: t('History') },
     {
       key: 'available',
-      label: availableCount > 0 ? `Available (${availableCount})` : 'Available',
+      label:
+        availableCount > 0
+          ? t('Available ({count})', { count: availableCount })
+          : t('Available'),
     },
   ];
 
@@ -358,7 +365,7 @@ const DriverPickupsView = () => {
       return (
         <TableErrorRow
           colSpan={columnCount}
-          message={error}
+          message={t(error ?? '')}
           onRetry={onRetry}
         />
       );
@@ -368,8 +375,8 @@ const DriverPickupsView = () => {
         <TableEmptyRow
           colSpan={columnCount}
           icon={<LuTruck className="size-6" />}
-          title={emptyMessages[activeTab].title}
-          subtitle={emptyMessages[activeTab].subtitle}
+          title={t(emptyMessages[activeTab].title)}
+          subtitle={t(emptyMessages[activeTab].subtitle)}
         />
       );
     }
@@ -400,9 +407,11 @@ const DriverPickupsView = () => {
                 checked={selectedIds.has(r.id)}
                 onChange={() => toggleSelect(r.id)}
                 disabled={offRoute || atCap || selectingAll}
-                title={checkboxTitle}
+                title={t(checkboxTitle ?? '')}
                 className="size-4 rounded border-slate-300 disabled:cursor-not-allowed disabled:opacity-40"
-                aria-label={`Select pickup for ${r.pickup_request.full_name}`}
+                aria-label={t('Select pickup for {value0}', {
+                  value0: r.pickup_request.full_name,
+                })}
               />
             </td>
           )}
@@ -410,9 +419,9 @@ const DriverPickupsView = () => {
           <td data-pickup-field="materials" className="p-3 text-slate-700">
             <span
               className="block max-w-48 truncate"
-              title={itemsSummary(r.items)}
+              title={itemsSummary(r.items, t)}
             >
-              {itemsSummary(r.items)}
+              {itemsSummary(r.items, t)}
             </span>
           </td>
           <td data-pickup-field="requester" className="p-3 text-slate-500">
@@ -439,7 +448,11 @@ const DriverPickupsView = () => {
             {r.price ?? '—'}
           </td>
           <td data-pickup-field="requested" className="p-3 text-slate-500">
-            <AppDate value={r.pickup_request.requested_at} format="short" />
+            <AppDate
+              value={r.pickup_request.requested_at}
+              format="short"
+              locale={locale === 'bm' ? 'ms-MY' : 'en-GB'}
+            />
           </td>
           <td data-pickup-field="confirmed" className="p-3">
             <ConfirmedPickupCell order={r} />
@@ -447,7 +460,7 @@ const DriverPickupsView = () => {
           {activeTab === 'history' && (
             <td data-pickup-field="status" className="p-3">
               <StatusBadge variant={STATUS_BADGE_VARIANT[r.status]}>
-                {PICKUP_STATUS_LABELS[r.status]}
+                {t(PICKUP_STATUS_LABELS[r.status])}
               </StatusBadge>
             </td>
           )}
@@ -466,7 +479,9 @@ const DriverPickupsView = () => {
                         'noopener,noreferrer',
                       )
                     }
-                    aria-label={`Navigate to ${r.pickup_request.full_name} with Google Maps`}
+                    aria-label={t('Navigate to {value0} with Google Maps', {
+                      value0: r.pickup_request.full_name,
+                    })}
                     icon={<LuMapPin className="size-4" />}
                   />
                   <IconButton
@@ -478,7 +493,9 @@ const DriverPickupsView = () => {
                         'noopener,noreferrer',
                       )
                     }
-                    aria-label={`Navigate to ${r.pickup_request.full_name} with Waze`}
+                    aria-label={t('Navigate to {value0} with Waze', {
+                      value0: r.pickup_request.full_name,
+                    })}
                     icon={<LuNavigation className="size-4" />}
                   />
                 </>
@@ -488,7 +505,9 @@ const DriverPickupsView = () => {
                   variant="ghost"
                   onClick={() => handleClaim(r)}
                   disabled={claimingId === r.id}
-                  aria-label={`Claim pickup for ${r.pickup_request.full_name}`}
+                  aria-label={t('Claim pickup for {value0}', {
+                    value0: r.pickup_request.full_name,
+                  })}
                   icon={<LuPackage className="size-4" />}
                 />
               ) : (
@@ -497,7 +516,7 @@ const DriverPickupsView = () => {
                     <IconButton
                       variant="ghost"
                       onClick={() => router.push(`/driver/pickups/${r.id}`)}
-                      aria-label={`View order ${r.code}`}
+                      aria-label={t('View order {value0}', { value0: r.code })}
                       icon={<LuEye className="size-4" />}
                     />
                   )}
@@ -505,8 +524,11 @@ const DriverPickupsView = () => {
                     <IconButton
                       variant="ghost"
                       onClick={() => setConfirmTarget(r)}
-                      aria-label={`Confirm pickup date and time for ${r.pickup_request.full_name}`}
-                      title="Confirm pickup date and time"
+                      aria-label={t(
+                        'Confirm pickup date and time for {value0}',
+                        { value0: r.pickup_request.full_name },
+                      )}
+                      title={t('Confirm pickup date and time')}
                       icon={<LuCalendarCheck className="size-4" />}
                     />
                   )}
@@ -514,7 +536,9 @@ const DriverPickupsView = () => {
                     <IconButton
                       variant="ghost"
                       onClick={() => setCollectTarget(r)}
-                      aria-label={`Mark pickup for ${r.pickup_request.full_name} as collected`}
+                      aria-label={t('Mark pickup for {value0} as collected', {
+                        value0: r.pickup_request.full_name,
+                      })}
                       icon={<LuPackage className="size-4" />}
                     />
                   )}
@@ -530,19 +554,21 @@ const DriverPickupsView = () => {
   return (
     <PageContainer variant="table">
       <PageHeader
-        title="Pickup Requests"
-        subtitle="Claim an available pickup, or manage your own."
+        title={t('Pickup Requests')}
+        subtitle={t('Claim an available pickup, or manage your own.')}
       />
 
       {pendingCount > 0 && (
         <div className="mb-4 flex flex-col items-start justify-between gap-3 rounded-xl border border-brand-200 bg-brand-50 p-4 sm:flex-row sm:items-center">
           <span className="inline-flex items-center gap-2 text-sm font-medium text-brand-900">
             <LuWallet className="size-4 shrink-0" />
-            Paid to customers: RM{pendingTotal.toFixed(2)} across {pendingCount}{' '}
-            order{pendingCount === 1 ? '' : 's'}.
+            {t('Paid to customers: RM{amount} across {count} orders.', {
+              amount: pendingTotal.toFixed(2),
+              count: pendingCount,
+            })}
           </span>
           <Button size="sm" href="/driver/finance">
-            View payments
+            {t('View payments')}
           </Button>
         </div>
       )}
@@ -557,7 +583,10 @@ const DriverPickupsView = () => {
       {activeTab === 'mine' && mineCount > 0 && (
         <div className="mb-4 flex flex-col gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3 sm:flex-row sm:items-center sm:justify-between">
           <span className="text-sm font-medium text-slate-700">
-            {selectedIds.size}/{MAX_OPTIMIZE_STOPS} selected
+            {t('{count}/{limit} selected', {
+              count: selectedIds.size,
+              limit: MAX_OPTIMIZE_STOPS,
+            })}
           </span>
           <div className="flex flex-wrap items-center gap-2">
             <Button
@@ -572,7 +601,7 @@ const DriverPickupsView = () => {
                 } else selectAllPickups();
               }}
             >
-              {selectingAll ? 'Selecting…' : selectionButtonLabel}
+              {selectingAll ? t('Selecting…') : t(selectionButtonLabel)}
             </Button>
             <Button
               size="sm"
@@ -583,7 +612,7 @@ const DriverPickupsView = () => {
               }}
             >
               <LuRoute className="size-4" />
-              Optimize Route
+              {t('Optimize Route')}
             </Button>
           </div>
         </div>
@@ -615,43 +644,46 @@ const DriverPickupsView = () => {
                       onChange={toggleSelectAll}
                       title={
                         optimizableMine.length > MAX_OPTIMIZE_STOPS
-                          ? `Selects the first ${MAX_OPTIMIZE_STOPS} — the most you can optimize at once.`
+                          ? t(
+                              'Selects the first {value0} — the most you can optimize at once.',
+                              { value0: MAX_OPTIMIZE_STOPS },
+                            )
                           : undefined
                       }
                       className="size-4 rounded border-slate-300"
-                      aria-label="Select all on this page"
+                      aria-label={t('Select all on this page')}
                     />
                   )}
                 </th>
               )}
               <th className="p-3 text-left font-semibold text-slate-500">
-                Order
+                {t('Order')}
               </th>
               <th className="p-3 text-left font-semibold text-slate-500">
-                Category
+                {t('Category')}
               </th>
               <th className="p-3 text-left font-semibold text-slate-500">
-                Requester
+                {t('Requester')}
               </th>
               <th className="p-3 text-left font-semibold text-slate-500">
-                Contact
+                {t('Contact')}
               </th>
               <th className="p-3 text-left font-semibold text-slate-500">
-                Price
+                {t('Price')}
               </th>
               <th className="p-3 text-left font-semibold text-slate-500">
-                Requested
+                {t('Requested')}
               </th>
               <th className="p-3 text-left font-semibold text-slate-500">
-                Confirmed pickup
+                {t('Confirmed pickup')}
               </th>
               {activeTab === 'history' && (
                 <th className="p-3 text-left font-semibold text-slate-500">
-                  Status
+                  {t('Status')}
                 </th>
               )}
               <th className="p-3 text-right font-semibold text-slate-500">
-                Actions
+                {t('Actions')}
               </th>
             </tr>
           </thead>

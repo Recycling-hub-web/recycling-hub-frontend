@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { LuPlus } from 'react-icons/lu';
 
 import { useAuth } from '../../../../contexts/AuthContext';
+import { usePortalLocale } from '../../../../contexts/PortalLocaleContext';
+import { formatMYR } from '../../../../lib/money';
 import { isAdminRole } from '../../../../types/auth';
 import { PageContainer } from '../../../layout/PageContainer';
 import { Button } from '../../../ui/buttons/Button';
@@ -20,6 +22,7 @@ import { ClaimTable } from './ClaimTable';
 /** Shared claims list with same-driver bulk payments for admin/accounting;
  * staff can read all claims, while drivers see and submit their own. */
 const ClaimsView = () => {
+  const { t } = usePortalLocale();
   const { user } = useAuth();
   const isDriver = user?.role === 'driver';
   const canPay = isAdminRole(user?.role) || user?.role === 'accounting';
@@ -82,13 +85,15 @@ const ClaimsView = () => {
   return (
     <PageContainer variant="table">
       <PageHeader
-        title="Expense Claims"
-        subtitle="Petrol and tool reimbursement claims submitted by drivers."
+        title={t('Expense Claims')}
+        subtitle={t(
+          'Petrol and tool reimbursement claims submitted by drivers.',
+        )}
         actions={
           isDriver ? (
             <Button href={`${basePath}/new`}>
               <LuPlus className="mr-1.5 size-4" />
-              New claim
+              {t('New claim')}
             </Button>
           ) : undefined
         }
@@ -98,38 +103,51 @@ const ClaimsView = () => {
         <FilterSelect
           value={categoryFilter}
           onChange={handleCategoryFilterChange}
-          options={CATEGORY_FILTER_OPTIONS}
+          ariaLabel={t('Filter claims by category')}
+          options={CATEGORY_FILTER_OPTIONS.map((option) => ({
+            ...option,
+            label: t(option.label),
+          }))}
         />
         <FilterSelect
           value={statusFilter}
           onChange={handleStatusFilterChange}
-          options={STATUS_FILTER_OPTIONS}
+          ariaLabel={t('Filter claims by status')}
+          options={STATUS_FILTER_OPTIONS.map((option) => ({
+            ...option,
+            label: t(option.label),
+          }))}
         />
       </div>
 
       {canPay && selected.length === 0 && (
         <p className="mb-3 text-sm text-slate-500">
-          Select up to 100 pending claims for one driver to record a combined
-          payment.
+          {t(
+            'Select up to 100 pending claims for one driver to record a combined payment.',
+          )}
         </p>
       )}
       {canPay && selected.length > 0 && (
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-brand-200 bg-brand-50 p-4">
           <div>
             <p className="text-sm font-semibold text-slate-900">
-              {selectedDriver?.full_name} · {selected.length}{' '}
-              {selected.length === 1 ? 'claim' : 'claims'} selected
+              {t('{name} · {count} claims selected', {
+                name: selectedDriver?.full_name ?? '',
+                count: selected.length,
+              })}
             </p>
             <p className="mt-1 text-sm text-brand-800">
-              Total RM {claimPaymentTotal(selected)}
+              {t('Total: {amount}', {
+                amount: formatMYR(claimPaymentTotal(selected)),
+              })}
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
             <Button variant="secondary" onClick={() => setSelection({})}>
-              Clear selection
+              {t('Clear selection')}
             </Button>
             <Button onClick={() => setPayOpen(true)}>
-              Pay selected claims
+              {t('Pay selected claims')}
             </Button>
           </div>
         </div>
@@ -157,7 +175,7 @@ const ClaimsView = () => {
             setSelection({});
             if (page === 1) refetch();
             else setPage(1);
-            toast.success('Expense claims paid');
+            toast.success(t('Expense claims paid'));
           }}
         />
       )}

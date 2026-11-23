@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { LuBuilding2, LuEye, LuMapPin, LuStar } from 'react-icons/lu';
 
 import { useAuth } from '../../../../../contexts/AuthContext';
+import { usePortalLocale } from '../../../../../contexts/PortalLocaleContext';
 import { Button } from '../../../../ui/buttons/Button';
 import type {
   CollectionRequestListItem,
@@ -29,6 +30,7 @@ export const OptimizedRoutePreview = ({
   origin: LatLng;
   selectedRequests: CollectionRequestListItem[];
 }) => {
+  const { t } = usePortalLocale();
   const { user } = useAuth();
   const firstStop = selectedRequests.find(
     (order) => order.id === result.stops[0]?.request_id,
@@ -41,16 +43,16 @@ export const OptimizedRoutePreview = ({
   );
   return (
     <section
-      aria-label="Optimized route"
+      aria-label={t('Optimized route')}
       className="mt-5 rounded-2xl border border-slate-200 bg-white p-4 sm:p-5"
     >
       <h2 className="mb-4 text-base font-semibold text-slate-900">
-        Optimized route
+        {t('Optimized route')}
       </h2>
       {showMap &&
         (embedUrl ? (
           <iframe
-            title="Google Maps optimized route"
+            title={t('Google Maps optimized route')}
             src={embedUrl}
             className="mb-5 h-64 w-full rounded-xl border-0 sm:h-80"
             loading="lazy"
@@ -59,16 +61,17 @@ export const OptimizedRoutePreview = ({
           />
         ) : (
           <p className="mb-4 rounded-lg bg-slate-50 p-3 text-sm text-slate-500">
-            Map preview unavailable. You can open the full route in Google Maps
-            below.
+            {t(
+              'Map preview unavailable. You can open the full route in Google Maps below.',
+            )}
           </p>
         ))}
       <div className="mb-3 flex items-center justify-between">
         <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-          Route order
+          {t('Route order')}
         </h3>
         <span className="rounded-full bg-brand-50 px-3 py-1 text-xs font-medium text-brand-700">
-          {result.stops.length} stops
+          {t('{count} stops', { count: result.stops.length })}
         </span>
       </div>
       <ol className="rounded-xl border border-slate-200 px-4 py-2">
@@ -82,9 +85,11 @@ export const OptimizedRoutePreview = ({
           </span>
           <div className="min-w-0">
             <p className="text-sm font-semibold text-slate-900">
-              {user?.full_name || 'Your location'}
+              {user?.full_name || t('Your location')}
             </p>
-            <p className="text-xs text-slate-500">Start · current location</p>
+            <p className="text-xs text-slate-500">
+              {t('Start · current location')}
+            </p>
           </div>
         </li>
         {result.stops.map((stop, i) => {
@@ -98,25 +103,26 @@ export const OptimizedRoutePreview = ({
                 aria-hidden="true"
                 className="absolute inset-y-0 left-4 w-px bg-slate-200"
               />
-              <span className="relative flex size-8 shrink-0 items-center justify-center rounded-full bg-brand-600 text-xs font-bold text-white">
+              <span className="relative flex size-8 shrink-0 items-center justify-center rounded-full bg-brand-700 text-xs font-bold text-white">
                 {i + 1}
               </span>
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-semibold text-slate-900">
-                  {req?.code || 'Order code unavailable'}
+                  {req?.code || t('Order code unavailable')}
                 </p>
                 <p
                   className="mt-0.5 truncate text-xs text-slate-500"
                   title={req?.pickup_request.pickup_address}
                 >
-                  {req?.pickup_request.pickup_address || 'Address unavailable'}
+                  {req?.pickup_request.pickup_address ||
+                    t('Address unavailable')}
                 </p>
               </div>
               {req && (
                 <Link
                   href={`/driver/pickups/${req.id}`}
-                  aria-label={`View order ${req.code}`}
-                  className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 text-slate-500 transition-colors hover:border-brand-600 hover:text-brand-600"
+                  aria-label={t('View order {value0}', { value0: req.code })}
+                  className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 text-slate-500 transition-colors hover:border-brand-600 hover:text-brand-700"
                 >
                   <LuEye className="size-4" aria-hidden="true" />
                 </Link>
@@ -134,7 +140,7 @@ export const OptimizedRoutePreview = ({
           </span>
           <div className="min-w-0">
             <p className="text-sm font-semibold text-slate-900">
-              {result.collection_point.name} — Drop-off
+              {result.collection_point.name} {t('— Drop-off')}
             </p>
             <p className="mt-0.5 break-words text-xs text-slate-500">
               {result.collection_point.address}
@@ -152,7 +158,7 @@ export const OptimizedRoutePreview = ({
             size="sm"
             className="min-h-11 min-w-0 whitespace-nowrap"
           >
-            Waze
+            {t('Waze')}
           </Button>
         )}
         <Button
@@ -161,13 +167,14 @@ export const OptimizedRoutePreview = ({
           className="min-h-11 min-w-0 gap-1.5 whitespace-nowrap"
         >
           <LuMapPin className="size-4" />
-          Google Maps
+          {t('Google Maps')}
         </Button>
       </div>
       {showWaze && firstStop && (
         <p className="mt-2 text-xs text-slate-500">
-          Waze opens the first stop. Follow the list above for the remaining
-          stops.
+          {t(
+            'Waze opens the first stop. Follow the list above for the remaining stops.',
+          )}
         </p>
       )}
     </section>

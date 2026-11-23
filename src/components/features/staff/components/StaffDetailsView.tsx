@@ -100,7 +100,7 @@ const StaffDetailsView = ({ staffId }: { staffId: string }) => {
     <PageContainer variant="form">
       <Link
         href="/admin/staff"
-        className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600 lg:mb-4 lg:min-h-0"
+        className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-700 lg:mb-4 lg:min-h-0"
       >
         <LuArrowLeft className="size-4" />
         Back to staff
@@ -121,7 +121,7 @@ const StaffDetailsView = ({ staffId }: { staffId: string }) => {
             className="size-14 shrink-0 rounded-full object-cover"
           />
         ) : (
-          <span className="flex size-14 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+          <span className="flex size-14 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-600">
             <LuUser className="size-6" />
           </span>
         )}
@@ -169,13 +169,13 @@ const StaffDetailsView = ({ staffId }: { staffId: string }) => {
 
         {hasArabicTranslation && (
           <div className="mt-5 border-t border-slate-100 pt-5">
-            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-600">
               Arabic translation (auto-generated)
             </p>
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
               {ARABIC_FIELDS.filter((f) => profile[f.key]).map((f) => (
                 <div key={f.key}>
-                  <p className="text-xs text-slate-400">{f.label}</p>
+                  <p className="text-xs text-slate-600">{f.label}</p>
                   <p dir="rtl" className="text-sm text-slate-700">
                     {profile[f.key]}
                   </p>

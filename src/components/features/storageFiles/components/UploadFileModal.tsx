@@ -76,7 +76,7 @@ const UploadFileModal = ({
             type="submit"
             form="upload-file-form"
             disabled={submitting}
-            className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-lg bg-brand-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-800 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {submitting ? 'Uploading…' : 'Upload'}
           </button>
@@ -94,7 +94,7 @@ const UploadFileModal = ({
           {file ? (
             <span className="text-sm font-medium text-slate-700">
               {file.name}{' '}
-              <span className="text-slate-400">
+              <span className="text-slate-600">
                 ({formatFileSize(file.size)})
               </span>
             </span>

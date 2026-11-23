@@ -9,6 +9,10 @@ import {
 import { TextareaField } from '../components/form/fields/TextareaField';
 import { ValidatedForm } from '../components/form/ValidatedForm';
 import { Meta } from '../components/layout/Meta';
+import {
+  MessageHandoff,
+  openWhatsAppDraft,
+} from '../components/public/shared/MessageHandoff';
 import { FadeIn } from '../components/ui/FadeIn';
 import { ReusableHero } from '../components/ui/hero';
 import { SectionHeading } from '../components/ui/SectionHeading';
@@ -26,17 +30,26 @@ const TrackTracePage: NextPageWithLayout = () => {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
-  const [requestType, setRequestType] = useState(content.requestTypes[0]);
+  const [requestType, setRequestType] = useState(content.requestTypes[0] ?? '');
   const [reference, setReference] = useState('');
   const [notes, setNotes] = useState('');
   const [error, setError] = useState('');
-  const [submitted, setSubmitted] = useState(false);
+  const [prepared, setPrepared] = useState(false);
+  const message = [
+    requestType,
+    `${content.form.fullName}: ${fullName.trim()}`,
+    `${content.form.email}: ${email.trim()}`,
+    `${content.form.phone}: ${phone.trim()}`,
+    `${content.form.requestTypeLabel}: ${requestType}`,
+    `${content.form.referenceLabel}: ${reference.trim()}`,
+    `${content.form.notesLabel}: ${notes.trim()}`,
+  ].join('\n');
 
   // Reset the select's value when the locale (and therefore the translated
   // option strings) changes, so it doesn't hold a stale string from the
   // previous language.
   useEffect(() => {
-    setRequestType(content.requestTypes[0]);
+    setRequestType(content.requestTypes[0] ?? '');
   }, [content.requestTypes]);
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -50,10 +63,8 @@ const TrackTracePage: NextPageWithLayout = () => {
       return;
     }
     setError('');
-    // TODO: wire this up to a real ticketing/records system (e.g. a helpdesk
-    // inbox, CRM, or internal collections database). This only simulates
-    // success client-side — no request is actually stored or routed yet.
-    setSubmitted(true);
+    setPrepared(true);
+    openWhatsAppDraft(message);
   };
 
   return (
@@ -87,7 +98,7 @@ const TrackTracePage: NextPageWithLayout = () => {
               return (
                 <FadeIn key={title} delay={i * 0.1}>
                   <div className="flex h-full flex-col rounded-2xl border border-slate-200 bg-neutral-50 p-6 md:p-8">
-                    <div className="mb-5 flex size-12 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
+                    <div className="mb-5 flex size-12 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
                       <Icon size={22} />
                     </div>
                     <h3 className="font-montserrat text-base font-extrabold text-neutral-950">
@@ -138,9 +149,8 @@ const TrackTracePage: NextPageWithLayout = () => {
                       setFullName(e.target.value);
                       if (error) setError('');
                     }}
-                    disabled={submitted}
                     placeholder={content.form.fullNamePlaceholder}
-                    className="rounded-lg border border-slate-200 px-3.5 py-2.5 text-sm text-neutral-950 placeholder:text-slate-400 focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20 disabled:bg-slate-50 disabled:text-slate-400"
+                    className="rounded-lg border border-slate-200 px-3.5 py-2.5 text-sm text-neutral-950 placeholder:text-slate-600 focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20 disabled:bg-slate-50 disabled:text-slate-400"
                   />
                 </div>
 
@@ -159,9 +169,8 @@ const TrackTracePage: NextPageWithLayout = () => {
                       setEmail(e.target.value);
                       if (error) setError('');
                     }}
-                    disabled={submitted}
                     placeholder="you@example.com"
-                    className="rounded-lg border border-slate-200 px-3.5 py-2.5 text-sm text-neutral-950 placeholder:text-slate-400 focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20 disabled:bg-slate-50 disabled:text-slate-400"
+                    className="rounded-lg border border-slate-200 px-3.5 py-2.5 text-sm text-neutral-950 placeholder:text-slate-600 focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20 disabled:bg-slate-50 disabled:text-slate-400"
                   />
                 </div>
 
@@ -177,9 +186,8 @@ const TrackTracePage: NextPageWithLayout = () => {
                     type="tel"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    disabled={submitted}
                     placeholder={content.form.phonePlaceholder}
-                    className="rounded-lg border border-slate-200 px-3.5 py-2.5 text-sm text-neutral-950 placeholder:text-slate-400 focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20 disabled:bg-slate-50 disabled:text-slate-400"
+                    className="rounded-lg border border-slate-200 px-3.5 py-2.5 text-sm text-neutral-950 placeholder:text-slate-600 focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20 disabled:bg-slate-50 disabled:text-slate-400"
                   />
                 </div>
 
@@ -194,7 +202,6 @@ const TrackTracePage: NextPageWithLayout = () => {
                     id="requestType"
                     value={requestType}
                     onChange={(e) => setRequestType(e.target.value)}
-                    disabled={submitted}
                     className="rounded-lg border border-slate-200 px-3.5 py-2.5 text-sm text-neutral-950 focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20 disabled:bg-slate-50 disabled:text-slate-400"
                   >
                     {content.requestTypes.map((type) => (
@@ -217,9 +224,8 @@ const TrackTracePage: NextPageWithLayout = () => {
                     type="text"
                     value={reference}
                     onChange={(e) => setReference(e.target.value)}
-                    disabled={submitted}
                     placeholder={content.form.referencePlaceholder}
-                    className="rounded-lg border border-slate-200 px-3.5 py-2.5 text-sm text-neutral-950 placeholder:text-slate-400 focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20 disabled:bg-slate-50 disabled:text-slate-400"
+                    className="rounded-lg border border-slate-200 px-3.5 py-2.5 text-sm text-neutral-950 placeholder:text-slate-600 focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20 disabled:bg-slate-50 disabled:text-slate-400"
                   />
                 </div>
 
@@ -230,31 +236,25 @@ const TrackTracePage: NextPageWithLayout = () => {
                     required={false}
                     formData={{ notes }}
                     updateFormData={(_, value) => setNotes(value)}
-                    disabled={submitted}
                     placeholder={content.form.notesPlaceholder}
                   />
                 </div>
               </div>
 
               {error && <p className="mt-4 text-sm text-red-500">{error}</p>}
-              {submitted && (
-                <p className="mt-4 text-sm font-medium text-brand-600">
-                  {content.form.successPrefix}
-                  {requestType}
-                  {content.form.successSuffix}
-                </p>
+              {prepared && (
+                <MessageHandoff message={message} subject={requestType} />
               )}
 
               <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-slate-600">
                   {content.form.whatsappNote}
                 </p>
                 <button
                   type="submit"
-                  disabled={submitted}
-                  className="inline-flex w-full items-center justify-center rounded-full bg-brand-600 px-6 py-3 text-sm font-semibold text-white ring-2 ring-brand-600 ring-offset-2 transition-all duration-300 ease-out hover:bg-brand-700 hover:ring-brand-700 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+                  className="inline-flex w-full shrink-0 items-center justify-center whitespace-nowrap rounded-full bg-brand-700 px-6 py-3 text-sm font-semibold text-white ring-2 ring-brand-700 ring-offset-2 transition-all duration-300 ease-out hover:bg-brand-800 hover:ring-brand-800 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
                 >
-                  {submitted
+                  {prepared
                     ? content.form.submittedButton
                     : content.form.submitButton}
                 </button>
@@ -268,7 +268,7 @@ const TrackTracePage: NextPageWithLayout = () => {
       <section className="bg-white py-12 md:py-16">
         <div className="mx-auto max-w-2xl px-5 text-center md:px-8">
           <div className="mb-4 flex justify-center">
-            <span className="flex size-11 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
+            <span className="flex size-11 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
               <LuClipboardCheck size={20} />
             </span>
           </div>
@@ -282,7 +282,9 @@ const TrackTracePage: NextPageWithLayout = () => {
 };
 
 TrackTracePage.getLayout = (page: ReactElement) => (
-  <PublicLayout navVariant="light">{page}</PublicLayout>
+  <PublicLayout navVariant="light" floatingContact={false}>
+    {page}
+  </PublicLayout>
 );
 
 export default TrackTracePage;

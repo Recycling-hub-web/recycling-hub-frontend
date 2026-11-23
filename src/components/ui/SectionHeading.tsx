@@ -20,7 +20,7 @@ const SectionHeading = ({
     <FadeIn>
       <span
         className={`mb-3 inline-block rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-widest ${
-          light ? 'bg-white/15 text-white/80' : 'bg-brand-50 text-brand-600'
+          light ? 'bg-white/15 text-white/80' : 'bg-brand-50 text-brand-700'
         }`}
       >
         {eyebrow}

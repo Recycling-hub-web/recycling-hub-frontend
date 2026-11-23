@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 
 import { SetPasswordView } from '../../../components/features/auth/components';
-import { getDictionary } from '../../../lib/dictionary';
 
 export const metadata: Metadata = {
   title: 'Set Your Password — Recycling Hub',
@@ -14,8 +13,5 @@ export default function SetPasswordPage({
 }: {
   searchParams: { token?: string };
 }) {
-  const { auth } = getDictionary('en');
-  return (
-    <SetPasswordView t={auth.setPassword} token={searchParams.token ?? ''} />
-  );
+  return <SetPasswordView token={searchParams.token ?? ''} />;
 }

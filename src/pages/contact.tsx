@@ -32,7 +32,9 @@ const ContactPage: NextPageWithLayout = () => {
 };
 
 ContactPage.getLayout = (page: ReactElement) => (
-  <PublicLayout navVariant="light">{page}</PublicLayout>
+  <PublicLayout navVariant="light" floatingContact={false}>
+    {page}
+  </PublicLayout>
 );
 
 export default ContactPage;

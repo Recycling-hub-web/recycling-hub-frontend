@@ -6,6 +6,8 @@ import type { FormEvent } from 'react';
 import { useState } from 'react';
 import { LuArrowLeft } from 'react-icons/lu';
 
+import { usePortalLocale } from '../../../../../contexts/PortalLocaleContext';
+import { localizeErrors } from '../../../../../lib/localizeErrors';
 import { ValidatedForm } from '../../../../form/ValidatedForm';
 import { PageContainer } from '../../../../layout/PageContainer';
 import { AlertBanner } from '../../../../ui/AlertBanner';
@@ -22,6 +24,7 @@ import {
 } from '../../hooks';
 import type { PickupRequestItemInput } from '../../services/pickupService';
 import { hasItemErrors, validateItems } from '../../units';
+import { PickupCategoryStatus } from '../shared/PickupCategoryStatus';
 import { PickupItemsFieldArray } from '../shared/PickupItemsFieldArray';
 import {
   type OrderPhoto,
@@ -47,6 +50,7 @@ const CreateOrderView = ({
   pickupRequestId,
   requestsBasePath,
 }: CreateOrderViewProps) => {
+  const { t } = usePortalLocale();
   const router = useRouter();
   const toast = useToast();
   const {
@@ -59,6 +63,8 @@ const CreateOrderView = ({
     options: categoryOptions,
     unitsByCategory,
     loading: loadingCategories,
+    error: categoriesError,
+    refetch: retryCategories,
   } = usePickupCategories();
   const [items, setItems] = useState<PickupRequestItemInput[]>([]);
   const [itemErrors, setItemErrors] = useState<Record<string, string>[]>([]);
@@ -90,7 +96,10 @@ const CreateOrderView = ({
           : undefined,
         photos: photos.map((p) => p.file_key),
       });
-      toast.success('Order created', `Order ${order.code} has been created.`);
+      toast.success(
+        t('Order created'),
+        t('Order {value0} has been created.', { value0: order.code }),
+      );
       // Orders live on their request's page — open the new one there.
       router.push(`${requestsBasePath}/${pickupRequestId}?order=${order.id}`);
     } catch {
@@ -99,12 +108,12 @@ const CreateOrderView = ({
     }
   };
 
-  if (loadingRequest) return <Loading text="Loading pickup request…" />;
+  if (loadingRequest) return <Loading text={t('Loading pickup request…')} />;
 
   if (loadError || !pickupRequest) {
     return (
       <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-        {loadError || 'Pickup request not found.'}
+        {loadError || t('Pickup request not found.')}
       </div>
     );
   }
@@ -113,22 +122,31 @@ const CreateOrderView = ({
     <PageContainer variant="form">
       <Link
         href={`${requestsBasePath}/${pickupRequestId}`}
-        className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600 lg:mb-4 lg:min-h-0"
+        className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-700 lg:mb-4 lg:min-h-0"
       >
         <LuArrowLeft className="size-4" />
-        Back to pickup request
+        {t('Back to pickup request')}
       </Link>
 
       <PageHeader
-        title="Create order"
-        subtitle={`For ${pickupRequest.full_name}'s pickup request — materials/items are optional here and can be added later.`}
+        title={t('Create order')}
+        subtitle={t(
+          "For {value0}'s pickup request — materials/items are optional here and can be added later.",
+          { value0: pickupRequest.full_name },
+        )}
       />
 
       <Card className="p-5">
         <ValidatedForm onSubmit={handleSubmit}>
-          <AlertBanner message={error} />
+          <AlertBanner message={t(error ?? '')} />
 
           <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
+            <PickupCategoryStatus
+              loading={loadingCategories}
+              error={categoriesError}
+              count={categoryOptions.length}
+              onRetry={retryCategories}
+            />
             <PickupItemsFieldArray
               items={items}
               onChange={setItems}
@@ -136,7 +154,7 @@ const CreateOrderView = ({
               unitsByCategory={unitsByCategory}
               loadingCategories={loadingCategories}
               disabled={submitting}
-              errors={itemErrors}
+              errors={localizeErrors(itemErrors, t)}
               labels={{
                 itemsSection: 'Materials (optional)',
                 category: 'Material category',
@@ -167,10 +185,10 @@ const CreateOrderView = ({
               href={`${requestsBasePath}/${pickupRequestId}`}
               variant="secondary"
             >
-              Cancel
+              {t('Cancel')}
             </Button>
             <Button type="submit" disabled={submitting}>
-              {submitting ? 'Creating…' : 'Create order'}
+              {submitting ? t('Creating…') : t('Create order')}
             </Button>
           </FormActions>
         </ValidatedForm>

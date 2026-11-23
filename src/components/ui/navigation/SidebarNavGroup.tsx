@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useEffect, useId, useState } from 'react';
 import { LuChevronDown } from 'react-icons/lu';
 
+import { usePortalLocale } from '../../../contexts/PortalLocaleContext';
 import type { NavItem, NavSubItem } from './navItems';
 
 type SidebarNavGroupProps = Omit<NavItem, 'href' | 'children'> & {
@@ -24,6 +25,7 @@ const SidebarNavGroup = ({
   items,
   activeHref,
 }: SidebarNavGroupProps) => {
+  const { t } = usePortalLocale();
   const hasActiveChild = items.some((item) => item.href === activeHref);
   const [open, setOpen] = useState(hasActiveChild);
   const listId = useId();
@@ -48,7 +50,7 @@ const SidebarNavGroup = ({
         }`}
       >
         <Icon className="size-4 shrink-0" />
-        <span className="flex-1">{label}</span>
+        <span className="flex-1">{t(label)}</span>
         <LuChevronDown
           className={`size-4 shrink-0 text-slate-400 transition-transform duration-300 ease-out motion-reduce:transition-none ${
             open ? 'rotate-180' : ''
@@ -88,7 +90,7 @@ const SidebarNavGroup = ({
                         : 'font-medium text-slate-500 hover:bg-slate-50 hover:text-slate-900'
                     }`}
                   >
-                    {itemLabel}
+                    {t(itemLabel)}
                   </Link>
                 </li>
               );

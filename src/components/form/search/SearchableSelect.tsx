@@ -95,7 +95,7 @@ const SearchableSelect = ({
         }`}
       >
         <span
-          className={`truncate ${selectedLabel ? 'text-slate-900' : 'text-slate-400'}`}
+          className={`truncate ${selectedLabel ? 'text-slate-900' : 'text-slate-600'}`}
         >
           {selectedLabel || placeholder}
         </span>
@@ -133,7 +133,7 @@ const SearchableSelect = ({
 
             {actions.length > 0 && !filteredOptions.length && (
               <div className="mt-2 border-t pt-2">
-                <li className="px-3 py-2 text-slate-400">No results found</li>
+                <li className="px-3 py-2 text-slate-600">No results found</li>
                 {actions.map((action, index) => (
                   <li
                     key={index}

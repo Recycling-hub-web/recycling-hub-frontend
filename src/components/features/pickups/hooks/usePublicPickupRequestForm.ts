@@ -21,8 +21,8 @@ import { useCreatePickupRequest } from './useCreatePickupRequest';
 
 /** State and behaviour for the public Business / Bulk step form: step
  * navigation, per-step and on-blur validation, photo-upload tracking
- * and submit. On success it resets in place, as before — a visitor may
- * well send another request. */
+ * and submit. An accepted reference remains visible until the visitor
+ * explicitly starts another request. */
 const usePublicPickupRequestForm = () => {
   const {
     pickupRequest: { form: copy },
@@ -42,6 +42,10 @@ const usePublicPickupRequestForm = () => {
   const [reached, setReached] = useState(0);
   const [completed, setCompleted] = useState<Set<PublicStepId>>(new Set());
   const [uploading, setUploading] = useState(false);
+  const [receipt, setReceipt] = useState<{
+    reference: string;
+    phone: string;
+  } | null>(null);
 
   const stepId = PUBLIC_STEP_IDS[stepIndex]!;
   const isLastStep = stepIndex === PUBLIC_STEP_IDS.length - 1;
@@ -121,10 +125,9 @@ const usePublicPickupRequestForm = () => {
     }
 
     try {
-      await createRequest(buildPublicPayload(formData, photos));
-      // Stay on the page and reset in place, as before.
-      reset();
-      toast.success(copy.successMessage);
+      const payload = buildPublicPayload(formData, photos);
+      const result = await createRequest(payload);
+      setReceipt({ reference: result.id, phone: payload.phone_number });
     } catch (err) {
       const message = err instanceof ApiError ? err.message : copy.errorMessage;
       setApiError(message);
@@ -134,6 +137,12 @@ const usePublicPickupRequestForm = () => {
 
   return {
     copy,
+    receipt,
+    startAnother: () => {
+      reset();
+      setApiError('');
+      setReceipt(null);
+    },
     steps,
     stepId,
     stepIndex,

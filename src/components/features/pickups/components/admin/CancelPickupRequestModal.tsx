@@ -2,6 +2,8 @@
 
 import { type FormEvent, useState } from 'react';
 
+import { usePortalLocale } from '../../../../../contexts/PortalLocaleContext';
+import { localizeErrors } from '../../../../../lib/localizeErrors';
 import { TextareaField } from '../../../../form/fields/TextareaField';
 import { ValidatedForm } from '../../../../form/ValidatedForm';
 import { AlertBanner } from '../../../../ui/AlertBanner';
@@ -31,6 +33,7 @@ const CancelPickupRequestModal = ({
   onClose,
   onCancelled,
 }: CancelPickupRequestModalProps) => {
+  const { t } = usePortalLocale();
   const { execute: cancel, loading: submitting } = useCancelPickupRequest();
   const [formData, setFormData] = useState<FormState>(INITIAL_STATE);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -59,6 +62,7 @@ const CancelPickupRequestModal = ({
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    if (submitting) return;
     setApiError('');
     if (!validate()) return;
     try {
@@ -73,9 +77,12 @@ const CancelPickupRequestModal = ({
   return (
     <Modal
       open={open}
+      dismissible={!submitting}
       onClose={handleClose}
-      title="Cancel pickup request"
-      subtitle="This cancels every order still in progress under this request. This can't be undone."
+      title={t('Cancel pickup request')}
+      subtitle={t(
+        "This cancels every order still in progress under this request. This can't be undone.",
+      )}
       footer={
         <FormActions>
           <button
@@ -84,7 +91,7 @@ const CancelPickupRequestModal = ({
             disabled={submitting}
             className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Keep request
+            {t('Keep request')}
           </button>
           <button
             type="submit"
@@ -92,7 +99,7 @@ const CancelPickupRequestModal = ({
             disabled={submitting}
             className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {submitting ? 'Cancelling…' : 'Cancel pickup request'}
+            {submitting ? t('Cancelling…') : t('Cancel pickup request')}
           </button>
         </FormActions>
       }
@@ -103,13 +110,13 @@ const CancelPickupRequestModal = ({
         noValidate
         className="space-y-1"
       >
-        <AlertBanner message={apiError} />
+        <AlertBanner message={t(apiError ?? '')} />
         <TextareaField
-          label="Cancellation reason"
+          label={t('Cancellation reason')}
           field="note"
-          placeholder="Why is this pickup request being cancelled?"
+          placeholder={t('Why is this pickup request being cancelled?')}
           formData={formData}
-          errors={errors}
+          errors={localizeErrors(errors, t)}
           updateFormData={updateFormData}
         />
       </ValidatedForm>

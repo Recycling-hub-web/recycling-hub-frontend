@@ -1,0 +1,277 @@
+[
+  {
+    "slug": "users-bm-desktop",
+    "title": "Users — Recycling Hub Admin",
+    "url": "/admin/users",
+    "text": "BETA\n\nUTAMA\n\nRingkasan\nPemberitahuan\n\nOPERASI\n\nPermintaan Kutipan\nPusat Kutipan\nVehicles\n\nKEWANGAN\n\nKewangan\nBank\n\nKANDUNGAN\n\nCatatan Blog\nKategori\nKerjasama\nHubungan\n\nPEOPLE\n\nPengguna\nKakitangan\nAU\nAudit User\nPentadbir\nLog keluar\nEN\nBM\n0 belum dibaca\n\nPemberitahuan\n\nBelum ada pemberitahuan\n\nAnda telah membaca semua pemberitahuan — aktiviti baharu akan dipaparkan di sini.\n\nLihat semua pemberitahuan\nAU\nAudit User\nProfil Saya\n\nModul operasi lain tersedia dalam Bahasa Inggeris buat masa ini.\n\nUsers\n\nManage admin, staff, driver, receiving officer, and accounting accounts.\n\nNew user\nUsers\nPending Registrations\nAll roles\nAdmin\nStaff\nDriver\nReceiving Officer\nAll statuses\nVerified\nPending\nExpired\nName\tEmail\tRole\tStatus\tRegistration\tActions\nTest Staff\taudit@example.test\tStaff\tActive\tVerified\t\n\nTest Administrator\taudit@example.test\tAdmin\tActive\tVerified\t\nMemaparkan 1 hingga 2 daripada 2 users\nSebelum\nHalaman 1 daripada 1\nSeterusnya\n© 2026 Recycling Hub. Hak cipta terpelihara.",
+    "overflow": false,
+    "headings": ["Users", "Ruang kerja anda"],
+    "smallControls": [],
+    "errors": []
+  },
+  {
+    "slug": "users-bm-mobile",
+    "title": "Users — Recycling Hub Admin",
+    "url": "/admin/users",
+    "text": "BETA\n0 belum dibaca\n\nPemberitahuan\n\nBelum ada pemberitahuan\n\nAnda telah membaca semua pemberitahuan — aktiviti baharu akan dipaparkan di sini.\n\nLihat semua pemberitahuan\nAU\nProfil Saya\n\nModul operasi lain tersedia dalam Bahasa Inggeris buat masa ini.\n\nUsers\n\nManage admin, staff, driver, receiving officer, and accounting accounts.\n\nNew user\nUsers\nPending Registrations\nName\tEmail\tRole\tStatus\tRegistration\tActions\nTest Staff\naudit@example.test\nStaff\nActive\nVerified\nTest Administrator\naudit@example.test\nAdmin\nActive\nVerified\nMemaparkan 1 hingga 2 daripada 2 users\nSebelum\nHalaman 1 daripada 1\nSeterusnya\nUtama\nPemberitahuan\nPermintaan Kutipan\nMenu",
+    "overflow": false,
+    "headings": ["Users", "Ruang kerja anda"],
+    "smallControls": [],
+    "errors": []
+  },
+  {
+    "slug": "categories-bm-mobile",
+    "title": "Material Categories — Recycling Hub Admin",
+    "url": "/admin/categories",
+    "text": "BETA\n0 belum dibaca\n\nPemberitahuan\n\nBelum ada pemberitahuan\n\nAnda telah membaca semua pemberitahuan — aktiviti baharu akan dipaparkan di sini.\n\nLihat semua pemberitahuan\nAU\nProfil Saya\n\nModul operasi lain tersedia dalam Bahasa Inggeris buat masa ini.\n\nMaterial Categories\n\nManage the material types used across pickup requests.\n\nNew category\nAll statuses\nActive\nInactive\nName\tDescription\tParent\tStatus\tActions\nLaptop\nA long material description that helps staff choose the right category for collection\n—\nActive\nMemaparkan 1 hingga 1 daripada 1 categories\nSebelum\nHalaman 1 daripada 1\nSeterusnya\nUtama\nPemberitahuan\nPermintaan Kutipan\nMenu",
+    "overflow": false,
+    "headings": ["Material Categories", "Ruang kerja anda"],
+    "smallControls": [],
+    "errors": []
+  },
+  {
+    "slug": "vehicles-bm-desktop",
+    "title": "Vehicles — Recycling Hub Admin",
+    "url": "/admin/vehicles",
+    "text": "BETA\n\nUTAMA\n\nRingkasan\nPemberitahuan\n\nOPERASI\n\nPermintaan Kutipan\nPusat Kutipan\nVehicles\n\nKEWANGAN\n\nKewangan\nBank\n\nKANDUNGAN\n\nCatatan Blog\nKategori\nKerjasama\nHubungan\n\nPEOPLE\n\nPengguna\nKakitangan\nAU\nAudit User\nPentadbir\nLog keluar\nEN\nBM\n0 belum dibaca\n\nPemberitahuan\n\nBelum ada pemberitahuan\n\nAnda telah membaca semua pemberitahuan — aktiviti baharu akan dipaparkan di sini.\n\nLihat semua pemberitahuan\nAU\nAudit User\nProfil Saya\n\nModul operasi lain tersedia dalam Bahasa Inggeris buat masa ini.\n\nVehicles\n\nManage the fleet vehicles drivers claim petrol expenses against.\n\nNew vehicle\nPlate number\tType\tOwnership\tAssigned driver\tStatus\tActions\nTEST 1234\tVan\tCompany\tTest Driver\tActive\t\nMemaparkan 1 hingga 1 daripada 1 vehicles\nSebelum\nHalaman 1 daripada 1\nSeterusnya\n© 2026 Recycling Hub. Hak cipta terpelihara.",
+    "overflow": false,
+    "headings": ["Vehicles", "Ruang kerja anda"],
+    "smallControls": [],
+    "errors": []
+  },
+  {
+    "slug": "request-create-bm-mobile",
+    "title": "New Pickup Request — Recycling Hub Admin",
+    "url": "/admin/pickup-requests/create",
+    "text": "BETA\n0 belum dibaca\n\nPemberitahuan\n\nBelum ada pemberitahuan\n\nAnda telah membaca semua pemberitahuan — aktiviti baharu akan dipaparkan di sini.\n\nLihat semua pemberitahuan\nAU\nProfil Saya\n\nModul operasi lain tersedia dalam Bahasa Inggeris buat masa ini.\n\nKembali ke permintaan kutipan\nPermintaan kutipan baharu\n\nMedan bertanda * diperlukan. Anda boleh menyemak semuanya sebelum menghantar.\n\n1\nPelanggan\n2\nKutipan\n3\nPesanan\n4\nSemak dan hantar\n\nPelanggan\n\nPelanggan\n\nUntuk siapa permintaan ini dibuat dan cara menghubunginya.\n\nNama penuh *\nJenis permintaan *\nPilih ...\nIndividu\nPerniagaan\nE-mel\nNombor telefon *\n+60 (MY)\n+93 (AF)\n+355 (AL)\n+213 (DZ)\n+376 (AD)\n+244 (AO)\n+1 (US/CA)\n+54 (AR)\n+374 (AM)\n+61 (AU)\n+43 (AT)\n+994 (AZ)\n+973 (BH)\n+880 (BD)\n+375 (BY)\n+32 (BE)\n+501 (BZ)\n+229 (BJ)\n+975 (BT)\n+591 (BO)\n+387 (BA)\n+267 (BW)\n+55 (BR)\n+673 (BN)\n+359 (BG)\n+226 (BF)\n+257 (BI)\n+855 (KH)\n+237 (CM)\n+238 (CV)\n+236 (CF)\n+235 (TD)\n+56 (CL)\n+86 (CN)\n+57 (CO)\n+269 (KM)\n+242 (CG)\n+243 (CD)\n+506 (CR)\n+385 (HR)\n+53 (CU)\n+357 (CY)\n+420 (CZ)\n+45 (DK)\n+253 (DJ)\n+1 809 (DO)\n+593 (EC)\n+20 (EG)\n+503 (SV)\n+240 (GQ)\n+291 (ER)\n+372 (EE)\n+268 (SZ)\n+251 (ET)\n+679 (FJ)\n+358 (FI)\n+33 (FR)\n+241 (GA)\n+220 (GM)\n+995 (GE)\n+49 (DE)\n+233 (GH)\n+30 (GR)\n+502 (GT)\n+224 (GN)\n+245 (GW)\n+592 (GY)\n+509 (HT)\n+504 (HN)\n+852 (HK)\n+36 (HU)\n+354 (IS)\n+91 (IN)\n+62 (ID)\n+98 (IR)\n+964 (IQ)\n+353 (IE)\n+972 (IL)\n+39 (IT)\n+225 (CI)\n+81 (JP)\n+962 (JO)\n+7 (RU/KZ)\n+254 (KE)\n+686 (KI)\n+850 (KP)\n+82 (KR)\n+965 (KW)\n+996 (KG)\n+856 (LA)\n+371 (LV)\n+961 (LB)\n+266 (LS)\n+231 (LR)\n+218 (LY)\n+423 (LI)\n+370 (LT)\n+352 (LU)\n+853 (MO)\n+389 (MK)\n+261 (MG)\n+265 (MW)\n+960 (MV)\n+223 (ML)\n+356 (MT)\n+222 (MR)\n+230 (MU)\n+52 (MX)\n+373 (MD)\n+377 (MC)\n+976 (MN)\n+382 (ME)\n+212 (MA)\n+258 (MZ)\n+95 (MM)\n+264 (NA)\n+977 (NP)\n+31 (NL)\n+64 (NZ)\n+505 (NI)\n+227 (NE)\n+234 (NG)\n+47 (NO)\n+968 (OM)\n+92 (PK)\n+970 (PS)\n+507 (PA)\n+675 (PG)\n+595 (PY)\n+51 (PE)\n+63 (PH)\n+48 (PL)\n+351 (PT)\n+974 (QA)\n+40 (RO)\n+250 (RW)\n+966 (SA)\n+221 (SN)\n+381 (RS)\n+248 (SC)\n+232 (SL)\n+65 (SG)\n+421 (SK)\n+386 (SI)\n+677 (SB)\n+252 (SO)\n+27 (ZA)\n+211 (SS)\n+34 (ES)\n+94 (LK)\n+249 (SD)\n+597 (SR)\n+46 (SE)\n+41 (CH)\n+963 (SY)\n+886 (TW)\n+992 (TJ)\n+255 (TZ)\n+66 (TH)\n+670 (TL)\n+228 (TG)\n+676 (TO)\n+216 (TN)\n+90 (TR)\n+993 (TM)\n+256 (UG)\n+380 (UA)\n+971 (AE)\n+44 (UK)\n+598 (UY)\n+998 (UZ)\n+678 (VU)\n+58 (VE)\n+84 (VN)\n+967 (YE)\n+260 (ZM)\n+263 (ZW)\n\nLangkah 1 daripada 4\n\nBatal\nTeruskan\nUtama\nPemberitahuan\nPermintaan Kutipan\nMenu",
+    "overflow": false,
+    "headings": ["Permintaan kutipan baharu", "Pelanggan", "Ruang kerja anda"],
+    "smallControls": [],
+    "errors": []
+  },
+  {
+    "slug": "requests-bm-desktop",
+    "title": "Pickup Requests — Recycling Hub Admin",
+    "url": "/admin/pickup-requests",
+    "text": "BETA\n\nUTAMA\n\nRingkasan\nPemberitahuan\n\nOPERASI\n\nPermintaan Kutipan\nPusat Kutipan\nVehicles\n\nKEWANGAN\n\nKewangan\nBank\n\nKANDUNGAN\n\nCatatan Blog\nKategori\nKerjasama\nHubungan\n\nPEOPLE\n\nPengguna\nKakitangan\nAU\nAudit User\nPentadbir\nLog keluar\nEN\nBM\n0 belum dibaca\n\nPemberitahuan\n\nBelum ada pemberitahuan\n\nAnda telah membaca semua pemberitahuan — aktiviti baharu akan dipaparkan di sini.\n\nLihat semua pemberitahuan\nAU\nAudit User\nProfil Saya\n\nModul operasi lain tersedia dalam Bahasa Inggeris buat masa ini.\n\nPermintaan Kutipan\n\nPermintaan pelanggan — permintaan kutipan yang dihantar melalui laman awam atau ditambah oleh kakitangan.\n\nPermintaan baharu\nSemua Permintaan\nPermintaan Panggilan Ringkas\nSemua jenis\nIndividu\nPerniagaan\nSemua status\nTerbuka\nSelesai\nDibatalkan\n\tKod\tNama\tHubungan\tJenis\tStatus\tPesanan\tDiminta untuk\tTindakan\n\tR1001\tTest Customer\t+60123456789\tIndividu\tTerbuka\tBelum ada pesanan\t23 Nov 2026\t\nMemaparkan 1 hingga 1 daripada 1 pickup requests\nSebelum\nHalaman 1 daripada 1\nSeterusnya\n© 2026 Recycling Hub. Hak cipta terpelihara.",
+    "overflow": false,
+    "headings": ["Permintaan Kutipan", "Ruang kerja anda"],
+    "smallControls": [
+      {
+        "text": "Lihat permintaan kutipan R1001",
+        "height": 17
+      },
+      {
+        "text": "Message +60123456789 on WhatsApp",
+        "height": 17
+      }
+    ],
+    "errors": []
+  },
+  {
+    "slug": "request-detail-bm",
+    "title": "Pickup Request — Recycling Hub Admin",
+    "url": "/admin/pickup-requests/request-1",
+    "text": "BETA\n\nUTAMA\n\nRingkasan\nPemberitahuan\n\nOPERASI\n\nPermintaan Kutipan\nPusat Kutipan\nVehicles\n\nKEWANGAN\n\nKewangan\nBank\n\nKANDUNGAN\n\nCatatan Blog\nKategori\nKerjasama\nHubungan\n\nPEOPLE\n\nPengguna\nKakitangan\nAU\nAudit User\nPentadbir\nLog keluar\nEN\nBM\n0 belum dibaca\n\nPemberitahuan\n\nBelum ada pemberitahuan\n\nAnda telah membaca semua pemberitahuan — aktiviti baharu akan dipaparkan di sini.\n\nLihat semua pemberitahuan\nAU\nAudit User\nProfil Saya\n\nModul operasi lain tersedia dalam Bahasa Inggeris buat masa ini.\n\nKembali ke permintaan kutipan\nR1001\n\nTest Customer · 0 pesanan\n\nTindakan\nIndividu\nTerbuka\nRingkasan\nPesanan (0)\nDokumen (0)\nAktiviti\n\nPEMOHON\n\nTest Customer\n\nE-MEL\n\ncustomer@example.test\n\nTELEFON\n\n+60123456789\n\nDIMINTA UNTUK\n\n23 November 2026\n\nALAMAT KUTIPAN\n\n1 Jalan Test\n\nNOTA\n\nKeep this original note\n\n© 2026 Recycling Hub. Hak cipta terpelihara.",
+    "overflow": false,
+    "headings": ["R1001", "Ruang kerja anda"],
+    "smallControls": [
+      {
+        "text": "Kembali ke permintaan kutipan",
+        "height": 20
+      },
+      {
+        "text": "Message +60123456789 on WhatsApp",
+        "height": 17
+      }
+    ],
+    "errors": []
+  },
+  {
+    "slug": "profile-edit-bm-mobile",
+    "title": "Edit Profile — Recycling Hub",
+    "url": "/profile/edit",
+    "text": "BETA\n0 belum dibaca\n\nPemberitahuan\n\nBelum ada pemberitahuan\n\nAnda telah membaca semua pemberitahuan — aktiviti baharu akan dipaparkan di sini.\n\nLihat semua pemberitahuan\nAU\nProfil Saya\n\nModul operasi lain tersedia dalam Bahasa Inggeris buat masa ini.\n\nBack to profile\nEdit profile\n\naudit@example.test\n\nProfile photo\nUpload photo\nPersonal details\nFull name *\nNombor telefon\n+60 (MY)\n+93 (AF)\n+355 (AL)\n+213 (DZ)\n+376 (AD)\n+244 (AO)\n+1 (US/CA)\n+54 (AR)\n+374 (AM)\n+61 (AU)\n+43 (AT)\n+994 (AZ)\n+973 (BH)\n+880 (BD)\n+375 (BY)\n+32 (BE)\n+501 (BZ)\n+229 (BJ)\n+975 (BT)\n+591 (BO)\n+387 (BA)\n+267 (BW)\n+55 (BR)\n+673 (BN)\n+359 (BG)\n+226 (BF)\n+257 (BI)\n+855 (KH)\n+237 (CM)\n+238 (CV)\n+236 (CF)\n+235 (TD)\n+56 (CL)\n+86 (CN)\n+57 (CO)\n+269 (KM)\n+242 (CG)\n+243 (CD)\n+506 (CR)\n+385 (HR)\n+53 (CU)\n+357 (CY)\n+420 (CZ)\n+45 (DK)\n+253 (DJ)\n+1 809 (DO)\n+593 (EC)\n+20 (EG)\n+503 (SV)\n+240 (GQ)\n+291 (ER)\n+372 (EE)\n+268 (SZ)\n+251 (ET)\n+679 (FJ)\n+358 (FI)\n+33 (FR)\n+241 (GA)\n+220 (GM)\n+995 (GE)\n+49 (DE)\n+233 (GH)\n+30 (GR)\n+502 (GT)\n+224 (GN)\n+245 (GW)\n+592 (GY)\n+509 (HT)\n+504 (HN)\n+852 (HK)\n+36 (HU)\n+354 (IS)\n+91 (IN)\n+62 (ID)\n+98 (IR)\n+964 (IQ)\n+353 (IE)\n+972 (IL)\n+39 (IT)\n+225 (CI)\n+81 (JP)\n+962 (JO)\n+7 (RU/KZ)\n+254 (KE)\n+686 (KI)\n+850 (KP)\n+82 (KR)\n+965 (KW)\n+996 (KG)\n+856 (LA)\n+371 (LV)\n+961 (LB)\n+266 (LS)\n+231 (LR)\n+218 (LY)\n+423 (LI)\n+370 (LT)\n+352 (LU)\n+853 (MO)\n+389 (MK)\n+261 (MG)\n+265 (MW)\n+960 (MV)\n+223 (ML)\n+356 (MT)\n+222 (MR)\n+230 (MU)\n+52 (MX)\n+373 (MD)\n+377 (MC)\n+976 (MN)\n+382 (ME)\n+212 (MA)\n+258 (MZ)\n+95 (MM)\n+264 (NA)\n+977 (NP)\n+31 (NL)\n+64 (NZ)\n+505 (NI)\n+227 (NE)\n+234 (NG)\n+47 (NO)\n+968 (OM)\n+92 (PK)\n+970 (PS)\n+507 (PA)\n+675 (PG)\n+595 (PY)\n+51 (PE)\n+63 (PH)\n+48 (PL)\n+351 (PT)\n+974 (QA)\n+40 (RO)\n+250 (RW)\n+966 (SA)\n+221 (SN)\n+381 (RS)\n+248 (SC)\n+232 (SL)\n+65 (SG)\n+421 (SK)\n+386 (SI)\n+677 (SB)\n+252 (SO)\n+27 (ZA)\n+211 (SS)\n+34 (ES)\n+94 (LK)\n+249 (SD)\n+597 (SR)\n+46 (SE)\n+41 (CH)\n+963 (SY)\n+886 (TW)\n+992 (TJ)\n+255 (TZ)\n+66 (TH)\n+670 (TL)\n+228 (TG)\n+676 (TO)\n+216 (TN)\n+90 (TR)\n+993 (TM)\n+256 (UG)\n+380 (UA)\n+971 (AE)\n+44 (UK)\n+598 (UY)\n+998 (UZ)\n+678 (VU)\n+58 (VE)\n+84 (VN)\n+967 (YE)\n+260 (ZM)\n+263 (ZW)\n\nContact me on WhatsApp\n\nUse this phone number for WhatsApp messages.\n\nEmail\n\naudit@example.test\n\nChange email\nWork details\nDepartment\nPosition\nBranch\nJoining date\n\nYour employee ID and role are managed by an administrator.\n\nCancel\nSave changes\nUtama\nPemberitahuan\nPermintaan Kutipan\nMenu",
+    "overflow": false,
+    "headings": [
+      "Edit profile",
+      "Personal details",
+      "Work details",
+      "Ruang kerja anda"
+    ],
+    "smallControls": [],
+    "errors": []
+  },
+  {
+    "slug": "request-required-validation",
+    "text": "Modul operasi lain tersedia dalam Bahasa Inggeris buat masa ini.\n\nKembali ke permintaan kutipan\nPermintaan kutipan baharu\n\nMedan bertanda * diperlukan. Anda boleh menyemak semuanya sebelum menghantar.\n\n1\nPelanggan\n2\nKutipan\n3\nPesanan\n4\nSemak dan hantar\n\nPelanggan\n\nNama penuh: Medan ini diperlukan.\n\nPelanggan\n\nUntuk siapa permintaan ini dibuat dan cara menghubunginya.\n\nNama penuh *\nJenis permintaan *\nPilih ...\nIndividu\nPerniagaan\nE-mel\nNombor telefon *\n+60 (MY)\n+93 (AF)\n+355 (AL)\n+213 (DZ)\n+376 (AD)\n+244 (AO)\n+1 (US/CA)\n+54 (AR)\n+374 (AM)\n+61 (AU)\n+43 (AT)\n+994 (AZ)\n+973 (BH)\n+880 (BD)\n+375 (BY)\n+32 (BE)\n+501 (BZ)\n+229 (BJ)\n+975 (BT)\n+591 (BO)\n+387 (BA)\n+267 (BW)\n+55 (BR)\n+673 (BN)\n+359 (BG)\n+226 (BF)\n+257 (BI)\n+855 (KH)\n+237 (CM)\n+238 (CV)\n+236 (CF)\n+235 (TD)\n+56 (CL)\n+86 (CN)\n+57 (CO)\n+269 (KM)\n+242 (CG)\n+243 (CD)\n+506 (CR)\n+385 (HR)\n+53 (CU)\n+357 (CY)\n+420 (CZ)\n+45 (DK)\n+253 (DJ)\n+1 809 (DO)\n+593 (EC)\n+20 (EG)\n+503 (SV)\n+240 (GQ)\n+291 (ER)\n+372 (EE)\n+268 (SZ)\n+251 (ET)\n+679 (FJ)\n+358 (FI)\n+33 (FR)\n+241 (GA)\n+220 (GM)\n+995 (GE)\n+49 (DE)\n+233 (GH)\n+30 (GR)\n+502 (GT)\n+224 (GN)\n+245 (GW)\n+592 (GY)\n+509 (HT)\n+504 (HN)\n+852 (HK)\n+36 (HU)\n+354 (IS)\n+91 (IN)\n+62 (ID)\n+98 (IR)\n+964 (IQ)\n+353 (IE)\n+972 (IL)\n+39 (IT)\n+225 (CI)\n+81 (JP)\n+962 (JO)\n+7 (RU/KZ)\n+254 (KE)\n+686 (KI)\n+850 (KP)\n+82 (KR)\n+965 (KW)\n+996 (KG)\n+856 (LA)\n+371 (LV)\n+961 (LB)\n+266 (LS)\n+231 (LR)\n+218 (LY)\n+423 (LI)\n+370 (LT)\n+352 (LU)\n+853 (MO)\n+389 (MK)\n+261 (MG)\n+265 (MW)\n+960 (MV)\n+223 (ML)\n+356 (MT)\n+222 (MR)\n+230 (MU)\n+52 (MX)\n+373 (MD)\n+377 (MC)\n+976 (MN)\n+382 (ME)\n+212 (MA)\n+258 (MZ)\n+95 (MM)\n+264 (NA)\n+977 (NP)\n+31 (NL)\n+64 (NZ)\n+505 (NI)\n+227 (NE)\n+234 (NG)\n+47 (NO)\n+968 (OM)\n+92 (PK)\n+970 (PS)\n+507 (PA)\n+675 (PG)\n+595 (PY)\n+51 (PE)\n+63 (PH)\n+48 (PL)\n+351 (PT)\n+974 (QA)\n+40 (RO)\n+250 (RW)\n+966 (SA)\n+221 (SN)\n+381 (RS)\n+248 (SC)\n+232 (SL)\n+65 (SG)\n+421 (SK)\n+386 (SI)\n+677 (SB)\n+252 (SO)\n+27 (ZA)\n+211 (SS)\n+34 (ES)\n+94 (LK)\n+249 (SD)\n+597 (SR)\n+46 (SE)\n+41 (CH)\n+963 (SY)\n+886 (TW)\n+992 (TJ)\n+255 (TZ)\n+66 (TH)\n+670 (TL)\n+228 (TG)\n+676 (TO)\n+216 (TN)\n+90 (TR)\n+993 (TM)\n+256 (UG)\n+380 (UA)\n+971 (AE)\n+44 (UK)\n+598 (UY)\n+998 (UZ)\n+678 (VU)\n+58 (VE)\n+84 (VN)\n+967 (YE)\n+260 (ZM)\n+263 (ZW)\n\nLangkah 1 daripada 4\n\nBatal\nTeruskan"
+  },
+  {
+    "slug": "actions-keyboard",
+    "focused": {
+      "text": "Tindakan",
+      "role": null,
+      "menu": [
+        {
+          "left": -80.109375,
+          "right": 127.890625,
+          "width": 208
+        }
+      ]
+    }
+  },
+  {
+    "slug": "unsaved-profile-navigation",
+    "dialogSeen": false,
+    "url": "/profile"
+  },
+  {
+    "slug": "mobile-menu",
+    "dialogOpen": 1,
+    "text": "Ruang kerja anda\nEN\nBM\nRingkasan\nPemberitahuan\nPermintaan Kutipan\nPusat Kutipan\nVehicles\nRekod Kewangan\nTuntutan Perbelanjaan\nBank\nCatatan Blog\nKategori\nKerjasama\nHubungan\nPengguna\nKakitangan\nAU\nAudit User\nPentadbir\nLog keluar"
+  },
+  {
+    "slug": "mobile-menu-escape",
+    "dialogOpen": 0,
+    "focused": "Menu"
+  },
+  {
+    "slug": "categories-error",
+    "title": "Material Categories — Recycling Hub Admin",
+    "url": "/admin/categories",
+    "text": "BETA\n\nUTAMA\n\nRingkasan\nPemberitahuan\n\nOPERASI\n\nPermintaan Kutipan\nPusat Kutipan\nVehicles\n\nKEWANGAN\n\nKewangan\nBank\n\nKANDUNGAN\n\nCatatan Blog\nKategori\nKerjasama\nHubungan\n\nPEOPLE\n\nPengguna\nKakitangan\nAU\nAudit User\nPentadbir\nLog keluar\nEN\nBM\n0 belum dibaca\n\nPemberitahuan\n\nBelum ada pemberitahuan\n\nAnda telah membaca semua pemberitahuan — aktiviti baharu akan dipaparkan di sini.\n\nLihat semua pemberitahuan\nAU\nAudit User\nProfil Saya\n\nModul operasi lain tersedia dalam Bahasa Inggeris buat masa ini.\n\nMaterial Categories\n\nManage the material types used across pickup requests.\n\nNew category\nAll statuses\nActive\nInactive\nName\tDescription\tParent\tStatus\tActions\n\n\nSesuatu tidak kena\n\nService temporarily unavailable\n\nCuba lagi\n0 categories\nSebelum\nHalaman 1 daripada 1\nSeterusnya\n© 2026 Recycling Hub. Hak cipta terpelihara.",
+    "overflow": false,
+    "headings": ["Material Categories", "Ruang kerja anda"],
+    "smallControls": [],
+    "errors": []
+  },
+  {
+    "slug": "receiving-desktop",
+    "title": "Deliveries — Recycling Hub Receiving",
+    "url": "/receiving/deliveries",
+    "text": "BETA\n\nMAIN\n\nOverview\nNotifications\n\nWORK\n\nDeliveries\nAU\nAudit User\nReceiving Officer\nSign out\nEN\nBM\n0 unread\n\nNotifications\n\nNo notifications yet\n\nYou're all caught up — new activity will show up here.\n\nView all notifications\nAU\nAudit User\nMy Profile\nDeliveries\n\nVerify and close requests once a driver's route has been dropped off.\n\nAll stores\nTest Store\nAll\nDelivered — awaiting verification\nClosed\nOrder\tRequester\tCategory / quantity\tStore\tStatus\tAction\nC1000\tTest Customer\tLaptop — 2.50\tTest Store\tDelivered\t\n\nC1001\tTest Customer\tLaptop — 2.50\tTest Store\tDelivered\t\nShowing 1 to 2 of 2 deliveries\nPrev\nPage 1 of 1\nNext\n© 2026 Recycling Hub. All rights reserved.",
+    "overflow": false,
+    "headings": ["Deliveries", "Your workspace"],
+    "smallControls": [],
+    "errors": []
+  },
+  {
+    "slug": "receiving-mobile",
+    "title": "Deliveries — Recycling Hub Receiving",
+    "url": "/receiving/deliveries",
+    "text": "BETA\n0 unread\n\nNotifications\n\nNo notifications yet\n\nYou're all caught up — new activity will show up here.\n\nView all notifications\nAU\nMy Profile\nDeliveries\n\nVerify and close requests once a driver's route has been dropped off.\n\nAll stores\nTest Store\nAll\nDelivered — awaiting verification\nClosed\nOrder\tRequester\tCategory / quantity\tStore\tStatus\tAction\nC1000\nTest Customer\nLaptop — 2.50\nTest Store\nDelivered\nC1001\nTest Customer\nLaptop — 2.50\nTest Store\nDelivered\nShowing 1 to 2 of 2 deliveries\nPrev\nPage 1 of 1\nNext\nHome\nNotifications\nDeliveries\nMenu",
+    "overflow": false,
+    "headings": ["Deliveries", "Your workspace"],
+    "smallControls": [],
+    "errors": []
+  },
+  {
+    "slug": "receiving-dashboard-error",
+    "title": "Receiving — Recycling Hub",
+    "url": "/receiving",
+    "text": "BETA\n\nMAIN\n\nOverview\nNotifications\n\nWORK\n\nDeliveries\nAU\nAudit User\nReceiving Officer\nSign out\nEN\nBM\n0 unread\n\nNotifications\n\nNo notifications yet\n\nYou're all caught up — new activity will show up here.\n\nView all notifications\nAU\nAudit User\nMy Profile\nWelcome, Audit\n\nReceiving Officer\n\nAwaiting close\n\n0\n\nClosed this month\n\nClosed-delivery volume\n\n—\n\ndeliveries closed\n\n7D\n30D\n3M\n6M\n12M\nAll\nCustom\n\nCouldn't load volume.\n\nRetry\nDeliveries by status\n\nEMAIL\n\naudit@example.test\n\nPHONE\n\n+60123456789\n\nEMPLOYEE ID\n\nTEST001\n\nDEPARTMENT\n\nOperations\n\nPOSITION\n\nStaff\n\nJOINING DATE\n\n1 January 2026\n© 2026 Recycling Hub. All rights reserved.",
+    "overflow": false,
+    "headings": [
+      "Welcome, Audit",
+      "Your next move, within reach.",
+      "Closed-delivery volume",
+      "Deliveries by status",
+      "Your workspace"
+    ],
+    "smallControls": [],
+    "errors": []
+  },
+  {
+    "slug": "login-mobile",
+    "title": "Sign In — Recycling Hub",
+    "url": "/login",
+    "text": "EN\nBM\nSign in\n\nSign in to Recycling Hub operations.\n\nEmail *\nPassword *\nForgot password?\nSign in",
+    "overflow": false,
+    "headings": ["Sign in"],
+    "smallControls": [
+      {
+        "text": "Forgot password?",
+        "height": 16
+      }
+    ],
+    "errors": []
+  },
+  {
+    "slug": "public-home-mobile",
+    "title": "E-waste recycling Malaysia | Free pickup | Recycling Hub",
+    "url": "/",
+    "text": "FOR INDIVIDUALS · FOR BUSINESSES\n\nE-waste recycling Malaysia\n\nE-waste recycling Malaysia starts at your doorstep. Recycling Hub offers free e-waste pickup in Klang Valley with a minimum of 3 devices and instant DuitNow payment for households. Businesses can arrange bulk collection, certified data destruction and compliance documents.\n\nRequest a Pickup\n\nPICKUP OPTIONS FOR HOUSEHOLDS AND BUSINESSES\n\nFree\nHousehold pickup in Klang Valley\n3 devices\nMinimum per household pickup\nDuitNow\nInstant household payment\nBusiness\nBulk collection by quotation\nRequest a Callback\n\nLeave your number and we'll call you back. Household pickup requires at least 3 devices.\n\nIndividual\nBusiness\nPhone *\n+60 (MY)\n+93 (AF)\n+355 (AL)\n+213 (DZ)\n+376 (AD)\n+244 (AO)\n+1 (US/CA)\n+54 (AR)\n+374 (AM)\n+61 (AU)\n+43 (AT)\n+994 (AZ)\n+973 (BH)\n+880 (BD)\n+375 (BY)\n+32 (BE)\n+501 (BZ)\n+229 (BJ)\n+975 (BT)\n+591 (BO)\n+387 (BA)\n+267 (BW)\n+55 (BR)\n+673 (BN)\n+359 (BG)\n+226 (BF)\n+257 (BI)\n+855 (KH)\n+237 (CM)\n+238 (CV)\n+236 (CF)\n+235 (TD)\n+56 (CL)\n+86 (CN)\n+57 (CO)\n+269 (KM)\n+242 (CG)\n+243 (CD)\n+506 (CR)\n+385 (HR)\n+53 (CU)\n+357 (CY)\n+420 (CZ)\n+45 (DK)\n+253 (DJ)\n+1 809 (DO)\n+593 (EC)\n+20 (EG)\n+503 (SV)\n+240 (GQ)\n+291 (ER)\n+372 (EE)\n+268 (SZ)\n+251 (ET)\n+679 (FJ)\n+358 (FI)\n+33 (FR)\n+241 (GA)\n+220 (GM)\n+995 (GE)\n+49 (DE)\n+233 (GH)\n+30 (GR)\n+502 (GT)\n+224 (GN)\n+245 (GW)\n+592 (GY)\n+509 (HT)\n+504 (HN)\n+852 (HK)\n+36 (HU)\n+354 (IS)\n+91 (IN)\n+62 (ID)\n+98 (IR)\n+964 (IQ)\n+353 (IE)\n+972 (IL)\n+39 (IT)\n+225 (CI)\n+81 (JP)\n+962 (JO)\n+7 (RU/KZ)\n+254 (KE)\n+686 (KI)\n+850 (KP)\n+82 (KR)\n+965 (KW)\n+996 (KG)\n+856 (LA)\n+371 (LV)\n+961 (LB)\n+266 (LS)\n+231 (LR)\n+218 (LY)\n+423 (LI)\n+370 (LT)\n+352 (LU)\n+853 (MO)\n+389 (MK)\n+261 (MG)\n+265 (MW)\n+960 (MV)\n+223 (ML)\n+356 (MT)\n+222 (MR)\n+230 (MU)\n+52 (MX)\n+373 (MD)\n+377 (MC)\n+976 (MN)\n+382 (ME)\n+212 (MA)\n+258 (MZ)\n+95 (MM)\n+264 (NA)\n+977 (NP)\n+31 (NL)\n+64 (NZ)\n+505 (NI)\n+227 (NE)\n+234 (NG)\n+47 (NO)\n+968 (OM)\n+92 (PK)\n+970 (PS)\n+507 (PA)\n+675 (PG)\n+595 (PY)\n+51 (PE)\n+63 (PH)\n+48 (PL)\n+351 (PT)\n+974 (QA)\n+40 (RO)\n+250 (RW)\n+966 (SA)\n+221 (SN)\n+381 (RS)\n+248 (SC)\n+232 (SL)\n+65 (SG)\n+421 (SK)\n+386 (SI)\n+677 (SB)\n+252 (SO)\n+27 (ZA)\n+211 (SS)\n+34 (ES)\n+94 (LK)\n+249 (SD)\n+597 (SR)\n+46 (SE)\n+41 (CH)\n+963 (SY)\n+886 (TW)\n+992 (TJ)\n+255 (TZ)\n+66 (TH)\n+670 (TL)\n+228 (TG)\n+676 (TO)\n+216 (TN)\n+90 (TR)\n+993 (TM)\n+256 (UG)\n+380 (UA)\n+971 (AE)\n+44 (UK)\n+598 (UY)\n+998 (UZ)\n+678 (VU)\n+58 (VE)\n+84 (VN)\n+967 (YE)\n+260 (ZM)\n+263 (ZW)\nRequest Callback\nOLD ELECTRONICS, A CLEAR NEXT STEP\nFree\ne-waste\npickup\nfor\nhomes.\nBulk\ncollection\nfor\noffices.\n\nWhether you want to get paid for recycling old electronics or arrange an office clear-out, choose the collection option that fits your needs.\n\nClearing out a phone or laptop?\n\nRequest collection for your old electronics with a minimum of 3 devices. Share the device type and condition so the team can discuss what you have before pickup.\n\nRetiring office equipment?\n\nTell us your equipment types, estimated volume and collection address. Business pickup is quoted separately from free household collection.\n\nNeed certified data destruction?\n\nBusinesses can request certified data destruction and compliance documents. Discuss the data-bearing devices and records you need when requesting a quote.\n\nTHE PROCESS\nRecycle\nin\n3\nSimple\nSteps\n01\n\nTakes Under a Minute\n\nBOOK A PICKUP\nOnline or WhatsApp — whichever is faster for you\nPick a convenient time for doorstep collection in Klang Valley\nNo account required to book a pickup\n02\n\nFree, minimum 3 devices\n\nWE COLLECT\nOur team comes to you at the scheduled time\nAll personal devices accepted in one visit\nNo cost to you — collection is always free\n03\n\nOn the Spot\n\nGET PAID\nInstant DuitNow payment at the moment of collection\nNo waiting period or manual payout request\nYour devices are recycled through certified channels\nE-waste pickup in Klang Valley\n\nAsk about pickup in Kuala Lumpur, Petaling Jaya, Shah Alam, Subang Jaya, Klang, Puchong, Cheras, Cyberjaya and Putrajaya. Share your address so we can confirm collection access and timing.\n\nExplore doorstep e-waste collection\nArrange bulk e-waste collection\nRequest an e-waste pickup quote\nBefore you request a pickup\nHow many devices do I need for pickup?\n\nHousehold pickup in Klang Valley is free when you have at least 3 devices. Have fewer? Contact the team to discuss your options.\n\nWhen is household payment made?\nUnsure whether your electronics can be collected?\nSee all e-waste recycling FAQs →\n\nDoorstep e-waste pickup in Klang Valley.\n\nWhatsApp: +60 11-6766 3035\ninfo@recyclinghub.eco\nRECYCLING HUB SDN. BHD.\nMon–Fri 9am–6pm · Sat 9am–1pm (MYT)\nSERVICES\nRecycle & Get Paid\nBulk & Enterprise Collection\nHow It Works\nTrack & Trace / Certificates\nCOMPANY\nAbout Us\nServices\nResources\nBlog\nFAQ\nContact\nLEGAL\nPrivacy Policy\nTerms of Service\n© 2026 Recycling Hub. All rights reserved. · recyclinghub.eco",
+    "overflow": false,
+    "headings": [
+      "E-waste recycling Malaysia ",
+      "Request a Callback",
+      "Freee-wastepickupforhomes.Bulkcollectionforoffices.",
+      "Recyclein3SimpleSteps",
+      "E-waste pickup in Klang Valley",
+      "Before you request a pickup"
+    ],
+    "smallControls": [
+      {
+        "text": "See all e-waste recycling FAQs →",
+        "height": 17
+      },
+      {
+        "text": "WhatsApp: +60 11-6766 3035",
+        "height": 20
+      },
+      {
+        "text": "info@recyclinghub.eco",
+        "height": 20
+      },
+      {
+        "text": "Recycle & Get Paid",
+        "height": 17
+      },
+      {
+        "text": "Bulk & Enterprise Collection",
+        "height": 17
+      },
+      {
+        "text": "How It Works",
+        "height": 17
+      },
+      {
+        "text": "Track & Trace / Certificates",
+        "height": 17
+      },
+      {
+        "text": "About Us",
+        "height": 17
+      },
+      {
+        "text": "Services",
+        "height": 17
+      },
+      {
+        "text": "Resources",
+        "height": 17
+      },
+      {
+        "text": "Blog",
+        "height": 17
+      },
+      {
+        "text": "FAQ",
+        "height": 17
+      },
+      {
+        "text": "Contact",
+        "height": 17
+      },
+      {
+        "text": "Privacy Policy",
+        "height": 17
+      },
+      {
+        "text": "Terms of Service",
+        "height": 17
+      }
+    ],
+    "errors": []
+  }
+]

@@ -1,6 +1,7 @@
 import { useId } from 'react';
 
-import { getNestedValue } from '../utils';
+import { usePortalLocale } from '../../../contexts/PortalLocaleContext';
+import { fieldErrorAttributes, getNestedValue } from '../utils';
 
 type SelectOption =
   | string
@@ -42,6 +43,7 @@ const SelectField = ({
   onBlur,
   disabled = false,
 }: SelectFieldProps) => {
+  const { t } = usePortalLocale();
   const inputId = useId();
   const value = (getNestedValue(formData, field) as string | undefined) ?? '';
 
@@ -59,6 +61,7 @@ const SelectField = ({
         name={field}
         required={required}
         aria-required={required}
+        {...fieldErrorAttributes(inputId, errors?.[field])}
         value={value}
         onChange={(e) => updateFormData(field, e.target.value)}
         onBlur={onBlur}
@@ -70,7 +73,7 @@ const SelectField = ({
         }`}
       >
         <option value="" disabled>
-          Select ...
+          {t('Select ...')}
         </option>
         {options.map((opt, index) =>
           typeof opt === 'object' && opt !== null ? (
@@ -91,7 +94,9 @@ const SelectField = ({
       </select>
 
       {errors?.[field] && (
-        <p className="mt-1 text-xs text-red-600">{errors[field]}</p>
+        <p id={`${inputId}-error`} className="mt-1 text-xs text-red-600">
+          {t(errors[field] ?? '')}
+        </p>
       )}
     </div>
   );

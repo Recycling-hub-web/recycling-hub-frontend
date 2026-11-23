@@ -49,7 +49,7 @@ const MeasuredByField = ({
               checked={value.includes(unit)}
               onChange={() => toggle(unit)}
               disabled={disabled}
-              className="size-4 rounded border-slate-300 text-brand-600"
+              className="size-4 rounded border-slate-300 text-brand-700"
             />
             {QUANTITY_UNIT_LABELS[unit]}
           </label>

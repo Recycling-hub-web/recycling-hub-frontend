@@ -1,0 +1,406 @@
+[
+  {
+    "id": "01",
+    "title": "Certificate requests can disappear behind a success message",
+    "area": "/track-trace",
+    "status": "Source verified",
+    "priority": "Critical",
+    "effort": "Medium",
+    "wrong": "The submit handler validates two fields and sets submitted=true. It makes no API call and stores or routes nothing. The source explicitly describes this as simulated success.",
+    "impact": "A customer can believe a collection status or destruction certificate request reached the team and wait indefinitely. This breaks the core promise of the page.",
+    "fix": "Until a real request channel exists, replace submission with an explicitly labelled email or WhatsApp handoff. For the complete flow, persist a ticket, acknowledge only after server acceptance, and show a reference plus the actual follow-up channel.",
+    "evidence": ["pages/track-trace.tsx"],
+    "accept": "A successful state requires a durable request ID or clearly says that the visitor must send the message in the external app. A failed request retains every field."
+  },
+  {
+    "id": "02",
+    "title": "Quote confirmation precedes the actual WhatsApp message",
+    "area": "/request-quote",
+    "status": "Source verified",
+    "priority": "High",
+    "effort": "Small",
+    "wrong": "The handler calls setSubmitted(true) before navigating to wa.me. Opening a composed message is treated as submission even though the visitor may cancel or lack WhatsApp.",
+    "impact": "The visitor can assume the business quote was delivered when no message was sent; navigating out also interrupts the website flow.",
+    "fix": "Label the action \u201cContinue in WhatsApp\u201d. State that the visitor must press Send there. Keep a copyable message and email alternative. Only say \u201cRequest received\u201d after an application-owned backend acknowledges receipt.",
+    "evidence": ["pages/request-quote.tsx"],
+    "accept": "Cancelling the WhatsApp handoff does not leave a false received/sent confirmation; a copy or alternate channel is available."
+  },
+  {
+    "id": "03",
+    "title": "Financial dashboard failures look like real zero balances",
+    "area": "Accounting overview; driver overview charts",
+    "status": "Source verified",
+    "priority": "High",
+    "effort": "Medium",
+    "wrong": "useAccountingOverviewStats catches errors by restoring zero-valued INITIAL data, then sets loading=false. Its status counts remain null, so the chart keeps loading. The driver aggregate request also swallows errors and leaves null chart data.",
+    "impact": "Accounting may interpret unavailable information as RM0 owed; drivers cannot distinguish a slow request from a failed one. The shared chart already supports errors, but these callers do not supply them.",
+    "fix": "Return explicit loading, success, empty and error states from the hooks. Show \u201cCould not load\u201d with Retry instead of money values on failure. Preserve the last successful values with an \u201cOut of date\u201d label when appropriate; pass errors into ChartFrame.",
+    "evidence": [
+      "components/features/overview/hooks/useAccountingOverviewStats.ts",
+      "components/features/overview/hooks/useDriverOverviewStats.ts",
+      "components/features/overview/components/AccountingOverviewView.tsx",
+      "components/ui/charts/ChartFrame.tsx"
+    ],
+    "accept": "A failed aggregate request never renders a fresh zero total or an indefinite skeleton; retry can recover the affected panel independently."
+  },
+  {
+    "id": "04",
+    "title": "Read-only finance rows have no keyboard route to detail",
+    "area": "Finance records across accounting, driver, staff and admin roles",
+    "status": "Source verified",
+    "priority": "High",
+    "effort": "Small",
+    "wrong": "FinanceRecordTable opens details from a mouse onClick on tr. The requester is plain text, and there is no normal details link. Driver rows have no per-row management action at all.",
+    "impact": "A keyboard user cannot open a driver finance detail record. Management users can reach reimbursement but still cannot use a standard link to inspect the record first.",
+    "fix": "Make the requester or a dedicated \u201cView record\u201d action a real Link with an accessible name. Keep whole-row mouse activation as an enhancement, preserving checkbox and action event handling.",
+    "evidence": [
+      "components/features/finance/components/FinanceRecordTable.tsx"
+    ],
+    "accept": "Every row has a Tab-reachable details link that opens with Enter, supports a new tab and announces its destination."
+  },
+  {
+    "id": "05",
+    "title": "Proof uploads cannot be reached using the keyboard",
+    "area": "StatusFileUpload in Collect, Reimburse and claim-payment modals",
+    "status": "Source verified",
+    "priority": "High",
+    "effort": "Small",
+    "wrong": "The visible upload surface is a label and the file input is display:none via className=\"hidden\". The label has no keyboard activation. Progress is visual text and a width change, without progress semantics.",
+    "impact": "Keyboard users can be blocked from collecting orders, claiming payments or completing reimbursement proof requirements.",
+    "fix": "Use a visible button to activate the file picker or an sr-only input with a focus-within treatment on its label. Give progress an accessible label and progressbar values; announce upload success/failure and keep retry/remove controls reachable.",
+    "evidence": [
+      "components/form/upload/StatusFileUpload.tsx",
+      "components/features/finance/components/ReimburseModal.tsx",
+      "components/features/pickups/components/shared/CollectModal.tsx"
+    ],
+    "accept": "Tab reaches a clearly focused Upload control; Enter/Space opens the picker; progress and failure can be understood without vision."
+  },
+  {
+    "id": "06",
+    "title": "Collection-point toggles are mouse-only",
+    "area": "ToggleInput; collection-point create/edit forms",
+    "status": "Source verified",
+    "priority": "High",
+    "effort": "Small",
+    "wrong": "ToggleInput toggles state from an onClick on a label and renders the switch as div elements. There is no input, button, role or tab stop. The generic caption says \u201cClick to toggle configuration\u201d.",
+    "impact": "A keyboard or screen-reader user cannot reliably identify the setting, hear its state or change it.",
+    "fix": "Use one shared native checkbox-based switch, labelled with the actual setting and explanatory enabled/disabled copy. Apply a visible focus indicator to the visual track. Reuse the existing SettingToggleInput behavior after correcting its focus treatment.",
+    "evidence": [
+      "components/form/toggle/ToggleInput.tsx",
+      "components/form/toggle/SettingToggleInput.tsx",
+      "components/features/collectionPoints/components/EditCollectionPointView.tsx"
+    ],
+    "accept": "The setting name and on/off state are announced and Space toggles it with a visible focus ring."
+  },
+  {
+    "id": "07",
+    "title": "Text and primary-button contrast need stronger tokens",
+    "area": "ReusableHero, footer, shared primary buttons, login",
+    "status": "Visual + source verified",
+    "priority": "High",
+    "effort": "Small",
+    "wrong": "The hero accent and small supporting text use slate-400 (#94a3b8), which is 2.56:1 against white. The primary button uses white normal-size text on brand-600 (#008a3e), approximately 4.46:1, just below 4.5:1. These ratios use the configured solid colours, not antialiased screenshot pixels.",
+    "impact": "Essential words such as \u201cPickup\u201d or \u201cCertificate or Status\u201d are less readable, and small supporting text and primary labels are harder to read in glare or with low vision.",
+    "fix": "Use slate-600/700 for meaningful secondary text and brand-700 for white-text action backgrounds, or introduce a compliant semantic action token within the existing green palette. Keep lighter tints for decoration and genuinely disabled content.",
+    "evidence": [
+      "components/ui/hero/ReusableHero.tsx",
+      "components/ui/buttons/Button.tsx",
+      "components/layout/Footer.tsx",
+      "../tailwind.config.js"
+    ],
+    "accept": "Normal text meets 4.5:1 and large text 3:1 in default, hover and focus states; review disabled content separately."
+  },
+  {
+    "id": "08",
+    "title": "Floating WhatsApp button overlaps the phone callback action",
+    "area": "/request-pickup \u2192 Request a Callback at 390 \u00d7 844",
+    "status": "Visually verified",
+    "priority": "High",
+    "effort": "Small",
+    "wrong": "The fixed WhatsApp bubble sits over the right end of the green Request Callback button in the captured phone viewport. The business step footer has special right padding, but the callback card does not.",
+    "impact": "Two competing contact actions occupy the same tap area. Users can open WhatsApp when trying to request a callback, or lose confidence in the primary action.",
+    "fix": "Hide or relocate the floating WhatsApp control while an active form/action is in view, or reserve a consistent safe area for it in every public form. Prefer an inline alternate-contact link in form contexts.",
+    "evidence": [
+      "components/features/pickups/components/public/QuickPickupRequestForm.tsx",
+      "components/features/pickups/components/public/PublicPickupRequestForm.tsx"
+    ],
+    "accept": "At 320, 390 and 430px widths, no floating control overlaps fields, errors, navigation or submit buttons, including with the software keyboard open."
+  },
+  {
+    "id": "09",
+    "title": "The initial pickup choice has no way back",
+    "area": "/request-pickup \u2192 Callback or Business / Bulk",
+    "status": "Visual + source verified",
+    "priority": "Medium",
+    "effort": "Small",
+    "wrong": "Choosing a card replaces the selector using component state. Neither resulting form provides \u201cChange request type\u201d; the URL and browser history do not represent the choice.",
+    "impact": "Visitors who choose the wrong route must reload or leave. Browser Back does not return them to the choice and can discard their work.",
+    "fix": "Add a persistent \u201cChange request type\u201d action above the form and a clear active type label. Preserve each draft while switching. Consider a query parameter for a shareable choice, with an explicit discard prompt only when data would be lost.",
+    "evidence": [
+      "pages/request-pickup.tsx",
+      "components/features/pickups/components/public/PickupTypeSelector.tsx"
+    ],
+    "accept": "A visitor can switch from business to callback and back without leaving the page or silently losing entered details."
+  },
+  {
+    "id": "10",
+    "title": "Business requests inherit household-focused page framing",
+    "area": "/request-pickup \u2192 Business / Bulk",
+    "status": "Visual + source verified",
+    "priority": "Medium",
+    "effort": "Small",
+    "wrong": "The page retains the eyebrow \u201cFREE DOORSTEP COLLECTION\u201d and household three-device explanation after Business / Bulk is selected. The specific business form only appears below that unchanged hero.",
+    "impact": "A business visitor may infer that bulk collection is free or that household eligibility rules govern the quotation.",
+    "fix": "Update the hero or selected-flow introduction to \u201cBusiness / bulk collection request\u201d, explain quotation and phone scheduling, and reserve free/minimum-device language for household callback flows.",
+    "evidence": [
+      "pages/request-pickup.tsx",
+      "components/features/pickups/components/public/PublicPickupRequestForm.tsx"
+    ],
+    "accept": "Each selected path states its own price expectation, eligibility and next step before asking for personal information."
+  },
+  {
+    "id": "11",
+    "title": "Track & Trace is difficult to discover for returning customers",
+    "area": "Public header and footer navigation",
+    "status": "Visually verified",
+    "priority": "Medium",
+    "effort": "Small",
+    "wrong": "The primary header offers Home, Services, About, Resources and Contact; Track & Trace / Certificates appears in the footer. Its page is a manual request, despite the tracking-oriented name.",
+    "impact": "Existing customers must search through a long marketing page for a repeat-service task and may expect immediate tracking when they finally arrive.",
+    "fix": "Add \u201cCollection status & certificates\u201d under an obvious Support/Resources destination or a secondary header link. Label the current service \u201cRequest a status update\u201d until live tracking exists, and explain the manual follow-up.",
+    "evidence": [
+      "components/navbar/Navbar.tsx",
+      "components/layout/Footer.tsx",
+      "pages/track-trace.tsx"
+    ],
+    "accept": "A returning visitor can find the status/certificate request in one clear navigation decision without scrolling to the footer."
+  },
+  {
+    "id": "12",
+    "title": "Validation rules and error presentation have two competing owners",
+    "area": "ValidatedForm + business pickup form + InputField",
+    "status": "Visual + source verified",
+    "priority": "Medium",
+    "effort": "Medium",
+    "wrong": "An empty Continue action produces the generic banner \u201cFull name: This field is required.\u201d and a green focused input, because submit capture intercepts the form before step-level validation runs. On-blur/domain errors use separate inline paragraphs and styles.",
+    "impact": "Users see different error locations and wording depending on how they reach the same invalid state. The summary does not consistently connect to the inline field treatment.",
+    "fix": "Give validation one presentation contract: field error IDs, invalid state, an error summary linking to fields, and consistent step rules. Keep first-invalid focus and entered values. Localize generic messages through the same dictionary as the form.",
+    "evidence": [
+      "components/form/ValidatedForm.tsx",
+      "components/form/fields/InputField.tsx",
+      "components/features/pickups/hooks/usePublicPickupRequestForm.ts"
+    ],
+    "accept": "Blur and Continue show the same field message and error state; the summary focuses the associated input and does not bypass domain rules."
+  },
+  {
+    "id": "13",
+    "title": "Inline field errors are not programmatically connected",
+    "area": "InputField, PasswordField, PhoneInputField and shared controls",
+    "status": "Source verified",
+    "priority": "High",
+    "effort": "Medium",
+    "wrong": "Field-level errors render as paragraphs without stable IDs or aria-describedby links. InputField and PasswordField do not derive aria-invalid from their errors props. ValidatedForm adds it for native submit failures, but that does not cover every domain/API error path.",
+    "impact": "Screen-reader users can focus an invalid field without hearing why it failed or how to correct it.",
+    "fix": "Create a shared FieldShell with label, optional hint, error ID, aria-describedby and aria-invalid. Pass those attributes into every native/custom control and keep the error summary as an additional navigation aid.",
+    "evidence": [
+      "components/form/fields/InputField.tsx",
+      "components/form/fields/PasswordField.tsx",
+      "components/form/fields/PhoneInputField.tsx",
+      "components/form/ValidatedForm.tsx"
+    ],
+    "accept": "Each invalid field announces its label, invalid status and exact correction message after client validation and server rejection."
+  },
+  {
+    "id": "14",
+    "title": "Several search and filter controls lack accessible names",
+    "area": "Shared SearchInput, finance status filter, phone country-code selector",
+    "status": "Source verified",
+    "priority": "Medium",
+    "effort": "Small",
+    "wrong": "SearchInput relies on placeholder text and has no label API. FilterSelect supports ariaLabel, but FinanceRecordsView does not supply it. PhoneInputField labels the number input but not the dial-code select.",
+    "impact": "Assistive technology users encounter unnamed or ambiguously named controls, especially when several filters sit together.",
+    "fix": "Require a visible label or accessible name in each shared control API. Use \u201cSearch finance records\u201d, \u201cFilter by status\u201d and \u201cCountry calling code\u201d; keep placeholders as examples rather than labels.",
+    "evidence": [
+      "components/form/filter/SearchInput.tsx",
+      "components/ui/FilterSelect.tsx",
+      "components/features/finance/components/FinanceRecordsView.tsx",
+      "components/form/fields/PhoneInputField.tsx"
+    ],
+    "accept": "The accessibility tree contains an unambiguous name for every textbox and combobox, including compact inline controls."
+  },
+  {
+    "id": "15",
+    "title": "Finance records cannot be located beyond a status filter",
+    "area": "FinanceRecordsView across managing roles",
+    "status": "Source verified",
+    "priority": "Medium",
+    "effort": "Medium",
+    "wrong": "The view offers status selection and pagination, without requester/driver/reference search, date range or sorting controls. Every row displays requester, driver, amounts and date, which are useful lookup attributes but not available as find controls.",
+    "impact": "As records grow, reconciling a specific driver payment requires paging and visual scanning. Frequency and severity depend on real record volumes, which were not available.",
+    "fix": "Add backend-supported search by reference/requester/driver and a labelled date range. Use a shared toolbar with active-filter chips, Clear all and result count. Begin with the most frequent accounting lookup task rather than adding every possible filter.",
+    "evidence": [
+      "components/features/finance/components/FinanceRecordsView.tsx",
+      "components/features/finance/components/FinanceRecordTable.tsx"
+    ],
+    "accept": "Accounting can locate a known payment using a reference or person plus date, and clearing filters returns to page 1."
+  },
+  {
+    "id": "16",
+    "title": "Finance table omits currency context and numeric alignment",
+    "area": "FinanceRecordTable",
+    "status": "Source verified",
+    "priority": "Medium",
+    "effort": "Small",
+    "wrong": "Agreed price and Actual paid render r.price and r.actual_amount directly. Column headings do not include RM; numeric cells use no consistent money formatter or explicit right alignment.",
+    "impact": "Amounts are slower to compare, and currency context depends on remembering other parts of the application.",
+    "fix": "Use a shared MYR formatter with two decimal places and grouping, right-align amount columns, and apply tabular numerals. Keep a clear dash for unknown amounts instead of representing them as zero.",
+    "evidence": [
+      "components/features/finance/components/FinanceRecordTable.tsx",
+      "components/features/overview/components/AccountingOverviewView.tsx"
+    ],
+    "accept": "The same amount has the same currency, precision and separators across list, detail, dashboard and confirmation dialog."
+  },
+  {
+    "id": "17",
+    "title": "Pagination can override the server total with a partial page",
+    "area": "TablePagination",
+    "status": "Source verified; conditional example",
+    "priority": "Medium",
+    "effort": "Small",
+    "wrong": "When itemCount < itemsPerPage, displayTotal is calculated from the current page length instead of totalCount. The component also renders a range while loading, even when itemCount is zero.",
+    "impact": "If a partial response arrives with a larger server count, Next can be disabled prematurely. Example: page 1, 12 per page, 8 items and totalCount=40 becomes \u201cof 8 / Page 1 of 1\u201d. This is a component-level example; no live dataset reproduced it.",
+    "fix": "Treat the server count/next-page metadata as authoritative; clamp and refetch an invalid page after deletion/filtering. Hide the range or show a skeleton during loading and render a coherent zero-results state.",
+    "evidence": ["components/ui/table/TablePagination.tsx"],
+    "accept": "Server totals remain stable for partial pages; zero, loading, deleted-last-row and changed-filter scenarios never show impossible ranges or trap the user."
+  },
+  {
+    "id": "18",
+    "title": "Filtered finance results use a first-use empty message",
+    "area": "FinanceRecordTable empty state",
+    "status": "Source verified",
+    "priority": "Medium",
+    "effort": "Small",
+    "wrong": "The same \u201cNo finance records yet / Priced, approved pickup requests will show up here\u201d message is used whenever the records array is empty, including with an active status filter.",
+    "impact": "A user may conclude the system has no financial activity when only the selected status has no matches.",
+    "fix": "Pass an explicit empty-state reason: first use, no matching results or no permission. For no matches, show the active constraint and Clear filters; reserve onboarding explanations for a genuinely empty dataset.",
+    "evidence": [
+      "components/features/finance/components/FinanceRecordTable.tsx",
+      "components/features/finance/components/FinanceRecordsView.tsx"
+    ],
+    "accept": "Filtering a populated dataset to zero matches offers Clear filters and never claims no records have ever existed."
+  },
+  {
+    "id": "19",
+    "title": "Driver route summary counts only the fetched page",
+    "area": "Driver overview: Open route tile",
+    "status": "Source verified; scale-dependent",
+    "priority": "Medium",
+    "effort": "Medium",
+    "wrong": "openRouteStops is derived by filtering mine.requests from a page-1 scheduled-orders query. It is not derived from an authoritative route aggregate or a complete route response.",
+    "impact": "The tile can undercount if an open route spans more than the fetched page. The current seven-stop optimization limit may reduce exposure, but does not make this count contract explicit.",
+    "fix": "Use the active route endpoint/aggregate as the source of truth, or label it as a preview count. State whether the count covers one open route, all assigned work, or only visible results.",
+    "evidence": [
+      "components/features/overview/hooks/useDriverOverviewStats.ts",
+      "components/features/overview/components/DriverOverviewView.tsx",
+      "components/features/pickups/components/driver/DriverPickupsView.tsx"
+    ],
+    "accept": "Tile and active-route detail agree for multiple pages, closed routes and unassigned scheduled orders."
+  },
+  {
+    "id": "20",
+    "title": "Session recovery discards the intended destination",
+    "area": "RequireAuth, LoginView and middleware redirects",
+    "status": "Source verified",
+    "priority": "Medium",
+    "effort": "Medium",
+    "wrong": "Unauthenticated navigation goes to /login without preserving the requested record URL; login deliberately returns to the role overview. Middleware also clears the query string.",
+    "impact": "An expired session or shared notification link sends the user back to the dashboard, requiring them to find the record again.",
+    "fix": "Preserve an application-local return path through password and OTP login, then validate the role before returning there. Fall back to the role home when the target is unavailable or unauthorized.",
+    "evidence": [
+      "components/features/auth/components/RequireAuth.tsx",
+      "components/features/auth/components/LoginView.tsx",
+      "middleware.ts"
+    ],
+    "accept": "Opening a permitted record while signed out returns to that record after login; wrong-role and external destinations safely fall back to the appropriate overview."
+  },
+  {
+    "id": "21",
+    "title": "Public language choice does not carry into operations",
+    "area": "Public EN/BM switch; auth and protected app routes",
+    "status": "Source verified",
+    "priority": "Medium",
+    "effort": "Large",
+    "wrong": "Public pages expose EN/BM, while App Router auth/operational pages load English dictionaries and middleware explicitly documents English-only operational routes during migration. Callback type labels are imported from a shared English labels constant.",
+    "impact": "A BM visitor can lose language continuity at key account or form interactions. Operational users cannot rely on translated role-specific task language.",
+    "fix": "Publish a deliberate locale policy. Carry locale through authentication, validation and notifications, then migrate operational dictionaries in complete task flows. In the short term, make language availability explicit and localize public form labels consistently.",
+    "evidence": [
+      "middleware.ts",
+      "app/(auth)/unauthorized/page.tsx",
+      "components/features/pickups/components/public/QuickPickupRequestForm.tsx"
+    ],
+    "accept": "A language switch keeps the selected public flow and field values; all labels, hints and errors within a supported flow use the selected language."
+  },
+  {
+    "id": "22",
+    "title": "Successful public requests leave no durable on-page receipt",
+    "area": "Public business pickup and callback success paths",
+    "status": "Source verified",
+    "priority": "Medium",
+    "effort": "Medium",
+    "wrong": "Both successful hooks reset their forms and show a toast. The business hook ignores the created request result and returns to step 1; neither flow retains an on-page acknowledgement or reference.",
+    "impact": "A visitor who misses the toast can wonder whether the request succeeded and submit again. They have no visible reference to use for later follow-up.",
+    "fix": "Show a persistent confirmation card with the accepted request reference where available, masked contact number, next step and an honest response expectation. Provide \u201cMake another request\u201d as an explicit action instead of automatically presenting a fresh form.",
+    "evidence": [
+      "components/features/pickups/hooks/usePublicPickupRequestForm.ts",
+      "components/features/pickups/components/public/QuickPickupRequestForm.tsx"
+    ],
+    "accept": "After success the visitor can leave and read the acknowledgement without relying on a transient notification; a second submission is an intentional new request."
+  },
+  {
+    "id": "23",
+    "title": "Public animation does not consistently respect reduced motion",
+    "area": "ReusableHero and smooth-scrolling shell",
+    "status": "Source verified",
+    "priority": "Medium",
+    "effort": "Medium",
+    "wrong": "ReusableHero unconditionally animates text entry and a pulsing decorative glow. DashboardLayout and Sidebar create Lenis instances with smoothWheel enabled without reading the user motion preference. Some newer mobile CSS and form transitions already respect reduced motion.",
+    "impact": "Motion-sensitive users receive inconsistent treatment when moving between pages, menus and modal flows.",
+    "fix": "Apply a common reduced-motion policy to Framer Motion, decorative CSS animations and Lenis. Keep content visible without entry animation and use native/instant scrolling when reduced motion is requested.",
+    "evidence": [
+      "components/ui/hero/ReusableHero.tsx",
+      "layouts/DashboardLayout.tsx",
+      "components/layout/Sidebar.tsx",
+      "styles/global.css"
+    ],
+    "accept": "With prefers-reduced-motion enabled, content is immediately visible, decorative pulsing stops and navigation does not apply smooth-scroll interpolation."
+  },
+  {
+    "id": "24",
+    "title": "An old invoice prototype remains publicly reachable",
+    "area": "/dashboard-preview",
+    "status": "Browser + source verified",
+    "priority": "Medium",
+    "effort": "Small",
+    "wrong": "The route renders an unrelated invoice dashboard with MyInvois API, LHDN statuses, suppliers and static pagination. It does not match the current e-waste operations product. Pricing is already intentionally unpublished, but this prototype remains reachable.",
+    "impact": "A direct visitor can mistake obsolete sample UI and static actions for the current service or a real signed-in workspace. No current inbound link was verified, so discovery risk is conditional.",
+    "fix": "Unpublish the obsolete route or move it to a clearly labelled internal design archive. If retained as a demo, mark all data as samples, explain that controls are nonfunctional and align the example with current operations.",
+    "evidence": ["pages/dashboard-preview.tsx", "pages/pricing.tsx"],
+    "accept": "A public visitor cannot mistake old invoice sample data for current account data; prototype access and purpose are explicit."
+  },
+  {
+    "id": "25",
+    "title": "Password visibility control is too small and suppresses focus",
+    "area": "Login and shared PasswordField",
+    "status": "Visual + source verified",
+    "priority": "Medium",
+    "effort": "Small",
+    "wrong": "The eye button wraps a size-4 icon without a larger hit area and has focus:outline-none. The login screen is outside the authenticated app CSS that enlarges controls.",
+    "impact": "The control is difficult to tap on a phone and keyboard focus is difficult to see, despite the useful Show/Hide password accessible label.",
+    "fix": "Give the button a minimum 44 \u00d7 44px interaction area, a visible focus ring and sufficient input end padding so long passwords do not run beneath it. Add explicit current-password/new-password autocomplete support to the shared API.",
+    "evidence": [
+      "components/form/fields/PasswordField.tsx",
+      "components/features/auth/components/LoginView.tsx"
+    ],
+    "accept": "At phone widths the eye has a comfortable tap target, shows keyboard focus and never covers password text."
+  }
+]

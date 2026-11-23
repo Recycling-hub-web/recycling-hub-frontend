@@ -124,7 +124,7 @@ const SocialMediaInputField = ({
             {SelectedIcon ? (
               <SelectedIcon className="size-5 shrink-0" />
             ) : (
-              <span className="text-xs text-slate-400">Select</span>
+              <span className="text-xs text-slate-600">Select</span>
             )}
             {!lockedPlatform && (
               <ChevronDown
@@ -150,7 +150,7 @@ const SocialMediaInputField = ({
                     onClick={() => handlePlatformChange(p.value)}
                     className={`flex w-full items-center gap-2.5 px-3 py-2 text-left text-sm transition ${
                       isSelected
-                        ? 'bg-brand-100 text-brand-600'
+                        ? 'bg-brand-100 text-brand-700'
                         : 'text-slate-700 hover:bg-slate-50'
                     }`}
                   >

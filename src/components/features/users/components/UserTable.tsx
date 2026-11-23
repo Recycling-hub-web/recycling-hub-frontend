@@ -155,6 +155,13 @@ const UserTable = ({
             <td className="px-6 py-4">
               <button
                 type="button"
+                disabled={!canManageUser(actor, u)}
+                aria-label={`${u.is_active ? 'Deactivate' : 'Activate'} ${u.full_name}`}
+                title={
+                  !canManageUser(actor, u)
+                    ? 'Only a super administrator can change this account.'
+                    : undefined
+                }
                 onClick={(e) => {
                   e.stopPropagation();
                   onToggleActive(u);
@@ -194,7 +201,7 @@ const UserTable = ({
                   disabled={resendLoading}
                   onClick={() => onResendInvite(u)}
                   aria-label={`Resend invite to ${u.full_name}`}
-                  className={`inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition ${resendLoading ? 'cursor-not-allowed opacity-50' : 'hover:bg-slate-100 hover:text-slate-700'}`}
+                  className={`inline-flex size-8 items-center justify-center rounded-full text-slate-600 transition ${resendLoading ? 'cursor-not-allowed opacity-50' : 'hover:bg-slate-100 hover:text-slate-700'}`}
                 >
                   <LuSend className="size-4" />
                 </button>
@@ -202,7 +209,7 @@ const UserTable = ({
             <Link
               href={`/admin/users/${u.id}`}
               aria-label={`View ${u.full_name}`}
-              className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+              className="inline-flex size-8 items-center justify-center rounded-full text-slate-600 transition hover:bg-slate-100 hover:text-slate-700"
             >
               <LuEye className="size-4" />
             </Link>
@@ -213,7 +220,7 @@ const UserTable = ({
                 <Link
                   href={`/admin/users/${u.id}/edit`}
                   aria-label={`Edit ${u.full_name}`}
-                  className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+                  className="inline-flex size-8 items-center justify-center rounded-full text-slate-600 transition hover:bg-slate-100 hover:text-slate-700"
                 >
                   <LuPencil className="size-4" />
                 </Link>
@@ -221,7 +228,7 @@ const UserTable = ({
                   type="button"
                   onClick={() => onDeleteRequest(u)}
                   aria-label={`Delete ${u.full_name}`}
-                  className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-red-50 hover:text-red-600"
+                  className="inline-flex size-8 items-center justify-center rounded-full text-slate-600 transition hover:bg-red-50 hover:text-red-600"
                 >
                   <LuTrash2 className="size-4" />
                 </button>
@@ -236,15 +243,19 @@ const UserTable = ({
   return (
     <TableWrapper
       footer={
-        <TablePagination
-          currentPage={page}
-          onPageChange={onPageChange}
-          itemsPerPage={PAGE_SIZE}
-          itemCount={users.length}
-          totalCount={count}
-          itemLabel={variant === 'pending' ? 'pending registrations' : 'users'}
-          loading={loading}
-        />
+        !error && (
+          <TablePagination
+            currentPage={page}
+            onPageChange={onPageChange}
+            itemsPerPage={PAGE_SIZE}
+            itemCount={users.length}
+            totalCount={count}
+            itemLabel={
+              variant === 'pending' ? 'pending registrations' : 'users'
+            }
+            loading={loading}
+          />
+        )
       }
     >
       <table className="min-w-full divide-y divide-slate-200 text-sm">

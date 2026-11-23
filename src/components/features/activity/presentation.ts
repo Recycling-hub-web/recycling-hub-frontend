@@ -24,26 +24,39 @@ const roleLabel = (value: unknown): string | null =>
     ? ROLE_LABELS[value as UserRole]
     : null;
 
-const detailValue = (value: unknown): string => {
-  if (value === null || value === undefined || value === '') return 'Not set';
-  if (typeof value === 'boolean') return value ? 'Yes' : 'No';
+type Translate = (
+  message: string,
+  values?: Record<string, string | number>,
+) => string;
+const identity: Translate = (message, values = {}) =>
+  message.replace(/\{(\w+)\}/g, (match, key: string) =>
+    String(values[key] ?? match),
+  );
+
+const detailValue = (value: unknown, t: Translate): string => {
+  if (value === null || value === undefined || value === '')
+    return t('Not set');
+  if (typeof value === 'boolean') return t(value ? 'Yes' : 'No');
   if (Array.isArray(value))
-    return value.length ? value.map(detailValue).join(', ') : 'None';
+    return value.length
+      ? value.map((item) => detailValue(item, t)).join(', ')
+      : t('None');
   if (typeof value === 'object') {
     const fields = Object.entries(value);
     return fields.length
       ? fields
           .map(
-            ([key, nested]) => `${activityLabel(key)}: ${detailValue(nested)}`,
+            ([key, nested]) =>
+              `${t(activityLabel(key))}: ${detailValue(nested, t)}`,
           )
           .join('; ')
-      : 'None';
+      : t('None');
   }
   return String(value);
 };
 
 /** Keep the immutable audit payload intact; translate it only for display. */
-const presentActivity = (entry: ActivityLogEntry) => {
+const presentActivity = (entry: ActivityLogEntry, t: Translate = identity) => {
   const fromRole = roleLabel(entry.details.from);
   const toRole = roleLabel(entry.details.to);
   const roleChanged =
@@ -53,8 +66,11 @@ const presentActivity = (entry: ActivityLogEntry) => {
     fromRole &&
     toRole;
   const title = roleChanged
-    ? `Role changed from ${fromRole} to ${toRole}`
-    : ACTION_LABELS[entry.action] ?? activityLabel(entry.action);
+    ? t('Role changed from {from} to {to}', {
+        from: t(fromRole),
+        to: t(toRole),
+      })
+    : t(ACTION_LABELS[entry.action] ?? activityLabel(entry.action));
   const details = Object.entries(entry.details)
     .filter(([key]) => !roleChanged || (key !== 'from' && key !== 'to'))
     .sort(([a], [b]) => {
@@ -64,24 +80,24 @@ const presentActivity = (entry: ActivityLogEntry) => {
       return rank(a) - rank(b) || a.localeCompare(b);
     })
     .map(([key, value]) => {
-      let formatted = detailValue(value);
+      let formatted = detailValue(value, t);
       if (key === 'changed_fields' && Array.isArray(value)) {
         formatted =
           value
             .map((field) =>
               typeof field === 'string'
-                ? activityLabel(field)
-                : detailValue(field),
+                ? t(activityLabel(field))
+                : detailValue(field, t),
             )
-            .join(', ') || 'None';
+            .join(', ') || t('None');
       } else if (
         ['from', 'to', 'role', 'status', 'evaluation_status'].includes(key) &&
         typeof value === 'string' &&
         value
       ) {
-        formatted = roleLabel(value) || activityLabel(value);
+        formatted = t(roleLabel(value) || activityLabel(value));
       }
-      return { label: activityLabel(key), value: formatted };
+      return { label: t(activityLabel(key)), value: formatted };
     });
   return { title, details };
 };

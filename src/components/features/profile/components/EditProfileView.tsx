@@ -161,7 +161,7 @@ const EditProfileView = () => {
     <PageContainer variant="form">
       <Link
         href="/profile"
-        className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600 lg:mb-4 lg:min-h-0"
+        className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-700 lg:mb-4 lg:min-h-0"
       >
         <LuArrowLeft className="size-4" />
         Back to profile
@@ -283,7 +283,7 @@ const EditProfileView = () => {
                     Manage your bank account and payout method on{' '}
                     <a
                       href="/profile"
-                      className="font-semibold text-brand-600 underline"
+                      className="font-semibold text-brand-700 underline"
                     >
                       your profile
                     </a>

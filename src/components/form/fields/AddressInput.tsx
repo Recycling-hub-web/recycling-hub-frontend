@@ -3,6 +3,7 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { LuLoaderCircle, LuMapPin, LuX } from 'react-icons/lu';
 
+import { usePortalLocale } from '../../../contexts/PortalLocaleContext';
 import {
   GeoapifyConfigError,
   type GeoapifyFeature,
@@ -10,7 +11,11 @@ import {
   type SelectedAddress,
   toSelectedAddress,
 } from '../../../lib/geoapify';
-import { fieldStateClasses, getNestedValue } from '../utils';
+import {
+  fieldErrorAttributes,
+  fieldStateClasses,
+  getNestedValue,
+} from '../utils';
 
 const DEBOUNCE_MS = 300;
 const MIN_QUERY_LENGTH = 3;
@@ -84,7 +89,10 @@ const AddressInput = ({
   className = '',
 }: AddressInputProps) => {
   const value = (getNestedValue(formData, field) as string | undefined) ?? '';
-  const error = errors?.[field];
+  const { t } = usePortalLocale();
+  const rawError = errors?.[field];
+  const error = rawError ? t(rawError) : undefined;
+  const inputId = useId();
   const listboxId = useId();
 
   const [suggestions, setSuggestions] = useState<GeoapifyFeature[]>([]);
@@ -208,11 +216,13 @@ const AddressInput = ({
 
   const renderDropdownContent = () => {
     if (searchError) {
-      return <p className="px-4 py-3 text-sm text-red-600">{searchError}</p>;
+      return <p className="px-4 py-3 text-sm text-red-600">{t(searchError)}</p>;
     }
     if (suggestions.length === 0) {
       return (
-        <p className="px-4 py-3 text-sm text-slate-500">No addresses found.</p>
+        <p className="px-4 py-3 text-sm text-slate-500">
+          {t('No addresses found.')}
+        </p>
       );
     }
     return (
@@ -258,7 +268,10 @@ const AddressInput = ({
 
   return (
     <div className={`mb-4 ${className}`} data-field={dataField ?? field}>
-      <label className="block text-sm font-medium text-slate-900">
+      <label
+        htmlFor={inputId}
+        className="block text-sm font-medium text-slate-900"
+      >
         {label} {required && <span className="text-red-600">*</span>}
       </label>
       <div className="relative mt-2" ref={wrapperRef}>
@@ -267,8 +280,11 @@ const AddressInput = ({
           aria-hidden="true"
         />
         <input
+          id={inputId}
           type="text"
           name={field}
+          aria-required={required}
+          {...fieldErrorAttributes(inputId, error)}
           required={required}
           maxLength={1000}
           role="combobox"
@@ -280,14 +296,14 @@ const AddressInput = ({
           onKeyDown={handleKeyDown}
           onFocus={() => suggestions.length > 0 && setOpen(true)}
           onBlur={onBlur}
-          placeholder={placeholder}
+          placeholder={t(placeholder)}
           disabled={disabled}
           className={`flex h-12 w-full items-center justify-start rounded-xl border p-3 py-2 ps-10 text-sm outline-none transition-colors focus:outline-none focus:ring-1 focus:ring-brand-500 ${
             value ? 'pe-11' : ''
           } ${fieldStateClasses(disabled, Boolean(error))}`}
         />
         {verified && (
-          <span className="absolute inset-y-0 end-9 flex items-center text-xs font-medium text-brand-600">
+          <span className="absolute inset-y-0 end-9 flex items-center text-xs font-medium text-brand-700">
             ✓
           </span>
         )}
@@ -301,8 +317,8 @@ const AddressInput = ({
           <button
             type="button"
             onClick={handleClear}
-            aria-label="Clear address"
-            className="absolute inset-y-0 end-0 flex w-11 items-center justify-center text-slate-400 transition-colors hover:text-slate-600"
+            aria-label={t('Clear address')}
+            className="absolute inset-y-0 end-0 flex w-11 items-center justify-center text-slate-600 transition-colors hover:text-slate-600"
           >
             <LuX className="size-4" />
           </button>
@@ -315,7 +331,11 @@ const AddressInput = ({
           </div>
         )}
       </div>
-      {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
+      {error && (
+        <p id={`${inputId}-error`} className="mt-1 text-xs text-red-600">
+          {error}
+        </p>
+      )}
     </div>
   );
 };

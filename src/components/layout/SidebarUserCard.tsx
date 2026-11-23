@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { LuLogOut } from 'react-icons/lu';
 
 import { useAuth } from '../../contexts/AuthContext';
+import { usePortalLocale } from '../../contexts/PortalLocaleContext';
 import { ROLE_LABELS } from '../../types/auth';
 
 const getInitials = (name: string) =>
@@ -20,6 +21,7 @@ const getInitials = (name: string) =>
  * Sidebar. Renders nothing while no user is loaded. */
 const SidebarUserCard = () => {
   const { user, logout } = useAuth();
+  const { t } = usePortalLocale();
   const pathname = usePathname();
   if (!user) return null;
 
@@ -32,7 +34,7 @@ const SidebarUserCard = () => {
       <div className="rounded-xl bg-slate-50 p-2.5">
         <Link
           href="/profile"
-          aria-label={`${user.full_name} — view profile`}
+          aria-label={`${user.full_name} — ${t('view profile')}`}
           aria-current={onProfile ? 'page' : undefined}
           className="group flex items-center gap-3 rounded-lg p-0.5 transition-colors duration-200 hover:bg-white motion-reduce:transition-none"
         >
@@ -56,8 +58,8 @@ const SidebarUserCard = () => {
             <span className="block truncate text-sm font-semibold text-neutral-950">
               {user.full_name}
             </span>
-            <span className="block truncate text-xs text-slate-400">
-              {ROLE_LABELS[user.role]}
+            <span className="block truncate text-xs text-slate-600">
+              {t(ROLE_LABELS[user.role])}
             </span>
           </span>
         </Link>
@@ -68,7 +70,7 @@ const SidebarUserCard = () => {
         >
           <LuLogOut className="size-4 shrink-0 text-slate-400 transition-colors group-hover:text-red-600" />
           <span className="text-sm font-medium text-slate-500 transition-colors group-hover:text-red-600">
-            Sign out
+            {t('Sign out')}
           </span>
         </button>
       </div>

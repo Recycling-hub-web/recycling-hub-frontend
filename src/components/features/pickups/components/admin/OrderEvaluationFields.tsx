@@ -3,6 +3,8 @@
 import type { ComponentProps } from 'react';
 import { LuCircleCheck, LuCircleX, LuClock } from 'react-icons/lu';
 
+import { usePortalLocale } from '../../../../../contexts/PortalLocaleContext';
+import { localizeErrors } from '../../../../../lib/localizeErrors';
 import { TextareaField } from '../../../../form/fields/TextareaField';
 import type { SegmentedOption } from '../../../../ui/buttons/SegmentedControl';
 import { SegmentedControl } from '../../../../ui/buttons/SegmentedControl';
@@ -20,7 +22,7 @@ const EVALUATE_NOW_OPTIONS: SegmentedOption<EvaluationDecision>[] = [
     value: 'approved',
     label: 'Approve',
     icon: LuCircleCheck,
-    activeClassName: 'text-brand-600',
+    activeClassName: 'text-brand-700',
   },
   {
     value: 'rejected',
@@ -96,6 +98,7 @@ const OrderEvaluationFields = ({
   errors = {},
   disabled = false,
 }: OrderEvaluationFieldsProps) => {
+  const { t } = usePortalLocale();
   const set = (patch: Partial<DraftEvaluation>) =>
     onChange({ ...evaluation, ...patch });
   const headingId = `${id}-evaluation-heading`;
@@ -114,17 +117,21 @@ const OrderEvaluationFields = ({
       className="mt-2 rounded-xl border border-slate-200 bg-slate-50/60 p-4 sm:col-span-2"
     >
       <h3 id={headingId} className="text-sm font-semibold text-neutral-950">
-        Evaluation{' '}
-        <span className="font-normal text-slate-400">(optional)</span>
+        {t('Evaluation')}{' '}
+        <span className="font-normal text-slate-600">{t('(optional)')}</span>
       </h3>
       <p className="mt-0.5 text-xs text-slate-500">
-        Already know the outcome? Decide it now for the whole request and skip
-        the Evaluate step later. One total is shared across the orders.
+        {t(
+          'Already know the outcome? Decide it now for the whole request and skip the Evaluate step later. One total is shared across the orders.',
+        )}
       </p>
 
       <SegmentedControl
-        ariaLabel="Evaluation decision"
-        options={EVALUATE_NOW_OPTIONS}
+        ariaLabel={t('Evaluation decision')}
+        options={EVALUATE_NOW_OPTIONS.map((item) => ({
+          ...item,
+          label: t(item.label),
+        }))}
         value={evaluation.decision}
         onChange={(decision) => set({ decision })}
         disabled={disabled}
@@ -167,11 +174,11 @@ const OrderEvaluationFields = ({
       {evaluation.decision === 'rejected' && (
         <div className="mt-4">
           <TextareaField
-            label="Reason"
+            label={t('Reason')}
             field="note"
-            placeholder="Why this order is being rejected"
+            placeholder={t('Why this order is being rejected')}
             formData={{ note: evaluation.note }}
-            errors={errors}
+            errors={localizeErrors(errors, t)}
             updateFormData={(_, note) => set({ note })}
             disabled={disabled}
           />

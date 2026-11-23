@@ -1,6 +1,9 @@
+'use client';
+
 import type { ReactNode } from 'react';
 
 import { useAuth } from '../../../../contexts/AuthContext';
+import { usePortalLocale } from '../../../../contexts/PortalLocaleContext';
 import { ROLE_LABELS } from '../../../../types/auth';
 import { PageContainer } from '../../../layout/PageContainer';
 import type { NavItem } from '../../../layout/Sidebar';
@@ -33,6 +36,7 @@ const RoleOverviewLayout = ({
   statGrid,
   extra,
 }: RoleOverviewLayoutProps) => {
+  const { t } = usePortalLocale();
   const { user } = useAuth();
 
   if (!user) return null;
@@ -42,8 +46,10 @@ const RoleOverviewLayout = ({
   return (
     <PageContainer variant="table">
       <PageHeader
-        title={`Welcome, ${user.full_name.split(' ')[0]}`}
-        subtitle={ROLE_LABELS[user.role]}
+        title={t('Welcome, {name}', {
+          name: user.full_name.split(' ')[0] ?? user.full_name,
+        })}
+        subtitle={t(ROLE_LABELS[user.role])}
       />
 
       <MobileCommandCard navItems={navItems} />
@@ -60,9 +66,10 @@ const RoleOverviewLayout = ({
         <ProfileSummaryCard />
 
         {!hasModules && (
-          <p className="text-sm text-slate-400">
-            More of your dashboard — assigned tasks, pickups, and reports — is
-            on the way.
+          <p className="text-sm text-slate-600">
+            {t(
+              'More of your dashboard — assigned tasks, pickups, and reports — is on the way.',
+            )}
           </p>
         )}
       </div>

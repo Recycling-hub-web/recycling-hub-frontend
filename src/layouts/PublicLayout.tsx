@@ -8,14 +8,19 @@ import { WhatsAppFloatingButton } from '../components/ui/WhatsAppFloatingButton'
 type PublicLayoutProps = {
   children: ReactNode;
   navVariant?: 'dark' | 'light';
+  floatingContact?: boolean;
 };
 
-const PublicLayout = ({ children, navVariant = 'dark' }: PublicLayoutProps) => (
+const PublicLayout = ({
+  children,
+  navVariant = 'dark',
+  floatingContact = true,
+}: PublicLayoutProps) => (
   <div className="relative antialiased">
     <Navbar variant={navVariant} />
     <main>{children}</main>
     <Footer />
-    <WhatsAppFloatingButton />
+    {floatingContact && <WhatsAppFloatingButton />}
     <StickyRecycleCTA />
   </div>
 );

@@ -51,7 +51,7 @@ const ServiceDetailTemplate = ({ slug }: ServiceDetailTemplateProps) => {
                 transition={{ duration: 0.45, delay: i * 0.06, ease }}
                 className="flex items-start gap-3 rounded-xl border border-slate-100 bg-neutral-50 px-5 py-4"
               >
-                <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-brand-50 text-brand-600">
+                <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-brand-50 text-brand-700">
                   <LuCheck size={12} strokeWidth={3} />
                 </span>
                 <span className="text-sm leading-relaxed text-slate-700">
@@ -68,7 +68,7 @@ const ServiceDetailTemplate = ({ slug }: ServiceDetailTemplateProps) => {
         <div className="mx-auto max-w-3xl px-5 md:px-8">
           <FadeIn>
             <div className="rounded-2xl border border-slate-200 bg-white p-6 md:p-8">
-              <div className="mb-5 flex size-12 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
+              <div className="mb-5 flex size-12 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
                 <Icon size={22} />
               </div>
               <h3 className="font-montserrat text-base font-extrabold text-neutral-950">
@@ -110,7 +110,7 @@ const ServiceDetailTemplate = ({ slug }: ServiceDetailTemplateProps) => {
                   href={BRAND.whatsapp}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-medium text-brand-600 underline underline-offset-2"
+                  className="font-medium text-brand-700 underline underline-offset-2"
                 >
                   {dictServices.freeIndividualNote.linkText}
                 </a>

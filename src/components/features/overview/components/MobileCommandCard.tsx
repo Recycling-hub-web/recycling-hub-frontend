@@ -1,11 +1,15 @@
+'use client';
+
 import Link from 'next/link';
 import { LuArrowUpRight, LuPlus, LuRadar, LuTruck } from 'react-icons/lu';
 
+import { usePortalLocale } from '../../../../contexts/PortalLocaleContext';
 import type { NavItem } from '../../../ui/navigation';
 
 type Props = { navItems: NavItem[] };
 
 const MobileCommandCard = ({ navItems }: Props) => {
+  const { t } = usePortalLocale();
   const pages = navItems.flatMap((item) =>
     item.children?.length ? item.children : [item],
   );
@@ -17,20 +21,21 @@ const MobileCommandCard = ({ navItems }: Props) => {
   return (
     <section
       className="system-command-card mb-6 lg:hidden"
-      aria-label="Pickup command center"
+      aria-label={t('Pickup command center')}
     >
       <div className="mb-5 flex items-center gap-2 text-xs font-medium text-white/75">
-        <LuRadar size={16} /> YOUR COMMAND CENTER
+        <LuRadar size={16} />
+        {t('YOUR COMMAND CENTER')}
       </div>
       <h2 className="max-w-64 text-2xl font-bold leading-tight">
         {requests
-          ? 'Good things start with a pickup.'
-          : 'Your next move, within reach.'}
+          ? t('Good things start with a pickup.')
+          : t('Your next move, within reach.')}
       </h2>
       <p className="mt-2 max-w-64 text-sm leading-relaxed text-white/75">
         {requests
-          ? 'Book collections. Follow progress. Keep e-waste moving.'
-          : 'Stay on top of your work and keep collections moving.'}
+          ? t('Book collections. Follow progress. Keep e-waste moving.')
+          : t('Stay on top of your work and keep collections moving.')}
       </p>
       <div className="mt-5 flex gap-3">
         {requests && (
@@ -38,7 +43,8 @@ const MobileCommandCard = ({ navItems }: Props) => {
             href={`${requests.href}/create`}
             className="system-command-primary"
           >
-            <LuPlus size={18} /> Book pickup
+            <LuPlus size={18} />
+            {t('Book pickup')}
           </Link>
         )}
         <Link
@@ -48,7 +54,7 @@ const MobileCommandCard = ({ navItems }: Props) => {
           }
         >
           {requests ? <LuTruck size={18} /> : <LuArrowUpRight size={18} />}
-          {requests ? 'Track' : work!.label}
+          {requests ? t('Track') : t(work!.label)}
         </Link>
       </div>
       <LuTruck className="system-command-watermark" aria-hidden="true" />

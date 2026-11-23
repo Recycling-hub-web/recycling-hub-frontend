@@ -24,9 +24,9 @@ type PublicButtonProps = {
 
 const variants: Record<PublicButtonVariant, string> = {
   primary:
-    'ring-2 ring-brand-600 ring-offset-2 bg-brand-600 text-white hover:bg-brand-700 hover:ring-brand-700',
+    'ring-2 ring-brand-700 ring-offset-2 bg-brand-700 text-white hover:bg-brand-800 hover:ring-brand-800',
   secondary:
-    'ring-2 ring-slate-200 ring-offset-2 bg-white text-neutral-950 hover:bg-brand-600 hover:text-white hover:ring-brand-600',
+    'ring-2 ring-slate-200 ring-offset-2 bg-white text-neutral-950 hover:bg-brand-800 hover:text-white hover:ring-brand-800',
   white:
     'ring-2 ring-white ring-offset-2 ring-offset-neutral-950 bg-white text-neutral-950 hover:bg-white/90',
   'outline-white':
@@ -38,7 +38,7 @@ const variants: Record<PublicButtonVariant, string> = {
 // transition-all so background-color, ring and transform all animate
 // smoothly together on hover rather than snapping. No shadows.
 const base =
-  'inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-semibold transition-all duration-300 ease-out cursor-pointer hover:-translate-y-0.5 active:translate-y-0';
+  'inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-semibold transition-all duration-300 ease-out cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-700 hover:-translate-y-0.5 active:translate-y-0';
 
 const isExternal = (href: string) =>
   href.startsWith('http') ||

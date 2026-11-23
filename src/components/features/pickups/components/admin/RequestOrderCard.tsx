@@ -9,6 +9,7 @@ import {
   LuX,
 } from 'react-icons/lu';
 
+import { usePortalLocale } from '../../../../../contexts/PortalLocaleContext';
 import { StatusBadge } from '../../../../ui/badges/StatusBadge';
 import {
   ActionsDropdown,
@@ -46,7 +47,7 @@ const Section = ({
   children: React.ReactNode;
 }) => (
   <div className="mt-5 border-t border-slate-100 pt-5">
-    <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
+    <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-600">
       {title}
     </p>
     {children}
@@ -65,12 +66,13 @@ const RequestOrderCard = ({
   onAction,
   onChanged,
 }: RequestOrderCardProps) => {
+  const { t, locale } = usePortalLocale();
   const stage = derivePickupStage(order.status, order.evaluation_status);
   const actions: DropdownItem[] = [
     ...(order.status === 'pending' && order.evaluation_status === 'approved'
       ? [
           {
-            label: 'Schedule pickup',
+            label: t('Schedule pickup'),
             icon: LuTruck,
             onClick: () => onAction('schedule'),
             color: 'neutral' as const,
@@ -80,7 +82,7 @@ const RequestOrderCard = ({
     ...(order.status === 'scheduled'
       ? [
           {
-            label: 'Mark as collected',
+            label: t('Mark as collected'),
             icon: LuPackage,
             onClick: () => onAction('collect'),
             color: 'neutral' as const,
@@ -90,7 +92,7 @@ const RequestOrderCard = ({
     ...(order.status === 'pending' || order.status === 'scheduled'
       ? [
           {
-            label: 'Cancel order',
+            label: t('Cancel order'),
             icon: LuX,
             onClick: () => onAction('cancel'),
             color: 'danger' as const,
@@ -116,16 +118,16 @@ const RequestOrderCard = ({
               {order.code}
             </span>
             <span className="block truncate text-sm text-slate-500">
-              {itemsSummary(order.items) || 'No materials'}
-              {order.price ? ` · RM ${order.price}` : ''}
+              {itemsSummary(order.items, t) || t('No materials')}
+              {order.price ? t(' · RM {value0}', { value0: order.price }) : ''}
             </span>
           </span>
           <StatusBadge variant={PICKUP_STAGE_BADGE_VARIANT[stage]}>
-            {PICKUP_STAGE_LABELS[stage]}
+            {t(PICKUP_STAGE_LABELS[stage])}
           </StatusBadge>
         </button>
         {actions.length > 0 && (
-          <ActionsDropdown label="Order actions" items={actions} />
+          <ActionsDropdown label={t('Order actions')} items={actions} />
         )}
       </div>
 
@@ -138,7 +140,7 @@ const RequestOrderCard = ({
               <Card className="p-5">
                 <InfoRow
                   icon={<LuPackage className="size-4" />}
-                  label="Materials"
+                  label={t('Materials')}
                   value={
                     order.items.length === 0 ? (
                       '—'
@@ -157,35 +159,39 @@ const RequestOrderCard = ({
                   }
                 />
                 {order.note && (
-                  <Section title="Note">
+                  <Section title={t('Note')}>
                     <p className="whitespace-pre-wrap text-sm leading-relaxed text-slate-700">
                       {order.note}
                     </p>
                   </Section>
                 )}
                 {order.evaluation_status !== 'pending' && (
-                  <Section title="Evaluation">
+                  <Section title={t('Evaluation')}>
                     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                       {order.price && (
                         <InfoRow
                           icon={<LuPackage className="size-4" />}
-                          label="Price"
-                          value={`RM ${order.price}`}
+                          label={t('Price')}
+                          value={t('RM {value0}', { value0: order.price })}
                         />
                       )}
                       {order.evaluated_by && (
                         <InfoRow
                           icon={<LuUser className="size-4" />}
-                          label="Evaluated by"
+                          label={t('Evaluated by')}
                           value={order.evaluated_by}
                         />
                       )}
                       {order.evaluated_at && (
                         <InfoRow
                           icon={<LuCalendar className="size-4" />}
-                          label="Evaluated at"
+                          label={t('Evaluated at')}
                           value={
-                            <AppDate value={order.evaluated_at} format="long" />
+                            <AppDate
+                              value={order.evaluated_at}
+                              format="long"
+                              locale={locale === 'bm' ? 'ms-MY' : 'en-GB'}
+                            />
                           }
                         />
                       )}

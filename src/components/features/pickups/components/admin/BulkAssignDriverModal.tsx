@@ -2,7 +2,9 @@
 
 import { type FormEvent, useMemo, useState } from 'react';
 
+import { usePortalLocale } from '../../../../../contexts/PortalLocaleContext';
 import { ApiError } from '../../../../../lib/api';
+import { localizeErrors } from '../../../../../lib/localizeErrors';
 import { SelectField } from '../../../../form/fields/SelectField';
 import { ValidatedForm } from '../../../../form/ValidatedForm';
 import { AlertBanner } from '../../../../ui/AlertBanner';
@@ -34,7 +36,13 @@ const BulkAssignDriverModal = ({
   onClose,
   onAssigned,
 }: BulkAssignDriverModalProps) => {
-  const { drivers, loading: loadingDrivers } = useDrivers(open);
+  const { t } = usePortalLocale();
+  const {
+    drivers,
+    loading: loadingDrivers,
+    error: driversError,
+    refetch: retryDrivers,
+  } = useDrivers(open);
   const { execute: bulkAssign, loading: submitting } = useBulkAssignDriver();
   const [formData, setFormData] = useState<FormState>(INITIAL_STATE);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -74,7 +82,7 @@ const BulkAssignDriverModal = ({
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setApiError('');
-    if (!validate()) return;
+    if (submitting || !validate()) return;
     try {
       await bulkAssign({
         order_ids: orderIds,
@@ -95,8 +103,12 @@ const BulkAssignDriverModal = ({
     <Modal
       open={open}
       onClose={handleClose}
-      title="Assign driver"
-      subtitle={`Assign one driver to ${orderIds.length} selected order${orderIds.length === 1 ? '' : 's'}. The driver will confirm pickup times.`}
+      dismissible={!submitting}
+      title={t('Assign driver')}
+      subtitle={t(
+        'Assign one driver to {value0} selected order{value1}. The driver will confirm pickup times.',
+        { value0: orderIds.length, value1: orderIds.length === 1 ? '' : 's' },
+      )}
       footer={
         <FormActions>
           <button
@@ -105,17 +117,20 @@ const BulkAssignDriverModal = ({
             disabled={submitting}
             className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Cancel
+            {t('Cancel')}
           </button>
           <button
             type="submit"
             form="bulk-assign-driver-form"
             disabled={submitting}
-            className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-lg bg-brand-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-800 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {submitting
-              ? 'Assigning…'
-              : `Assign ${orderIds.length} order${orderIds.length === 1 ? '' : 's'}`}
+              ? t('Assigning…')
+              : t('Assign {value0} order{value1}', {
+                  value0: orderIds.length,
+                  value1: orderIds.length === 1 ? '' : 's',
+                })}
           </button>
         </FormActions>
       }
@@ -126,15 +141,27 @@ const BulkAssignDriverModal = ({
         noValidate
         className="space-y-1"
       >
-        <AlertBanner message={apiError} />
+        <AlertBanner message={t(apiError ?? '')} />
+        {driversError && (
+          <div className="mb-4">
+            <AlertBanner message={t(driversError)} />
+            <button
+              type="button"
+              onClick={retryDrivers}
+              className="min-h-11 rounded px-3 text-sm font-semibold text-brand-800 underline"
+            >
+              {t('Retry drivers')}
+            </button>
+          </div>
+        )}
         <SelectField
-          label="Driver"
+          label={t('Driver')}
           field="driver"
           options={driverOptions}
           formData={formData}
-          errors={errors}
+          errors={localizeErrors(errors, t)}
           updateFormData={updateFormData}
-          disabled={loadingDrivers}
+          disabled={loadingDrivers || submitting || Boolean(driversError)}
         />
       </ValidatedForm>
     </Modal>

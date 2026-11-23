@@ -62,7 +62,7 @@ const PricingTiers = () => {
         {/* Toggle */}
         <div className="mb-12 flex items-center justify-center gap-4">
           <span
-            className={`text-sm font-medium ${!annual ? 'text-slate-900' : 'text-slate-400'}`}
+            className={`text-sm font-medium ${!annual ? 'text-slate-900' : 'text-slate-600'}`}
           >
             Monthly
           </span>
@@ -81,7 +81,7 @@ const PricingTiers = () => {
             />
           </button>
           <span
-            className={`text-sm font-medium ${annual ? 'text-slate-900' : 'text-slate-400'}`}
+            className={`text-sm font-medium ${annual ? 'text-slate-900' : 'text-slate-600'}`}
           >
             Annual
             <span className="ml-2 rounded-full bg-green-100 px-2 py-0.5 text-xs font-semibold text-green-700">
@@ -115,7 +115,7 @@ const PricingTiers = () => {
                 <h3 className="font-montserrat text-base font-extrabold text-slate-900">
                   {tier.name}
                 </h3>
-                <p className="mt-1 text-xs leading-relaxed text-slate-400">
+                <p className="mt-1 text-xs leading-relaxed text-slate-600">
                   {tier.tagline}
                 </p>
 
@@ -129,13 +129,13 @@ const PricingTiers = () => {
                       <span className="font-montserrat text-3xl font-extrabold text-neutral-950">
                         {annual ? tier.annualPrice : tier.monthlyPrice}
                       </span>
-                      <span className="ml-1 text-sm text-slate-400">
+                      <span className="ml-1 text-sm text-slate-600">
                         /month
                       </span>
                     </>
                   )}
                   {annual && !tier.enterprise && (
-                    <p className="mt-1 text-xs text-slate-400">
+                    <p className="mt-1 text-xs text-slate-600">
                       {tier.annualNote}
                     </p>
                   )}

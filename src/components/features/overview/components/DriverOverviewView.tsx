@@ -26,28 +26,14 @@ import { RoleOverviewLayout } from './RoleOverviewLayout';
 const PREVIEW_SIZE = 5;
 const columnCount = 3;
 
-/** Driver's own "what do I need to do today" — a stat row, the same
- * pickup/finance status-breakdown charts Admin's dashboard uses (see
- * AdminOverviewView), and a short preview table of their own assigned
- * stops (same shape as Staff's uncontacted-leads table and Receiving
- * Officer's awaiting-close table). Unlike Admin's charts, these need
- * no new backend endpoint at all — CollectionRequestViewSet and
- * FinanceRecordViewSet already scope a driver's own list calls to
- * "mine" server-side (see useDriverOverviewStats), so a per-status
- * count here is already this driver's own data, not a cross-driver
- * aggregate. The assigned-pickups table reuses the exact
- * `status: 'scheduled'` rows the stat tiles are already built from —
- * no second fetch. No claim/collect actions here — those stay on the
- * real task list at /driver/pickups; this is a glance, not a second
- * place to do the work. "Open route" isn't a dedicated endpoint —
- * every pickup list row already carries its own `route` field, so an
- * open route's stop count is just how many of the driver's own
- * `scheduled` rows currently point at a route still `status: 'open'`. */
+/** Driver-scoped task counts, status charts and an assigned-pickups preview.
+ * Route stops come from the server aggregate; preview rows reuse the scheduled
+ * orders query. Collection actions stay on the dedicated pickups page. */
 const DriverOverviewView = () => {
   const stats = useDriverOverviewStats();
 
   let routeValue: string | null = null;
-  if (!stats.routeLoading) {
+  if (!stats.routeLoading && !stats.routeError) {
     routeValue =
       stats.openRouteStops > 0
         ? `${stats.openRouteStops} stop${stats.openRouteStops === 1 ? '' : 's'}`
@@ -125,18 +111,24 @@ const DriverOverviewView = () => {
           <OverviewStatCard
             icon={LuPackage}
             label="Available pickups"
+            error={stats.availableError}
+            onRetry={stats.refetchAvailable}
             value={stats.availableCount}
             href="/driver/pickups"
           />
           <OverviewStatCard
             icon={LuPackageCheck}
             label="My assigned pickups"
+            error={stats.assignedError}
+            onRetry={stats.refetchAssigned}
             value={stats.assignedCount}
             href="/driver/pickups"
           />
           <OverviewStatCard
             icon={LuRoute}
             label="Open route"
+            error={stats.routeError}
+            onRetry={stats.refetchRoute}
             value={routeValue}
             href="/driver/pickups"
           />
@@ -166,7 +158,9 @@ const DriverOverviewView = () => {
                     color: '#007535',
                   },
                 ]}
-                loading={!stats.pickupStatusCounts}
+                loading={stats.statusLoading}
+                error={stats.statusError}
+                onRetry={stats.refetchStatuses}
               />
             </SectionContainer>
             <SectionContainer>
@@ -175,12 +169,16 @@ const DriverOverviewView = () => {
               </h2>
               <DonutChart
                 data={financeStatusData}
-                loading={!stats.financeStatusCounts}
+                loading={stats.statusLoading}
+                error={stats.statusError}
+                onRetry={stats.refetchStatuses}
               />
             </SectionContainer>
           </div>
 
-          {(stats.assignedLoading || stats.assigned.length > 0) && (
+          {(stats.assignedLoading ||
+            stats.assignedError ||
+            stats.assigned.length > 0) && (
             <div>
               <div className="mb-3 flex items-center justify-between">
                 <h2 className="text-sm font-semibold text-slate-900">
@@ -188,7 +186,7 @@ const DriverOverviewView = () => {
                 </h2>
                 <Link
                   href="/driver/pickups"
-                  className="text-xs font-medium text-brand-600 hover:underline"
+                  className="text-xs font-medium text-brand-700 hover:underline"
                 >
                   View all
                 </Link>

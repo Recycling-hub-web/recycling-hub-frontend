@@ -1,10 +1,11 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import type { IconType } from 'react-icons';
 import { LuChevronRight } from 'react-icons/lu';
 
+import { usePortalLocale } from '../../../contexts/PortalLocaleContext';
 import type { BadgeVariant } from '../badges/variants';
 
 const ITEM_COLOR_CLASSES: Record<BadgeVariant, { row: string; icon: string }> =
@@ -53,12 +54,15 @@ type ActionsDropdownProps = {
   label?: string;
 };
 
-type Position = { top: number; right: number };
+type Position = { top: number; left: number };
 
 const ActionsDropdown = ({
   items,
   label = 'Actions',
 }: ActionsDropdownProps) => {
+  const { t } = usePortalLocale();
+  const menuId = useId();
+  const focusLast = useRef(false);
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [position, setPosition] = useState<Position | null>(null);
@@ -70,10 +74,30 @@ const ActionsDropdown = ({
   const updatePosition = () => {
     const rect = buttonRef.current?.getBoundingClientRect();
     if (!rect) return;
-    setPosition({
-      top: rect.bottom + 8,
-      right: window.innerWidth - rect.right,
-    });
+    const gutter = 16;
+    const width = Math.min(208, window.innerWidth - gutter * 2);
+    const height = Math.min(
+      panelRef.current?.scrollHeight ?? 0,
+      window.innerHeight - gutter * 2,
+    );
+    const below = rect.bottom + 8;
+    const top =
+      below + height > window.innerHeight - gutter &&
+      rect.top - height - 8 >= gutter
+        ? rect.top - height - 8
+        : Math.max(
+            gutter,
+            Math.min(below, window.innerHeight - gutter - height),
+          );
+    const left = Math.max(
+      gutter,
+      Math.min(rect.right - width, window.innerWidth - gutter - width),
+    );
+    setPosition((previous) =>
+      previous?.top === top && previous.left === left
+        ? previous
+        : { top, left },
+    );
   };
 
   useEffect(() => {
@@ -88,7 +112,11 @@ const ActionsDropdown = ({
       close();
     };
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') close();
+      if (e.key === 'Escape' && open) {
+        e.preventDefault();
+        close();
+        buttonRef.current?.focus();
+      }
     };
     document.addEventListener('mousedown', onMouseDown);
     document.addEventListener('keydown', onKeyDown);
@@ -96,7 +124,7 @@ const ActionsDropdown = ({
       document.removeEventListener('mousedown', onMouseDown);
       document.removeEventListener('keydown', onKeyDown);
     };
-  }, []);
+  }, [open]);
 
   useEffect(() => {
     if (!open) return undefined;
@@ -119,7 +147,22 @@ const ActionsDropdown = ({
     return () => cancelAnimationFrame(frame);
   }, [open]);
 
+  const positioned = position !== null;
+  useEffect(() => {
+    if (!open || !mounted || !positioned) return undefined;
+    const frame = requestAnimationFrame(() => {
+      const enabled = panelRef.current?.querySelectorAll<HTMLButtonElement>(
+        '[role="menuitem"]:not(:disabled)',
+      );
+      if (enabled?.length)
+        enabled[focusLast.current ? enabled.length - 1 : 0]?.focus();
+    });
+    return () => cancelAnimationFrame(frame);
+    // Position changes while scrolling should not steal focus from the selected item.
+  }, [open, mounted, positioned]);
+
   const toggle = () => {
+    focusLast.current = false;
     if (!open) updatePosition();
     setMounted(true);
     setOpen((v) => !v);
@@ -141,14 +184,24 @@ const ActionsDropdown = ({
         type="button"
         onClick={toggle}
         aria-expanded={open}
-        aria-haspopup="true"
+        aria-haspopup="menu"
+        aria-controls={open ? menuId : undefined}
+        onKeyDown={(event) => {
+          if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+            event.preventDefault();
+            focusLast.current = event.key === 'ArrowUp';
+            updatePosition();
+            setMounted(true);
+            setOpen(true);
+          }
+        }}
         className={`flex items-center gap-2 rounded-full border px-3 py-2 text-sm font-medium transition-all duration-150 ${
           open
             ? 'border-slate-300 bg-slate-100 text-slate-800'
             : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50'
         }`}
       >
-        {label}
+        {t(label)}
         <LuChevronRight
           className={`size-4 transition-transform duration-200 ${open ? 'rotate-90' : 'rotate-0'}`}
         />
@@ -160,8 +213,42 @@ const ActionsDropdown = ({
         createPortal(
           <div
             ref={panelRef}
-            style={{ top: position.top, right: position.right }}
-            className={`fixed z-50 w-52 origin-top-right overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl ring-1 ring-slate-100 transition-all duration-200 ${
+            id={menuId}
+            style={{
+              top: position.top,
+              left: position.left,
+              maxWidth: 'calc(100vw - 32px)',
+              maxHeight: 'calc(100dvh - 32px)',
+            }}
+            onKeyDown={(event) => {
+              const enabled = Array.from(
+                panelRef.current?.querySelectorAll<HTMLButtonElement>(
+                  '[role="menuitem"]:not(:disabled)',
+                ) ?? [],
+              );
+              const index = enabled.indexOf(
+                document.activeElement as HTMLButtonElement,
+              );
+              if (event.key === 'Tab') {
+                event.preventDefault();
+                close();
+                buttonRef.current?.focus();
+              } else if (
+                ['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key) &&
+                enabled.length
+              ) {
+                event.preventDefault();
+                let next =
+                  (index +
+                    (event.key === 'ArrowDown' ? 1 : -1) +
+                    enabled.length) %
+                  enabled.length;
+                if (event.key === 'Home') next = 0;
+                if (event.key === 'End') next = enabled.length - 1;
+                enabled[next]?.focus();
+              }
+            }}
+            className={`fixed z-50 w-52 origin-top-right overflow-y-auto rounded-xl border border-slate-200 bg-white shadow-xl ring-1 ring-slate-100 transition-all duration-200 ${
               open
                 ? 'translate-y-0 scale-100 opacity-100'
                 : 'pointer-events-none -translate-y-1 scale-95 opacity-0'
@@ -180,6 +267,7 @@ const ActionsDropdown = ({
                     key={item.label}
                     type="button"
                     role="menuitem"
+                    tabIndex={-1}
                     disabled={item.disabled}
                     onClick={() => handleItemClick(item.onClick, item.disabled)}
                     className={`group flex w-full items-center gap-3 rounded-full border border-transparent px-3 py-2.5 text-left text-sm transition-all duration-150 ${item.disabled ? 'cursor-not-allowed opacity-50' : colorClasses.row}`}

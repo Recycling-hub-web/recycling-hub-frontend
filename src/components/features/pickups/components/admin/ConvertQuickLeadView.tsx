@@ -11,7 +11,9 @@ import {
   splitPhoneNumber,
   validatePhoneNumber,
 } from '../../../../../constants/dialCodes';
+import { usePortalLocale } from '../../../../../contexts/PortalLocaleContext';
 import type { SelectedAddress } from '../../../../../lib/geoapify';
+import { localizeErrors } from '../../../../../lib/localizeErrors';
 import { AddressInput } from '../../../../form/fields/AddressInput';
 import { InputField } from '../../../../form/fields/InputField';
 import { PhoneInputField } from '../../../../form/fields/PhoneInputField';
@@ -37,6 +39,7 @@ import {
 import type { PickupRequestItemInput } from '../../services/pickupService';
 import type { PickupRequestItem, PickupRequestType } from '../../types';
 import { hasItemErrors, validateItems } from '../../units';
+import { PickupCategoryStatus } from '../shared/PickupCategoryStatus';
 import { PickupItemsFieldArray } from '../shared/PickupItemsFieldArray';
 import { isValidPrice, PricingEditor } from '../shared/PricingEditor';
 import { EVALUATE_NOW_OPTIONS } from './OrderEvaluationFields';
@@ -130,6 +133,7 @@ type ConvertQuickLeadViewProps = {
 // see PickupRequestCreateView/CreateOrderView), so this view only
 // renders anything useful once reached with a `leadId`.
 const ConvertQuickLeadView = ({ basePath }: ConvertQuickLeadViewProps) => {
+  const { t } = usePortalLocale();
   // There's no orders list page — orders live on their pickup request.
   // Leads come from the Pickup Requests page's Quick Leads tab.
   const requestsPath = basePath.replace('/pickups', '/pickup-requests');
@@ -150,6 +154,8 @@ const ConvertQuickLeadView = ({ basePath }: ConvertQuickLeadViewProps) => {
     options: categoryOptions,
     unitsByCategory,
     loading: loadingCategories,
+    error: categoriesError,
+    refetch: retryCategories,
   } = usePickupCategories();
   const [formData, setFormData] = useState<FormState>(INITIAL_STATE);
   const [items, setItems] = useState<PickupRequestItemInput[]>([
@@ -280,8 +286,11 @@ const ConvertQuickLeadView = ({ basePath }: ConvertQuickLeadViewProps) => {
                 : undefined,
           });
           toast.success(
-            'Pickup request created',
-            `A request for ${formData.full_name} has been added and ${formData.evaluation_decision}.`,
+            t('Pickup request created'),
+            t('A request for {value0} has been added and {value1}.', {
+              value0: formData.full_name,
+              value1: formData.evaluation_decision,
+            }),
           );
         } catch {
           // The request/order itself was created fine — only the
@@ -289,14 +298,16 @@ const ConvertQuickLeadView = ({ basePath }: ConvertQuickLeadViewProps) => {
           // failure toast; it's created, just needs evaluating
           // manually now.
           toast.error(
-            'Request created, but evaluation failed',
-            'Open the pickup request and evaluate it from there.',
+            t('Request created, but evaluation failed'),
+            t('Open the pickup request and evaluate it from there.'),
           );
         }
       } else {
         toast.success(
-          'Pickup request created',
-          `A request for ${formData.full_name} has been added.`,
+          t('Pickup request created'),
+          t('A request for {value0} has been added.', {
+            value0: formData.full_name,
+          }),
         );
       }
       // Orders live on their request's page — open the new one there.
@@ -314,31 +325,34 @@ const ConvertQuickLeadView = ({ basePath }: ConvertQuickLeadViewProps) => {
       <PageContainer variant="form">
         <Link
           href={leadsPath}
-          className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600 lg:mb-4 lg:min-h-0"
+          className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-700 lg:mb-4 lg:min-h-0"
         >
           <LuArrowLeft className="size-4" />
-          Back to quick leads
+          {t('Back to quick leads')}
         </Link>
         <Card className="p-5 text-sm text-slate-600">
-          This form follows up on a Quick Lead. To create a brand-new pickup
-          request, use the{' '}
-          <Link href={requestsPath} className="font-semibold text-brand-600">
-            Pickup Requests
+          {t(
+            'This form follows up on a Quick Lead. To create a brand-new pickup request, use the',
+          )}{' '}
+          <Link href={requestsPath} className="font-semibold text-brand-700">
+            {t('Pickup Requests')}
           </Link>{' '}
-          list&apos;s &ldquo;New request&rdquo; action instead.
+          {t("list's “New request” action instead.")}
         </Card>
       </PageContainer>
     );
   }
 
-  if (loadingLead) return <Loading text="Loading lead…" />;
+  if (loadingLead) return <Loading text={t('Loading lead…')} />;
 
   if (lead?.status === 'cancelled') {
     return (
       <PageContainer variant="form">
-        <AlertBanner message="This lead has been cancelled and cannot be converted." />
+        <AlertBanner
+          message={t('This lead has been cancelled and cannot be converted.')}
+        />
         <Button href={leadsPath} variant="secondary">
-          Back to quick leads
+          {t('Back to quick leads')}
         </Button>
       </PageContainer>
     );
@@ -348,67 +362,72 @@ const ConvertQuickLeadView = ({ basePath }: ConvertQuickLeadViewProps) => {
     <PageContainer variant="form">
       <Link
         href={leadsPath}
-        className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600 lg:mb-4 lg:min-h-0"
+        className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-700 lg:mb-4 lg:min-h-0"
       >
         <LuArrowLeft className="size-4" />
-        Back to quick leads
+        {t('Back to quick leads')}
       </Link>
 
       <PageHeader
-        title="Follow up on quick lead"
-        subtitle="Complete the rest of the details to create the real pickup request."
+        title={t('Follow up on quick lead')}
+        subtitle={t(
+          'Complete the rest of the details to create the real pickup request.',
+        )}
       />
 
       <Card className="p-5">
         <ValidatedForm onSubmit={handleSubmit}>
-          <AlertBanner message={error} />
+          <AlertBanner message={t(error ?? '')} />
 
           <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
             <InputField
-              label="Full name"
+              label={t('Full name')}
               field="full_name"
-              placeholder="e.g. Fatima Ali"
+              placeholder={t('e.g. Fatima Ali')}
               formData={formData}
-              errors={errors}
+              errors={localizeErrors(errors, t)}
               updateFormData={updateFormData}
               disabled={submitting}
             />
             <InputField
-              label="Email"
+              label={t('Email')}
               field="email"
               type="email"
               required={formData.request_type === 'business'}
-              placeholder="e.g. fatima@recyclinghub.example"
+              placeholder={t('e.g. fatima@recyclinghub.example')}
               formData={formData}
-              errors={errors}
+              errors={localizeErrors(errors, t)}
               updateFormData={updateFormData}
               disabled={submitting}
             />
             <PhoneInputField
-              label="Phone number"
+              label={t('Phone number')}
               dialCodeField="phone_dial_code"
               numberField="phone_local"
               formData={formData}
-              errors={errors}
+              errors={localizeErrors(errors, t)}
               updateFormData={updateFormData}
               disabled={submitting}
             />
             <SelectField
-              label="Request type"
+              label={t('Request type')}
               field="request_type"
-              options={REQUEST_TYPE_OPTIONS}
+              options={REQUEST_TYPE_OPTIONS.map((item) => ({
+                ...item,
+                label: t(item.label),
+              }))}
               formData={formData}
-              errors={errors}
+              errors={localizeErrors(errors, t)}
               updateFormData={updateFormData}
               disabled={submitting}
             />
             <div className="sm:col-span-2">
               <AddressInput
-                label="Pickup address"
+                label={t('Pickup address')}
                 field="pickup_address"
-                placeholder="Address where materials should be collected"
+                placeholder={t('Address where materials should be collected')}
                 formData={formData}
-                errors={errors}
+                errors={localizeErrors(errors, t)}
                 updateFormData={updateFormData}
                 disabled={submitting}
                 countryRestrictions={['my']}
@@ -416,21 +435,28 @@ const ConvertQuickLeadView = ({ basePath }: ConvertQuickLeadViewProps) => {
                 onClear={() => setSelectedLocation(null)}
               />
               {selectedLocation && (
-                <p className="-mt-3 mb-4 text-xs text-slate-400">
-                  Verified at {selectedLocation.latitude.toFixed(5)},{' '}
+                <p className="-mt-3 mb-4 text-xs text-slate-600">
+                  {t('Verified at')}
+                  {selectedLocation.latitude.toFixed(5)},{' '}
                   {selectedLocation.longitude.toFixed(5)}
                 </p>
               )}
             </div>
             <InputField
-              label="Pickup date & time"
+              label={t('Pickup date & time')}
               field="requested_at"
               type="datetime-local"
               required={false}
               formData={formData}
-              errors={errors}
+              errors={localizeErrors(errors, t)}
               updateFormData={updateFormData}
               disabled={submitting}
+            />
+            <PickupCategoryStatus
+              loading={loadingCategories}
+              error={categoriesError}
+              count={categoryOptions.length}
+              onRetry={retryCategories}
             />
             <PickupItemsFieldArray
               items={items}
@@ -439,7 +465,7 @@ const ConvertQuickLeadView = ({ basePath }: ConvertQuickLeadViewProps) => {
               unitsByCategory={unitsByCategory}
               loadingCategories={loadingCategories}
               disabled={submitting}
-              errors={itemErrors}
+              errors={localizeErrors(itemErrors, t)}
               labels={{
                 itemsSection: 'Materials',
                 category: 'Material category',
@@ -454,12 +480,12 @@ const ConvertQuickLeadView = ({ basePath }: ConvertQuickLeadViewProps) => {
             />
             <div className="sm:col-span-2">
               <TextareaField
-                label="Note"
+                label={t('Note')}
                 field="note"
                 required={false}
-                placeholder="Anything else worth noting"
+                placeholder={t('Anything else worth noting')}
                 formData={formData}
-                errors={errors}
+                errors={localizeErrors(errors, t)}
                 updateFormData={updateFormData}
                 disabled={submitting}
               />
@@ -474,17 +500,23 @@ const ConvertQuickLeadView = ({ basePath }: ConvertQuickLeadViewProps) => {
               id="evaluate-now-heading"
               className="text-sm font-semibold text-neutral-950"
             >
-              Evaluation{' '}
-              <span className="font-normal text-slate-400">(optional)</span>
+              {t('Evaluation')}{' '}
+              <span className="font-normal text-slate-600">
+                {t('(optional)')}
+              </span>
             </h3>
             <p className="mt-0.5 text-xs text-slate-500">
-              Already know the outcome? Decide it now and skip the Evaluate step
-              on the order&apos;s details page.
+              {t(
+                "Already know the outcome? Decide it now and skip the Evaluate step on the order's details page.",
+              )}
             </p>
 
             <SegmentedControl
-              ariaLabel="Evaluation decision"
-              options={EVALUATE_NOW_OPTIONS}
+              ariaLabel={t('Evaluation decision')}
+              options={EVALUATE_NOW_OPTIONS.map((item) => ({
+                ...item,
+                label: t(item.label),
+              }))}
               value={formData.evaluation_decision}
               onChange={(value) => updateFormData('evaluation_decision', value)}
               disabled={submitting}
@@ -535,11 +567,11 @@ const ConvertQuickLeadView = ({ basePath }: ConvertQuickLeadViewProps) => {
             {formData.evaluation_decision === 'rejected' && (
               <div className="mt-4">
                 <TextareaField
-                  label="Reason"
+                  label={t('Reason')}
                   field="evaluation_reason"
-                  placeholder="Why this request is being rejected"
+                  placeholder={t('Why this request is being rejected')}
                   formData={formData}
-                  errors={errors}
+                  errors={localizeErrors(errors, t)}
                   updateFormData={updateFormData}
                   disabled={submitting}
                 />
@@ -549,10 +581,10 @@ const ConvertQuickLeadView = ({ basePath }: ConvertQuickLeadViewProps) => {
 
           <FormActions className="pt-5">
             <Button href={leadsPath} variant="secondary">
-              Cancel
+              {t('Cancel')}
             </Button>
             <Button type="submit" disabled={submitting}>
-              {submitting ? 'Creating…' : 'Create request'}
+              {submitting ? t('Creating…') : t('Create request')}
             </Button>
           </FormActions>
         </ValidatedForm>

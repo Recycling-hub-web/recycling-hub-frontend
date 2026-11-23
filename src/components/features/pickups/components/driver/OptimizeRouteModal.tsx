@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
+import { usePortalLocale } from '../../../../../contexts/PortalLocaleContext';
 import { SelectField } from '../../../../form/fields/SelectField';
 import { AlertBanner } from '../../../../ui/AlertBanner';
 import { Button } from '../../../../ui/buttons/Button';
@@ -80,8 +81,13 @@ export const OptimizeRouteModal = ({
   selectedRequests: CollectionRequestListItem[];
   onOptimized: (result: OptimizeRouteResult, origin: LatLng) => void;
 }) => {
-  const { collectionPoints, loading: loadingPoints } =
-    useCollectionPoints(open);
+  const { t } = usePortalLocale();
+  const {
+    collectionPoints,
+    loading: loadingPoints,
+    error: pointsError,
+    refetch: retryPoints,
+  } = useCollectionPoints(open);
   const { execute: optimize } = useOptimizeRoute();
   const [formData, setFormData] = useState({ collection_point: '' });
   const [apiError, setApiError] = useState('');
@@ -134,9 +140,12 @@ export const OptimizeRouteModal = ({
         if (!preparing) onClose();
       }}
       closeOnBackdrop={!preparing}
-      title="Optimize route"
+      title={t('Optimize route')}
       size={desktopPreview ? 'lg' : 'md'}
-      subtitle={`Plan ${selectedRequests.length} selected stops, ending at your collection point.`}
+      subtitle={t(
+        'Plan {value0} selected stops, ending at your collection point.',
+        { value0: selectedRequests.length },
+      )}
       footer={
         desktopPreview ? undefined : (
           <FormActions>
@@ -146,14 +155,14 @@ export const OptimizeRouteModal = ({
               disabled={preparing}
               onClick={onClose}
             >
-              Cancel
+              {t('Cancel')}
             </Button>
             <Button
               size="sm"
               disabled={preparing || loadingPoints}
               onClick={submit}
             >
-              {preparing ? 'Optimizing…' : 'Get optimized route'}
+              {preparing ? t('Optimizing…') : t('Get optimized route')}
             </Button>
           </FormActions>
         )
@@ -169,14 +178,30 @@ export const OptimizeRouteModal = ({
         />
       ) : (
         <>
-          <AlertBanner message={apiError} />
+          <AlertBanner message={t(apiError ?? '')} />
+          {pointsError && (
+            <div className="mb-3">
+              <AlertBanner message={t(pointsError)} />
+              <button
+                type="button"
+                onClick={retryPoints}
+                className="min-h-11 rounded-lg px-3 text-sm font-semibold text-brand-800 underline"
+              >
+                {t('Retry')}
+              </button>
+            </div>
+          )}
           <p className="mb-3 text-sm text-slate-500">
             {inlinePreview
-              ? 'Choose the drop-off destination. The map and stop list will appear below your pickups.'
-              : 'Choose the drop-off destination to preview your optimized route.'}
+              ? t(
+                  'Choose the drop-off destination. The map and stop list will appear below your pickups.',
+                )
+              : t(
+                  'Choose the drop-off destination to preview your optimized route.',
+                )}
           </p>
           <SelectField
-            label="Collection point"
+            label={t('Collection point')}
             field="collection_point"
             required={false}
             options={collectionPoints.map((point) => ({

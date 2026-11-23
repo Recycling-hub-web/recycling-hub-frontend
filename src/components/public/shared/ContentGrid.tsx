@@ -51,7 +51,7 @@ const ContentGrid = ({
                 href={`${basePath}/${slug}`}
                 className="group flex h-full flex-col rounded-2xl border border-slate-200 bg-neutral-50 p-6 transition-colors duration-200 hover:border-brand-600 hover:bg-white md:p-8"
               >
-                <div className="mb-5 flex size-12 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
+                <div className="mb-5 flex size-12 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
                   {Icon && <Icon size={22} />}
                 </div>
                 <h3 className="font-montserrat text-base font-extrabold text-neutral-950">
@@ -60,7 +60,7 @@ const ContentGrid = ({
                 <p className="mt-3 flex-1 text-sm leading-relaxed text-slate-500">
                   {summary}
                 </p>
-                <p className="mt-5 text-xs font-semibold text-brand-600">
+                <p className="mt-5 text-xs font-semibold text-brand-700">
                   {learnMoreLabel} →
                 </p>
               </Link>

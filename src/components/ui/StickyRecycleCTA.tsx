@@ -27,7 +27,8 @@ const StickyRecycleCTA = () => {
     !mounted ||
     pathname === '/request-pickup' ||
     pathname === '/request-quote' ||
-    pathname === '/contact'
+    pathname === '/contact' ||
+    pathname === '/track-trace'
   ) {
     return null;
   }
@@ -44,7 +45,7 @@ const StickyRecycleCTA = () => {
         >
           <Link
             href="/request-pickup"
-            className="group pointer-events-auto inline-flex items-center gap-3 rounded-full bg-brand-600 py-3 pl-5 pr-2 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(0,138,62,0.35)] transition-colors hover:bg-brand-700"
+            className="group pointer-events-auto inline-flex items-center gap-3 rounded-full bg-brand-700 py-3 pl-5 pr-2 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(0,138,62,0.35)] transition-colors hover:bg-brand-800"
           >
             {nav.requestPickup}
             <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-white text-brand-700 transition-transform group-hover:translate-x-0.5">

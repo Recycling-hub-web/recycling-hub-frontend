@@ -63,7 +63,7 @@ const B2BSection = () => {
           {content.pillars.map((pillar, i) => (
             <FadeIn key={pillar.title} delay={i * 0.1}>
               <div className="flex h-full flex-col rounded-2xl bg-white p-6 ring-1 ring-slate-200">
-                <span className="flex size-11 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
+                <span className="flex size-11 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
                   {ICONS[pillar.icon as PillarIcon]}
                 </span>
                 <h3 className="mt-5 font-montserrat text-lg font-bold text-neutral-950">

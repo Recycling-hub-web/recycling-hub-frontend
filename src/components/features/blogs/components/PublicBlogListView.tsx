@@ -32,7 +32,7 @@ const PublicBlogListView = () => {
         <button
           type="button"
           onClick={refetch}
-          className="mt-3 text-sm font-semibold text-brand-600 underline"
+          className="mt-3 text-sm font-semibold text-brand-700 underline"
         >
           Retry
         </button>
@@ -76,7 +76,7 @@ const PublicBlogListView = () => {
                 )}
                 <div className="flex flex-1 flex-col p-6">
                   {post.published_at && (
-                    <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">
+                    <p className="text-xs font-semibold uppercase tracking-widest text-slate-600">
                       <AppDate value={post.published_at} format="long" />
                     </p>
                   )}
@@ -86,7 +86,7 @@ const PublicBlogListView = () => {
                   <p className="mt-3 flex-1 text-sm leading-relaxed text-slate-500">
                     {post.excerpt}
                   </p>
-                  <p className="mt-5 flex items-center gap-1 text-xs font-semibold text-brand-600">
+                  <p className="mt-5 flex items-center gap-1 text-xs font-semibold text-brand-700">
                     Read more <LuArrowRight className="size-3.5" />
                   </p>
                 </div>
@@ -105,7 +105,7 @@ const PublicBlogListView = () => {
             >
               Previous
             </button>
-            <span className="text-sm text-slate-400">
+            <span className="text-sm text-slate-600">
               Page {page} of {totalPages}
             </span>
             <button

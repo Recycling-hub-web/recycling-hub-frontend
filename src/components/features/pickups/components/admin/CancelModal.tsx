@@ -2,6 +2,8 @@
 
 import { type FormEvent, useState } from 'react';
 
+import { usePortalLocale } from '../../../../../contexts/PortalLocaleContext';
+import { localizeErrors } from '../../../../../lib/localizeErrors';
 import { TextareaField } from '../../../../form/fields/TextareaField';
 import { ValidatedForm } from '../../../../form/ValidatedForm';
 import { AlertBanner } from '../../../../ui/AlertBanner';
@@ -31,6 +33,7 @@ const CancelModal = ({
   onClose,
   onCancelled,
 }: CancelModalProps) => {
+  const { t } = usePortalLocale();
   const { execute: cancel, loading: submitting } = useCancelOrder();
   const [formData, setFormData] = useState<FormState>(INITIAL_STATE);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -61,6 +64,7 @@ const CancelModal = ({
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    if (submitting) return;
     setApiError('');
     if (!validate()) return;
     try {
@@ -75,9 +79,10 @@ const CancelModal = ({
   return (
     <Modal
       open={open}
+      dismissible={!submitting}
       onClose={handleClose}
-      title="Cancel pickup"
-      subtitle="This can't be undone."
+      title={t('Cancel pickup')}
+      subtitle={t("This can't be undone.")}
       footer={
         <FormActions>
           <button
@@ -86,7 +91,7 @@ const CancelModal = ({
             disabled={submitting}
             className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Keep request
+            {t('Keep request')}
           </button>
           <button
             type="submit"
@@ -94,7 +99,7 @@ const CancelModal = ({
             disabled={submitting}
             className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {submitting ? 'Cancelling…' : 'Cancel pickup'}
+            {submitting ? t('Cancelling…') : t('Cancel pickup')}
           </button>
         </FormActions>
       }
@@ -105,13 +110,13 @@ const CancelModal = ({
         noValidate
         className="space-y-1"
       >
-        <AlertBanner message={apiError} />
+        <AlertBanner message={t(apiError ?? '')} />
         <TextareaField
-          label="Cancellation reason"
+          label={t('Cancellation reason')}
           field="note"
-          placeholder="Why is this pickup being cancelled?"
+          placeholder={t('Why is this pickup being cancelled?')}
           formData={formData}
-          errors={errors}
+          errors={localizeErrors(errors, t)}
           updateFormData={updateFormData}
         />
       </ValidatedForm>

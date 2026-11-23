@@ -1,8 +1,10 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { LuSlidersHorizontal } from 'react-icons/lu';
+
+import { usePortalLocale } from '../../../contexts/PortalLocaleContext';
 
 type FilterToggleProps = {
   /** The filter controls themselves (FilterSelect, etc.) — always
@@ -37,6 +39,8 @@ const FilterToggle = ({
   label = 'filters',
   className = '',
 }: FilterToggleProps) => {
+  const { t } = usePortalLocale();
+  const panelId = useId();
   const [open, setOpen] = useState(false);
   const hasActiveFilters = activeCount > 0;
 
@@ -46,7 +50,12 @@ const FilterToggle = ({
         type="button"
         onClick={() => setOpen((prev) => !prev)}
         aria-expanded={open}
-        aria-label={open ? `Hide ${label}` : `Show ${label}`}
+        aria-controls={panelId}
+        aria-label={
+          open
+            ? t('Hide {label}', { label: t(label) })
+            : t('Show {label}', { label: t(label) })
+        }
         className={`relative inline-flex size-11 shrink-0 items-center justify-center rounded-full text-white transition-colors sm:hidden ${
           open ? 'bg-brand-800' : 'bg-brand-700 hover:bg-brand-800'
         } ${className}`}
@@ -67,13 +76,14 @@ const FilterToggle = ({
        * of `open`, auto width — sits inline with the search input,
        * same as before this toggle existed. */}
       <div
+        id={panelId}
         className={`grid w-full transition-[grid-template-rows] duration-300 ease-out sm:w-auto sm:grid-rows-[1fr] ${
           open ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
         }`}
       >
         <div
-          className={`flex min-h-0 flex-wrap gap-2 overflow-hidden transition-opacity duration-300 sm:opacity-100 ${
-            open ? 'opacity-100' : 'opacity-0'
+          className={`flex min-h-0 flex-wrap gap-2 overflow-hidden transition-opacity duration-300 sm:visible sm:opacity-100 ${
+            open ? 'visible opacity-100' : 'invisible opacity-0'
           }`}
         >
           {children}

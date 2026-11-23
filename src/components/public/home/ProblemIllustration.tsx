@@ -47,7 +47,7 @@ const IllustrationCard = ({
     <span className="absolute right-4 top-4 size-1.5 rounded-full bg-slate-200" />
 
     {/* Source label */}
-    <p className="mb-3 text-[11px] font-medium uppercase tracking-wider text-slate-400">
+    <p className="mb-3 text-[11px] font-medium uppercase tracking-wider text-slate-600">
       {label}
     </p>
 

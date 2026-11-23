@@ -2,6 +2,7 @@
 
 import { type FormEvent, useState } from 'react';
 
+import { usePortalLocale } from '../../../../contexts/PortalLocaleContext';
 import { ApiError } from '../../../../lib/api';
 import { StatusFileUpload } from '../../../form/upload/StatusFileUpload';
 import { ValidatedForm } from '../../../form/ValidatedForm';
@@ -30,6 +31,7 @@ const ReimburseModal = ({
   onClose,
   onReimbursed,
 }: ReimburseModalProps) => {
+  const { t } = usePortalLocale();
   const { execute: verifyReimburse, loading: submitting } =
     useVerifyReimburse();
   const { execute: upload, loading: uploading } = useUploadStorageFile();
@@ -62,7 +64,7 @@ const ReimburseModal = ({
       setApiError(
         err instanceof ApiError
           ? err.message
-          : 'Could not upload the proof. Please try again.',
+          : t('Could not upload the proof. Please try again.'),
       );
     }
   };
@@ -73,7 +75,7 @@ const ReimburseModal = ({
     setRecordErrors([]);
     if (submitting || uploading) return;
     if (!proofKey) {
-      setApiError('Upload the proof of payment before reimbursing.');
+      setApiError(t('Upload the proof of payment before reimbursing.'));
       return;
     }
     try {
@@ -84,7 +86,7 @@ const ReimburseModal = ({
       setApiError(
         err instanceof ApiError
           ? err.message
-          : 'Could not verify and reimburse this. Please try again.',
+          : t('Could not verify and reimburse this. Please try again.'),
       );
       if (
         err instanceof ApiError &&
@@ -113,11 +115,14 @@ const ReimburseModal = ({
     <Modal
       open={open}
       onClose={handleClose}
-      title="Verify & Reimburse"
+      title={t('Verify & Reimburse')}
       subtitle={
         count === 1
-          ? 'Confirm this driver has been paid back.'
-          : `Review and record payment for ${count} orders. One proof covers this batch.`
+          ? t('Confirm this driver has been paid back.')
+          : t(
+              'Review and record payment for {count} orders. One proof covers this batch.',
+              { count },
+            )
       }
       footer={
         <FormActions>
@@ -127,15 +132,15 @@ const ReimburseModal = ({
             disabled={submitting || uploading}
             className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Cancel
+            {t('Cancel')}
           </button>
           <button
             type="submit"
             form="reimburse-form"
             disabled={submitting || uploading}
-            className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-lg bg-brand-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-800 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {submitting ? 'Saving…' : 'Verify & Reimburse'}
+            {submitting ? t('Saving…') : t('Verify & Reimburse')}
           </button>
         </FormActions>
       }
@@ -150,11 +155,11 @@ const ReimburseModal = ({
         {recordErrors.length > 0 && (
           <ul
             className="mb-4 space-y-2 rounded-xl bg-red-50 p-4 text-sm text-red-800"
-            aria-label="Records requiring attention"
+            aria-label={t('Records requiring attention')}
           >
             {recordErrors.map((record) => (
               <li key={record.order}>
-                <strong>{record.order}</strong>: {record.reason}
+                <strong>{record.order}</strong> : {record.reason}
               </li>
             ))}
           </ul>
@@ -163,11 +168,11 @@ const ReimburseModal = ({
         <div className="mb-4" data-field="reimbursement_proof">
           <StatusFileUpload
             id="reimburse-proof-input"
-            label="Reimbursement proof"
+            label={t('Reimbursement proof')}
             description={
               count === 1
-                ? 'A receipt showing the driver was paid back.'
-                : `One receipt for all ${count} records.`
+                ? t('A receipt showing the driver was paid back.')
+                : t('One receipt for all {count} records.', { count })
             }
             file={proofFile}
             onFileChange={handleProofChange}

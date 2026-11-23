@@ -27,4 +27,10 @@ const fieldStateClasses = (disabled: boolean, hasError: boolean): string => {
   return 'border-slate-200 bg-white hover:bg-slate-50';
 };
 
-export { fieldStateClasses, getNestedValue };
+/** Pair each inline error with the control that needs correction. */
+const fieldErrorAttributes = (inputId: string, error?: string) => ({
+  'aria-invalid': Boolean(error),
+  'aria-describedby': error ? `${inputId}-error` : undefined,
+});
+
+export { fieldErrorAttributes, fieldStateClasses, getNestedValue };

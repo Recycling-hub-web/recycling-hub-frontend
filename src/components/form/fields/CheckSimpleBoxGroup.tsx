@@ -108,7 +108,7 @@ const CheckSimpleBoxGroup = ({
                 <button
                   type="button"
                   onClick={() => setSearch('')}
-                  className="mt-2 text-xs text-brand-600 hover:underline"
+                  className="mt-2 text-xs text-brand-700 hover:underline"
                 >
                   Clear search
                 </button>

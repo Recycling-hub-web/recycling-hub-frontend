@@ -11,8 +11,10 @@ import {
   splitPhoneNumber,
   validatePhoneNumber,
 } from '../../../../../constants/dialCodes';
+import { usePortalLocale } from '../../../../../contexts/PortalLocaleContext';
 import { ApiError } from '../../../../../lib/api';
 import type { SelectedAddress } from '../../../../../lib/geoapify';
+import { localizeErrors } from '../../../../../lib/localizeErrors';
 import { AddressInput } from '../../../../form/fields/AddressInput';
 import { InputField } from '../../../../form/fields/InputField';
 import { PhoneInputField } from '../../../../form/fields/PhoneInputField';
@@ -37,6 +39,7 @@ import {
   orderToPayload,
   validateOrders,
 } from '../../models/pickupRequestCreateModel';
+import { PickupCategoryStatus } from '../shared/PickupCategoryStatus';
 import { type DraftOrder, NewOrdersFieldArray } from './NewOrdersFieldArray';
 
 type FormState = {
@@ -76,6 +79,7 @@ const PickupRequestEditView = ({
   requestId,
   basePath,
 }: PickupRequestEditViewProps) => {
+  const { t } = usePortalLocale();
   const router = useRouter();
   const toast = useToast();
   const {
@@ -167,8 +171,8 @@ const PickupRequestEditView = ({
     if (!formData || !request) return;
     if (uploading.size > 0) {
       toast.error(
-        'Photo still uploading',
-        'Wait for the photo to finish uploading, then save.',
+        t('Photo still uploading'),
+        t('Wait for the photo to finish uploading, then save.'),
       );
       return;
     }
@@ -213,24 +217,24 @@ const PickupRequestEditView = ({
             ? `${added} order${added === 1 ? '' : 's'} added, then: ${message}`
             : message,
         );
-        toast.error('Some orders were not added', message);
+        toast.error(t('Some orders were not added'), message);
         return;
       }
     }
 
     toast.success(
-      'Pickup request updated',
+      t('Pickup request updated'),
       added ? `${added} new order${added === 1 ? '' : 's'} added.` : undefined,
     );
     router.push(`${basePath}/${request.id}`);
   };
 
-  if (loadingRequest) return <Loading text="Loading pickup request…" />;
+  if (loadingRequest) return <Loading text={t('Loading pickup request…')} />;
 
   if (loadError || !request || !formData) {
     return (
       <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-        {loadError || 'Pickup request not found.'}
+        {loadError || t('Pickup request not found.')}
       </div>
     );
   }
@@ -247,65 +251,68 @@ const PickupRequestEditView = ({
     <PageContainer variant="form">
       <Link
         href={`${basePath}/${request.id}`}
-        className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600 lg:mb-4 lg:min-h-0"
+        className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-700 lg:mb-4 lg:min-h-0"
       >
         <LuArrowLeft className="size-4" />
-        Back to pickup request
+        {t('Back to pickup request')}
       </Link>
 
-      <PageHeader title="Edit pickup request" subtitle={request.full_name} />
+      <PageHeader
+        title={t('Edit pickup request')}
+        subtitle={request.full_name}
+      />
 
       <Card className="p-5">
         <ValidatedForm onSubmit={handleSubmit}>
-          <AlertBanner message={error} />
+          <AlertBanner message={t(error ?? '')} />
 
           <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
             <InputField
-              label="Full name"
+              label={t('Full name')}
               field="full_name"
-              placeholder="e.g. Fatima Ali"
+              placeholder={t('e.g. Fatima Ali')}
               formData={formData}
-              errors={errors}
+              errors={localizeErrors(errors, t)}
               updateFormData={updateFormData}
               disabled={submitting}
             />
             <InputField
-              label="Email"
+              label={t('Email')}
               field="email"
               type="email"
               required={request.request_type === 'business'}
-              placeholder="e.g. fatima@recyclinghub.example"
+              placeholder={t('e.g. fatima@recyclinghub.example')}
               formData={formData}
-              errors={errors}
+              errors={localizeErrors(errors, t)}
               updateFormData={updateFormData}
               disabled={submitting}
             />
             <PhoneInputField
-              label="Phone number"
+              label={t('Phone number')}
               dialCodeField="phone_dial_code"
               numberField="phone_local"
               formData={formData}
-              errors={errors}
+              errors={localizeErrors(errors, t)}
               updateFormData={updateFormData}
               disabled={submitting}
             />
             <InputField
-              label="Pickup date & time"
+              label={t('Pickup date & time')}
               field="requested_at"
               type="datetime-local"
               required={false}
               formData={formData}
-              errors={errors}
+              errors={localizeErrors(errors, t)}
               updateFormData={updateFormData}
               disabled={submitting}
             />
             <div className="sm:col-span-2">
               <AddressInput
-                label="Pickup address"
+                label={t('Pickup address')}
                 field="pickup_address"
-                placeholder="Address where materials should be collected"
+                placeholder={t('Address where materials should be collected')}
                 formData={formData}
-                errors={errors}
+                errors={localizeErrors(errors, t)}
                 updateFormData={updateFormData}
                 disabled={submitting}
                 countryRestrictions={['my']}
@@ -313,18 +320,19 @@ const PickupRequestEditView = ({
                 onClear={() => setSelectedLocation(null)}
               />
               {selectedLocation && (
-                <p className="-mt-3 mb-4 text-xs text-slate-400">
-                  Verified at {selectedLocation.latitude.toFixed(5)},{' '}
+                <p className="-mt-3 mb-4 text-xs text-slate-600">
+                  {t('Verified at')}
+                  {selectedLocation.latitude.toFixed(5)},{' '}
                   {selectedLocation.longitude.toFixed(5)}
                 </p>
               )}
             </div>
             <div className="sm:col-span-2">
               <TextareaField
-                label="Note"
+                label={t('Note')}
                 field="note"
                 required={false}
-                placeholder="Anything else worth noting"
+                placeholder={t('Anything else worth noting')}
                 formData={formData}
                 updateFormData={updateFormData}
                 disabled={submitting}
@@ -332,13 +340,21 @@ const PickupRequestEditView = ({
             </div>
             {canAddOrders && (
               <div className="border-t border-slate-100 pt-4 sm:col-span-2">
-                <p className="text-sm font-medium text-slate-900">New orders</p>
-                <p className="mb-3 text-xs text-slate-500">
-                  This request has {request.orders.length} order
-                  {request.orders.length === 1 ? '' : 's'}. Optional: add up to{' '}
-                  {ordersLeft} more here, each with its materials and at least
-                  one photo. Existing orders are edited from their own pages.
+                <p className="text-sm font-medium text-slate-900">
+                  {t('New orders')}
                 </p>
+                <p className="mb-3 text-xs text-slate-500">
+                  {t(
+                    'This request has {count} orders. Optional: add up to {remaining} more here, each with its materials and at least one photo. Existing orders are edited from their own pages.',
+                    { count: request.orders.length, remaining: ordersLeft },
+                  )}
+                </p>
+                <PickupCategoryStatus
+                  loading={categories.loading}
+                  error={categories.error}
+                  count={categories.options.length}
+                  onRetry={categories.refetch}
+                />
                 <NewOrdersFieldArray
                   orders={orders}
                   onChange={setOrders}
@@ -358,10 +374,10 @@ const PickupRequestEditView = ({
 
           <FormActions className="pt-2">
             <Button href={`${basePath}/${request.id}`} variant="secondary">
-              Cancel
+              {t('Cancel')}
             </Button>
             <Button type="submit" disabled={submitting || !hasChanges}>
-              {submitting ? 'Saving…' : 'Save changes'}
+              {submitting ? t('Saving…') : t('Save changes')}
             </Button>
           </FormActions>
         </ValidatedForm>

@@ -192,7 +192,7 @@ const ImageUploadField = ({
             <div className="flex size-24 items-center justify-center rounded-full border-2 border-dashed border-slate-300 bg-slate-50 transition-all duration-200 group-hover:border-brand-400 group-hover:bg-brand-50">
               <div className="flex flex-col items-center gap-1">
                 <Camera className="size-6 text-slate-400 transition-colors group-hover:text-brand-500" />
-                <span className="text-xs font-medium text-slate-400 transition-colors group-hover:text-brand-500">
+                <span className="text-xs font-medium text-slate-600 transition-colors group-hover:text-brand-500">
                   Upload
                 </span>
               </div>
@@ -206,7 +206,7 @@ const ImageUploadField = ({
             />
           </label>
           <p className="text-xs text-slate-500">Click to upload {uploadNoun}</p>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-600">
             {resolvedLabel} accepted (max 10MB)
           </p>
         </div>
@@ -217,11 +217,11 @@ const ImageUploadField = ({
           <Upload className="mb-3 size-8 text-slate-400" />
           <p className="text-sm text-slate-600">
             Drag & drop or{' '}
-            <span className="font-semibold text-brand-600 underline">
+            <span className="font-semibold text-brand-700 underline">
               browse
             </span>
           </p>
-          <p className="mt-1 text-xs text-slate-400">
+          <p className="mt-1 text-xs text-slate-600">
             {resolvedLabel} accepted
           </p>
           <input
@@ -320,7 +320,7 @@ const ImageUploadField = ({
           <p className="max-w-[140px] truncate text-center text-xs font-medium text-slate-700">
             {simpleFile.name}
           </p>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-600">
             {simpleUploading
               ? `Uploading… ${simpleProgress}%`
               : `${(simpleFile.size / 1024).toFixed(1)} KB`}
@@ -365,7 +365,7 @@ const ImageUploadField = ({
                   {docFile.name}
                 </p>
                 <p
-                  className={`text-xs ${docFile.file_key ? 'text-slate-400' : 'text-red-500'}`}
+                  className={`text-xs ${docFile.file_key ? 'text-slate-600' : 'text-red-500'}`}
                 >
                   {docFile.size}
                 </p>

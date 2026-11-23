@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
+import { usePortalLocale } from '../../../../../contexts/PortalLocaleContext';
 import { Loading } from '../../../../ui/loading/Loading';
 import { useOrder } from '../../hooks';
 
@@ -19,6 +20,7 @@ type OrderRedirectProps = {
  * pickup request's page. Old order links (/…/pickups/{id}, notifications,
  * bookmarks) land here and are sent on to that page with the order open. */
 const OrderRedirect = ({ orderId, requestsBasePath }: OrderRedirectProps) => {
+  const { t } = usePortalLocale();
   const router = useRouter();
   const { request: order, error } = useOrder(orderId);
 
@@ -33,11 +35,11 @@ const OrderRedirect = ({ orderId, requestsBasePath }: OrderRedirectProps) => {
   if (error) {
     return (
       <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-        {error}
+        {t(error ?? '')}
       </div>
     );
   }
-  return <Loading text="Opening order…" />;
+  return <Loading text={t('Opening order…')} />;
 };
 
 export { OrderRedirect };

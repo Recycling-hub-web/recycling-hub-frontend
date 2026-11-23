@@ -116,7 +116,7 @@ const ContactMessageTable = ({
             <Link
               href={`${basePath}/${m.id}`}
               aria-label={`View message from ${m.full_name}`}
-              className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+              className="inline-flex size-8 items-center justify-center rounded-full text-slate-600 transition hover:bg-slate-100 hover:text-slate-700"
             >
               <LuEye className="size-4" />
             </Link>
@@ -124,7 +124,7 @@ const ContactMessageTable = ({
               <Link
                 href={`${basePath}/${m.id}/edit`}
                 aria-label={`Edit message from ${m.full_name}`}
-                className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+                className="inline-flex size-8 items-center justify-center rounded-full text-slate-600 transition hover:bg-slate-100 hover:text-slate-700"
               >
                 <LuPencil className="size-4" />
               </Link>
@@ -134,7 +134,7 @@ const ContactMessageTable = ({
                 type="button"
                 onClick={() => onDeleteRequest?.(m)}
                 aria-label={`Delete message from ${m.full_name}`}
-                className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-red-50 hover:text-red-600"
+                className="inline-flex size-8 items-center justify-center rounded-full text-slate-600 transition hover:bg-red-50 hover:text-red-600"
               >
                 <LuTrash2 className="size-4" />
               </button>

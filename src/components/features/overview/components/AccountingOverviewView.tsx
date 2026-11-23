@@ -2,7 +2,9 @@
 
 import { LuCalendarCheck, LuFileClock, LuWallet } from 'react-icons/lu';
 
+import { usePortalLocale } from '../../../../contexts/PortalLocaleContext';
 import { OPERATIONAL_ROLES } from '../../../../layouts/operationalRoles';
+import { formatMYR } from '../../../../lib/money';
 import { SectionContainer } from '../../../ui/card/SectionContainer';
 import { DonutChart } from '../../../ui/charts';
 import { STATUS_BADGE_VARIANT as FINANCE_STATUS_BADGE_VARIANT } from '../../finance/constants';
@@ -22,6 +24,7 @@ import { RoleOverviewLayout } from './RoleOverviewLayout';
  * and the status-breakdown chart are new, mirroring the chart treatment
  * Admin/Driver/Staff/Receiving already have. */
 const AccountingOverviewView = () => {
+  const { t } = usePortalLocale();
   const stats = useAccountingOverviewStats();
 
   const financeStatusData = stats.financeStatusCounts
@@ -31,7 +34,7 @@ const AccountingOverviewView = () => {
         ) as (keyof typeof FINANCE_STATUS_LABELS)[]
       ).map((s) => ({
         key: s,
-        label: FINANCE_STATUS_LABELS[s],
+        label: t(FINANCE_STATUS_LABELS[s]),
         value: stats.financeStatusCounts![s],
         variant: FINANCE_STATUS_BADGE_VARIANT[s],
       }))
@@ -45,25 +48,29 @@ const AccountingOverviewView = () => {
         <OverviewStatGrid>
           <OverviewStatCard
             icon={LuFileClock}
-            label="Unverified records"
+            label={t('Unverified records')}
             value={stats.loading ? null : stats.count}
             href="/accounting/finance"
+            error={stats.error}
+            onRetry={stats.refetch}
           />
           <OverviewStatCard
             icon={LuWallet}
-            label="Amount pending"
-            value={stats.loading ? null : `RM${stats.amountPending.toFixed(2)}`}
+            label={t('Amount pending')}
+            value={stats.loading ? null : formatMYR(stats.amountPending)}
             href="/accounting/finance"
+            error={stats.error}
+            onRetry={stats.refetch}
           />
           <OverviewStatCard
             icon={LuCalendarCheck}
-            label="Reimbursed this month"
+            label={t('Reimbursed this month')}
             value={
-              stats.loading
-                ? null
-                : `RM${stats.amountReimbursedThisMonth.toFixed(2)}`
+              stats.loading ? null : formatMYR(stats.amountReimbursedThisMonth)
             }
             href="/accounting/finance"
+            error={stats.error}
+            onRetry={stats.refetch}
           />
         </OverviewStatGrid>
       }
@@ -71,18 +78,20 @@ const AccountingOverviewView = () => {
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           <PickupVolumeChart
             useVolume={useAccountingVolume}
-            title="Reimbursed volume"
-            seriesLabel="Reimbursements"
-            unitLabel="reimbursements processed"
-            emptyMessage="No reimbursements in this range."
+            title={t('Reimbursed volume')}
+            seriesLabel={t('Reimbursements')}
+            unitLabel={t('reimbursements processed')}
+            emptyMessage={t('No reimbursements in this range.')}
           />
           <SectionContainer className="lg:col-span-2">
             <h2 className="mb-4 text-sm font-semibold text-slate-900">
-              Finance records by status
+              {t('Finance records by status')}
             </h2>
             <DonutChart
               data={financeStatusData}
-              loading={!stats.financeStatusCounts}
+              loading={stats.loading}
+              error={stats.error}
+              onRetry={stats.refetch}
             />
           </SectionContainer>
         </div>

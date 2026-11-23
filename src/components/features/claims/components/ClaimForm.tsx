@@ -4,10 +4,12 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import type { FormEvent } from 'react';
 import { useState } from 'react';
-import { LuArrowLeft, LuReceipt, LuTruck, LuUpload } from 'react-icons/lu';
+import { LuArrowLeft, LuTruck } from 'react-icons/lu';
 
+import { usePortalLocale } from '../../../../contexts/PortalLocaleContext';
 import { InputField } from '../../../form/fields/InputField';
 import { SelectField } from '../../../form/fields/SelectField';
+import { StatusFileUpload } from '../../../form/upload/StatusFileUpload';
 import { ValidatedForm } from '../../../form/ValidatedForm';
 import { PageContainer } from '../../../layout/PageContainer';
 import { AlertBanner } from '../../../ui/AlertBanner';
@@ -55,6 +57,7 @@ const isValidNumber = (value: string): boolean => {
  * (useMyVehicle) rather than picked — there's no vehicle picker
  * anymore, every driver has at most one vehicle. */
 const ClaimForm = ({ basePath }: ClaimFormProps) => {
+  const { t } = usePortalLocale();
   const router = useRouter();
   const {
     execute: createClaim,
@@ -66,17 +69,18 @@ const ClaimForm = ({ basePath }: ClaimFormProps) => {
     loading: loadingVehicle,
     error: vehicleError,
     hasNoVehicle,
+    retry: retryVehicle,
   } = useMyVehicle();
-  const {
-    execute: upload,
-    loading: uploading,
-    error: uploadError,
-  } = useUploadStorageFile();
+  const { execute: upload, loading: uploading } = useUploadStorageFile();
 
   const [formData, setFormData] = useState<FormState>(INITIAL_STATE);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [receiptKey, setReceiptKey] = useState('');
-  const [receiptPreview, setReceiptPreview] = useState<string | null>(null);
+  const [receiptFile, setReceiptFile] = useState<File | null>(null);
+  const [receiptError, setReceiptError] = useState('');
+  const translatedErrors = Object.fromEntries(
+    Object.entries(errors).map(([key, value]) => [key, t(value)]),
+  );
 
   const updateFormData = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -86,7 +90,8 @@ const ClaimForm = ({ basePath }: ClaimFormProps) => {
   const isPetrol = formData.category === 'petrol';
   const isFleetCard =
     isPetrol && vehicle?.ownership === 'company' && vehicle.has_fleet_card;
-  const isPetrolBlocked = isPetrol && (hasNoVehicle || Boolean(isFleetCard));
+  const isPetrolBlocked =
+    isPetrol && (hasNoVehicle || Boolean(vehicleError) || Boolean(isFleetCard));
 
   const amount = Number(formData.amount_claimed);
   const receiptSuggested =
@@ -94,13 +99,17 @@ const ClaimForm = ({ basePath }: ClaimFormProps) => {
 
   const handleReceiptChange = async (file: File | undefined) => {
     if (!file) return;
+    setReceiptKey('');
+    setReceiptFile(file);
+    setReceiptError('');
     try {
       const result = await upload(file);
       setReceiptKey(result.file_key);
-      setReceiptPreview(URL.createObjectURL(file));
       setErrors((prev) => ({ ...prev, receipt: '' }));
-    } catch {
-      // useUploadStorageFile already captured the message in uploadError.
+    } catch (err) {
+      setReceiptError(
+        err instanceof Error ? err.message : 'Could not upload the file.',
+      );
     }
   };
 
@@ -117,13 +126,18 @@ const ClaimForm = ({ basePath }: ClaimFormProps) => {
 
     if (!formData.date) nextErrors.date = 'Date is required.';
 
+    if (receiptSuggested && !receiptKey)
+      nextErrors.receipt = 'Upload a receipt for claims of RM50 or more.';
+    else if (receiptFile && !receiptKey)
+      nextErrors.receipt =
+        'Upload the receipt successfully or remove it before submitting.';
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (isPetrolBlocked) return;
+    if (submitting || uploading || isPetrolBlocked) return;
     if (!validate()) return;
 
     const payload = {
@@ -141,78 +155,48 @@ const ClaimForm = ({ basePath }: ClaimFormProps) => {
     }
   };
 
-  let receiptUploadLabel = 'Upload receipt';
-  if (uploading) receiptUploadLabel = 'Uploading…';
-  else if (receiptKey) receiptUploadLabel = 'Replace receipt';
-
-  const renderReceiptUploader = (required: boolean) => (
-    <div className="mb-4" data-field="receipt">
-      <label className="block text-sm font-medium text-slate-900">
-        Receipt {required && <span className="text-red-600">*</span>}
-      </label>
-      <div className="mt-2 flex items-center gap-4">
-        {receiptPreview ? (
-          // eslint-disable-next-line @next/next/no-img-element -- local object URL preview, not a static asset
-          <img
-            src={receiptPreview}
-            alt=""
-            className="size-16 shrink-0 rounded-xl border border-slate-200 object-cover"
-          />
-        ) : (
-          <span className="flex size-16 shrink-0 items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50 text-slate-400">
-            <LuReceipt className="size-6" />
-          </span>
-        )}
-        <label
-          htmlFor="claim-receipt-input"
-          className={`flex cursor-pointer items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 transition hover:border-brand-300 hover:bg-slate-50 ${
-            uploading || submitting ? 'pointer-events-none opacity-50' : ''
-          }`}
-        >
-          <LuUpload className="size-4" />
-          {receiptUploadLabel}
-        </label>
-      </div>
-      <input
-        id="claim-receipt-input"
-        type="file"
-        accept="image/*"
-        className="sr-only"
-        disabled={uploading || submitting}
-        onChange={(e) => handleReceiptChange(e.target.files?.[0])}
-      />
-      {errors.receipt && (
-        <p className="mt-1 text-xs text-red-600">{errors.receipt}</p>
-      )}
-    </div>
-  );
-
   return (
     <PageContainer variant="form">
       <Link
         href={basePath}
-        className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600 lg:mb-4 lg:min-h-0"
+        className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-700 lg:mb-4 lg:min-h-0"
       >
         <LuArrowLeft className="size-4" />
-        Back to expense claims
+        {t('Back to expense claims')}
       </Link>
 
       <PageHeader
-        title="New expense claim"
-        subtitle="Submit a petrol or tool reimbursement claim for review."
+        title={t('New expense claim')}
+        subtitle={t('Submit a petrol or tool reimbursement claim for review.')}
       />
 
       <Card className="p-5">
-        <ValidatedForm onSubmit={handleSubmit}>
-          <AlertBanner message={apiError || uploadError || vehicleError} />
+        <ValidatedForm onSubmit={handleSubmit} fieldErrors={translatedErrors}>
+          <AlertBanner
+            message={t(
+              apiError || receiptError || (isPetrol ? vehicleError : ''),
+            )}
+          />
 
+          {isPetrol && vehicleError && (
+            <button
+              type="button"
+              onClick={retryVehicle}
+              className="mb-4 min-h-11 rounded-lg px-3 text-sm font-semibold text-brand-800 underline"
+            >
+              {t('Retry')}
+            </button>
+          )}
           <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
             <SelectField
-              label="Category"
+              label={t('Category')}
               field="category"
-              options={CATEGORY_OPTIONS}
+              options={CATEGORY_OPTIONS.map((option) => ({
+                ...option,
+                label: t(option.label),
+              }))}
               formData={formData}
-              errors={errors}
+              errors={translatedErrors}
               updateFormData={(_field, value) => {
                 setFormData({
                   ...INITIAL_STATE,
@@ -221,23 +205,24 @@ const ClaimForm = ({ basePath }: ClaimFormProps) => {
                 });
                 setErrors({});
                 setReceiptKey('');
-                setReceiptPreview(null);
+                setReceiptFile(null);
+                setReceiptError('');
               }}
-              disabled={submitting}
+              disabled={submitting || uploading}
             />
             <InputField
-              label="Date"
+              label={t('Date')}
               field="date"
               type="date"
               formData={formData}
-              errors={errors}
+              errors={translatedErrors}
               updateFormData={updateFormData}
-              disabled={submitting}
+              disabled={submitting || uploading}
             />
 
             {isPetrol && loadingVehicle && (
               <div className="sm:col-span-2">
-                <Loading text="Checking your assigned vehicle…" />
+                <Loading text={t('Checking your assigned vehicle…')} />
               </div>
             )}
 
@@ -245,7 +230,9 @@ const ClaimForm = ({ basePath }: ClaimFormProps) => {
               <div className="sm:col-span-2">
                 <AlertBanner
                   variant="warning"
-                  message="No vehicle is assigned to you — contact an admin before submitting a petrol claim."
+                  message={t(
+                    'No vehicle is assigned to you — contact an admin before submitting a petrol claim.',
+                  )}
                 />
               </div>
             )}
@@ -254,7 +241,9 @@ const ClaimForm = ({ basePath }: ClaimFormProps) => {
               <div className="sm:col-span-2">
                 <AlertBanner
                   variant="warning"
-                  message="Fleet card vehicles are reimbursed directly — no claim needed."
+                  message={t(
+                    'Fleet card vehicles are reimbursed directly — no claim needed.',
+                  )}
                 />
               </div>
             )}
@@ -264,9 +253,9 @@ const ClaimForm = ({ basePath }: ClaimFormProps) => {
               !hasNoVehicle &&
               !isFleetCard &&
               vehicle && (
-                <div className="mb-4 flex items-center gap-1.5 text-xs text-slate-400 sm:col-span-2">
+                <div className="mb-4 flex items-center gap-1.5 text-xs text-slate-600 sm:col-span-2">
                   <LuTruck className="size-3.5" />
-                  Your vehicle: {vehicle.plate_number}
+                  {t('Your vehicle:')} {vehicle.plate_number}
                 </div>
               )}
 
@@ -274,21 +263,39 @@ const ClaimForm = ({ basePath }: ClaimFormProps) => {
               formData.category === 'tool') && (
               <>
                 <InputField
-                  label="Amount claimed"
+                  label={t('Amount claimed')}
                   field="amount_claimed"
                   type="number"
                   prefix="RM"
-                  placeholder="0.00"
+                  placeholder={t('0.00')}
                   formData={formData}
-                  errors={errors}
+                  errors={translatedErrors}
                   updateFormData={updateFormData}
-                  disabled={submitting}
+                  disabled={submitting || uploading}
                 />
-                <div className="sm:col-span-2">
-                  {renderReceiptUploader(receiptSuggested)}
-                  <p className="-mt-3 mb-4 text-xs text-slate-400">
-                    A receipt is required for claims of RM
-                    {TOOL_RECEIPT_THRESHOLD} or more.
+                <div className="sm:col-span-2" data-field="receipt">
+                  <StatusFileUpload
+                    id="claim-receipt-input"
+                    label={t('Receipt')}
+                    error={translatedErrors.receipt}
+                    file={receiptFile}
+                    onFileChange={handleReceiptChange}
+                    onRemove={() => {
+                      setReceiptFile(null);
+                      setReceiptKey('');
+                      setReceiptError('');
+                      setErrors((previous) => ({ ...previous, receipt: '' }));
+                    }}
+                    onError={setReceiptError}
+                    disabled={submitting || uploading}
+                    uploading={uploading}
+                    required={receiptSuggested}
+                  />
+                  <p className="mb-4 mt-2 text-xs text-slate-600">
+                    {t(
+                      'A receipt is required for claims of RM{threshold} or more.',
+                      { threshold: TOOL_RECEIPT_THRESHOLD },
+                    )}
                   </p>
                 </div>
               </>
@@ -297,15 +304,17 @@ const ClaimForm = ({ basePath }: ClaimFormProps) => {
 
           <FormActions className="pt-5">
             <Button href={basePath} variant="secondary">
-              Cancel
+              {t('Cancel')}
             </Button>
             <Button
               type="submit"
               disabled={
-                submitting || (isPetrol && (loadingVehicle || isPetrolBlocked))
+                submitting ||
+                uploading ||
+                (isPetrol && (loadingVehicle || isPetrolBlocked))
               }
             >
-              {submitting ? 'Submitting…' : 'Submit claim'}
+              {submitting ? t('Submitting…') : t('Submit claim')}
             </Button>
           </FormActions>
         </ValidatedForm>

@@ -12,7 +12,7 @@ type WhatsAppLinkProps = {
  * inside a clickable table row — the click doesn't bubble to the row.
  * Renders "—" when there's no number. */
 const WhatsAppLink = ({ phoneNumber, className = '' }: WhatsAppLinkProps) => {
-  if (!phoneNumber) return <span className="text-slate-400">—</span>;
+  if (!phoneNumber) return <span className="text-slate-600">—</span>;
   return (
     <a
       href={whatsAppUrl(phoneNumber)}
@@ -20,7 +20,7 @@ const WhatsAppLink = ({ phoneNumber, className = '' }: WhatsAppLinkProps) => {
       rel="noopener noreferrer"
       onClick={(e) => e.stopPropagation()}
       aria-label={`Message ${phoneNumber} on WhatsApp`}
-      className={`whitespace-nowrap text-slate-700 transition hover:text-brand-600 hover:underline ${className}`}
+      className={`whitespace-nowrap text-slate-700 transition hover:text-brand-700 hover:underline ${className}`}
     >
       {phoneNumber}
     </a>

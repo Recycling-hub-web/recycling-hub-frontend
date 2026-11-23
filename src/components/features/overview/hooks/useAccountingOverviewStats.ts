@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import type { FinanceStatus } from '../../finance/types';
 import { getAccountingOverviewStats } from '../services/overviewService';
@@ -24,11 +24,17 @@ const INITIAL: Stats = {
 const useAccountingOverviewStats = () => {
   const [stats, setStats] = useState<Stats>(INITIAL);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const generation = useRef(0);
 
   const refetch = useCallback(async () => {
+    generation.current += 1;
+    const request = generation.current;
     setLoading(true);
+    setError('');
     try {
       const data = await getAccountingOverviewStats();
+      if (request !== generation.current) return;
       setStats({
         count: data.unverified_records,
         amountPending: Number(data.amount_pending),
@@ -36,17 +42,21 @@ const useAccountingOverviewStats = () => {
         financeStatusCounts: data.finance_status_counts,
       });
     } catch {
-      setStats(INITIAL);
+      if (request === generation.current)
+        setError('Could not load accounting totals.');
     } finally {
-      setLoading(false);
+      if (request === generation.current) setLoading(false);
     }
   }, []);
 
   useEffect(() => {
     refetch();
+    return () => {
+      generation.current += 1;
+    };
   }, [refetch]);
 
-  return { ...stats, loading, refetch };
+  return { ...stats, loading, error, refetch };
 };
 
 export { useAccountingOverviewStats };

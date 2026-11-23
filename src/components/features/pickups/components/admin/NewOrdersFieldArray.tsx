@@ -3,6 +3,8 @@
 import type { ComponentProps, Dispatch, SetStateAction } from 'react';
 import { LuPlus } from 'react-icons/lu';
 
+import { usePortalLocale } from '../../../../../contexts/PortalLocaleContext';
+import { localizeErrors } from '../../../../../lib/localizeErrors';
 import { Button } from '../../../../ui/buttons/Button';
 import { MAX_ORDERS_PER_PICKUP_REQUEST } from '../../constants';
 import type { PickupRequestItemInput } from '../../services/pickupService';
@@ -69,6 +71,7 @@ const NewOrdersFieldArray = ({
   showIntro = true,
   max = MAX_ORDERS_PER_PICKUP_REQUEST,
 }: NewOrdersFieldArrayProps) => {
+  const { t } = usePortalLocale();
   const update = (key: string, patch: Partial<DraftOrder>) =>
     onChange((current) =>
       current.map((o) => (o.key === key ? { ...o, ...patch } : o)),
@@ -81,10 +84,11 @@ const NewOrdersFieldArray = ({
       >
         {showIntro && (
           <div>
-            <p className="text-sm font-medium text-slate-900">Orders</p>
+            <p className="text-sm font-medium text-slate-900">{t('Orders')}</p>
             <p className="text-xs text-slate-500">
-              Optional — add orders now, or later from the request. Each order
-              needs its materials and at least one photo.
+              {t(
+                'Optional — add orders now, or later from the request. Each order needs its materials and at least one photo.',
+              )}
             </p>
           </div>
         )}
@@ -96,7 +100,7 @@ const NewOrdersFieldArray = ({
             disabled={disabled}
           >
             <LuPlus className="mr-1.5 size-4" />
-            Add order
+            {t('Add order')}
           </Button>
         )}
       </div>
@@ -110,7 +114,8 @@ const NewOrdersFieldArray = ({
           >
             <div className="mb-3 flex items-center justify-between">
               <p className="text-sm font-semibold text-slate-900">
-                Order {index + 1}
+                {t('Order')}
+                {index + 1}
               </p>
               <button
                 type="button"
@@ -122,7 +127,7 @@ const NewOrdersFieldArray = ({
                 disabled={disabled}
                 className="text-xs font-medium text-red-600 hover:underline disabled:opacity-50"
               >
-                Remove order
+                {t('Remove order')}
               </button>
             </div>
             <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
@@ -133,7 +138,7 @@ const NewOrdersFieldArray = ({
                 unitsByCategory={unitsByCategory}
                 loadingCategories={loadingCategories}
                 disabled={disabled}
-                errors={itemErrors[index] ?? []}
+                errors={localizeErrors(itemErrors[index] ?? [], t)}
                 labels={{
                   itemsSection: 'Materials',
                   category: 'Material category',

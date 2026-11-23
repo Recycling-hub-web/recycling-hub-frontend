@@ -44,18 +44,18 @@ const Footer = () => {
                 href={BRAND.whatsapp}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-fit text-neutral-950 transition-colors hover:text-brand-600"
+                className="w-fit text-neutral-950 transition-colors hover:text-brand-700"
               >
                 {dict.contact.form.sidePanel.whatsappLabel}: {BRAND.phone}
               </a>
               <a
                 href={`mailto:${BRAND.email}`}
-                className="w-fit text-neutral-950 hover:text-brand-600"
+                className="w-fit text-neutral-950 hover:text-brand-700"
               >
                 {BRAND.email}
               </a>
               <span className="text-xs text-slate-500">{BRAND.legalName}</span>
-              <span className="text-xs text-slate-400">
+              <span className="text-xs text-slate-600">
                 {BRAND.businessHours}
               </span>
             </div>
@@ -65,7 +65,7 @@ const Footer = () => {
                 href={BRAND.social.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex size-8 items-center justify-center rounded-lg bg-neutral-100 text-slate-500 transition-colors hover:bg-brand-50 hover:text-brand-600"
+                className="flex size-8 items-center justify-center rounded-lg bg-neutral-100 text-slate-500 transition-colors hover:bg-brand-50 hover:text-brand-700"
                 aria-label="Instagram"
               >
                 <InstagramIcon />
@@ -74,7 +74,7 @@ const Footer = () => {
                 href={BRAND.social.facebook}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex size-8 items-center justify-center rounded-lg bg-neutral-100 text-slate-500 transition-colors hover:bg-brand-50 hover:text-brand-600"
+                className="flex size-8 items-center justify-center rounded-lg bg-neutral-100 text-slate-500 transition-colors hover:bg-brand-50 hover:text-brand-700"
                 aria-label="Facebook"
               >
                 <FacebookIcon />
@@ -84,7 +84,7 @@ const Footer = () => {
 
           {/* Services */}
           <div>
-            <h4 className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-400">
+            <h4 className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-600">
               {dict.footer.servicesHeading}
             </h4>
             <ul className="flex flex-col gap-2.5">
@@ -103,7 +103,7 @@ const Footer = () => {
 
           {/* Company */}
           <div>
-            <h4 className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-400">
+            <h4 className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-600">
               {dict.footer.companyHeading}
             </h4>
             <ul className="flex flex-col gap-2.5">
@@ -122,7 +122,7 @@ const Footer = () => {
 
           {/* Legal */}
           <div>
-            <h4 className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-400">
+            <h4 className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-600">
               {dict.footer.legalHeading}
             </h4>
             <ul className="flex flex-col gap-2.5">
@@ -140,7 +140,7 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="mt-12 border-t border-slate-200 pt-6 text-center text-xs text-slate-400">
+        <div className="mt-12 border-t border-slate-200 pt-6 text-center text-xs text-slate-600">
           © {new Date().getFullYear()} {BRAND.name}.{' '}
           {dict.footer.copyrightLine} · {BRAND.website}
         </div>

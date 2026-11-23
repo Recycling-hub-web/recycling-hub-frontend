@@ -4,15 +4,26 @@ import type { FormHTMLAttributes } from 'react';
 import { useState } from 'react';
 
 import { validatePhoneNumber } from '../../constants/dialCodes';
+import { usePortalLocale } from '../../contexts/PortalLocaleContext';
 import { fieldLimit, validatePhoneText, validateText } from './validation';
 
-/** Runs even in modal forms using noValidate and preserves their submit handlers. */
+type ValidatedFormProps = FormHTMLAttributes<HTMLFormElement> & {
+  validationMode?: 'native' | 'external';
+  fieldErrors?: Record<string, string>;
+  errorSummaryLabel?: string;
+};
+
+/** Native guardrails by default; step forms may supply their own domain validation. */
 export const ValidatedForm = ({
   children,
   onSubmitCapture,
   onInputCapture,
+  validationMode = 'native',
+  fieldErrors = {},
+  errorSummaryLabel = 'Check the following fields.',
   ...props
-}: FormHTMLAttributes<HTMLFormElement>) => {
+}: ValidatedFormProps) => {
+  const { t, locale } = usePortalLocale();
   const [error, setError] = useState('');
   return (
     <form
@@ -32,6 +43,10 @@ export const ValidatedForm = ({
         onInputCapture?.(event);
       }}
       onSubmitCapture={(event) => {
+        if (validationMode === 'external') {
+          onSubmitCapture?.(event);
+          return;
+        }
         const form = event.currentTarget;
         let firstInvalid:
           | HTMLInputElement
@@ -102,6 +117,18 @@ export const ValidatedForm = ({
           ) {
             element.setCustomValidity('Enter a valid decimal number.');
           }
+          if (locale === 'bm') {
+            if (element.validity.valueMissing)
+              element.setCustomValidity(t('This field is required.'));
+            else if (
+              element.validity.typeMismatch &&
+              element instanceof HTMLInputElement &&
+              element.type === 'email'
+            )
+              element.setCustomValidity(t('Enter a valid email address.'));
+            else if (element.validity.customError)
+              element.setCustomValidity(t(element.validationMessage));
+          }
           if (!element.validity.valid) {
             element.setAttribute('aria-invalid', 'true');
             firstInvalid ??= element;
@@ -130,6 +157,46 @@ export const ValidatedForm = ({
         >
           {error}
         </p>
+      )}
+      {Object.values(fieldErrors).some(Boolean) && (
+        <div
+          role="alert"
+          className="mb-4 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800"
+        >
+          <p className="font-semibold">{t(errorSummaryLabel)}</p>
+          <ul className="mt-2 space-y-1">
+            {Object.entries(fieldErrors)
+              .filter(([, message]) => message)
+              .map(([field, message]) => (
+                <li key={field}>
+                  <button
+                    type="button"
+                    className="min-h-9 rounded text-left underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-red-700"
+                    onClick={(event) => {
+                      const form = event.currentTarget.closest('form');
+                      const control = Array.from(
+                        form?.querySelectorAll<HTMLElement>(
+                          '[name], [data-field]',
+                        ) ?? [],
+                      ).find(
+                        (element) =>
+                          element.getAttribute('name') === field ||
+                          element.dataset.field === field,
+                      );
+                      (control?.matches('input, select, textarea')
+                        ? control
+                        : control?.querySelector<HTMLElement>(
+                            'input, select, textarea, button',
+                          )
+                      )?.focus();
+                    }}
+                  >
+                    {t(message)}
+                  </button>
+                </li>
+              ))}
+          </ul>
+        </div>
       )}
       {children}
     </form>

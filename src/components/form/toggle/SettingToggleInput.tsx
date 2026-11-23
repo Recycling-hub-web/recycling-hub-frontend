@@ -1,3 +1,7 @@
+import { useId } from 'react';
+
+import { getNestedValue } from '../utils';
+
 type SettingToggleInputProps = {
   label: string;
   field: string;
@@ -29,18 +33,25 @@ const SettingToggleInput = ({
   enabledDescription = 'Click to toggle',
   disabledDescription = 'Click to toggle',
 }: SettingToggleInputProps) => {
-  const selected = Boolean(formData[field]);
+  const inputId = useId();
+  const descriptionId = `${inputId}-description`;
+  const errorId = `${inputId}-error`;
+  const selected = Boolean(getNestedValue(formData, field));
 
   const toggle = () => updateFormData(field, !selected);
 
   return (
     <div className="mb-5" data-field={field}>
-      <label className="mb-2 block text-sm font-semibold text-slate-900">
+      <label
+        id={`${inputId}-label`}
+        htmlFor={inputId}
+        className="mb-2 block text-sm font-semibold text-slate-900"
+      >
         {label} {required && <span className="text-red-600">*</span>}
       </label>
 
       <label
-        className={`group relative flex cursor-pointer items-center justify-between rounded-xl border p-4 transition-all ${
+        className={`group relative flex cursor-pointer items-center justify-between rounded-xl border p-4 transition-all focus-within:ring-2 focus-within:ring-brand-700 focus-within:ring-offset-2 ${
           selected
             ? 'border-brand-600 bg-brand-100 shadow-sm'
             : 'border-slate-200 bg-white hover:border-slate-300 hover:shadow-sm'
@@ -50,14 +61,22 @@ const SettingToggleInput = ({
           <span className="truncate text-sm font-medium text-slate-800">
             {selected ? enabledText : disabledText}
           </span>
-          <span className="truncate text-xs text-slate-400">
+          <span id={descriptionId} className="text-xs text-slate-600">
             {selected ? enabledDescription : disabledDescription}
           </span>
         </div>
 
         <div className="relative shrink-0">
           <input
+            id={inputId}
+            name={field}
             type="checkbox"
+            role="switch"
+            aria-labelledby={`${inputId}-label`}
+            aria-describedby={
+              errors?.[field] ? `${descriptionId} ${errorId}` : descriptionId
+            }
+            aria-invalid={Boolean(errors?.[field])}
             checked={selected}
             onChange={toggle}
             className="peer sr-only"
@@ -68,7 +87,9 @@ const SettingToggleInput = ({
       </label>
 
       {errors?.[field] && (
-        <p className="mt-1 text-xs text-red-600">{errors[field]}</p>
+        <p id={errorId} className="mt-1 text-xs text-red-600">
+          {errors[field]}
+        </p>
       )}
     </div>
   );

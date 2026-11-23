@@ -1,6 +1,11 @@
 import { useId } from 'react';
 
-import { fieldStateClasses, getNestedValue } from '../utils';
+import { usePortalLocale } from '../../../contexts/PortalLocaleContext';
+import {
+  fieldErrorAttributes,
+  fieldStateClasses,
+  getNestedValue,
+} from '../utils';
 import { fieldLimit } from '../validation';
 
 type InputFieldProps = {
@@ -45,10 +50,12 @@ const InputField = ({
   step,
   pattern,
 }: InputFieldProps) => {
+  const { t } = usePortalLocale();
   const inputId = useId();
   const value =
     (getNestedValue(formData, field) as string | number | undefined) ?? '';
-  const error = errors?.[field];
+  const rawError = errors?.[field];
+  const error = rawError ? t(rawError) : undefined;
 
   const isAmount = [
     'price',
@@ -90,6 +97,7 @@ const InputField = ({
           name={field}
           required={required}
           aria-required={required}
+          {...fieldErrorAttributes(inputId, error)}
           maxLength={maxLength ?? fieldLimit(field)}
           min={min ?? (isNonnegative ? 0 : undefined)}
           max={max ?? (isAmount ? 99999999.99 : undefined)}
@@ -111,9 +119,13 @@ const InputField = ({
         />
       </div>
 
-      {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
+      {error && (
+        <p id={`${inputId}-error`} className="mt-1 text-xs text-red-600">
+          {error}
+        </p>
+      )}
       {!error && disabled && helperText && (
-        <p className="mt-1 text-xs text-slate-400">{helperText}</p>
+        <p className="mt-1 text-xs text-slate-600">{helperText}</p>
       )}
     </div>
   );

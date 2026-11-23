@@ -68,7 +68,7 @@ const PostMediaManager = ({ blogId }: PostMediaManagerProps) => {
         {error && <AlertBanner message={error} />}
 
         {loading ? (
-          <p className="text-sm text-slate-400">Loading media…</p>
+          <p className="text-sm text-slate-600">Loading media…</p>
         ) : (
           media.length > 0 && (
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
@@ -85,7 +85,7 @@ const PostMediaManager = ({ blogId }: PostMediaManagerProps) => {
                       className="h-24 w-full object-cover"
                     />
                   ) : (
-                    <div className="flex h-24 w-full items-center justify-center bg-slate-100 text-slate-400">
+                    <div className="flex h-24 w-full items-center justify-center bg-slate-100 text-slate-600">
                       {item.type === 'video_thumbnail' ? (
                         <LuFileVideo className="size-6" />
                       ) : (
@@ -103,7 +103,7 @@ const PostMediaManager = ({ blogId }: PostMediaManagerProps) => {
                         handleRemove(item.id, item.alt_text || item.type)
                       }
                       aria-label="Remove media"
-                      className="inline-flex size-6 shrink-0 items-center justify-center rounded-full text-slate-400 transition hover:bg-red-50 hover:text-red-600"
+                      className="inline-flex size-6 shrink-0 items-center justify-center rounded-full text-slate-600 transition hover:bg-red-50 hover:text-red-600"
                     >
                       <LuTrash2 className="size-3.5" />
                     </button>

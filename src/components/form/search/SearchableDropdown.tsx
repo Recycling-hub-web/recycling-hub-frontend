@@ -99,7 +99,7 @@ const SearchableDropdown = ({
         }`}
       >
         <span
-          className={`truncate ${selectedLabel ? 'text-slate-900' : 'text-slate-400'}`}
+          className={`truncate ${selectedLabel ? 'text-slate-900' : 'text-slate-600'}`}
         >
           {selectedLabel || placeholder}
         </span>
@@ -148,7 +148,7 @@ const SearchableDropdown = ({
 
             {!filteredOptions.length && (
               <div className="mt-2 border-t pt-2">
-                <li className="px-3 py-2 text-slate-400">No results found</li>
+                <li className="px-3 py-2 text-slate-600">No results found</li>
               </div>
             )}
           </ul>

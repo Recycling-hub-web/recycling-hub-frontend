@@ -64,7 +64,7 @@ const SolutionCard = ({
         }`}
       >
         <div
-          className={`mb-5 flex items-center justify-center rounded-xl text-brand-600 ${
+          className={`mb-5 flex items-center justify-center rounded-xl text-brand-700 ${
             featured ? 'size-14 bg-white' : 'size-12 bg-brand-50'
           }`}
         >
@@ -84,7 +84,7 @@ const SolutionCard = ({
         >
           {summary}
         </p>
-        <p className="mt-5 text-xs font-semibold text-brand-600">
+        <p className="mt-5 text-xs font-semibold text-brand-700">
           {learnMoreLabel} →
         </p>
       </Link>

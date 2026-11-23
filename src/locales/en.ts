@@ -21,7 +21,6 @@
 // visual to show — stay in `constants/content.ts` and are language-independent;
 // only the translatable copy lives here, keyed by the same slug so components
 // zip the two together at render time.
-
 import {
   BRAND,
   type ResourceSlug,
@@ -29,6 +28,7 @@ import {
   type SolutionSlug,
 } from '../constants/content';
 import type { LegalSection } from '../types/legal';
+import { authEn } from './portalAuth';
 
 const en = {
   seo: {
@@ -55,6 +55,8 @@ const en = {
   },
 
   nav: {
+    collectionSupportShort: 'Status & certificates',
+    collectionSupport: 'Collection status & certificates',
     whoWeHelp: 'Who we help',
     serviceGroupMain: 'Collection & recycling',
     serviceGroupSupport: 'Business support',
@@ -1281,6 +1283,18 @@ const en = {
     ],
   },
 
+  countryCallingCode: 'Country calling code',
+  messageHandoff: {
+    notice:
+      'Your message is ready. Send it in WhatsApp to contact our team. Nothing has been submitted through this website.',
+    preview: 'Message to send',
+    copy: 'Copy message',
+    copied: 'Message copied.',
+    copyFailed: 'Select and copy the message below, or use the email option.',
+    email: 'Continue by email',
+    emailNote: 'Review and send the email in your email app.',
+  },
+
   trackTrace: {
     hero: {
       eyebrow: 'Track & Trace',
@@ -1318,7 +1332,7 @@ const en = {
       'Collection Status Update',
     ],
     sectionHeading2: {
-      eyebrow: 'Submit a Request',
+      eyebrow: 'Prepare a Request',
       headline: 'Tell Us What You Need',
     },
     form: {
@@ -1336,11 +1350,10 @@ const en = {
         'Approximate pickup date, address, or anything else that helps us find your collection',
       errorNameRequired: 'Please enter your full name.',
       errorEmailInvalid: 'Enter a valid email address.',
-      submitButton: 'Submit Request',
-      submittedButton: 'Request Sent',
-      successPrefix: "Request received — we'll email your ",
-      successSuffix: ' within 2 business days.',
-      whatsappNote: 'Prefer to talk it through? WhatsApp us instead.',
+      submitButton: 'Continue in WhatsApp',
+      submittedButton: 'Open WhatsApp again',
+      whatsappNote:
+        'Review and send your message in WhatsApp. It is not sent by this website.',
     },
     closingNote:
       "Requests are handled by our team, not an automated system — if your reference number is hard to find, just describe the collection as best you can and we'll match it on our end.",
@@ -1398,6 +1411,25 @@ const en = {
       description:
         'Tell us what you have and where to collect it. Free household pickup requires at least 3 devices; the team will confirm the arrangements.',
     },
+    confirmation: {
+      callbackTitle: 'Callback request received',
+      businessTitle: 'Collection request received',
+      reference: 'Request reference',
+      phone: 'Contact number',
+      keepReference: 'Keep this reference when contacting our team.',
+      callbackNext:
+        'Our team will call the number you provided. Your pickup is not booked yet.',
+      businessNext:
+        'Our team will review your details and call to agree the scope, quotation and collection time. Your pickup is not booked yet.',
+      another: 'Make another request',
+    },
+    businessHero: {
+      eyebrow: 'Business and bulk collection',
+      headline: 'Request a business',
+      headlineAccent: 'collection.',
+      description:
+        'Share your collection address and photos. Our team will confirm the scope, quotation and pickup time by phone before collection is arranged.',
+    },
     typeSelector: {
       changeOption: 'Change request type',
       heading: 'What are you recycling?',
@@ -1414,6 +1446,9 @@ const en = {
       },
     },
     quickForm: {
+      individual: 'Individual',
+      business: 'Business',
+      errorSummary: 'Please check your contact number.',
       heading: 'Request a Callback',
       subheading:
         "Leave your number and we'll call you back. Household pickup requires at least 3 devices.",
@@ -1427,6 +1462,9 @@ const en = {
       errorMessage: 'Something went wrong. Please try again.',
     },
     form: {
+      errorSummary: 'Please correct the following fields.',
+      errorTextInvalid:
+        'Remove unsupported characters and check the field length.',
       heading: 'Pickup Request Details',
       subheading:
         "Fill in your details and we'll be in touch to confirm a collection time.",
@@ -1899,90 +1937,7 @@ const en = {
   // Internal operations sign-in (Admin/Staff/Driver/Receiving Officer/
   // Accounting) — not part of the public marketing site, but bilingual for
   // the same reason everything else here is: staff read Malay too.
-  auth: {
-    login: {
-      title: 'Sign in',
-      subtitle: 'Sign in to Recycling Hub operations.',
-      emailLabel: 'Email',
-      emailPlaceholder: 'you@recyclinghub.eco',
-      passwordLabel: 'Password',
-      passwordPlaceholder: '••••••••',
-      showPassword: 'Show password',
-      hidePassword: 'Hide password',
-      forgotPassword: 'Forgot password?',
-      submit: 'Sign in',
-      submitting: 'Signing in…',
-      genericError: 'Invalid email or password.',
-    },
-    verifyOtp: {
-      title: 'Enter your code',
-      subtitle: 'We sent a 6-digit verification code to your email.',
-      codeLabel: '6-digit code',
-      submit: 'Verify',
-      submitting: 'Verifying…',
-      resend: "Didn't get a code? Resend",
-      resendSending: 'Sending…',
-      resendSent: 'A new code has been sent.',
-      resendIn: 'Resend in',
-      backToLogin: 'Back to sign in',
-      noPendingFlow: 'Your sign-in session has expired — please sign in again.',
-      genericError: 'Invalid or expired code.',
-      incompleteCodeError: 'Enter all 6 digits.',
-    },
-    forgotPassword: {
-      title: 'Forgot your password?',
-      subtitle: "Enter your email and we'll send you a link to reset it.",
-      emailLabel: 'Email',
-      emailPlaceholder: 'you@recyclinghub.eco',
-      submit: 'Send reset link',
-      submitting: 'Sending…',
-      successTitle: 'Check your email',
-      successMessage:
-        "If that account exists, we've sent a password reset link to it.",
-      backToLogin: 'Back to sign in',
-    },
-    resetPassword: {
-      title: 'Reset your password',
-      subtitle: 'Choose a new password for your account.',
-      passwordLabel: 'New password',
-      confirmLabel: 'Confirm new password',
-      submit: 'Reset password',
-      submitting: 'Resetting…',
-      successTitle: 'Password updated',
-      successMessage: 'Your password has been reset — you can now sign in.',
-      signInNow: 'Sign in',
-      invalidToken:
-        'This link is invalid or has expired. Request a new one below.',
-      requestNewLink: 'Request a new link',
-      passwordMismatch: 'Passwords do not match.',
-    },
-    setPassword: {
-      title: 'Set your password',
-      subtitle:
-        'An administrator created an account for you on Recycling Hub. Set a password to finish activating it.',
-      passwordLabel: 'Password',
-      confirmLabel: 'Confirm password',
-      submit: 'Set password',
-      submitting: 'Setting password…',
-      successTitle: 'Account activated',
-      successMessage: 'Your password has been set — you can now sign in.',
-      signInNow: 'Sign in',
-      invalidToken:
-        'This invite link is invalid or has expired. Contact your administrator for a new one.',
-      passwordMismatch: 'Passwords do not match.',
-    },
-    accountLocked: {
-      title: 'Account temporarily locked',
-      message:
-        "We've temporarily locked this account after several failed sign-in attempts, to protect it. Please try again in a little while.",
-      backToLogin: 'Back to sign in',
-    },
-    unauthorized: {
-      title: "You don't have access to this",
-      message: "Your account doesn't have permission to view this page.",
-      backToDashboard: 'Back to my dashboard',
-    },
-  },
+  auth: authEn,
 };
 
 export type Dictionary = typeof en;

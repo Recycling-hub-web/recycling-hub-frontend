@@ -20,6 +20,7 @@ import { PageHeader } from '../../../ui/PageHeader';
 import { Tabs } from '../../../ui/tabs';
 import { useToast } from '../../../ui/toast/ToastContext';
 import {
+  canManageUser,
   REGISTRATION_STATUS_FILTER_OPTIONS,
   roleFilterOptionsFor,
 } from '../constants';
@@ -125,6 +126,7 @@ const AdminUsersView = () => {
   };
 
   const handleToggleActive = async (targetUser: UserListItem) => {
+    if (!canManageUser(actor, targetUser)) return;
     try {
       await updateUser(targetUser.id, { is_active: !targetUser.is_active });
       toast.success(

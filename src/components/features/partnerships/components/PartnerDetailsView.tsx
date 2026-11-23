@@ -95,7 +95,7 @@ const PartnerDetailsView = ({
     <PageContainer variant="form">
       <Link
         href={basePath}
-        className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600 lg:mb-4 lg:min-h-0"
+        className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-700 lg:mb-4 lg:min-h-0"
       >
         <LuArrowLeft className="size-4" />
         Back to partnerships
@@ -116,7 +116,7 @@ const PartnerDetailsView = ({
             className="size-16 shrink-0 rounded-xl border border-slate-200 object-contain p-1.5"
           />
         ) : (
-          <span className="flex size-16 shrink-0 items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50 text-slate-400">
+          <span className="flex size-16 shrink-0 items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50 text-slate-600">
             <LuBuilding2 className="size-6" />
           </span>
         )}
@@ -144,7 +144,7 @@ const PartnerDetailsView = ({
                 href={partner.website_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-brand-600 hover:underline"
+                className="text-brand-700 hover:underline"
               >
                 {partner.website_url}
               </a>

@@ -1,6 +1,7 @@
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 
+import { usePortalLocale } from '../../../../contexts/PortalLocaleContext';
 import { ApiError } from '../../../../lib/api';
 import type { SelectedAddress } from '../../../../lib/geoapify';
 import { useToast } from '../../../ui/toast/ToastContext';
@@ -16,7 +17,6 @@ import {
   INITIAL_STATE,
   type StepId,
   STEPS,
-  successMessage,
   validateField,
   validateOrders,
   validateRequestEvaluation,
@@ -34,6 +34,7 @@ type PickupRequestBasePath =
  * step navigation, per-step and on-blur validation, upload tracking and
  * submit. The view only renders what this returns. */
 const usePickupRequestCreateForm = (basePath: PickupRequestBasePath) => {
+  const { t } = usePortalLocale();
   const router = useRouter();
   const toast = useToast();
   const {
@@ -44,6 +45,7 @@ const usePickupRequestCreateForm = (basePath: PickupRequestBasePath) => {
   const categories = usePickupCategories();
 
   const [formData, setFormData] = useState<FormState>(INITIAL_STATE);
+  const [validationAttempt, setValidationAttempt] = useState(0);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [selectedLocation, setSelectedLocation] =
     useState<SelectedAddress | null>(null);
@@ -108,7 +110,10 @@ const usePickupRequestCreateForm = (basePath: PickupRequestBasePath) => {
 
   /** Continue: validate only this step, mark it done, move on. */
   const next = () => {
-    if (!checkStep(step.id)) return;
+    if (!checkStep(step.id)) {
+      setValidationAttempt((n) => n + 1);
+      return;
+    }
     markDone(step.id);
     const nextIndex = Math.min(stepIndex + 1, STEPS.length - 1);
     setStepIndex(nextIndex);
@@ -128,8 +133,8 @@ const usePickupRequestCreateForm = (basePath: PickupRequestBasePath) => {
   const submit = async () => {
     if (uploading.size > 0) {
       toast.error(
-        'Photo still uploading',
-        'Wait for the photo to finish uploading, then submit.',
+        t('Photo still uploading'),
+        t('Wait for the photo to finish uploading, then submit.'),
       );
       return;
     }
@@ -139,9 +144,12 @@ const usePickupRequestCreateForm = (basePath: PickupRequestBasePath) => {
     );
     if (firstInvalid !== -1) {
       setStepIndex(firstInvalid);
+      setValidationAttempt((n) => n + 1);
       toast.error(
-        'Check this step',
-        `${STEPS[firstInvalid]!.label} has something to fix.`,
+        t('Check this step'),
+        t('{step} has something to fix.', {
+          step: t(STEPS[firstInvalid]!.label),
+        }),
       );
       return;
     }
@@ -150,12 +158,22 @@ const usePickupRequestCreateForm = (basePath: PickupRequestBasePath) => {
       const result = await createRequest(
         buildPayload(formData, orders, evaluation),
       );
-      toast.success('Pickup request created', successMessage(formData, orders));
+      toast.success(
+        t('Pickup request created'),
+        orders.length
+          ? t('A request for {name} has been added with {count} orders.', {
+              name: formData.full_name,
+              count: orders.length,
+            })
+          : t('A request for {name} has been added.', {
+              name: formData.full_name,
+            }),
+      );
       router.push(`${basePath}/${result.id}`);
     } catch (err) {
       // useCreatePickupRequest also keeps the message in `error`.
       toast.error(
-        'Could not create the request',
+        t('Could not create the request'),
         err instanceof ApiError ? err.message : undefined,
       );
     }
@@ -169,6 +187,7 @@ const usePickupRequestCreateForm = (basePath: PickupRequestBasePath) => {
     reached,
     formData,
     errors,
+    validationAttempt,
     selectedLocation,
     setSelectedLocation,
     orders,

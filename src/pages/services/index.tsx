@@ -51,7 +51,7 @@ const ServicesPage: NextPageWithLayout = () => {
       <div className="bg-white pb-16 text-center md:pb-20">
         <Link
           href={crossLink.href}
-          className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-600 hover:text-brand-700"
+          className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-700 hover:text-brand-700"
         >
           {crossLink.text} {crossLink.cta}
           <LuArrowRight size={15} />

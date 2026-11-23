@@ -109,7 +109,7 @@ const EditStaffView = ({ staffId }: { staffId: string }) => {
     <PageContainer variant="form">
       <Link
         href={`/admin/staff/${profile.id}`}
-        className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-600 lg:mb-4 lg:min-h-0"
+        className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-700 lg:mb-4 lg:min-h-0"
       >
         <LuArrowLeft className="size-4" />
         Back to staff profile
@@ -126,13 +126,13 @@ const EditStaffView = ({ staffId }: { staffId: string }) => {
 
           <div className="mb-4 grid grid-cols-1 gap-3 rounded-xl bg-slate-50 p-3.5 sm:grid-cols-2">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-600">
                 Full name
               </p>
               <p className="text-sm text-slate-700">{profile.user.full_name}</p>
             </div>
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-600">
                 Email
               </p>
               <p className="text-sm text-slate-700">{profile.user.email}</p>

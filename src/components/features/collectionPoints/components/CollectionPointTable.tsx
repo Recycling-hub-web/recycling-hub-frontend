@@ -98,14 +98,14 @@ const CollectionPointTable = ({
             <Link
               href={`${basePath}/${cp.id}`}
               aria-label={`View collection point ${cp.name}`}
-              className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+              className="inline-flex size-8 items-center justify-center rounded-full text-slate-600 transition hover:bg-slate-100 hover:text-slate-700"
             >
               <LuEye className="size-4" />
             </Link>
             <Link
               href={`${basePath}/${cp.id}/edit`}
               aria-label={`Edit collection point ${cp.name}`}
-              className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+              className="inline-flex size-8 items-center justify-center rounded-full text-slate-600 transition hover:bg-slate-100 hover:text-slate-700"
             >
               <LuPencil className="size-4" />
             </Link>
@@ -113,7 +113,7 @@ const CollectionPointTable = ({
               type="button"
               onClick={() => onDeleteRequest(cp)}
               aria-label={`Delete collection point ${cp.name}`}
-              className="inline-flex size-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-red-50 hover:text-red-600"
+              className="inline-flex size-8 items-center justify-center rounded-full text-slate-600 transition hover:bg-red-50 hover:text-red-600"
             >
               <LuTrash2 className="size-4" />
             </button>

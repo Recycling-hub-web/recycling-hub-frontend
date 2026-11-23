@@ -1,6 +1,11 @@
 import { useId, useState } from 'react';
 
-import { fieldStateClasses, getNestedValue } from '../utils';
+import { usePortalLocale } from '../../../contexts/PortalLocaleContext';
+import {
+  fieldErrorAttributes,
+  fieldStateClasses,
+  getNestedValue,
+} from '../utils';
 import { fieldLimit } from '../validation';
 
 type TextareaFieldProps = {
@@ -26,6 +31,7 @@ const TextareaField = ({
   onBlur,
   disabled = false,
 }: TextareaFieldProps) => {
+  const { t } = usePortalLocale();
   const inputId = useId();
   const value = (getNestedValue(formData, field) as string | undefined) ?? '';
   const collapsible = !required && /(?:^|_)(?:note|notes)$/.test(field);
@@ -45,7 +51,7 @@ const TextareaField = ({
             type="button"
             role="switch"
             aria-checked={showInput}
-            aria-label={`Show ${label.toLowerCase()}`}
+            aria-label={t('Show {label}', { label: label.toLowerCase() })}
             aria-controls={`${inputId}-panel`}
             disabled={disabled}
             onClick={() => setExpanded(!showInput)}
@@ -76,6 +82,7 @@ const TextareaField = ({
             name={field}
             required={required}
             aria-required={required}
+            {...fieldErrorAttributes(inputId, errors?.[field])}
             maxLength={fieldLimit(field, true)}
             value={value}
             onChange={(e) => updateFormData(field, e.target.value)}
@@ -86,7 +93,9 @@ const TextareaField = ({
           />
 
           {errors?.[field] && (
-            <p className="mt-1 text-xs text-red-600">{errors[field]}</p>
+            <p id={`${inputId}-error`} className="mt-1 text-xs text-red-600">
+              {t(errors[field] ?? '')}
+            </p>
           )}
         </div>
       </div>

@@ -8,16 +8,7 @@ import { Providers } from './providers';
 // responsibility src/pages/_document.tsx + _app.tsx have for the Pages
 // Router side (fonts, global CSS, provider tree).
 //
-// English-only for now, deliberately: Next's App Router cannot resolve
-// non-default-locale (bm) subpaths while next.config.js's legacy `i18n`
-// block is still active for the still-unmigrated src/pages/ public site —
-// confirmed empirically (a bare [locale] segment 404s on every /bm/*
-// request; Next's i18n routing layer strips/normalizes the locale prefix
-// before App Router's own dynamic-segment matching ever sees it, and only
-// the default locale's normalization happens to degenerate into something
-// App Router can still resolve). Real bm support for these routes is
-// follow-up work alongside the Phase 3 public-site i18n redesign (see the
-// App Router migration plan), not a gap introduced casually here.
+// Operations and authentication use English; the public Pages Router has its own locale.
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,

@@ -3,7 +3,9 @@
 import { useEffect, useState } from 'react';
 import { LuClipboardCheck } from 'react-icons/lu';
 
+import { usePortalLocale } from '../../../../../contexts/PortalLocaleContext';
 import { ApiError } from '../../../../../lib/api';
+import { localizeErrors } from '../../../../../lib/localizeErrors';
 import { TextareaField } from '../../../../form/fields/TextareaField';
 import { AlertBanner } from '../../../../ui/AlertBanner';
 import { Button } from '../../../../ui/buttons/Button';
@@ -57,6 +59,7 @@ const RequestEvaluateModal = ({
   onClose,
   onEvaluated,
 }: RequestEvaluateModalProps) => {
+  const { t } = usePortalLocale();
   const { execute: evaluate, loading: submitting } = useEvaluateWholeRequest();
   const [total, setTotal] = useState('');
   const [note, setNote] = useState('');
@@ -102,6 +105,7 @@ const RequestEvaluateModal = ({
   };
 
   const submit = async (decision: 'approved' | 'rejected') => {
+    if (submitting) return;
     setApiError('');
     if (!validate(decision)) return;
     const perItem = decision === 'approved' && itemized && lines.length > 1;
@@ -133,36 +137,43 @@ const RequestEvaluateModal = ({
       open={open}
       onClose={onClose}
       title={
-        reevaluation ? 'Re-evaluate pickup request' : 'Evaluate pickup request'
+        reevaluation
+          ? t('Re-evaluate pickup request')
+          : t('Evaluate pickup request')
       }
-      subtitle={`${covered.length} order${covered.length === 1 ? '' : 's'}: ${covered.map((o) => o.code).join(', ')}`}
+      subtitle={t('{value0} order{value1}: {value2}', {
+        value0: covered.length,
+        value1: covered.length === 1 ? '' : 's',
+        value2: covered.map((o) => o.code).join(', '),
+      })}
       icon={<LuClipboardCheck className="size-5" />}
       closeOnBackdrop={!submitting}
       dismissible={!submitting}
       footer={
         <FormActions>
           <Button variant="secondary" onClick={onClose} disabled={submitting}>
-            Cancel
+            {t('Cancel')}
           </Button>
           <Button
             variant="danger-outline"
             onClick={() => submit('rejected')}
             disabled={submitting}
           >
-            Reject
+            {t('Reject')}
           </Button>
           <Button onClick={() => submit('approved')} disabled={submitting}>
-            {submitting ? 'Saving…' : 'Approve'}
+            {submitting ? t('Saving…') : t('Approve')}
           </Button>
         </FormActions>
       }
     >
       <div className="space-y-1">
-        <AlertBanner message={apiError} />
+        <AlertBanner message={t(apiError ?? '')} />
         {anyScheduled && (
           <p className="mb-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-            Some orders already have a driver. Approving keeps them on it with
-            the new price; rejecting takes those orders off the driver.
+            {t(
+              'Some orders already have a driver. Approving keeps them on it with the new price; rejecting takes those orders off the driver.',
+            )}
           </p>
         )}
 
@@ -201,16 +212,18 @@ const RequestEvaluateModal = ({
         />
         {!itemized && covered.length > 1 && (
           <p className="-mt-2 mb-3 text-xs text-slate-500">
-            The total is shared across the orders by their estimated quantity.
+            {t(
+              'The total is shared across the orders by their estimated quantity.',
+            )}
           </p>
         )}
         <TextareaField
-          label="Note"
+          label={t('Note')}
           field="note"
           required={false}
-          placeholder="Required to reject — optional otherwise."
+          placeholder={t('Required to reject — optional otherwise.')}
           formData={{ note }}
-          errors={errors}
+          errors={localizeErrors(errors, t)}
           updateFormData={(_, value) => {
             setNote(value);
             setErrors({});

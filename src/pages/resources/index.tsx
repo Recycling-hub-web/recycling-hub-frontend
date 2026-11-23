@@ -34,7 +34,7 @@ const ResourcesPage: NextPageWithLayout = () => {
        * ResourcesGrid's dictionary-driven card data. */}
       <section className="bg-neutral-50 py-16 text-center md:py-20">
         <FadeIn>
-          <p className="text-xs font-semibold uppercase tracking-widest text-brand-600">
+          <p className="text-xs font-semibold uppercase tracking-widest text-brand-700">
             More from Recycling Hub
           </p>
           <h2 className="mt-3 font-montserrat text-2xl font-bold text-neutral-950 md:text-3xl">
@@ -45,7 +45,7 @@ const ResourcesPage: NextPageWithLayout = () => {
           </p>
           <Link
             href="/resources/blog"
-            className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-600"
+            className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-700"
           >
             Visit the blog <LuArrowRight className="size-4" />
           </Link>

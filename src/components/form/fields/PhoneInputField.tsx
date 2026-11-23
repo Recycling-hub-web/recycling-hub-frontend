@@ -1,6 +1,8 @@
 import { useId } from 'react';
 
 import { DIAL_CODES } from '../../../constants/dialCodes';
+import { usePortalLocale } from '../../../contexts/PortalLocaleContext';
+import { fieldErrorAttributes } from '../utils';
 
 type PhoneInputFieldProps = {
   label?: string;
@@ -13,6 +15,7 @@ type PhoneInputFieldProps = {
   placeholder?: string;
   disabled?: boolean;
   onBlur?: () => void;
+  dialCodeLabel?: string;
 };
 
 const PhoneInputField = ({
@@ -26,11 +29,14 @@ const PhoneInputField = ({
   placeholder = '12-345 6789',
   disabled = false,
   onBlur,
+  dialCodeLabel = 'Country calling code',
 }: PhoneInputFieldProps) => {
+  const { t } = usePortalLocale();
   const inputId = useId();
   const dialCode = (formData[dialCodeField] as string | undefined) ?? '+60';
   const number = (formData[numberField] as string | undefined) ?? '';
-  const error = errors?.[numberField];
+  const rawError = errors?.[numberField];
+  const error = rawError ? t(rawError) : undefined;
 
   const handleNumberChange = (value: string) => {
     updateFormData(numberField, value.replace(/[^\d\s()-]/g, ''));
@@ -42,13 +48,14 @@ const PhoneInputField = ({
         htmlFor={inputId}
         className="block text-sm font-medium text-slate-900"
       >
-        {label} {required && <span className="text-red-600">*</span>}
+        {t(label)} {required && <span className="text-red-600">*</span>}
       </label>
       <div
         data-dial-code={dialCode}
         className={`mt-2 flex h-12 overflow-hidden rounded-xl border transition ${error ? 'border-red-500' : 'border-slate-200'} ${disabled ? 'bg-slate-50 opacity-60' : ''}`}
       >
         <select
+          aria-label={t(dialCodeLabel)}
           value={dialCode}
           onChange={(e) => updateFormData(dialCodeField, e.target.value)}
           disabled={disabled}
@@ -65,6 +72,7 @@ const PhoneInputField = ({
           name={numberField}
           required={required}
           aria-required={required}
+          {...fieldErrorAttributes(inputId, error)}
           type="tel"
           inputMode="tel"
           autoComplete="tel-national"
@@ -77,7 +85,11 @@ const PhoneInputField = ({
           className="min-w-0 flex-1 bg-white px-3 text-sm outline-none hover:bg-slate-50 disabled:cursor-not-allowed disabled:bg-slate-50"
         />
       </div>
-      {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
+      {error && (
+        <p id={`${inputId}-error`} className="mt-1 text-xs text-red-600">
+          {error}
+        </p>
+      )}
     </div>
   );
 };

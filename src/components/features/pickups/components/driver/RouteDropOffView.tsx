@@ -9,6 +9,7 @@ import {
   LuUpload,
 } from 'react-icons/lu';
 
+import { usePortalLocale } from '../../../../../contexts/PortalLocaleContext';
 import { SelectField } from '../../../../form/fields/SelectField';
 import { PageContainer } from '../../../../layout/PageContainer';
 import { AlertBanner } from '../../../../ui/AlertBanner';
@@ -25,6 +26,7 @@ import { useToast } from '../../../../ui/toast/ToastContext';
 import { useUploadStorageFile } from '../../../storageFiles/hooks';
 import { useCollectionPoints, useDropOffRoute, useOrders } from '../../hooks';
 import { itemsSummary } from '../../types';
+import { quantityError } from '../../units';
 import {
   googleMapsDirectionsUrl,
   wazeNavigateUrl,
@@ -40,6 +42,7 @@ import {
  * navigation links, and the drop-off records the store actually used —
  * the planned one by default, or a different one the driver picks. */
 const RouteDropOffView = () => {
+  const { t } = usePortalLocale();
   const toast = useToast();
   const { requests, loading, error, refetch } = useOrders({
     page: 1,
@@ -47,7 +50,11 @@ const RouteDropOffView = () => {
   });
   const { execute: dropOff, loading: submitting } = useDropOffRoute();
   const { execute: upload, loading: uploading } = useUploadStorageFile();
-  const { collectionPoints } = useCollectionPoints(true);
+  const {
+    collectionPoints,
+    error: pointsError,
+    refetch: retryPoints,
+  } = useCollectionPoints(true);
 
   // Every collected request here is on the driver's one open route, so
   // they share its planned end point.
@@ -60,9 +67,18 @@ const RouteDropOffView = () => {
   const chosenStore =
     collectionPoints.find((p) => p.id === store.collection_point) ??
     (plannedStore?.id === store.collection_point ? plannedStore : null);
-  const storeOptions = collectionPoints.map((p) => ({
+  const storeOptions = [
+    ...(plannedStore &&
+    !collectionPoints.some((point) => point.id === plannedStore.id)
+      ? [plannedStore]
+      : []),
+    ...collectionPoints,
+  ].map((p) => ({
     value: p.id,
-    label: p.id === plannedStore?.id ? `${p.name} (planned)` : p.name,
+    label:
+      p.id === plannedStore?.id
+        ? t('{name} (planned)', { name: p.name })
+        : p.name,
   }));
 
   const [selected, setSelected] = useState<Set<string>>(new Set());
@@ -72,6 +88,12 @@ const RouteDropOffView = () => {
   const [proofKey, setProofKey] = useState('');
   const [proofPreview, setProofPreview] = useState<string | null>(null);
   const [apiError, setApiError] = useState('');
+  useEffect(
+    () => () => {
+      if (proofPreview) URL.revokeObjectURL(proofPreview);
+    },
+    [proofPreview],
+  );
 
   let uploadLabel = 'Upload proof';
   if (uploading) uploadLabel = 'Uploading…';
@@ -96,6 +118,8 @@ const RouteDropOffView = () => {
 
   const handleProofChange = async (file: File | undefined) => {
     if (!file) return;
+    setProofKey('');
+    setApiError('');
     try {
       const result = await upload(file);
       setProofKey(result.file_key);
@@ -106,6 +130,7 @@ const RouteDropOffView = () => {
   };
 
   const handleSubmit = async () => {
+    if (uploading || submitting) return;
     setApiError('');
     if (selected.size === 0) {
       setApiError('Select at least one request to drop off.');
@@ -113,6 +138,14 @@ const RouteDropOffView = () => {
     }
     if (!store.collection_point) {
       setApiError('Choose the store you are dropping off at.');
+      return;
+    }
+    if (
+      Array.from(selected).some((id) =>
+        quantityError(deliveredQuantities[id], ''),
+      )
+    ) {
+      setApiError('Quantity must be more than 0.');
       return;
     }
     if (!proofKey) {
@@ -128,7 +161,7 @@ const RouteDropOffView = () => {
         proof: proofKey,
         collection_point: store.collection_point,
       });
-      toast.success('Dropped off to store');
+      toast.success(t('Dropped off to store'));
       setSelected(new Set());
       setDeliveredQuantities({});
       setProofKey('');
@@ -147,7 +180,7 @@ const RouteDropOffView = () => {
       return (
         <TableErrorRow
           colSpan={columnCount}
-          message={error}
+          message={t(error ?? '')}
           onRetry={refetch}
         />
       );
@@ -157,8 +190,10 @@ const RouteDropOffView = () => {
         <TableEmptyRow
           colSpan={columnCount}
           icon={<LuPackage className="size-6" />}
-          title="Nothing to drop off"
-          subtitle="Requests you've collected will show up here until dropped off at the store."
+          title={t('Nothing to drop off')}
+          subtitle={t(
+            "Requests you've collected will show up here until dropped off at the store.",
+          )}
         />
       );
     }
@@ -170,7 +205,9 @@ const RouteDropOffView = () => {
             checked={selected.has(r.id)}
             onChange={() => toggleSelect(r.id)}
             className="size-4 rounded border-slate-300"
-            aria-label={`Select ${r.pickup_request.full_name}`}
+            aria-label={t('Select {value0}', {
+              value0: r.pickup_request.full_name,
+            })}
           />
         </td>
         <td className="px-6 py-4 font-medium text-slate-900">{r.code}</td>
@@ -178,13 +215,16 @@ const RouteDropOffView = () => {
           {r.pickup_request.full_name}
         </td>
         <td className="px-6 py-4 text-slate-700">
-          {itemsSummary(r.items)} — {r.items[0]?.collected_quantity ?? '—'}{' '}
-          collected
+          {itemsSummary(r.items, t)} — {r.items[0]?.collected_quantity ?? '—'}{' '}
+          {t('collected')}
         </td>
         <td className="px-6 py-4">
           <input
+            aria-label={t('Delivered quantity for {name}', { name: r.code })}
+            min="0"
+            step="any"
             type="number"
-            placeholder="Delivered qty"
+            placeholder={t('Delivered qty')}
             value={deliveredQuantities[r.id] ?? ''}
             onChange={(e) =>
               setDeliveredQuantities((prev) => ({
@@ -203,25 +243,39 @@ const RouteDropOffView = () => {
   return (
     <PageContainer variant="table">
       <PageHeader
-        title="Drop Off to Store"
-        subtitle="Check off everything you're dropping off from this route, in one go."
+        title={t('Drop Off to Store')}
+        subtitle={t(
+          "Check off everything you're dropping off from this route, in one go.",
+        )}
       />
 
-      <AlertBanner message={apiError} />
+      <AlertBanner message={t(apiError ?? '')} />
+      {pointsError && (
+        <div className="mb-3">
+          <AlertBanner message={t(pointsError)} />
+          <button
+            type="button"
+            onClick={retryPoints}
+            className="min-h-11 rounded-lg px-3 text-sm font-semibold text-brand-800 underline"
+          >
+            {t('Retry')}
+          </button>
+        </div>
+      )}
 
       {requests.length > 0 && (
         <section
-          aria-label="Drop-off store"
+          aria-label={t('Drop-off store')}
           className="mb-4 rounded-xl border border-slate-200 p-4"
         >
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div className="flex min-w-0 items-start gap-3">
-              <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
+              <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
                 <LuMapPin className="size-5" />
               </span>
               <div className="min-w-0">
-                <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
-                  Drop-off store
+                <p className="text-xs font-semibold uppercase tracking-wider text-slate-600">
+                  {t('Drop-off store')}
                 </p>
                 {chosenStore ? (
                   <>
@@ -234,15 +288,18 @@ const RouteDropOffView = () => {
                   </>
                 ) : (
                   <p className="text-sm text-slate-500">
-                    No store planned for this route — choose where you&apos;re
-                    dropping off.
+                    {t(
+                      "No store planned for this route — choose where you're dropping off.",
+                    )}
                   </p>
                 )}
                 {plannedStore &&
                   store.collection_point &&
                   store.collection_point !== plannedStore.id && (
                     <p className="mt-1 text-xs font-medium text-amber-700">
-                      Different from the planned store ({plannedStore.name}).
+                      {t('Different from the planned store ({name}).', {
+                        name: plannedStore.name,
+                      })}
                     </p>
                   )}
               </div>
@@ -256,7 +313,7 @@ const RouteDropOffView = () => {
                   href={googleMapsDirectionsUrl(chosenStore.address)}
                 >
                   <LuNavigation className="size-4" />
-                  Google Maps
+                  {t('Google Maps')}
                 </Button>
                 <Button
                   variant="secondary"
@@ -265,14 +322,14 @@ const RouteDropOffView = () => {
                   href={wazeNavigateUrl(chosenStore.address)}
                 >
                   <LuNavigation className="size-4" />
-                  Waze
+                  {t('Waze')}
                 </Button>
               </div>
             )}
           </div>
           <div className="mt-3 max-w-sm">
             <SelectField
-              label="Dropping off at"
+              label={t('Dropping off at')}
               field="collection_point"
               options={storeOptions}
               formData={store}
@@ -296,21 +353,21 @@ const RouteDropOffView = () => {
                     checked={selected.size === requests.length}
                     onChange={toggleSelectAll}
                     className="size-4 rounded border-slate-300"
-                    aria-label="Select all"
+                    aria-label={t('Select all')}
                   />
                 )}
               </th>
               <th className="px-6 py-3 text-left font-semibold text-slate-500">
-                Order
+                {t('Order')}
               </th>
               <th className="px-6 py-3 text-left font-semibold text-slate-500">
-                Requester
+                {t('Requester')}
               </th>
               <th className="px-6 py-3 text-left font-semibold text-slate-500">
-                Category / collected
+                {t('Category / collected')}
               </th>
               <th className="px-6 py-3 text-left font-semibold text-slate-500">
-                Delivered quantity
+                {t('Delivered quantity')}
               </th>
             </tr>
           </thead>
@@ -319,7 +376,7 @@ const RouteDropOffView = () => {
       </TableWrapper>
 
       <div className="mt-4 flex flex-col items-start gap-3 rounded-xl border border-slate-200 p-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 rounded-xl focus-within:ring-2 focus-within:ring-brand-700 focus-within:ring-offset-2">
           {proofPreview ? (
             // eslint-disable-next-line @next/next/no-img-element -- local object URL preview, not a static asset
             <img
@@ -328,7 +385,7 @@ const RouteDropOffView = () => {
               className="size-14 shrink-0 rounded-xl border border-slate-200 object-cover"
             />
           ) : (
-            <span className="flex size-14 shrink-0 items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50 text-slate-400">
+            <span className="flex size-14 shrink-0 items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50 text-slate-600">
               <LuPackageCheck className="size-5" />
             </span>
           )}
@@ -339,18 +396,21 @@ const RouteDropOffView = () => {
             }`}
           >
             <LuUpload className="size-4" />
-            {uploadLabel}
+            {t(uploadLabel ?? '')}
           </label>
           <input
             id="drop-off-proof-input"
+            aria-label={t('Drop-off photo')}
+            aria-required="true"
             type="file"
             accept="image/*"
             className="sr-only"
-            disabled={uploading}
+            disabled={uploading || submitting}
             onChange={(e) => handleProofChange(e.target.files?.[0])}
           />
           <span className="text-xs text-slate-500">
-            Drop-off photo <span className="text-red-600">*</span>
+            {t('Drop-off photo')}
+            <span className="text-red-600">*</span>
           </span>
         </div>
       </div>
@@ -361,12 +421,15 @@ const RouteDropOffView = () => {
         <Button
           onClick={handleSubmit}
           disabled={
-            submitting || selected.size === 0 || !store.collection_point
+            submitting ||
+            uploading ||
+            selected.size === 0 ||
+            !store.collection_point
           }
         >
           {submitting
-            ? 'Dropping off…'
-            : `Drop off to store (${selected.size})`}
+            ? t('Dropping off…')
+            : t('Drop off to store ({value0})', { value0: selected.size })}
         </Button>
       </StickyActionBar>
     </PageContainer>
