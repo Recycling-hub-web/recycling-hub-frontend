@@ -17,16 +17,10 @@ const format = (message: string, values: Variables = {}) =>
 const english = {
   locale: 'en' as PortalLocale,
   auth: authEn,
-  setLocale: (_locale: PortalLocale) => {},
   t: (message: string, values?: Variables) => format(message, values),
 };
 const PortalLocaleContext = createContext(english);
-export const PortalLocaleProvider = ({
-  children,
-}: {
-  initialLocale: PortalLocale;
-  children: ReactNode;
-}) => {
+export const PortalLocaleProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     document.documentElement.lang = 'en';
   }, []);

@@ -5,7 +5,6 @@ import { SignJWT } from 'jose';
 
 import { presentActivity } from '../src/components/features/activity/presentation';
 import type { ActivityLogEntry } from '../src/components/features/activity/types';
-import { portalBm } from '../src/locales/portal';
 
 loadEnvConfig(process.cwd());
 const origin = 'http://127.0.0.1:3101';
@@ -139,17 +138,31 @@ async function setup(
   return writes;
 }
 
-test('activity presentation translates known labels while preserving user text', () => {
+test('activity presentation supports custom labels while preserving user text', () => {
   const original = JSON.stringify(entry);
-  const t = (key: string) => portalBm[key] ?? key;
+  const labels: Record<string, string> = {
+    'Payment recorded for review': 'Recorded payment',
+    Note: 'Customer note',
+    'Fields updated': 'Changed fields',
+    'Actual amount': 'Amount',
+    'Account active': 'Active account',
+    Yes: 'Enabled',
+  };
+  const t = (key: string) => labels[key] ?? key;
   const result = presentActivity(entry, t);
-  expect(result.title).toBe('Bayaran direkodkan untuk semakan');
-  expect(result.details).toContainEqual({ label: 'Nota', value: 'Paid' });
+  expect(result.title).toBe('Recorded payment');
   expect(result.details).toContainEqual({
-    label: 'Medan dikemas kini',
-    value: 'Jumlah sebenar',
+    label: 'Customer note',
+    value: 'Paid',
   });
-  expect(result.details).toContainEqual({ label: 'Akaun aktif', value: 'Ya' });
+  expect(result.details).toContainEqual({
+    label: 'Changed fields',
+    value: 'Amount',
+  });
+  expect(result.details).toContainEqual({
+    label: 'Active account',
+    value: 'Enabled',
+  });
   expect(JSON.stringify(entry)).toBe(original);
   expect(presentActivity(entry).title).toBe('Payment recorded for review');
 });

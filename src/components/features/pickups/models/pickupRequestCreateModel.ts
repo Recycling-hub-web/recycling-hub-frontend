@@ -236,12 +236,6 @@ const buildPayload = (
   evaluation: evaluationToPayload(evaluation, orders),
 });
 
-/** The success toast's body, unchanged. */
-const successMessage = (data: FormState, orders: DraftOrder[]) =>
-  orders.length
-    ? `A request for ${data.full_name} has been added with ${orders.length} order${orders.length === 1 ? '' : 's'}.`
-    : `A request for ${data.full_name} has been added.`;
-
 const requestTypeLabel = (type: PickupRequestType) =>
   REQUEST_TYPE_OPTIONS.find((opt) => opt.value === type)?.label ?? type;
 
@@ -254,7 +248,6 @@ export {
   requestTypeLabel,
   STEP_FIELDS,
   STEPS,
-  successMessage,
   validateField,
   validateOrders,
   validateRequestEvaluation,

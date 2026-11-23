@@ -37,7 +37,6 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const locale = 'en';
   return (
     <html lang="en">
       <head>
@@ -57,7 +56,7 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <Providers locale={locale}>{children}</Providers>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
