@@ -2,6 +2,8 @@
 
 import { type FormEvent, useMemo, useState } from 'react';
 
+import { usePortalLocale } from '../../../../../contexts/PortalLocaleContext';
+import { localizeErrors } from '../../../../../lib/localizeErrors';
 import { SelectField } from '../../../../form/fields/SelectField';
 import { ValidatedForm } from '../../../../form/ValidatedForm';
 import { AlertBanner } from '../../../../ui/AlertBanner';
@@ -32,7 +34,13 @@ const AssignDriverModal = ({
   onClose,
   onAssigned,
 }: AssignDriverModalProps) => {
-  const { drivers, loading: loadingDrivers } = useDrivers(open);
+  const { t } = usePortalLocale();
+  const {
+    drivers,
+    loading: loadingDrivers,
+    error: driversError,
+    refetch: retryDrivers,
+  } = useDrivers(open);
   const { execute: assignDriver, loading: submitting } = useAssignDriver();
   const [formData, setFormData] = useState<FormState>(INITIAL_STATE);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -75,7 +83,7 @@ const AssignDriverModal = ({
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setApiError('');
-    if (!validate()) return;
+    if (submitting || !validate()) return;
     try {
       await assignDriver(requestId, {
         driver: formData.driver,
@@ -91,8 +99,11 @@ const AssignDriverModal = ({
     <Modal
       open={open}
       onClose={handleClose}
-      title="Schedule pickup"
-      subtitle="Assign a driver. The driver will confirm the pickup date and time."
+      dismissible={!submitting}
+      title={t('Schedule pickup')}
+      subtitle={t(
+        'Assign a driver. The driver will confirm the pickup date and time.',
+      )}
       footer={
         <FormActions>
           <button
@@ -101,7 +112,7 @@ const AssignDriverModal = ({
             disabled={submitting}
             className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Cancel
+            {t('Cancel')}
           </button>
           <button
             type="submit"
@@ -109,7 +120,7 @@ const AssignDriverModal = ({
             disabled={submitting}
             className="rounded-lg bg-brand-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-800 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {submitting ? 'Scheduling…' : 'Schedule'}
+            {submitting ? t('Scheduling…') : t('Schedule')}
           </button>
         </FormActions>
       }
@@ -120,15 +131,27 @@ const AssignDriverModal = ({
         noValidate
         className="space-y-1"
       >
-        <AlertBanner message={apiError} />
+        <AlertBanner message={t(apiError ?? '')} />
+        {driversError && (
+          <div className="mb-4">
+            <AlertBanner message={t(driversError)} />
+            <button
+              type="button"
+              onClick={retryDrivers}
+              className="min-h-11 rounded px-3 text-sm font-semibold text-brand-800 underline"
+            >
+              {t('Retry drivers')}
+            </button>
+          </div>
+        )}
         <SelectField
-          label="Driver"
+          label={t('Driver')}
           field="driver"
           options={driverOptions}
           formData={formData}
-          errors={errors}
+          errors={localizeErrors(errors, t)}
           updateFormData={updateFormData}
-          disabled={loadingDrivers}
+          disabled={loadingDrivers || submitting || Boolean(driversError)}
         />
       </ValidatedForm>
     </Modal>

@@ -10,6 +10,7 @@ import {
   LuX,
 } from 'react-icons/lu';
 
+import { usePortalLocale } from '../../../../../contexts/PortalLocaleContext';
 import { ApiError } from '../../../../../lib/api';
 import { StatusBadge } from '../../../../ui/badges/StatusBadge';
 import { AppDate } from '../../../../ui/date/AppDate';
@@ -63,6 +64,7 @@ const QuickLeadTable = ({
   onMarkContacted,
   markingContactedId,
 }: QuickLeadTableProps) => {
+  const { t, locale } = usePortalLocale();
   const toast = useToast();
   const [cancellingLead, setCancellingLead] =
     useState<PickupQuickRequestListItem | null>(null);
@@ -72,7 +74,7 @@ const QuickLeadTable = ({
     setCancelling(true);
     try {
       await cancelQuickPickupRequest(cancellingLead.id);
-      toast.success('Lead cancelled');
+      toast.success(t('Lead cancelled'));
       setCancellingLead(null);
       onRetry();
     } catch (err) {
@@ -90,7 +92,7 @@ const QuickLeadTable = ({
       return (
         <TableErrorRow
           colSpan={columnCount}
-          message={error}
+          message={t(error ?? '')}
           onRetry={onRetry}
         />
       );
@@ -99,8 +101,10 @@ const QuickLeadTable = ({
         <TableEmptyRow
           colSpan={columnCount}
           icon={<LuUserRoundSearch className="size-6" />}
-          title="No quick leads yet"
-          subtitle="Quick callback requests from the website will show up here."
+          title={t('No quick leads yet')}
+          subtitle={t(
+            'Quick callback requests from the website will show up here.',
+          )}
         />
       );
     }
@@ -114,18 +118,22 @@ const QuickLeadTable = ({
         </td>
         <td className="px-6 py-4">
           <StatusBadge variant={REQUEST_TYPE_BADGE_VARIANT[lead.request_type]}>
-            {PICKUP_REQUEST_TYPE_LABELS[lead.request_type]}
+            {t(PICKUP_REQUEST_TYPE_LABELS[lead.request_type])}
           </StatusBadge>
         </td>
         <td className="px-6 py-4">
           <StatusBadge
             variant={QUICK_REQUEST_STATUS_BADGE_VARIANT[lead.status]}
           >
-            {PICKUP_QUICK_REQUEST_STATUS_LABELS[lead.status]}
+            {t(PICKUP_QUICK_REQUEST_STATUS_LABELS[lead.status])}
           </StatusBadge>
         </td>
         <td className="px-6 py-4 text-slate-500">
-          <AppDate value={lead.created_at} format="short" />
+          <AppDate
+            value={lead.created_at}
+            format="short"
+            locale={locale === 'bm' ? 'ms-MY' : 'en-GB'}
+          />
         </td>
         <td className="px-6 py-4">
           <div className="flex items-center justify-end gap-1">
@@ -133,7 +141,7 @@ const QuickLeadTable = ({
               ? lead.collection_request && (
                   <Link
                     href={`${basePath}/${lead.collection_request}`}
-                    aria-label="View request"
+                    aria-label={t('View request')}
                     className="inline-flex size-8 items-center justify-center rounded-full text-slate-600 transition hover:bg-slate-100 hover:text-slate-700"
                   >
                     <LuEye className="size-4" />
@@ -146,7 +154,9 @@ const QuickLeadTable = ({
                         type="button"
                         onClick={() => onMarkContacted(lead)}
                         disabled={markingContactedId === lead.id}
-                        aria-label={`Mark lead from ${lead.phone_number} as contacted`}
+                        aria-label={t('Mark lead from {value0} as contacted', {
+                          value0: lead.phone_number,
+                        })}
                         className="inline-flex size-8 items-center justify-center rounded-full text-slate-600 transition hover:bg-slate-100 hover:text-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
                       >
                         <LuCheck className="size-4" />
@@ -154,7 +164,9 @@ const QuickLeadTable = ({
                     )}
                     <Link
                       href={`${basePath}/create?leadId=${lead.id}`}
-                      aria-label={`Follow up on lead from ${lead.phone_number}`}
+                      aria-label={t('Follow up on lead from {value0}', {
+                        value0: lead.phone_number,
+                      })}
                       className="inline-flex size-8 items-center justify-center rounded-full text-slate-600 transition hover:bg-brand-50 hover:text-brand-700"
                     >
                       <LuPhoneCall className="size-4" />
@@ -162,7 +174,9 @@ const QuickLeadTable = ({
                     <button
                       type="button"
                       onClick={() => setCancellingLead(lead)}
-                      aria-label={`Cancel lead from ${lead.phone_number}`}
+                      aria-label={t('Cancel lead from {value0}', {
+                        value0: lead.phone_number,
+                      })}
                       className="inline-flex size-8 items-center justify-center rounded-full text-slate-600 transition hover:bg-red-50 hover:text-red-600"
                     >
                       <LuX className="size-4" />
@@ -183,10 +197,13 @@ const QuickLeadTable = ({
           if (!cancelling) setCancellingLead(null);
         }}
         onConfirm={handleCancelLead}
-        title="Cancel quick lead"
-        message={`Cancel the lead from ${cancellingLead?.phone_number ?? ''}? It will remain visible, but cannot be contacted or converted.`}
-        confirmText="Cancel lead"
-        cancelText="Keep lead"
+        title={t('Cancel quick lead')}
+        message={t(
+          'Cancel the lead from {value0}? It will remain visible, but cannot be contacted or converted.',
+          { value0: cancellingLead?.phone_number ?? '' },
+        )}
+        confirmText={t('Cancel lead')}
+        cancelText={t('Keep lead')}
         loading={cancelling}
       />
       <TableWrapper>
@@ -194,19 +211,19 @@ const QuickLeadTable = ({
           <thead className="bg-slate-50">
             <tr>
               <th className="px-6 py-3 text-left font-semibold text-slate-500">
-                Phone
+                {t('Phone')}
               </th>
               <th className="px-6 py-3 text-left font-semibold text-slate-500">
-                Type
+                {t('Type')}
               </th>
               <th className="px-6 py-3 text-left font-semibold text-slate-500">
-                Status
+                {t('Status')}
               </th>
               <th className="px-6 py-3 text-left font-semibold text-slate-500">
-                Created
+                {t('Created')}
               </th>
               <th className="px-6 py-3 text-right font-semibold text-slate-500">
-                Actions
+                {t('Actions')}
               </th>
             </tr>
           </thead>

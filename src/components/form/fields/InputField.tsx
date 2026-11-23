@@ -1,5 +1,6 @@
 import { useId } from 'react';
 
+import { usePortalLocale } from '../../../contexts/PortalLocaleContext';
 import {
   fieldErrorAttributes,
   fieldStateClasses,
@@ -49,10 +50,12 @@ const InputField = ({
   step,
   pattern,
 }: InputFieldProps) => {
+  const { t } = usePortalLocale();
   const inputId = useId();
   const value =
     (getNestedValue(formData, field) as string | number | undefined) ?? '';
-  const error = errors?.[field];
+  const rawError = errors?.[field];
+  const error = rawError ? t(rawError) : undefined;
 
   const isAmount = [
     'price',

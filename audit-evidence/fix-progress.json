@@ -1,5 +1,5 @@
 {
-  "batch": "Implementation progress: batches 1, 2, 3, 4 and 5",
+  "batch": "Implementation progress: batches 1–8",
   "original_audit": "UI-UX-Audit-2026-11-22.html",
   "scope": "Local frontend and finance API changes. No deployment, account changes, real business submissions or payments.",
   "findings": [
@@ -127,7 +127,7 @@
       "id": "21",
       "title": "Public language choice does not carry into operations",
       "status": "partially implemented",
-      "implementation": "Public EN/BM choice persists through a shared language preference cookie into portal sign-in and auth screens. Added a small shared locale provider and reusable switcher, translated shared role navigation, notification controls, finance filters/table/pagination and reimbursement UI. Switching language preserves credentials, OTP entry and finance filters; portal role URLs and permissions are unchanged. Auth dictionaries are reused rather than duplicated. Other operational pages and server-provided error/notification content still need translation; BM mode displays an availability notice on unsupported pages. Batch 4 extends BM to finance detail labels/statuses, dated payment history, payout viewing/editing/history and activity interface labels. Prices and item totals now use the same MYR formatter as the list. Known audit labels/enums are translated for display; names, bank account strings, identifiers, notes and the stored audit payload remain untouched. Nested desktop sidebar links now translate too. Full operational and backend-message localization is still incomplete. Batch 5 adds the accounting overview, shared welcome/profile labels and mobile command card, chart range controls, locale-aware chart dates, and loading/empty/error/retry copy. Date-range state and original profile data survive language changes. The accounting overview now uses the shared MYR formatter."
+      "implementation": "Public EN/BM choice persists through a shared language preference cookie into portal sign-in and auth screens. Added a small shared locale provider and reusable switcher, translated shared role navigation, notification controls, finance filters/table/pagination and reimbursement UI. Switching language preserves credentials, OTP entry and finance filters; portal role URLs and permissions are unchanged. Auth dictionaries are reused rather than duplicated. Other operational pages and server-provided error/notification content still need translation; BM mode displays an availability notice on unsupported pages. Batch 4 extends BM to finance detail labels/statuses, dated payment history, payout viewing/editing/history and activity interface labels. Prices and item totals now use the same MYR formatter as the list. Known audit labels/enums are translated for display; names, bank account strings, identifiers, notes and the stored audit payload remain untouched. Nested desktop sidebar links now translate too. Full operational and backend-message localization is still incomplete. Batch 5 adds the accounting overview, shared welcome/profile labels and mobile command card, chart range controls, locale-aware chart dates, and loading/empty/error/retry copy. Date-range state and original profile data survive language changes. The accounting overview now uses the shared MYR formatter. Batch 6 covers claims list/detail, driver submission and vehicle states, approval/rejection and same-driver bulk-payment dialogs. Status/category labels, filter names, dates, totals, upload requirements and errors use BM copy. Shared select, upload and toast labels are localized. Sidebar section keys remain stable across language changes. Server-authored messages and other operational modules still require follow-up. Batch 7 extends BM to the driver pickup list/detail, route optimization/preview, collection confirmation and route drop-off, plus shared order documents, lifecycle, payment and activity tabs. Customer names, categories, addresses, notes, IDs and navigation targets remain data values. Admin/staff pickup administration and receiving workflows still need translation."
     },
     {
       "id": "22",
@@ -155,13 +155,18 @@
     }
   ],
   "verification": {
-    "typescript": "Passed after batch 5, including production build type validation.",
-    "changed_file_eslint": "Passed for changed frontend source and regression files after batch 5. Backend unchanged in batches 3–5.",
-    "mocked_regression_suite": "48 frontend tests passed against the production build after batch 5. Three new cases cover accounting overview translation and custom-range persistence across locale switches/reloads, truthful loading skeletons, separate totals/chart failure recovery and localized empty states. Existing regressions cover the other roles and previously fixed workflows. All business APIs and writes are mocked.",
-    "final_public_flow_recheck": "Reviewed batch 5 accounting overview at 1280px and 390px. Three statistic cards fill the desktop row, currency amounts fit, and the mobile command card and date-range select remain readable. Language changes preserve profile values and date ranges. Earlier batch evidence remains unchanged.",
+    "typescript": "Passed after batch 8, including standalone check-types and production-build type validation.",
+    "changed_file_eslint": "Passed for changed frontend source/configuration/tests; backend unchanged in batches 3–8.",
+    "mocked_regression_suite": "65 frontend tests passed against the isolated production build after batch 7. Six new driver cases cover BM route selection and previews at mobile/desktop sizes, seven-stop limit, Malaysia-local schedule prefilling from list and detail with UTC round-trip, collection proof and unchanged notes/payment codes, collection-point retry/location denial, and drop-off quantity/upload guards with original IDs and precise quantities. Every business API and storage write is mocked; geolocation uses synthetic values/errors.",
+    "final_public_flow_recheck": "Reviewed BM driver route preview at 390px and 1440px and the schedule confirmation dialog. Order codes, addresses and user names remain original data; dialogs and navigation controls remain readable. The confirmation shows 23 Nov 2026 10:00 in Malaysia and submits the corresponding 02:00 UTC. Preserved previously committed batch 3–5 screenshots.",
     "repository_lint": "Still fails only in unchanged scripts/verify-seo-batch.cjs, scripts/verify-service-navbar.cjs and scripts/verify-services.cjs (83 errors, 8 warnings).",
-    "production_build": "Passed: next build --no-lint after batch 5. Google Fonts stylesheet optimization remained unavailable; the build completed with the existing font configuration. The separate full-repository lint limitation from batch 2 is unchanged.",
-    "backend_finance_suite": "50 tests passed (43 existing, 7 new) using an isolated in-memory SQLite database; real network calls blocked"
+    "production_build": "Passed: RECYCLING_UI_BUILD_DIR=.next-ui-validation npx next build --no-lint. The default .next directory remains available to the running development server. Build emitted Google Fonts optimization and jose Edge Runtime dependency warnings; compilation, generated routes and type validation completed successfully. Full-repository lint limitation remains recorded separately.",
+    "backend_finance_suite": "50 tests passed (43 existing, 7 new) using an isolated in-memory SQLite database; real network calls blocked",
+    "isolated_build_command": "RECYCLING_UI_BUILD_DIR=.next-ui-validation npx next build --no-lint",
+    "isolated_start_command": "RECYCLING_UI_BUILD_DIR=.next-ui-validation npx next start --hostname 127.0.0.1 --port 3101",
+    "batch8_regressions": "66 mocked UI regression tests passed; an additional targeted run passed all 4 receiving/management tests, adding keyboard navigation coverage for staff, admin and super-admin (69 unique cases total). Receiving covers pagination, filter reset, pending-close guard and original customer data.",
+    "batch8_visual": "Reviewed receiving mobile screenshot. Existing brand styles and responsive card presentation preserved.",
+    "batch8_limits": "Admin create/edit/conversion/evaluation/assignment/upload mutations were reviewed in source and type/build checked, but have not yet received dedicated end-to-end browser coverage in this batch. No live business submissions performed. BM availability notice remains until remaining workflow coverage and translations are verified."
   },
   "evidence": [
     "after-batch-1/callback-mobile.png",
@@ -179,7 +184,13 @@
     "batch4-finance-details-bm-mobile.png",
     "batch4-payout-validation-bm.png",
     "batch5-accounting-bm-desktop.png",
-    "batch5-accounting-bm-mobile.png"
+    "batch5-accounting-bm-mobile.png",
+    "batch6-claim-form-bm.png",
+    "batch6-bulk-claims-bm-mobile.png",
+    "batch7-route-bm-mobile.png",
+    "batch7-route-bm-desktop.png",
+    "batch7-schedule-bm.png",
+    "batch8-receiving-bm-mobile.png"
   ],
   "limitations": [
     "Protected flows were tested with synthetic identities and intercepted API responses. Real backend/production role workflows were not exercised.",
@@ -187,9 +198,9 @@
     "Original audit report and original findings remain unchanged as a baseline."
   ],
   "remaining_work": [
-    "Translate remaining operational workflows (other role dashboards, claims, pickup operations, profile editing and administration) and backend-provided messages; retain the BM availability notice until each module is ready.",
-    "Review less common server-defined activity fields and enum labels during module translation; unknown values retain their original text.",
-    "Validate production role workflows and real delivery/upload integrations with authorized test accounts before release."
+    "Finish browser verification of admin/staff request creation/editing, conversion, evaluation, assignment and upload workflows; complete other role dashboards, profile editing and administration translations. Keep BM availability notice until each module is verified.",
+    "Localize backend-authored messages and less common server-defined activity fields/enum labels; unknown values retain their original text.",
+    "Validate production role workflows and real delivery/upload/navigation integrations with authorized test accounts before release."
   ],
   "release_notes": [
     "Deploy the frontend and finance API updates together so search, dates and ordering are honored by the server.",
@@ -207,5 +218,27 @@
     "Corrected OverviewStatGrid to use three columns for three cards instead of reserving a fourth column; long metric values can wrap within their card.",
     "Used shared MYR formatting for dashboard amounts and locale-aware UTC date formatters for chart labels.",
     "Removed the partial-language notice on the accounting overview; unsupported modules continue to show it."
+  ],
+  "batch6_changes": [
+    "Localized claim lists, filters, details, driver form, review dialogs and same-driver combined payments; claim notes, names, dates, proof keys and exact payment totals remain original data.",
+    "Added native keyboard links for claim rows and document links for receipt viewing, including PDFs supported by the backend.",
+    "Reused StatusFileUpload for receipt selection, type/size validation, visible keyboard focus, removal and upload states; domain errors are associated with the picker and reachable from validation summaries.",
+    "Blocked submission/category changes while uploads are pending; prevented stale or failed receipt uploads from being submitted as successful. Added local receipt validation using the existing RM50 default threshold; backend validation remains authoritative.",
+    "Added retry for failed vehicle lookup while retaining the selected claim category. Missing vehicles and company fleet cards retain their submission guards.",
+    "Retained role-based controls and same-driver/100-claim bulk-selection restrictions; localized shared labels and kept sidebar section keys independent of language."
+  ],
+  "last_updated": "2026-11-23",
+  "batch7_changes": [
+    "Completed existing partial driver pickup translations: dynamic tabs/counts, action names, material summaries, empty/error/retry states, route previews and shared order tabs now use the locale provider.",
+    "Converted API timestamps into local datetime input values for driver confirmation, reseeding the correct order time whenever the modal opens; API submissions remain UTC timestamps.",
+    "Added collection-point loading-error retry controls, retained location-denied guidance and the seven-stop optimization limit.",
+    "Blocked drop-off completion while proof uploads are pending, cleared stale proof keys before replacement uploads, cleaned up preview object URLs, named quantity inputs and rejected non-positive delivered quantities before API submission.",
+    "Added isolated production-build output via RECYCLING_UI_BUILD_DIR so production verification can coexist with a local development server without overwriting .next."
+  ],
+  "batch8_changes": [
+    "Added BM presentation copy across pickup request list/detail/create/edit, quick-lead conversion, order creation/evaluation, driver assignment and cancellation components; customer values and command codes remain unchanged.",
+    "Added receiving pagination with filter resets, collection-point retries, 44px verification controls and pending-close safeguards; hide pagination on queue errors.",
+    "Added native request-detail links for keyboard navigation across staff, admin and super-admin routes.",
+    "Localized shared field errors, action labels and filter controls. Collapsed mobile filters are hidden from keyboard focus. Assignment failures offer retries and pending mutation dialogs resist dismissal."
   ]
 }

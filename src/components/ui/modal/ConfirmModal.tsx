@@ -1,5 +1,8 @@
+'use client';
+
 import type { ReactNode } from 'react';
 
+import { usePortalLocale } from '../../../contexts/PortalLocaleContext';
 import { FormActions } from '../buttons/FormActions';
 import { Modal } from './Modal';
 
@@ -21,7 +24,7 @@ type ConfirmModalProps = {
 
 const CONFIRM_VARIANT_CLASSES: Record<ConfirmVariant, string> = {
   danger: 'bg-red-600 hover:bg-red-700',
-  primary: 'bg-brand-600 hover:bg-brand-700',
+  primary: 'bg-brand-700 hover:bg-brand-800',
 };
 
 /** Confirmation dialog built on top of Modal. Buttons are plain (rather
@@ -39,38 +42,42 @@ const ConfirmModal = ({
   cancelText = 'Cancel',
   confirmVariant = 'danger',
   loading = false,
-}: ConfirmModalProps) => (
-  <Modal
-    open={open}
-    onClose={onClose}
-    title={title}
-    subtitle={subtitle}
-    icon={icon}
-    size="sm"
-    footer={
-      <FormActions>
-        <button
-          type="button"
-          onClick={onClose}
-          disabled={loading}
-          className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          {cancelText}
-        </button>
-        <button
-          type="button"
-          onClick={onConfirm}
-          disabled={loading}
-          className={`rounded-lg px-4 py-2 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-50 ${CONFIRM_VARIANT_CLASSES[confirmVariant]}`}
-        >
-          {loading ? 'Please wait…' : confirmText}
-        </button>
-      </FormActions>
-    }
-  >
-    <p className="text-sm text-slate-600">{message}</p>
-  </Modal>
-);
+}: ConfirmModalProps) => {
+  const { t } = usePortalLocale();
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      dismissible={!loading}
+      title={title}
+      subtitle={subtitle}
+      icon={icon}
+      size="sm"
+      footer={
+        <FormActions>
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={loading}
+            className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {t(cancelText)}
+          </button>
+          <button
+            type="button"
+            onClick={onConfirm}
+            disabled={loading}
+            className={`rounded-lg px-4 py-2 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-50 ${CONFIRM_VARIANT_CLASSES[confirmVariant]}`}
+          >
+            {loading ? t('Please wait…') : t(confirmText)}
+          </button>
+        </FormActions>
+      }
+    >
+      <p className="text-sm text-slate-600">{message}</p>
+    </Modal>
+  );
+};
 
 export { ConfirmModal };
 export type { ConfirmModalProps, ConfirmVariant };

@@ -11,7 +11,8 @@ export const PortalLanguageAvailability = () => {
   if (
     locale !== 'bm' ||
     pathname === '/accounting' ||
-    /\/finance(?:\/[^/]+)?\/?$/.test(pathname ?? '')
+    /^\/driver\/(?:pickups(?:\/[^/]+)?|drop-off)\/?$/.test(pathname ?? '') ||
+    /\/(?:finance|claims)(?:\/[^/]+)?\/?$/.test(pathname ?? '')
   )
     return null;
   return (

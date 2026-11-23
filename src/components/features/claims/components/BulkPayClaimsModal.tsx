@@ -2,7 +2,9 @@
 
 import { type FormEvent, useState } from 'react';
 
+import { usePortalLocale } from '../../../../contexts/PortalLocaleContext';
 import { ApiError } from '../../../../lib/api';
+import { formatMYR } from '../../../../lib/money';
 import { StatusFileUpload } from '../../../form/upload/StatusFileUpload';
 import { ValidatedForm } from '../../../form/ValidatedForm';
 import { AlertBanner } from '../../../ui/AlertBanner';
@@ -22,6 +24,7 @@ type Props = {
 };
 
 const BulkPayClaimsModal = ({ claims, onClose, onPaid }: Props) => {
+  const { t, locale } = usePortalLocale();
   const [proofFile, setProofFile] = useState<File | null>(null);
   const [proof, setProof] = useState('');
   const [error, setError] = useState('');
@@ -81,22 +84,22 @@ const BulkPayClaimsModal = ({ claims, onClose, onPaid }: Props) => {
       onClose={onClose}
       dismissible={!busy}
       size="lg"
-      title="Pay selected expense claims"
-      subtitle="Record one cashless payment."
+      title={t('Pay selected expense claims')}
+      subtitle={t('Record one cashless payment.')}
       footer={
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <p className="text-xs text-slate-500">Total reimbursement</p>
+            <p className="text-xs text-slate-500">{t('Total reimbursement')}</p>
             <p className="text-xl font-bold tabular-nums text-brand-800">
-              RM {total}
+              {formatMYR(total)}
             </p>
           </div>
           <FormActions>
             <Button variant="secondary" onClick={onClose} disabled={busy}>
-              Cancel
+              {t('Cancel')}
             </Button>
             <Button type="submit" form="bulk-pay-claims-form" disabled={busy}>
-              {saving ? 'Saving…' : 'Confirm payment'}
+              {saving ? t('Saving…') : t('Confirm payment')}
             </Button>
           </FormActions>
         </div>
@@ -108,18 +111,18 @@ const BulkPayClaimsModal = ({ claims, onClose, onPaid }: Props) => {
         noValidate
         className="space-y-4 py-2"
       >
-        <AlertBanner message={error} />
+        <AlertBanner message={t(error)} />
         <div className="rounded-xl bg-brand-50 p-4">
-          <p className="text-xs text-slate-500">Paying driver</p>
+          <p className="text-xs text-slate-500">{t('Paying driver')}</p>
           <p className="mt-1 font-semibold text-slate-900">
             {driver?.full_name}
           </p>
           <p className="mt-1 text-xs text-slate-500">
-            {claims.length} pending {claims.length === 1 ? 'claim' : 'claims'}
+            {t('{count} pending claims', { count: claims.length })}
           </p>
         </div>
         <ul
-          aria-label="Selected claims"
+          aria-label={t('Selected claims')}
           className="divide-y divide-slate-100 rounded-xl border border-slate-200 px-4"
         >
           {claims.map((claim) => (
@@ -129,16 +132,17 @@ const BulkPayClaimsModal = ({ claims, onClose, onPaid }: Props) => {
             >
               <div>
                 <p className="font-medium text-slate-800">
-                  {CLAIM_CATEGORY_LABELS[claim.category]}
+                  {t(CLAIM_CATEGORY_LABELS[claim.category])}
                   {claim.vehicle ? ` · ${claim.vehicle.plate_number}` : ''}
                 </p>
                 <AppDate
+                  locale={locale === 'bm' ? 'ms-MY' : 'en-GB'}
                   value={claim.date}
                   className="text-xs text-slate-500"
                 />
               </div>
               <span className="shrink-0 font-semibold tabular-nums">
-                RM {claim.amount_approved ?? claim.amount_claimed}
+                {formatMYR(claim.amount_approved ?? claim.amount_claimed)}
               </span>
             </li>
           ))}
@@ -147,8 +151,10 @@ const BulkPayClaimsModal = ({ claims, onClose, onPaid }: Props) => {
           <StatusFileUpload
             compact
             id="bulk-claim-proof"
-            label="Payment proof"
-            description="Upload the receipt for the combined DuitNow or bank transfer. This proof will be saved against every selected claim."
+            label={t('Payment proof')}
+            description={t(
+              'Upload the receipt for the combined DuitNow or bank transfer. This proof will be saved against every selected claim.',
+            )}
             file={proofFile}
             onFileChange={handleProof}
             onRemove={() => {

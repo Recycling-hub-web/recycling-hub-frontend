@@ -1,8 +1,11 @@
 'use client';
 
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { LuReceipt } from 'react-icons/lu';
 
+import { usePortalLocale } from '../../../../contexts/PortalLocaleContext';
+import { formatMYR } from '../../../../lib/money';
 import { StatusBadge } from '../../../ui/badges/StatusBadge';
 import { AppDate } from '../../../ui/date/AppDate';
 import {
@@ -49,6 +52,7 @@ const ClaimTable = ({
   onSelect,
   onSelectPage,
 }: ClaimTableProps) => {
+  const { t, locale } = usePortalLocale();
   const router = useRouter();
   const columnCount = onSelect ? 7 : 6;
   const eligibleOnPage = claims.filter(
@@ -75,8 +79,10 @@ const ClaimTable = ({
         <TableEmptyRow
           colSpan={columnCount}
           icon={<LuReceipt className="size-6" />}
-          title="No expense claims yet"
-          subtitle="Petrol and tool reimbursement claims will show up here."
+          title={t('No expense claims yet')}
+          subtitle={t(
+            'Petrol and tool reimbursement claims will show up here.',
+          )}
         />
       );
     }
@@ -88,7 +94,11 @@ const ClaimTable = ({
         className="cursor-pointer transition-colors hover:bg-slate-50"
       >
         {onSelect && (
-          <td className="w-12 p-4" onClick={(event) => event.stopPropagation()}>
+          <td
+            data-card-role="select"
+            className="w-12 p-4"
+            onClick={(event) => event.stopPropagation()}
+          >
             <input
               type="checkbox"
               className="size-4 accent-brand-600"
@@ -98,30 +108,54 @@ const ClaimTable = ({
                 Boolean(selectedDriverId && selectedDriverId !== c.driver.id) ||
                 (selectedIds.size >= 100 && !selectedIds.has(c.id))
               }
-              aria-label={`Select claim for ${c.driver.full_name}: ${CLAIM_CATEGORY_LABELS[c.category]}, RM ${c.amount_approved ?? c.amount_claimed}, ${c.date}`}
+              aria-label={t(
+                'Select claim for {name}: {category}, {amount}, {date}',
+                {
+                  name: c.driver.full_name,
+                  category: t(CLAIM_CATEGORY_LABELS[c.category]),
+                  amount: formatMYR(c.amount_approved ?? c.amount_claimed),
+                  date: c.date,
+                },
+              )}
               onChange={() => onSelect(c)}
             />
           </td>
         )}
-        <td className="max-w-[160px] truncate px-6 py-4 font-medium text-slate-900">
-          {c.driver.full_name}
+        <td
+          data-card-role="title"
+          className="max-w-[160px] truncate px-6 py-4 font-medium text-slate-900"
+        >
+          <Link
+            href={`${basePath}/${c.id}`}
+            onClick={(event) => event.stopPropagation()}
+            aria-label={t('View claim for {name}', {
+              name: c.driver.full_name,
+            })}
+            className="rounded underline decoration-slate-300 underline-offset-4 hover:text-brand-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-700"
+          >
+            {c.driver.full_name}
+          </Link>
         </td>
         <td className="px-6 py-4 text-slate-700">
-          {CLAIM_CATEGORY_LABELS[c.category]}
+          {t(CLAIM_CATEGORY_LABELS[c.category])}
         </td>
         <td className="max-w-[160px] truncate px-6 py-4 text-slate-700">
           {c.vehicle ? c.vehicle.plate_number : '—'}
         </td>
         <td className="px-6 py-4 font-medium text-slate-900">
-          {c.amount_approved ?? c.amount_claimed}
+          {formatMYR(c.amount_approved ?? c.amount_claimed)}
         </td>
         <td className="px-6 py-4">
           <StatusBadge variant={STATUS_BADGE_VARIANT[c.status]}>
-            {CLAIM_STATUS_LABELS[c.status]}
+            {t(CLAIM_STATUS_LABELS[c.status])}
           </StatusBadge>
         </td>
         <td className="px-6 py-4 text-slate-500">
-          <AppDate value={c.date} format="short" />
+          <AppDate
+            value={c.date}
+            format="short"
+            locale={locale === 'bm' ? 'ms-MY' : 'en-GB'}
+          />
         </td>
       </tr>
     ));
@@ -136,7 +170,7 @@ const ClaimTable = ({
           itemsPerPage={PAGE_SIZE}
           itemCount={claims.length}
           totalCount={count}
-          itemLabel="claims"
+          itemLabel={t('claims')}
           loading={loading}
         />
       }
@@ -148,7 +182,9 @@ const ClaimTable = ({
               <th className="w-12 px-4 py-3">
                 <input
                   type="checkbox"
-                  aria-label="Select this driver's pending claims on this page"
+                  aria-label={t(
+                    "Select this driver's pending claims on this page",
+                  )}
                   className="size-4 accent-brand-600"
                   checked={pageSelected}
                   disabled={
@@ -162,22 +198,22 @@ const ClaimTable = ({
               </th>
             )}
             <th className="px-6 py-3 text-left font-semibold text-slate-500">
-              Driver
+              {t('Driver')}
             </th>
             <th className="px-6 py-3 text-left font-semibold text-slate-500">
-              Category
+              {t('Category')}
             </th>
             <th className="px-6 py-3 text-left font-semibold text-slate-500">
-              Vehicle
+              {t('Vehicle')}
             </th>
             <th className="px-6 py-3 text-left font-semibold text-slate-500">
-              Amount
+              {t('Amount')}
             </th>
             <th className="px-6 py-3 text-left font-semibold text-slate-500">
-              Status
+              {t('Status')}
             </th>
             <th className="px-6 py-3 text-left font-semibold text-slate-500">
-              Date
+              {t('Date')}
             </th>
           </tr>
         </thead>

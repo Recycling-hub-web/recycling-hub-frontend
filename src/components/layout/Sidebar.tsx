@@ -114,7 +114,7 @@ const Sidebar = ({ navItems, open, onClose }: SidebarProps) => {
           <SmoothScroll className="flex min-h-0 flex-1 flex-col overflow-y-auto px-3 py-4">
             <div>
               {groupBySection(navItems).map(({ title, items }, index) => (
-                <div key={t(title)} className={index > 0 ? 'mt-4' : ''}>
+                <div key={title} className={index > 0 ? 'mt-4' : ''}>
                   <p className="mb-2 px-4 text-xs font-semibold uppercase tracking-wider text-slate-600">
                     {t(title)}
                   </p>

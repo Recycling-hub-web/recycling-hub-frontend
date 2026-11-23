@@ -185,7 +185,7 @@ test('mobile language control fits the workspace menu and reports partial transl
     path: 'audit-evidence/batch3-finance-bm-mobile.png',
     fullPage: true,
   });
-  await page.goto('/accounting/claims');
+  await page.goto('/accounting/notifications');
   await expect(
     page.getByText(
       'Modul operasi lain tersedia dalam Bahasa Inggeris buat masa ini.',

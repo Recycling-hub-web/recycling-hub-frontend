@@ -1,6 +1,7 @@
 import { useId } from 'react';
 
 import { DIAL_CODES } from '../../../constants/dialCodes';
+import { usePortalLocale } from '../../../contexts/PortalLocaleContext';
 import { fieldErrorAttributes } from '../utils';
 
 type PhoneInputFieldProps = {
@@ -30,10 +31,12 @@ const PhoneInputField = ({
   onBlur,
   dialCodeLabel = 'Country calling code',
 }: PhoneInputFieldProps) => {
+  const { t } = usePortalLocale();
   const inputId = useId();
   const dialCode = (formData[dialCodeField] as string | undefined) ?? '+60';
   const number = (formData[numberField] as string | undefined) ?? '';
-  const error = errors?.[numberField];
+  const rawError = errors?.[numberField];
+  const error = rawError ? t(rawError) : undefined;
 
   const handleNumberChange = (value: string) => {
     updateFormData(numberField, value.replace(/[^\d\s()-]/g, ''));
@@ -45,14 +48,14 @@ const PhoneInputField = ({
         htmlFor={inputId}
         className="block text-sm font-medium text-slate-900"
       >
-        {label} {required && <span className="text-red-600">*</span>}
+        {t(label)} {required && <span className="text-red-600">*</span>}
       </label>
       <div
         data-dial-code={dialCode}
         className={`mt-2 flex h-12 overflow-hidden rounded-xl border transition ${error ? 'border-red-500' : 'border-slate-200'} ${disabled ? 'bg-slate-50 opacity-60' : ''}`}
       >
         <select
-          aria-label={dialCodeLabel}
+          aria-label={t(dialCodeLabel)}
           value={dialCode}
           onChange={(e) => updateFormData(dialCodeField, e.target.value)}
           disabled={disabled}

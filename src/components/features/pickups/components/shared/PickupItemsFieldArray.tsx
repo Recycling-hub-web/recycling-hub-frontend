@@ -2,6 +2,8 @@
 
 import { LuPlus, LuTrash2 } from 'react-icons/lu';
 
+import { usePortalLocale } from '../../../../../contexts/PortalLocaleContext';
+import { localizeErrors } from '../../../../../lib/localizeErrors';
 import { InputField } from '../../../../form/fields/InputField';
 import {
   SelectField,
@@ -45,10 +47,7 @@ type PickupItemsFieldArrayProps = {
   disabled?: boolean;
   /** One error map per row, same shape/index as `items`. */
   errors?: Record<string, string>[];
-  /** Passed in rather than read from useDictionary() directly — only
-   * the public form is part of the bilingual site; the admin/staff
-   * "New request" view that reuses this component is English-only,
-   * like every other dashboard screen. */
+  /** Caller-provided labels support both the public dictionary and portal locale. */
   labels: PickupItemsFieldArrayLabels;
 };
 
@@ -66,6 +65,7 @@ const PickupItemsFieldArray = ({
   errors = [],
   labels,
 }: PickupItemsFieldArrayProps) => {
+  const { t } = usePortalLocale();
   const unitsFor = (category: string) =>
     category ? unitsByCategory[category] ?? QUANTITY_UNITS : [];
 
@@ -101,7 +101,7 @@ const PickupItemsFieldArray = ({
           section-level action in the app. */}
       <div className="mb-3 flex items-center justify-between gap-3">
         <p className="text-sm font-medium text-slate-900">
-          {labels.itemsSection}
+          {t(labels.itemsSection)}
         </p>
         <Button
           type="button"
@@ -111,7 +111,7 @@ const PickupItemsFieldArray = ({
           className="px-3.5 py-1.5 text-xs"
         >
           <LuPlus className="mr-1.5 size-3.5" />
-          {labels.addItem}
+          {t(labels.addItem)}
         </Button>
       </div>
       <div className="space-y-4">
@@ -121,7 +121,7 @@ const PickupItemsFieldArray = ({
             {items.length > 1 && (
               <div className="mb-3 flex items-center justify-between gap-3">
                 <p className="text-xs font-semibold uppercase tracking-wider text-slate-600">
-                  {labels.itemHeading} {index + 1}
+                  {t(labels.itemHeading)} {index + 1}
                 </p>
                 <Button
                   type="button"
@@ -131,48 +131,48 @@ const PickupItemsFieldArray = ({
                   className="px-3.5 py-1.5 text-xs"
                 >
                   <LuTrash2 className="mr-1.5 size-3.5" />
-                  {labels.removeItem}
+                  {t(labels.removeItem)}
                 </Button>
               </div>
             )}
             <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-3">
               <SelectField
-                label={labels.category}
+                label={t(labels.category)}
                 field="category"
                 options={categoryOptions}
                 formData={item}
-                errors={errors[index]}
+                errors={localizeErrors(errors[index], t)}
                 updateFormData={(field, value) =>
                   updateItem(index, field, value)
                 }
                 disabled={disabled || loadingCategories}
               />
               <InputField
-                label={labels.estimatedQuantity}
+                label={t(labels.estimatedQuantity)}
                 field="estimated_quantity"
                 type="number"
                 required={false}
                 placeholder={
                   item.quantity_unit === 'unit'
-                    ? 'e.g. 3'
-                    : labels.estimatedQuantityPlaceholder
+                    ? t('e.g. 3')
+                    : t(labels.estimatedQuantityPlaceholder)
                 }
                 formData={item}
-                errors={errors[index]}
+                errors={localizeErrors(errors[index], t)}
                 updateFormData={(field, value) =>
                   updateItem(index, field, value)
                 }
                 disabled={disabled}
               />
               <SelectField
-                label={labels.quantityUnit}
+                label={t(labels.quantityUnit)}
                 field="quantity_unit"
                 options={unitsFor(item.category).map((unit) => ({
                   value: unit,
-                  label: QUANTITY_UNIT_LABELS[unit],
+                  label: t(QUANTITY_UNIT_LABELS[unit]),
                 }))}
                 formData={item}
-                errors={errors[index]}
+                errors={localizeErrors(errors[index], t)}
                 updateFormData={(field, value) =>
                   updateItem(index, field, value)
                 }

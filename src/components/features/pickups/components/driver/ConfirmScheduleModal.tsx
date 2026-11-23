@@ -1,7 +1,8 @@
 'use client';
 
-import { type FormEvent, useState } from 'react';
+import { type FormEvent, useEffect, useState } from 'react';
 
+import { usePortalLocale } from '../../../../../contexts/PortalLocaleContext';
 import { InputField } from '../../../../form/fields/InputField';
 import { ValidatedForm } from '../../../../form/ValidatedForm';
 import { AlertBanner } from '../../../../ui/AlertBanner';
@@ -34,11 +35,21 @@ const ConfirmScheduleModal = ({
   onConfirmed,
   initialScheduledAt,
 }: ConfirmScheduleModalProps) => {
+  const { t } = usePortalLocale();
   const { execute: confirmSchedule, loading: submitting } =
     useConfirmSchedule();
-  const [formData, setFormData] = useState<FormState>({
-    scheduled_at: initialScheduledAt?.slice(0, 16) ?? '',
-  });
+  const [formData, setFormData] = useState<FormState>({ scheduled_at: '' });
+  useEffect(() => {
+    if (!open) return;
+    const date = initialScheduledAt ? new Date(initialScheduledAt) : null;
+    const scheduledAt =
+      date && Number.isFinite(date.getTime())
+        ? new Date(date.getTime() - date.getTimezoneOffset() * 60_000)
+            .toISOString()
+            .slice(0, 16)
+        : '';
+    setFormData({ scheduled_at: scheduledAt });
+  }, [open, requestId, initialScheduledAt]);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [apiError, setApiError] = useState('');
 
@@ -81,8 +92,9 @@ const ConfirmScheduleModal = ({
     <Modal
       open={open}
       onClose={handleClose}
-      title="Confirm pickup time"
-      subtitle="Let the customer know exactly when you'll arrive."
+      dismissible={!submitting}
+      title={t('Confirm pickup time')}
+      subtitle={t("Let the customer know exactly when you'll arrive.")}
       footer={
         <FormActions>
           <button
@@ -91,7 +103,7 @@ const ConfirmScheduleModal = ({
             disabled={submitting}
             className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Cancel
+            {t('Cancel')}
           </button>
           <button
             type="submit"
@@ -99,7 +111,7 @@ const ConfirmScheduleModal = ({
             disabled={submitting}
             className="rounded-lg bg-brand-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-800 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {submitting ? 'Confirming…' : 'Confirm'}
+            {submitting ? t('Confirming…') : t('Confirm')}
           </button>
         </FormActions>
       }
@@ -110,13 +122,15 @@ const ConfirmScheduleModal = ({
         noValidate
         className="space-y-1"
       >
-        <AlertBanner message={apiError} />
+        <AlertBanner message={t(apiError ?? '')} />
         <InputField
-          label="Pickup date & time"
+          label={t('Pickup date & time')}
           field="scheduled_at"
           type="datetime-local"
           formData={formData}
-          errors={errors}
+          errors={Object.fromEntries(
+            Object.entries(errors).map(([key, value]) => [key, t(value)]),
+          )}
           updateFormData={updateFormData}
         />
       </ValidatedForm>

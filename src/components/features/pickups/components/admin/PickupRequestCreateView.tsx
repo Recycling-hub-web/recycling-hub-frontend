@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { type FormEvent, useEffect, useRef } from 'react';
 import { LuArrowLeft, LuClipboardList, LuPencil } from 'react-icons/lu';
 
+import { usePortalLocale } from '../../../../../contexts/PortalLocaleContext';
+import { localizeErrors } from '../../../../../lib/localizeErrors';
 import { AddressInput } from '../../../../form/fields/AddressInput';
 import { InputField } from '../../../../form/fields/InputField';
 import { PhoneInputField } from '../../../../form/fields/PhoneInputField';
@@ -38,11 +40,14 @@ type PickupRequestCreateViewProps = {
   basePath: PickupRequestBasePath;
 };
 
-const formatPickupTime = (value: string) => {
+const formatPickupTime = (value: string, dateLocale: string) => {
   const date = new Date(value);
   return Number.isNaN(date.getTime())
     ? ''
-    : date.toLocaleString('en-MY', { dateStyle: 'medium', timeStyle: 'short' });
+    : date.toLocaleString(dateLocale, {
+        dateStyle: 'medium',
+        timeStyle: 'short',
+      });
 };
 
 const prefersReducedMotion = () =>
@@ -57,26 +62,30 @@ const prefersReducedMotion = () =>
 const evaluationSummary = (
   evaluation: DraftEvaluation,
   orders: DraftOrder[],
+  translate: (key: string, values?: Record<string, string | number>) => string,
 ) => {
   const itemCount = orders.reduce((n, o) => n + o.items.length, 0);
   if (evaluation.decision === 'rejected') {
-    return `Rejected — ${evaluation.note.trim()}`;
+    return translate('Rejected — {reason}', { reason: evaluation.note.trim() });
   }
-  if (evaluation.decision !== 'approved') return 'Not yet';
+  if (evaluation.decision !== 'approved') return translate('Not yet');
   const total =
     evaluation.itemized && itemCount > 1
       ? evaluation.itemPrices
           .slice(0, itemCount)
           .reduce((sum, p) => sum + (Number(p) || 0), 0)
       : Number(evaluation.price) || 0;
-  return `Approved, RM ${total.toFixed(2)}${
-    evaluation.itemized && itemCount > 1 ? ' (priced per item)' : ''
-  }`;
+  return evaluation.itemized && itemCount > 1
+    ? translate('Approved, RM {amount} (priced per item)', {
+        amount: total.toFixed(2),
+      })
+    : translate('Approved, RM {amount}', { amount: total.toFixed(2) });
 };
 
 const PickupRequestCreateView = ({
   basePath,
 }: PickupRequestCreateViewProps) => {
+  const { t, locale } = usePortalLocale();
   const form = usePickupRequestCreateForm(basePath);
   const {
     step,
@@ -129,8 +138,8 @@ const PickupRequestCreateView = ({
   const editButton = (index: number) => (
     <Button variant="secondary" size="sm" onClick={() => form.goTo(index)}>
       <LuPencil className="me-1.5 size-3.5" aria-hidden />
-      Edit
-      <span className="sr-only"> {STEPS[index]!.label.toLowerCase()}</span>
+      {t('Edit')}
+      <span className="sr-only"> {t(STEPS[index]!.label).toLowerCase()}</span>
     </Button>
   );
 
@@ -144,7 +153,7 @@ const PickupRequestCreateView = ({
         className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-700 lg:mb-4 lg:min-h-0"
       >
         <LuArrowLeft className="size-4" />
-        Back to pickup requests
+        {t('Back to pickup requests')}
       </Link>
 
       <Card className="overflow-visible">
@@ -152,19 +161,19 @@ const PickupRequestCreateView = ({
           <IconTile icon={<LuClipboardList />} size="sm" />
           <div className="min-w-0">
             <h1 className="text-xl font-bold text-neutral-950">
-              New pickup request
+              {t('New pickup request')}
             </h1>
             <p className="mt-1 text-sm text-slate-500">
-              Fields marked <span className="text-red-600">*</span> are
-              required. You can review everything before you submit.
+              {t('Fields marked')} <span className="text-red-600">*</span>{' '}
+              {t('are required. You can review everything before you submit.')}
             </p>
           </div>
         </header>
 
         <div ref={stepTopRef} className="border-b border-slate-100 px-5 py-3">
           <StepIndicator
-            label="New pickup request steps"
-            steps={STEPS}
+            label={t('New pickup request steps')}
+            steps={STEPS.map((item) => ({ ...item, label: t(item.label) }))}
             current={stepIndex}
             completed={form.completed}
             reached={form.reached}
@@ -183,39 +192,42 @@ const PickupRequestCreateView = ({
               tabIndex={-1}
               className="text-base font-semibold text-neutral-950 focus:outline-none"
             >
-              {step.label}
+              {t(step.label)}
             </h2>
             <p className="mb-5 mt-1 text-sm text-slate-500">
-              {step.description}
+              {t(step.description)}
             </p>
 
             {step.id === 'customer' && (
               <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
                 <InputField
-                  label="Full name"
+                  label={t('Full name')}
                   field="full_name"
-                  placeholder="e.g. Fatima Ali"
+                  placeholder={t('e.g. Fatima Ali')}
                   onBlur={() => blurField('full_name')}
                   {...field}
                 />
                 <SelectField
-                  label="Request type"
+                  label={t('Request type')}
                   field="request_type"
-                  options={REQUEST_TYPE_OPTIONS}
+                  options={REQUEST_TYPE_OPTIONS.map((item) => ({
+                    ...item,
+                    label: t(item.label),
+                  }))}
                   onBlur={() => blurField('email')}
                   {...field}
                 />
                 <InputField
-                  label="Email"
+                  label={t('Email')}
                   field="email"
                   type="email"
                   required={formData.request_type === 'business'}
-                  placeholder="e.g. fatima@recyclinghub.example"
+                  placeholder={t('e.g. fatima@recyclinghub.example')}
                   onBlur={() => blurField('email')}
                   {...field}
                 />
                 <PhoneInputField
-                  label="Phone number"
+                  label={t('Phone number')}
                   dialCodeField="phone_dial_code"
                   numberField="phone_local"
                   onBlur={() => blurField('phone_local')}
@@ -227,7 +239,7 @@ const PickupRequestCreateView = ({
             {step.id === 'pickup' && (
               <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
                 <InputField
-                  label="Pickup date & time"
+                  label={t('Pickup date & time')}
                   field="requested_at"
                   type="datetime-local"
                   required={false}
@@ -236,9 +248,11 @@ const PickupRequestCreateView = ({
                 />
                 <div className="sm:col-span-2">
                   <AddressInput
-                    label="Pickup address"
+                    label={t('Pickup address')}
                     field="pickup_address"
-                    placeholder="Address where materials should be collected"
+                    placeholder={t(
+                      'Address where materials should be collected',
+                    )}
                     countryRestrictions={['my']}
                     onSelect={form.setSelectedLocation}
                     onClear={() => form.setSelectedLocation(null)}
@@ -247,17 +261,18 @@ const PickupRequestCreateView = ({
                   />
                   {form.selectedLocation && (
                     <p className="-mt-3 mb-4 text-xs text-slate-600">
-                      Verified at {form.selectedLocation.latitude.toFixed(5)},{' '}
+                      {t('Verified at')}
+                      {form.selectedLocation.latitude.toFixed(5)},{' '}
                       {form.selectedLocation.longitude.toFixed(5)}
                     </p>
                   )}
                 </div>
                 <div className="sm:col-span-2">
                   <TextareaField
-                    label="Note"
+                    label={t('Note')}
                     field="note"
                     required={false}
-                    placeholder="Anything else worth noting"
+                    placeholder={t('Anything else worth noting')}
                     {...field}
                   />
                 </div>
@@ -285,7 +300,7 @@ const PickupRequestCreateView = ({
                     onChange={form.setEvaluation}
                     items={form.orders.flatMap((order) => order.items)}
                     categoryOptions={form.categories.options}
-                    errors={form.evaluationErrors}
+                    errors={localizeErrors(form.evaluationErrors, t)}
                     disabled={submitting}
                   />
                 )}
@@ -294,18 +309,18 @@ const PickupRequestCreateView = ({
 
             {step.id === 'review' && (
               <div className="space-y-4">
-                <AlertBanner message={form.error} />
-                <SectionCard title="Customer" action={editButton(0)}>
+                <AlertBanner message={t(form.error)} />
+                <SectionCard title={t('Customer')} action={editButton(0)}>
                   <DescriptionList
                     items={[
-                      { label: 'Full name', value: formData.full_name },
+                      { label: t('Full name'), value: formData.full_name },
                       {
-                        label: 'Request type',
-                        value: requestTypeLabel(formData.request_type),
+                        label: t('Request type'),
+                        value: t(requestTypeLabel(formData.request_type)),
                       },
-                      { label: 'Email', value: formData.email },
+                      { label: t('Email'), value: formData.email },
                       {
-                        label: 'Phone number',
+                        label: t('Phone number'),
                         value: formData.phone_local
                           ? `${formData.phone_dial_code} ${formData.phone_local}`
                           : '',
@@ -313,26 +328,29 @@ const PickupRequestCreateView = ({
                     ]}
                   />
                 </SectionCard>
-                <SectionCard title="Pickup" action={editButton(1)}>
+                <SectionCard title={t('Pickup')} action={editButton(1)}>
                   <DescriptionList
                     items={[
                       {
-                        label: 'Pickup date & time',
-                        value: formatPickupTime(formData.requested_at),
+                        label: t('Pickup date & time'),
+                        value: formatPickupTime(
+                          formData.requested_at,
+                          locale === 'bm' ? 'ms-MY' : 'en-MY',
+                        ),
                       },
                       {
-                        label: 'Pickup address',
+                        label: t('Pickup address'),
                         value: formData.pickup_address,
                       },
-                      { label: 'Note', value: formData.note },
+                      { label: t('Note'), value: formData.note },
                     ]}
                   />
                 </SectionCard>
-                <SectionCard title="Orders" action={editButton(2)}>
+                <SectionCard title={t('Orders')} action={editButton(2)}>
                   {form.orders.length ? (
                     <DescriptionList
                       items={form.orders.map((order, i) => ({
-                        label: `Order ${i + 1}`,
+                        label: t('Order {number}', { number: i + 1 }),
                         value: `${
                           order.items
                             .map((item) =>
@@ -351,14 +369,14 @@ const PickupRequestCreateView = ({
                     />
                   ) : (
                     <p className="text-sm text-slate-500">
-                      No orders. You can add them later from the request.
+                      {t('No orders. You can add them later from the request.')}
                     </p>
                   )}
                 </SectionCard>
                 {form.orders.length > 0 && (
-                  <SectionCard title="Evaluation" action={editButton(2)}>
+                  <SectionCard title={t('Evaluation')} action={editButton(2)}>
                     <p className="text-sm text-slate-700">
-                      {evaluationSummary(form.evaluation, form.orders)}
+                      {evaluationSummary(form.evaluation, form.orders, t)}
                     </p>
                   </SectionCard>
                 )}
@@ -370,11 +388,14 @@ const PickupRequestCreateView = ({
           <div className="sticky bottom-0 z-10 flex flex-wrap items-center justify-between gap-3 rounded-b-2xl border-t border-slate-100 bg-white/95 px-5 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur">
             <p className="text-sm text-slate-500" aria-live="polite">
               <span className="font-semibold text-neutral-950">
-                Step {stepIndex + 1} of {STEPS.length}
+                {t('Step {step} of {total}', {
+                  step: stepIndex + 1,
+                  total: STEPS.length,
+                })}
               </span>
               <span className="hidden sm:inline">
                 {' '}
-                · {form.completed.size} done
+                · {t('{count} done', { count: form.completed.size })}
               </span>
             </p>
             <div className="flex w-full items-center gap-2 sm:w-auto">
@@ -384,7 +405,7 @@ const PickupRequestCreateView = ({
                   variant="secondary"
                   className="flex-1 sm:flex-none"
                 >
-                  Cancel
+                  {t('Cancel')}
                 </Button>
               ) : (
                 <Button
@@ -393,7 +414,7 @@ const PickupRequestCreateView = ({
                   disabled={submitting}
                   className="flex-1 sm:flex-none"
                 >
-                  Back
+                  {t('Back')}
                 </Button>
               )}
               <Button
@@ -401,8 +422,9 @@ const PickupRequestCreateView = ({
                 disabled={submitting}
                 className="flex-1 sm:flex-none"
               >
-                {isLastStep && (submitting ? 'Creating…' : 'Create request')}
-                {!isLastStep && 'Continue'}
+                {isLastStep &&
+                  (submitting ? t('Creating…') : t('Create request'))}
+                {!isLastStep && t('Continue')}
               </Button>
             </div>
           </div>

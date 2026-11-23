@@ -307,13 +307,20 @@ const derivePickupStage = (
  * since "largest quantity" has no defined meaning across mixed units
  * (10 computers vs. 3 kg of cable). Items are optional on an Order now
  * (empty until staff add them), so this also covers the empty case. */
-const itemsSummary = (items: PickupRequestItem[]): string => {
+const itemsSummary = (
+  items: PickupRequestItem[],
+  translate?: (key: string, values: Record<string, string | number>) => string,
+): string => {
   const first = items[0];
   if (!first) return '—';
   const extra = items.length - 1;
-  return extra > 0
-    ? `${first.category.name} +${extra} more`
-    : first.category.name;
+  if (extra === 0) return first.category.name;
+  if (translate)
+    return translate('{name} +{count} more', {
+      name: first.category.name,
+      count: extra,
+    });
+  return `${first.category.name} +${extra} more`;
 };
 
 const PICKUP_STAGE_LABELS: Record<PickupStage, string> = {

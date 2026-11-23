@@ -3,6 +3,7 @@
 import { type FormEvent, useEffect, useState } from 'react';
 import { LuPackageCheck, LuPlus, LuTrash2 } from 'react-icons/lu';
 
+import { usePortalLocale } from '../../../../../contexts/PortalLocaleContext';
 import { ApiError } from '../../../../../lib/api';
 import { InputField } from '../../../../form/fields/InputField';
 import { SelectField } from '../../../../form/fields/SelectField';
@@ -88,6 +89,7 @@ const CollectModal = ({
   items = [],
   agreedPrice,
 }: CollectModalProps) => {
+  const { t } = usePortalLocale();
   const { execute: collect, loading: submitting } = useCollectPickup();
   const { execute: upload, loading: uploading } = useUploadStorageFile();
   const {
@@ -142,7 +144,7 @@ const CollectModal = ({
   // An existing item's fields are keyed by its id in this form.
   const errorFor = (id: string, key: 'category' | 'quantity') => {
     const message = itemErrors[id]?.[key];
-    return message ? { [id]: message } : undefined;
+    return message ? { [id]: t(message) } : undefined;
   };
 
   const unitsFor = (category: string): QuantityUnit[] =>
@@ -335,20 +337,21 @@ const CollectModal = ({
     <Modal
       open={open}
       onClose={handleClose}
-      title="Mark as collected"
-      subtitle="Confirm materials and payment."
+      dismissible={!submitting && !uploading}
+      title={t('Mark as collected')}
+      subtitle={t('Confirm materials and payment.')}
       icon={<LuPackageCheck className="size-5 text-brand-600" />}
       size="xl"
-      dismissible={!submitting && !uploading}
       footer={
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           {agreedPrice != null && (
             <div className="flex items-center justify-between gap-4 sm:block">
               <p className="text-xs font-medium text-slate-500">
-                Total payment
+                {t('Total payment')}
               </p>
               <p className="text-xl font-bold tabular-nums text-brand-800">
-                RM {(totalCents / 100).toFixed(2)}
+                {t('RM')}
+                {(totalCents / 100).toFixed(2)}
               </p>
             </div>
           )}
@@ -359,7 +362,7 @@ const CollectModal = ({
               disabled={submitting}
               className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              Cancel
+              {t('Cancel')}
             </button>
             <button
               type="submit"
@@ -367,7 +370,7 @@ const CollectModal = ({
               disabled={submitting || uploading}
               className="rounded-lg bg-brand-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-800 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {submitting ? 'Saving…' : 'Mark collected'}
+              {submitting ? t('Saving…') : t('Mark collected')}
             </button>
           </FormActions>
         </div>
@@ -379,11 +382,11 @@ const CollectModal = ({
         noValidate
         className="space-y-5 py-2"
       >
-        <AlertBanner message={apiError} />
+        <AlertBanner message={t(apiError ?? '')} />
 
         {items.length > 0 && (
           <section
-            aria-label="Collected materials"
+            aria-label={t('Collected materials')}
             className="rounded-2xl border border-slate-200 bg-white p-4"
           >
             <div className="mb-4 flex items-start gap-3">
@@ -392,10 +395,10 @@ const CollectModal = ({
               </span>
               <div>
                 <h3 className="text-sm font-semibold text-slate-900">
-                  Collected materials
+                  {t('Collected materials')}
                 </h3>
                 <p className="mt-1 text-xs text-slate-500">
-                  Confirm the category and actual quantity for each item.
+                  {t('Confirm the category and actual quantity for each item.')}
                 </p>
               </div>
             </div>
@@ -406,7 +409,9 @@ const CollectModal = ({
                   className="grid grid-cols-1 gap-x-4 rounded-xl bg-slate-50 px-3 pt-3 sm:grid-cols-2"
                 >
                   <SelectField
-                    label={`Category (${item.category.name})`}
+                    label={t('Category ({value0})', {
+                      value0: item.category.name,
+                    })}
                     field={item.id}
                     dataField={`item-category-${item.category.name}`}
                     required={false}
@@ -440,7 +445,7 @@ const CollectModal = ({
         )}
 
         <section
-          aria-label="New materials"
+          aria-label={t('New materials')}
           className="rounded-2xl border border-slate-200 bg-white p-4"
         >
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
@@ -450,11 +455,13 @@ const CollectModal = ({
               </span>
               <div>
                 <h3 className="text-sm font-semibold text-slate-900">
-                  Found on-site{' '}
-                  <span className="font-normal text-slate-600">· Optional</span>
+                  {t('Found on-site')}{' '}
+                  <span className="font-normal text-slate-600">
+                    {t('· Optional')}
+                  </span>
                 </h3>
                 <p className="mt-1 text-xs text-slate-500">
-                  Add any extra material and its total price.
+                  {t('Add any extra material and its total price.')}
                 </p>
               </div>
             </div>
@@ -465,13 +472,14 @@ const CollectModal = ({
               className="px-3.5 py-1.5 text-xs"
             >
               <LuPlus className="mr-1.5 size-3.5" />
-              Add another material
+              {t('Add another material')}
             </Button>
           </div>
           {newItems.length === 0 && (
             <p className="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-3 text-xs text-slate-500">
-              No additional materials. Add one if you collected more than
-              expected.
+              {t(
+                'No additional materials. Add one if you collected more than expected.',
+              )}
             </p>
           )}
           {newItems.length > 0 && (
@@ -484,34 +492,39 @@ const CollectModal = ({
                 >
                   <div className="mb-3 flex items-center justify-between sm:col-span-2">
                     <p className="text-xs font-semibold text-slate-700">
-                      Additional material {index + 1}
+                      {t('Additional material')}
+                      {index + 1}
                     </p>
                     <button
                       type="button"
                       onClick={() => removeNewItemRow(index)}
-                      aria-label="Remove this material"
+                      aria-label={t('Remove this material')}
                       className="flex size-8 items-center justify-center rounded-full text-slate-600 transition hover:bg-red-50 hover:text-red-600"
                     >
                       <LuTrash2 className="size-4" />
                     </button>
                   </div>
                   <SelectField
-                    label="Category"
+                    label={t('Category')}
                     field="category"
                     options={categoryOptions}
                     formData={row}
-                    errors={newItemErrors[index]}
+                    errors={Object.fromEntries(
+                      Object.entries(newItemErrors[index] ?? {}).map(
+                        ([key, value]) => [key, t(value)],
+                      ),
+                    )}
                     updateFormData={(field, value) =>
                       updateNewItem(index, field, value)
                     }
                     disabled={loadingCategories}
                   />
                   <InputField
-                    label="Quantity"
+                    label={t('Quantity')}
                     field="collected_quantity"
                     type="number"
                     required={false}
-                    placeholder="e.g. 5"
+                    placeholder={t('e.g. 5')}
                     formData={row}
                     errors={newItemErrors[index]}
                     updateFormData={(field, value) =>
@@ -520,12 +533,12 @@ const CollectModal = ({
                   />
                   <div className="min-w-0">
                     <SelectField
-                      label="Unit"
+                      label={t('Unit')}
                       field="quantity_unit"
                       required={false}
                       options={unitsFor(row.category).map((unit) => ({
                         value: unit,
-                        label: QUANTITY_UNIT_LABELS[unit],
+                        label: t(QUANTITY_UNIT_LABELS[unit]),
                       }))}
                       formData={row}
                       errors={newItemErrors[index]}
@@ -537,7 +550,7 @@ const CollectModal = ({
                   </div>
                   <div className="min-w-0">
                     <InputField
-                      label="Price"
+                      label={t('Price')}
                       field="price"
                       dataField={`new-item-price-${index}`}
                       type="number"
@@ -562,27 +575,38 @@ const CollectModal = ({
           <div className="rounded-2xl border border-brand-200 bg-brand-50 p-4 text-sm">
             <dl className="space-y-2">
               <div className="flex justify-between gap-3">
-                <dt>Existing amount</dt>
-                <dd>RM {Number(agreedPrice).toFixed(2)}</dd>
+                <dt>{t('Existing amount')}</dt>
+                <dd>
+                  {t('RM')}
+                  {Number(agreedPrice).toFixed(2)}
+                </dd>
               </div>
               <div className="flex justify-between gap-3">
-                <dt>New materials</dt>
-                <dd>RM {(additionalCents / 100).toFixed(2)}</dd>
+                <dt>{t('New materials')}</dt>
+                <dd>
+                  {t('RM')}
+                  {(additionalCents / 100).toFixed(2)}
+                </dd>
               </div>
               <div className="flex justify-between gap-3 border-t border-brand-200 pt-2 font-semibold">
-                <dt>Total payment</dt>
-                <dd>RM {(totalCents / 100).toFixed(2)}</dd>
+                <dt>{t('Total payment')}</dt>
+                <dd>
+                  {t('RM')}
+                  {(totalCents / 100).toFixed(2)}
+                </dd>
               </div>
             </dl>
           </div>
         )}
-        <AlertBanner message={errors.price} />
+        <AlertBanner message={t(errors.price ?? '')} />
         <div className="rounded-2xl border border-slate-200 p-4 pb-0">
           <TextareaField
-            label="Collection note"
+            label={t('Collection note')}
             field="note"
             required={false}
-            placeholder="Anything the team should know about this collection?"
+            placeholder={t(
+              'Anything the team should know about this collection?',
+            )}
             formData={formData}
             updateFormData={updateFormData}
           />
@@ -590,7 +614,7 @@ const CollectModal = ({
 
         {showPaymentFields && (
           <section
-            aria-label="Payment confirmation"
+            aria-label={t('Payment confirmation')}
             className="rounded-2xl border border-slate-200 bg-white p-4"
           >
             <div className="mb-4 flex items-start gap-3">
@@ -599,29 +623,38 @@ const CollectModal = ({
               </span>
               <div>
                 <h3 className="text-sm font-semibold text-slate-900">
-                  Payment confirmation
+                  {t('Payment confirmation')}
                 </h3>
                 <p className="mt-1 text-xs text-slate-500">
-                  Use DuitNow or bank transfer and upload the payment receipt.
+                  {t(
+                    'Use DuitNow or bank transfer and upload the payment receipt.',
+                  )}
                 </p>
               </div>
             </div>
             <SelectField
-              label="Payment method"
+              label={t('Payment method')}
               field="payment_method"
               required
-              options={PAYMENT_METHOD_OPTIONS}
+              options={PAYMENT_METHOD_OPTIONS.map((option) => ({
+                ...option,
+                label: t(option.label),
+              }))}
               formData={formData}
-              errors={errors}
+              errors={Object.fromEntries(
+                Object.entries(errors).map(([key, value]) => [key, t(value)]),
+              )}
               updateFormData={updateFormData}
             />
 
             <div className="mb-4" data-field="proof_of_payment">
               <StatusFileUpload
                 id="collect-proof-input"
-                label="Proof of payment"
+                label={t('Proof of payment')}
                 compact
-                description="Upload a receipt showing the customer was paid."
+                description={t(
+                  'Upload a receipt showing the customer was paid.',
+                )}
                 file={proofFile}
                 onFileChange={handleProofChange}
                 onRemove={() => {
@@ -630,15 +663,11 @@ const CollectModal = ({
                   updateFormData('proof_of_payment', '');
                 }}
                 onError={setApiError}
+                error={t(errors.proof_of_payment ?? '')}
                 required
                 disabled={submitting || uploading}
                 uploading={uploading}
               />
-              {errors.proof_of_payment && (
-                <p className="mt-1 text-xs text-red-600">
-                  {errors.proof_of_payment}
-                </p>
-              )}
             </div>
           </section>
         )}

@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom';
 import type { IconType } from 'react-icons';
 import { LuChevronRight } from 'react-icons/lu';
 
+import { usePortalLocale } from '../../../contexts/PortalLocaleContext';
 import type { BadgeVariant } from '../badges/variants';
 
 const ITEM_COLOR_CLASSES: Record<BadgeVariant, { row: string; icon: string }> =
@@ -59,6 +60,7 @@ const ActionsDropdown = ({
   items,
   label = 'Actions',
 }: ActionsDropdownProps) => {
+  const { t } = usePortalLocale();
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [position, setPosition] = useState<Position | null>(null);
@@ -148,7 +150,7 @@ const ActionsDropdown = ({
             : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50'
         }`}
       >
-        {label}
+        {t(label)}
         <LuChevronRight
           className={`size-4 transition-transform duration-200 ${open ? 'rotate-90' : 'rotate-0'}`}
         />

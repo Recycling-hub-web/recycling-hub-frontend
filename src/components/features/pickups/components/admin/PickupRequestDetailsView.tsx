@@ -17,6 +17,7 @@ import {
   LuX,
 } from 'react-icons/lu';
 
+import { usePortalLocale } from '../../../../../contexts/PortalLocaleContext';
 import { PageContainer } from '../../../../layout/PageContainer';
 import { StatusBadge } from '../../../../ui/badges/StatusBadge';
 import {
@@ -78,6 +79,7 @@ const PickupRequestDetailsView = ({
   requestId,
   basePath,
 }: PickupRequestDetailsViewProps) => {
+  const { t, locale } = usePortalLocale();
   const router = useRouter();
   const { request, loading, error, refetch } = usePickupRequest(requestId);
   const toast = useToast();
@@ -127,21 +129,22 @@ const PickupRequestDetailsView = ({
 
   const handleCancelled = () => {
     refetch();
-    toast.success('Pickup request cancelled');
+    toast.success(t('Pickup request cancelled'));
   };
 
-  if (loading && !request) return <Loading text="Loading pickup request…" />;
+  if (loading && !request)
+    return <Loading text={t('Loading pickup request…')} />;
 
   if (error || !request) {
     return (
       <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-        {error || 'Pickup request not found.'}{' '}
+        {error || t('Pickup request not found.')}{' '}
         <button
           type="button"
           onClick={refetch}
           className="font-semibold underline"
         >
-          Retry
+          {t('Retry')}
         </button>
       </div>
     );
@@ -176,7 +179,7 @@ const PickupRequestDetailsView = ({
 
   const actionItems: DropdownItem[] = [
     {
-      label: 'Edit',
+      label: t('Edit'),
       icon: LuPencil,
       onClick: () => router.push(`${basePath}/${request.id}/edit`),
       color: 'neutral',
@@ -184,7 +187,7 @@ const PickupRequestDetailsView = ({
     ...(canCreateOrder
       ? [
           {
-            label: 'Create order',
+            label: t('Create order'),
             icon: LuPlus,
             onClick: () =>
               router.push(`${basePath}/${request.id}/orders/create`),
@@ -207,7 +210,7 @@ const PickupRequestDetailsView = ({
     ...(canCancel
       ? [
           {
-            label: 'Cancel request',
+            label: t('Cancel request'),
             icon: LuX,
             onClick: () => setCancelOpen(true),
             color: 'danger' as const,
@@ -223,12 +226,16 @@ const PickupRequestDetailsView = ({
         className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-700 lg:mb-4 lg:min-h-0"
       >
         <LuArrowLeft className="size-4" />
-        Back to pickup requests
+        {t('Back to pickup requests')}
       </Link>
 
       <PageHeader
         title={request.code}
-        subtitle={`${request.full_name} · ${request.orders.length} order${request.orders.length === 1 ? '' : 's'}`}
+        subtitle={t('{value0} · {value1} order{value2}', {
+          value0: request.full_name,
+          value1: request.orders.length,
+          value2: request.orders.length === 1 ? '' : 's',
+        })}
         actions={
           // More than one action → one Actions dropdown (project rule);
           // a lone action stays a plain button.
@@ -237,7 +244,7 @@ const PickupRequestDetailsView = ({
           ) : (
             <Button variant="secondary" href={`${basePath}/${request.id}/edit`}>
               <LuPencil className="mr-1.5 size-4" />
-              Edit
+              {t('Edit')}
             </Button>
           )
         }
@@ -245,22 +252,28 @@ const PickupRequestDetailsView = ({
 
       <div className="mb-5 flex flex-wrap gap-2">
         <StatusBadge variant={REQUEST_TYPE_BADGE_VARIANT[request.request_type]}>
-          {PICKUP_REQUEST_TYPE_LABELS[request.request_type]}
+          {t(PICKUP_REQUEST_TYPE_LABELS[request.request_type])}
         </StatusBadge>
         <StatusBadge
           variant={PICKUP_REQUEST_STATUS_BADGE_VARIANT[request.status]}
         >
-          {PICKUP_REQUEST_STATUS_LABELS[request.status]}
+          {t(PICKUP_REQUEST_STATUS_LABELS[request.status])}
         </StatusBadge>
       </div>
 
       <div className="mb-5 overflow-x-auto">
         <Tabs
           tabs={[
-            { key: 'overview', label: 'Overview' },
-            { key: 'orders', label: `Orders (${request.orders.length})` },
-            { key: 'documents', label: `Documents (${documents.length})` },
-            { key: 'activity', label: 'Activity' },
+            { key: 'overview', label: t('Overview') },
+            {
+              key: 'orders',
+              label: t('Orders ({count})', { count: request.orders.length }),
+            },
+            {
+              key: 'documents',
+              label: t('Documents ({count})', { count: documents.length }),
+            },
+            { key: 'activity', label: t('Activity') },
           ]}
           active={activeTab}
           onChange={setActiveTab}
@@ -272,28 +285,34 @@ const PickupRequestDetailsView = ({
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <InfoRow
               icon={<LuUser className="size-4" />}
-              label="Requester"
+              label={t('Requester')}
               value={request.full_name}
             />
             <InfoRow
               icon={<LuMail className="size-4" />}
-              label="Email"
+              label={t('Email')}
               value={request.email || '—'}
             />
             <InfoRow
               icon={<LuPhone className="size-4" />}
-              label="Phone"
+              label={t('Phone')}
               value={<WhatsAppLink phoneNumber={request.phone_number} />}
             />
             <InfoRow
               icon={<LuCalendar className="size-4" />}
-              label="Requested for"
-              value={<AppDate value={request.requested_at} format="long" />}
+              label={t('Requested for')}
+              value={
+                <AppDate
+                  value={request.requested_at}
+                  format="long"
+                  locale={locale === 'bm' ? 'ms-MY' : 'en-GB'}
+                />
+              }
             />
             <div className="sm:col-span-2">
               <InfoRow
                 icon={<LuMapPin className="size-4" />}
-                label="Pickup address"
+                label={t('Pickup address')}
                 value={request.pickup_address}
               />
             </div>
@@ -302,7 +321,7 @@ const PickupRequestDetailsView = ({
           {request.collection_point && (
             <div className="mt-5 border-t border-slate-100 pt-5">
               <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-600">
-                Drop-off collection point
+                {t('Drop-off collection point')}
               </p>
               <p className="text-sm text-slate-700">
                 {request.collection_point.name} —{' '}
@@ -314,7 +333,7 @@ const PickupRequestDetailsView = ({
           {request.note && (
             <div className="mt-5 border-t border-slate-100 pt-5">
               <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-600">
-                Note
+                {t('Note')}
               </p>
               <p className="whitespace-pre-wrap text-sm leading-relaxed text-slate-700">
                 {request.note}
@@ -325,22 +344,26 @@ const PickupRequestDetailsView = ({
           {request.status === 'cancelled' && (
             <div className="mt-5 border-t border-slate-100 pt-5">
               <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-600">
-                Cancellation
+                {t('Cancellation')}
               </p>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 {request.cancelled_by && (
                   <InfoRow
                     icon={<LuUser className="size-4" />}
-                    label="Cancelled by"
+                    label={t('Cancelled by')}
                     value={request.cancelled_by}
                   />
                 )}
                 {request.cancelled_at && (
                   <InfoRow
                     icon={<LuCalendar className="size-4" />}
-                    label="Cancelled at"
+                    label={t('Cancelled at')}
                     value={
-                      <AppDate value={request.cancelled_at} format="long" />
+                      <AppDate
+                        value={request.cancelled_at}
+                        format="long"
+                        locale={locale === 'bm' ? 'ms-MY' : 'en-GB'}
+                      />
                     }
                   />
                 )}
@@ -359,8 +382,10 @@ const PickupRequestDetailsView = ({
           <Card className="p-5">
             <EmptyState
               icon={<LuPackage className="size-6" />}
-              title="No orders yet"
-              description="Create one to start the materials, pricing and driver workflow."
+              title={t('No orders yet')}
+              description={t(
+                'Create one to start the materials, pricing and driver workflow.',
+              )}
             />
           </Card>
         ) : (
@@ -388,7 +413,10 @@ const PickupRequestDetailsView = ({
         open={evaluateOpen}
         onClose={() => setEvaluateOpen(false)}
         onEvaluated={() => {
-          toast.success('Pickup request evaluated', 'Its orders were updated.');
+          toast.success(
+            t('Pickup request evaluated'),
+            t('Its orders were updated.'),
+          );
           refetch();
         }}
       />

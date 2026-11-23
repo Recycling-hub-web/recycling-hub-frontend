@@ -3,6 +3,7 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { LuLoaderCircle, LuMapPin, LuX } from 'react-icons/lu';
 
+import { usePortalLocale } from '../../../contexts/PortalLocaleContext';
 import {
   GeoapifyConfigError,
   type GeoapifyFeature,
@@ -88,7 +89,9 @@ const AddressInput = ({
   className = '',
 }: AddressInputProps) => {
   const value = (getNestedValue(formData, field) as string | undefined) ?? '';
-  const error = errors?.[field];
+  const { t } = usePortalLocale();
+  const rawError = errors?.[field];
+  const error = rawError ? t(rawError) : undefined;
   const inputId = useId();
   const listboxId = useId();
 
@@ -213,11 +216,13 @@ const AddressInput = ({
 
   const renderDropdownContent = () => {
     if (searchError) {
-      return <p className="px-4 py-3 text-sm text-red-600">{searchError}</p>;
+      return <p className="px-4 py-3 text-sm text-red-600">{t(searchError)}</p>;
     }
     if (suggestions.length === 0) {
       return (
-        <p className="px-4 py-3 text-sm text-slate-500">No addresses found.</p>
+        <p className="px-4 py-3 text-sm text-slate-500">
+          {t('No addresses found.')}
+        </p>
       );
     }
     return (
@@ -291,7 +296,7 @@ const AddressInput = ({
           onKeyDown={handleKeyDown}
           onFocus={() => suggestions.length > 0 && setOpen(true)}
           onBlur={onBlur}
-          placeholder={placeholder}
+          placeholder={t(placeholder)}
           disabled={disabled}
           className={`flex h-12 w-full items-center justify-start rounded-xl border p-3 py-2 ps-10 text-sm outline-none transition-colors focus:outline-none focus:ring-1 focus:ring-brand-500 ${
             value ? 'pe-11' : ''
@@ -312,7 +317,7 @@ const AddressInput = ({
           <button
             type="button"
             onClick={handleClear}
-            aria-label="Clear address"
+            aria-label={t('Clear address')}
             className="absolute inset-y-0 end-0 flex w-11 items-center justify-center text-slate-600 transition-colors hover:text-slate-600"
           >
             <LuX className="size-4" />

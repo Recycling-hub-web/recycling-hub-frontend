@@ -49,6 +49,8 @@ const isProductionDeployment =
   !process.env.VERCEL_ENV || process.env.VERCEL_ENV === 'production';
 
 module.exports = withBundleAnalyzer({
+  // Keep production verification separate from a running local development server.
+  distDir: process.env.RECYCLING_UI_BUILD_DIR || '.next',
   eslint: {
     dirs: ['.'],
   },

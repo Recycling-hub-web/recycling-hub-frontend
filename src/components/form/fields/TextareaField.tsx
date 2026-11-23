@@ -1,5 +1,6 @@
 import { useId, useState } from 'react';
 
+import { usePortalLocale } from '../../../contexts/PortalLocaleContext';
 import {
   fieldErrorAttributes,
   fieldStateClasses,
@@ -30,6 +31,7 @@ const TextareaField = ({
   onBlur,
   disabled = false,
 }: TextareaFieldProps) => {
+  const { t } = usePortalLocale();
   const inputId = useId();
   const value = (getNestedValue(formData, field) as string | undefined) ?? '';
   const collapsible = !required && /(?:^|_)(?:note|notes)$/.test(field);
@@ -49,7 +51,7 @@ const TextareaField = ({
             type="button"
             role="switch"
             aria-checked={showInput}
-            aria-label={`Show ${label.toLowerCase()}`}
+            aria-label={t('Show {label}', { label: label.toLowerCase() })}
             aria-controls={`${inputId}-panel`}
             disabled={disabled}
             onClick={() => setExpanded(!showInput)}
@@ -92,7 +94,7 @@ const TextareaField = ({
 
           {errors?.[field] && (
             <p id={`${inputId}-error`} className="mt-1 text-xs text-red-600">
-              {errors[field]}
+              {t(errors[field] ?? '')}
             </p>
           )}
         </div>

@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
 import {
@@ -9,6 +10,7 @@ import {
   LuTruck,
 } from 'react-icons/lu';
 
+import { usePortalLocale } from '../../../../../contexts/PortalLocaleContext';
 import { SearchInput } from '../../../../form/filter/SearchInput';
 import { PageContainer } from '../../../../layout/PageContainer';
 import { StatusBadge } from '../../../../ui/badges/StatusBadge';
@@ -82,6 +84,7 @@ type PickupRequestsListViewProps = {
 const PickupRequestsListContent = ({
   basePath,
 }: PickupRequestsListViewProps) => {
+  const { t, locale } = usePortalLocale();
   const router = useRouter();
   const toast = useToast();
   const searchParams = useSearchParams();
@@ -115,10 +118,10 @@ const PickupRequestsListContent = ({
     setMarkingContactedId(lead.id);
     try {
       await markContacted(lead.id);
-      toast.success('Lead marked as contacted');
+      toast.success(t('Lead marked as contacted'));
       refetchQuickLeads();
     } catch {
-      toast.error('Could not update this lead');
+      toast.error(t('Could not update this lead'));
     } finally {
       setMarkingContactedId(null);
     }
@@ -201,7 +204,10 @@ const PickupRequestsListContent = ({
     refetch();
     setSelectedRequestIds(new Set());
     toast.success(
-      `${selectedRequestIds.size} request${selectedRequestIds.size === 1 ? '' : 's'} assigned to a driver`,
+      t('{value0} request{value1} assigned to a driver', {
+        value0: selectedRequestIds.size,
+        value1: selectedRequestIds.size === 1 ? '' : 's',
+      }),
     );
   };
 
@@ -211,7 +217,7 @@ const PickupRequestsListContent = ({
       return (
         <TableErrorRow
           colSpan={columnCount}
-          message={error}
+          message={t(error ?? '')}
           onRetry={refetch}
         />
       );
@@ -224,8 +230,12 @@ const PickupRequestsListContent = ({
         <TableEmptyRow
           colSpan={columnCount}
           icon={<LuClipboardList className="size-6" />}
-          title="No pickup requests found"
-          subtitle={emptySubtitle}
+          title={t('No pickup requests found')}
+          subtitle={
+            search
+              ? t('No matches for "{search}".', { search })
+              : t(emptySubtitle)
+          }
         />
       );
     }
@@ -242,12 +252,19 @@ const PickupRequestsListContent = ({
               checked={selectedRequestIds.has(r.id)}
               onChange={() => toggleRequestSelected(r.id)}
               className="size-4 rounded border-slate-300"
-              aria-label={`Select ${r.full_name}`}
+              aria-label={t('Select {value0}', { value0: r.full_name })}
             />
           )}
         </td>
         <td className="whitespace-nowrap px-6 py-4 font-semibold text-neutral-950">
-          {r.code}
+          <Link
+            href={`${basePath}/${r.id}`}
+            onClick={(event) => event.stopPropagation()}
+            aria-label={t('View pickup request {code}', { code: r.code })}
+            className="rounded underline-offset-4 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-700"
+          >
+            {r.code}
+          </Link>
         </td>
         <td className="max-w-[180px] truncate px-6 py-4 font-medium text-slate-900">
           {r.full_name}
@@ -257,23 +274,27 @@ const PickupRequestsListContent = ({
         </td>
         <td className="px-6 py-4">
           <StatusBadge variant={REQUEST_TYPE_BADGE_VARIANT[r.request_type]}>
-            {PICKUP_REQUEST_TYPE_LABELS[r.request_type]}
+            {t(PICKUP_REQUEST_TYPE_LABELS[r.request_type])}
           </StatusBadge>
         </td>
         <td className="px-6 py-4">
           <StatusBadge variant={PICKUP_REQUEST_STATUS_BADGE_VARIANT[r.status]}>
-            {PICKUP_REQUEST_STATUS_LABELS[r.status]}
+            {t(PICKUP_REQUEST_STATUS_LABELS[r.status])}
           </StatusBadge>
         </td>
         <td className="px-6 py-4 text-slate-700">
           {r.orders.length === 0 ? (
-            <span className="text-slate-600">No orders yet</span>
+            <span className="text-slate-600">{t('No orders yet')}</span>
           ) : (
-            `${r.orders.length} order${r.orders.length === 1 ? '' : 's'}`
+            t('{count} orders', { count: r.orders.length })
           )}
         </td>
         <td className="px-6 py-4 text-slate-500">
-          <AppDate value={r.requested_at} format="short" />
+          <AppDate
+            value={r.requested_at}
+            format="short"
+            locale={locale === 'bm' ? 'ms-MY' : 'en-GB'}
+          />
         </td>
         <td
           className="px-6 py-4 text-right"
@@ -283,7 +304,12 @@ const PickupRequestsListContent = ({
             <IconButton
               variant="ghost"
               icon={<LuClipboardCheck className="size-5" />}
-              title={`${isReevaluation(r.orders) ? 'Re-evaluate' : 'Evaluate'} ${r.full_name}`}
+              title={t(
+                isReevaluation(r.orders)
+                  ? 'Re-evaluate {name}'
+                  : 'Evaluate {name}',
+                { name: r.full_name },
+              )}
               onClick={() => setEvaluatingId(r.id)}
             />
           )}
@@ -295,18 +321,20 @@ const PickupRequestsListContent = ({
   return (
     <PageContainer variant="table">
       <PageHeader
-        title="Pickup Requests"
-        subtitle="The customer's ask — collection requests submitted from the public site or added by staff."
+        title={t('Pickup Requests')}
+        subtitle={t(
+          "The customer's ask — collection requests submitted from the public site or added by staff.",
+        )}
         actions={
           <Button href={`${basePath}/create`}>
             <LuPlus className="mr-1.5 size-4" />
-            New request
+            {t('New request')}
           </Button>
         }
       />
 
       <Tabs
-        tabs={TAB_ITEMS}
+        tabs={TAB_ITEMS.map((item) => ({ ...item, label: t(item.label) }))}
         active={activeTab}
         onChange={(tab) => {
           setActiveTab(tab);
@@ -337,17 +365,18 @@ const PickupRequestsListContent = ({
             <SearchInput
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              placeholder="Search by code, name, email, or phone…"
+              ariaLabel={t('Search pickup requests')}
+              placeholder={t('Search by code, name, email, or phone…')}
               className="sm:max-w-xs"
             />
             {selectedRequestIds.size > 0 && (
               <div className="ml-auto flex items-center gap-3">
                 <span className="text-sm font-medium text-slate-700">
-                  {selectedRequestIds.size} selected
+                  {t('{count} selected', { count: selectedRequestIds.size })}
                 </span>
                 <Button size="sm" onClick={() => setBulkAssignOpen(true)}>
                   <LuTruck className="mr-1.5 size-4" />
-                  Assign driver
+                  {t('Assign driver')}
                 </Button>
               </div>
             )}
@@ -362,7 +391,10 @@ const PickupRequestsListContent = ({
                   setRequestTypeFilter(value as PickupRequestType | '');
                   setPage(1);
                 }}
-                options={REQUEST_TYPE_FILTER_OPTIONS}
+                options={REQUEST_TYPE_FILTER_OPTIONS.map((item) => ({
+                  ...item,
+                  label: t(item.label),
+                }))}
               />
               <FilterSelect
                 value={statusFilter}
@@ -370,7 +402,10 @@ const PickupRequestsListContent = ({
                   setStatusFilter(value as PickupRequestStatus | '');
                   setPage(1);
                 }}
-                options={PICKUP_REQUEST_STATUS_FILTER_OPTIONS}
+                options={PICKUP_REQUEST_STATUS_FILTER_OPTIONS.map((item) => ({
+                  ...item,
+                  label: t(item.label),
+                }))}
               />
             </FilterToggle>
           </div>
@@ -398,33 +433,33 @@ const PickupRequestsListContent = ({
                         checked={allAssignableSelected}
                         onChange={toggleSelectAllAssignable}
                         className="size-4 rounded border-slate-300"
-                        aria-label="Select all assignable requests"
+                        aria-label={t('Select all assignable requests')}
                       />
                     )}
                   </th>
                   <th className="px-6 py-3 text-left font-semibold text-slate-500">
-                    Code
+                    {t('Code')}
                   </th>
                   <th className="px-6 py-3 text-left font-semibold text-slate-500">
-                    Name
+                    {t('Name')}
                   </th>
                   <th className="px-6 py-3 text-left font-semibold text-slate-500">
-                    Contact
+                    {t('Contact')}
                   </th>
                   <th className="px-6 py-3 text-left font-semibold text-slate-500">
-                    Type
+                    {t('Type')}
                   </th>
                   <th className="px-6 py-3 text-left font-semibold text-slate-500">
-                    Status
+                    {t('Status')}
                   </th>
                   <th className="px-6 py-3 text-left font-semibold text-slate-500">
-                    Orders
+                    {t('Orders')}
                   </th>
                   <th className="px-6 py-3 text-left font-semibold text-slate-500">
-                    Requested for
+                    {t('Requested for')}
                   </th>
                   <th className="px-6 py-3 text-right font-semibold text-slate-500">
-                    Actions
+                    {t('Actions')}
                   </th>
                 </tr>
               </thead>
@@ -443,8 +478,10 @@ const PickupRequestsListContent = ({
         onClose={() => setEvaluatingId(null)}
         onEvaluated={() => {
           toast.success(
-            'Pickup request evaluated',
-            `${evaluatingRequest?.full_name}'s orders were updated.`,
+            t('Pickup request evaluated'),
+            t("{value0}'s orders were updated.", {
+              value0: evaluatingRequest?.full_name ?? '',
+            }),
           );
           refetch();
         }}
@@ -459,10 +496,13 @@ const PickupRequestsListContent = ({
   );
 };
 
-const PickupRequestsListView = (props: PickupRequestsListViewProps) => (
-  <Suspense fallback={<p role="status">Loading pickup requests…</p>}>
-    <PickupRequestsListContent {...props} />
-  </Suspense>
-);
+const PickupRequestsListView = (props: PickupRequestsListViewProps) => {
+  const { t } = usePortalLocale();
+  return (
+    <Suspense fallback={<p role="status">{t('Loading pickup requests…')}</p>}>
+      <PickupRequestsListContent {...props} />
+    </Suspense>
+  );
+};
 
 export { PickupRequestsListView };

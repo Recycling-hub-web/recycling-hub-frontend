@@ -9,6 +9,7 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
 type StatusFileUploadProps = {
   label: string;
+  error?: string;
   description?: string;
   id: string;
   file: File | null;
@@ -24,6 +25,7 @@ type StatusFileUploadProps = {
 
 const StatusFileUpload = ({
   label,
+  error,
   description,
   id,
   file,
@@ -39,6 +41,7 @@ const StatusFileUpload = ({
   const { t } = usePortalLocale();
   const toast = useToast();
   const [validationError, setValidationError] = useState('');
+  const shownError = validationError || error || '';
   const unavailable = disabled || uploading;
   const safeProgress =
     progress === undefined ? undefined : Math.min(100, Math.max(0, progress));
@@ -56,7 +59,7 @@ const StatusFileUpload = ({
     if (!isAllowed) {
       const msg = t(
         'Invalid file type "{name}". Only {types} files are allowed.',
-        { name: selected.name, types: ALLOWED_FILE_TYPES.label },
+        { name: selected.name, types: t(ALLOWED_FILE_TYPES.label) },
       );
       setValidationError(msg);
       toast.error(t('Invalid file type'), msg);
@@ -120,7 +123,7 @@ const StatusFileUpload = ({
 
         <p className="text-sm font-semibold text-slate-800">{label}</p>
         <p id={`${id}-requirements`} className="mt-2 text-xs text-slate-600">
-          {ALLOWED_FILE_TYPES.label} {t('– Max 10MB')}
+          {t(ALLOWED_FILE_TYPES.label)} {t('– Max 10MB')}
         </p>
 
         <input
@@ -130,16 +133,16 @@ const StatusFileUpload = ({
           className="sr-only"
           aria-label={label}
           aria-required={required}
-          aria-invalid={Boolean(validationError)}
-          aria-describedby={`${id}-requirements${description ? ` ${id}-description` : ''}${validationError ? ` ${id}-error` : ''}`}
+          aria-invalid={Boolean(shownError)}
+          aria-describedby={`${id}-requirements${description ? ` ${id}-description` : ''}${shownError ? ` ${id}-error` : ''}`}
           disabled={unavailable}
           onChange={handleChange}
         />
       </label>
 
-      {validationError && (
+      {shownError && (
         <p id={`${id}-error`} role="alert" className="text-sm text-red-700">
-          {validationError}
+          {shownError}
         </p>
       )}
 

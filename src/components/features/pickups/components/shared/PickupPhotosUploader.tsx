@@ -3,6 +3,7 @@
 import { useId, useState } from 'react';
 import { LuImage, LuUpload, LuX } from 'react-icons/lu';
 
+import { usePortalLocale } from '../../../../../contexts/PortalLocaleContext';
 import { ApiError } from '../../../../../lib/api';
 import { AlertBanner } from '../../../../ui/AlertBanner';
 import { useUploadStorageFile } from '../../../storageFiles/hooks';
@@ -47,6 +48,7 @@ const PickupPhotosUploader = ({
   upload,
   onUploadingChange,
 }: PickupPhotosUploaderProps) => {
+  const { t } = usePortalLocale();
   const inputId = useId();
   const { execute: storageUpload } = useUploadStorageFile();
   const [uploading, setUploading] = useState(false);
@@ -83,17 +85,17 @@ const PickupPhotosUploader = ({
   return (
     <div className="mb-4" data-field="photos">
       <label className="block text-sm font-medium text-slate-900">
-        {label} {required && <span className="text-red-600">*</span>}{' '}
+        {t(label)} {required && <span className="text-red-600">*</span>}{' '}
         <span className="font-normal text-slate-600">
           ({required ? 1 : 0}–{MAX_ORDER_PHOTOS})
         </span>
       </label>
       {helperText && (
-        <p className="mt-0.5 text-xs text-slate-500">{helperText}</p>
+        <p className="mt-0.5 text-xs text-slate-500">{t(helperText)}</p>
       )}
 
       <div className="mt-2">
-        <AlertBanner message={uploadError} />
+        <AlertBanner message={t(uploadError ?? '')} />
 
         <div className="flex flex-wrap items-center gap-3">
           {value.map((photo, index) => (
@@ -114,7 +116,7 @@ const PickupPhotosUploader = ({
                 type="button"
                 onClick={() => removeAt(index)}
                 disabled={disabled}
-                aria-label={`Remove photo ${index + 1}`}
+                aria-label={t('Remove photo {value0}', { value0: index + 1 })}
                 className="absolute -right-1.5 -top-1.5 flex size-5 items-center justify-center rounded-full bg-white text-slate-500 shadow ring-1 ring-slate-200 transition hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <LuX className="size-3" />
@@ -130,7 +132,7 @@ const PickupPhotosUploader = ({
               }`}
             >
               <LuUpload className="size-4" />
-              {uploading ? 'Uploading…' : addLabel}
+              {uploading ? t('Uploading…') : t(addLabel)}
             </label>
           )}
         </div>
@@ -145,7 +147,9 @@ const PickupPhotosUploader = ({
             e.target.value = '';
           }}
         />
-        {error && <p className="mt-1.5 text-xs text-red-600">{error}</p>}
+        {error && (
+          <p className="mt-1.5 text-xs text-red-600">{t(error ?? '')}</p>
+        )}
       </div>
     </div>
   );

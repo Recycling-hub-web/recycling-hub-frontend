@@ -5,6 +5,8 @@ import type { ReactNode } from 'react';
 import { createContext, useCallback, useContext, useState } from 'react';
 import { LuCheck, LuInfo, LuTriangleAlert, LuX } from 'react-icons/lu';
 
+import { usePortalLocale } from '../../../contexts/PortalLocaleContext';
+
 type ToastType = 'success' | 'error' | 'warning' | 'info';
 
 type ToastOptions = {
@@ -60,6 +62,7 @@ const ToastItem = ({
   toast: ToastEntry;
   onDismiss: (id: number) => void;
 }) => {
+  const { t } = usePortalLocale();
   const { bar, iconBg, Icon } = STYLES[toast.type];
 
   return (
@@ -96,7 +99,7 @@ const ToastItem = ({
         <button
           type="button"
           onClick={() => onDismiss(toast.id)}
-          aria-label="Dismiss notification"
+          aria-label={t('Dismiss notification')}
           className="ml-1 mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full text-slate-300 transition-colors hover:bg-slate-100 hover:text-slate-500"
         >
           <LuX className="size-3" />

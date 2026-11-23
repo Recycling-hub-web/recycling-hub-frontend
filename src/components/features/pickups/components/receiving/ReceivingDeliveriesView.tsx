@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { LuCheckCheck, LuPackageCheck } from 'react-icons/lu';
 
+import { usePortalLocale } from '../../../../../contexts/PortalLocaleContext';
 import { PageContainer } from '../../../../layout/PageContainer';
 import { StatusBadge } from '../../../../ui/badges/StatusBadge';
 import { FilterSelect } from '../../../../ui/FilterSelect';
@@ -11,6 +12,7 @@ import {
   TableEmptyRow,
   TableErrorRow,
   TableLoadingRow,
+  TablePagination,
   TableWrapper,
 } from '../../../../ui/table';
 import { useToast } from '../../../../ui/toast/ToastContext';
@@ -33,18 +35,24 @@ const STATUS_FILTER_OPTIONS = [
  * CollectionRequestViewSet.get_queryset), so there's nothing before a
  * driver's route has been dropped off to show here. */
 const ReceivingDeliveriesView = () => {
+  const { t } = usePortalLocale();
   const toast = useToast();
+  const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<PickupStatus | ''>(
     'delivered',
   );
   const [storeFilter, setStoreFilter] = useState('');
-  const { collectionPoints } = useCollectionPoints(true);
+  const {
+    collectionPoints,
+    error: pointsError,
+    refetch: retryPoints,
+  } = useCollectionPoints(true);
   const storeOptions = [
-    { value: '', label: 'All stores' },
+    { value: '', label: t('All stores') },
     ...collectionPoints.map((p) => ({ value: p.id, label: p.name })),
   ];
-  const { requests, loading, error, refetch } = useOrders({
-    page: 1,
+  const { requests, count, loading, error, refetch } = useOrders({
+    page,
     status: statusFilter || undefined,
     dropOffPoint: storeFilter || undefined,
   });
@@ -52,13 +60,15 @@ const ReceivingDeliveriesView = () => {
   const [closingId, setClosingId] = useState<string | null>(null);
 
   const handleClose = async (id: string) => {
+    if (closing) return;
     setClosingId(id);
     try {
       await close(id);
-      toast.success('Verified and closed');
-      refetch();
+      toast.success(t('Verified and closed'));
+      if (page === 1) refetch();
+      else setPage(1);
     } catch {
-      toast.error('Could not close this request. Please try again.');
+      toast.error(t('Could not close this request. Please try again.'));
     } finally {
       setClosingId(null);
     }
@@ -72,7 +82,7 @@ const ReceivingDeliveriesView = () => {
       return (
         <TableErrorRow
           colSpan={columnCount}
-          message={error}
+          message={t(error ?? '')}
           onRetry={refetch}
         />
       );
@@ -82,8 +92,10 @@ const ReceivingDeliveriesView = () => {
         <TableEmptyRow
           colSpan={columnCount}
           icon={<LuPackageCheck className="size-6" />}
-          title="Nothing to verify yet"
-          subtitle="Delivered requests will show up here once a driver drops off their route."
+          title={t('Nothing to verify yet')}
+          subtitle={t(
+            'Delivered requests will show up here once a driver drops off their route.',
+          )}
         />
       );
     }
@@ -94,7 +106,7 @@ const ReceivingDeliveriesView = () => {
           {r.pickup_request.full_name}
         </td>
         <td className="px-6 py-4 text-slate-700">
-          {itemsSummary(r.items)} —{' '}
+          {itemsSummary(r.items, t)} —{' '}
           {r.delivered_quantity ?? r.items[0]?.collected_quantity ?? '—'}
         </td>
         <td className="px-6 py-4 text-slate-700">
@@ -102,17 +114,20 @@ const ReceivingDeliveriesView = () => {
         </td>
         <td className="px-6 py-4">
           <StatusBadge variant={STATUS_BADGE_VARIANT[r.status]}>
-            {PICKUP_STATUS_LABELS[r.status]}
+            {t(PICKUP_STATUS_LABELS[r.status])}
           </StatusBadge>
         </td>
         <td className="px-6 py-4">
           {r.status === 'delivered' && (
             <button
               type="button"
-              disabled={closing && closingId === r.id}
+              disabled={closing}
+              aria-busy={closing && closingId === r.id}
               onClick={() => handleClose(r.id)}
-              aria-label={`Verify and close delivery from ${r.pickup_request.full_name}`}
-              className="inline-flex size-8 items-center justify-center rounded-full text-slate-600 transition hover:bg-slate-100 hover:text-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
+              aria-label={t('Verify and close delivery from {value0}', {
+                value0: r.pickup_request.full_name,
+              })}
+              className="inline-flex size-11 items-center justify-center rounded-full text-slate-600 transition hover:bg-slate-100 hover:text-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
               <LuCheckCheck className="size-4" />
             </button>
@@ -125,46 +140,83 @@ const ReceivingDeliveriesView = () => {
   return (
     <PageContainer variant="table">
       <PageHeader
-        title="Deliveries"
-        subtitle="Verify and close requests once a driver's route has been dropped off."
+        title={t('Deliveries')}
+        subtitle={t(
+          "Verify and close requests once a driver's route has been dropped off.",
+        )}
       />
 
       <div className="mb-4 flex flex-wrap justify-end gap-2">
         <FilterSelect
-          ariaLabel="Store"
+          ariaLabel={t('Store')}
           value={storeFilter}
-          onChange={setStoreFilter}
+          onChange={(value) => {
+            setStoreFilter(value);
+            setPage(1);
+          }}
           options={storeOptions}
         />
         <FilterSelect
-          ariaLabel="Status"
+          ariaLabel={t('Status')}
           value={statusFilter}
-          onChange={(value) => setStatusFilter(value as PickupStatus | '')}
-          options={STATUS_FILTER_OPTIONS}
+          onChange={(value) => {
+            setStatusFilter(value as PickupStatus | '');
+            setPage(1);
+          }}
+          options={STATUS_FILTER_OPTIONS.map((item) => ({
+            ...item,
+            label: t(item.label),
+          }))}
         />
       </div>
 
-      <TableWrapper>
+      {pointsError && (
+        <div className="mb-4 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+          <p>{t(pointsError ?? '')}</p>
+          <button
+            type="button"
+            onClick={retryPoints}
+            className="min-h-11 px-3 font-semibold underline"
+          >
+            {t('Retry collection points')}
+          </button>
+        </div>
+      )}
+      <TableWrapper
+        footer={
+          !error && (
+            <TablePagination
+              currentPage={page}
+              onPageChange={setPage}
+              itemsPerPage={12}
+              itemCount={requests.length}
+              totalCount={count}
+              itemLabel="deliveries"
+              loading={loading}
+            />
+          )
+        }
+      >
         <table className="min-w-full divide-y divide-slate-200 text-sm">
           <thead className="bg-slate-50">
             <tr>
               <th className="px-6 py-3 text-left font-semibold text-slate-500">
-                Order
+                {t('Order')}
               </th>
               <th className="px-6 py-3 text-left font-semibold text-slate-500">
-                Requester
+                {t('Requester')}
               </th>
               <th className="px-6 py-3 text-left font-semibold text-slate-500">
-                Category / quantity
+                {t('Category / quantity')}
               </th>
               <th className="px-6 py-3 text-left font-semibold text-slate-500">
-                Store
+                {t('Store')}
               </th>
               <th className="px-6 py-3 text-left font-semibold text-slate-500">
-                Status
+                {t('Status')}
               </th>
               <th className="px-6 py-3 text-left font-semibold text-slate-500">
-                Action
+                {t('Action')}
               </th>
             </tr>
           </thead>

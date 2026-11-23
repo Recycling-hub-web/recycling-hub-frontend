@@ -1,8 +1,14 @@
+import { portalClaimsBm } from './portalClaims';
 import { portalFinanceBm } from './portalFinance';
 import { portalOverviewBm } from './portalOverview';
+import { portalPickupManagementBm } from './portalPickupManagement';
+import { portalPickupsBm } from './portalPickups';
 
 /** UI copy only: records, names and user-authored content are never translated. */
 export const portalBm: Record<string, string> = {
+  ...portalPickupManagementBm,
+  ...portalPickupsBm,
+  ...portalClaimsBm,
   ...portalFinanceBm,
   ...portalOverviewBm,
   'Loading notifications…': 'Sedang memuatkan pemberitahuan…',

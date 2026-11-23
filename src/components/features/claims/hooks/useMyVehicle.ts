@@ -11,6 +11,7 @@ import type { Vehicle } from '../types';
  * via `hasNoVehicle`, never `error`. Only petrol claims need this; tool
  * claims don't call it at all. */
 const useMyVehicle = () => {
+  const [attempt, setAttempt] = useState(0);
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -46,9 +47,15 @@ const useMyVehicle = () => {
     return () => {
       active = false;
     };
-  }, []);
+  }, [attempt]);
 
-  return { vehicle, loading, error, hasNoVehicle };
+  return {
+    vehicle,
+    loading,
+    error,
+    hasNoVehicle,
+    retry: () => setAttempt((value) => value + 1),
+  };
 };
 
 export { useMyVehicle };

@@ -191,7 +191,7 @@ export const ValidatedForm = ({
                       )?.focus();
                     }}
                   >
-                    {message}
+                    {t(message)}
                   </button>
                 </li>
               ))}

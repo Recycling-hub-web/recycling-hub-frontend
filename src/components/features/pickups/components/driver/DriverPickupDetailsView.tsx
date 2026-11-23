@@ -15,6 +15,7 @@ import {
   LuUser,
 } from 'react-icons/lu';
 
+import { usePortalLocale } from '../../../../../contexts/PortalLocaleContext';
 import { PageContainer } from '../../../../layout/PageContainer';
 import { StatusBadge } from '../../../../ui/badges/StatusBadge';
 import { Button } from '../../../../ui/buttons/Button';
@@ -62,22 +63,23 @@ const NAVIGABLE_STATUSES = ['pending', 'scheduled'];
 const DriverPickupDetailsView = ({
   requestId,
 }: DriverPickupDetailsViewProps) => {
+  const { t, locale } = usePortalLocale();
   const { request, loading, error, refetch } = useOrder(requestId);
   const toast = useToast();
   const [confirmOpen, setConfirmOpen] = useState(false);
 
-  if (loading && !request) return <Loading text="Loading order…" />;
+  if (loading && !request) return <Loading text={t('Loading order…')} />;
 
   if (error || !request) {
     return (
       <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-        {error || 'Order not found.'}{' '}
+        {error || t('Order not found.')}{' '}
         <button
           type="button"
           onClick={refetch}
           className="font-semibold underline"
         >
-          Retry
+          {t('Retry')}
         </button>
       </div>
     );
@@ -89,7 +91,7 @@ const DriverPickupDetailsView = ({
 
   const handleConfirmed = () => {
     refetch();
-    toast.success('Pickup time confirmed');
+    toast.success(t('Pickup time confirmed'));
   };
 
   return (
@@ -99,19 +101,19 @@ const DriverPickupDetailsView = ({
         className="mb-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand-700 lg:mb-4 lg:min-h-0"
       >
         <LuArrowLeft className="size-4" />
-        Back to pickups
+        {t('Back to pickups')}
       </Link>
 
       <PageHeader
         title={request.code}
-        subtitle={`${request.pickup_request.full_name} — ${itemsSummary(request.items)}`}
+        subtitle={`${request.pickup_request.full_name} — ${itemsSummary(request.items, t)}`}
         actions={
           // Desktop: in the header. Phones: the sticky bar at the bottom.
           canConfirmSchedule ? (
             <span className="hidden lg:inline-flex">
               <Button onClick={() => setConfirmOpen(true)}>
                 <LuClipboardCheck className="mr-1.5 size-4" />
-                Confirm pickup time
+                {t('Confirm pickup time')}
               </Button>
             </span>
           ) : undefined
@@ -120,12 +122,12 @@ const DriverPickupDetailsView = ({
 
       <div className="mb-4 flex flex-wrap gap-2">
         <StatusBadge variant={STATUS_BADGE_VARIANT[request.status]}>
-          {PICKUP_STATUS_LABELS[request.status]}
+          {t(PICKUP_STATUS_LABELS[request.status])}
         </StatusBadge>
         <StatusBadge
           variant={EVALUATION_STATUS_BADGE_VARIANT[request.evaluation_status]}
         >
-          {PICKUP_EVALUATION_STATUS_LABELS[request.evaluation_status]}
+          {t(PICKUP_EVALUATION_STATUS_LABELS[request.evaluation_status])}
         </StatusBadge>
       </div>
 
@@ -137,17 +139,17 @@ const DriverPickupDetailsView = ({
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <InfoRow
                 icon={<LuUser className="size-4" />}
-                label="Requester"
+                label={t('Requester')}
                 value={request.pickup_request.full_name}
               />
               <InfoRow
                 icon={<LuMail className="size-4" />}
-                label="Email"
+                label={t('Email')}
                 value={request.pickup_request.email || '—'}
               />
               <InfoRow
                 icon={<LuPhone className="size-4" />}
-                label="Phone"
+                label={t('Phone')}
                 value={
                   <WhatsAppLink
                     phoneNumber={request.pickup_request.phone_number}
@@ -156,25 +158,26 @@ const DriverPickupDetailsView = ({
               />
               <InfoRow
                 icon={<LuCalendar className="size-4" />}
-                label="Requested for"
+                label={t('Requested for')}
                 value={
                   <AppDate
                     value={request.pickup_request.requested_at}
                     format="long"
+                    locale={locale === 'bm' ? 'ms-MY' : 'en-GB'}
                   />
                 }
               />
               <div className="sm:col-span-2">
                 <InfoRow
                   icon={<LuMapPin className="size-4" />}
-                  label="Pickup address"
+                  label={t('Pickup address')}
                   value={request.pickup_request.pickup_address}
                 />
               </div>
               <div className="sm:col-span-2">
                 <InfoRow
                   icon={<LuPackage className="size-4" />}
-                  label="Materials"
+                  label={t('Materials')}
                   value={
                     request.items.length === 0 ? (
                       '—'
@@ -196,7 +199,7 @@ const DriverPickupDetailsView = ({
               {request.price && (
                 <InfoRow
                   icon={<LuPackage className="size-4" />}
-                  label="Price"
+                  label={t('Price')}
                   value={request.price}
                 />
               )}
@@ -204,18 +207,20 @@ const DriverPickupDetailsView = ({
                 (request.pickup_confirmed_at ? (
                   <InfoRow
                     icon={<LuCalendarCheck className="size-4" />}
-                    label="Confirmed pickup"
+                    label={t('Confirmed pickup')}
                     value={
                       <span>
                         <AppDate
                           value={request.scheduled_at}
                           format="datetime"
+                          locale={locale === 'bm' ? 'ms-MY' : 'en-GB'}
                         />
                         <span className="block text-xs text-slate-600">
-                          Confirmed{' '}
+                          {t('Confirmed')}{' '}
                           <AppDate
                             value={request.pickup_confirmed_at}
                             format="relative"
+                            locale={locale === 'bm' ? 'ms-MY' : 'en-GB'}
                           />
                         </span>
                       </span>
@@ -224,9 +229,13 @@ const DriverPickupDetailsView = ({
                 ) : (
                   <InfoRow
                     icon={<LuCalendar className="size-4" />}
-                    label="Scheduled for (not confirmed yet)"
+                    label={t('Scheduled for (not confirmed yet)')}
                     value={
-                      <AppDate value={request.scheduled_at} format="datetime" />
+                      <AppDate
+                        value={request.scheduled_at}
+                        format="datetime"
+                        locale={locale === 'bm' ? 'ms-MY' : 'en-GB'}
+                      />
                     }
                   />
                 ))}
@@ -243,7 +252,7 @@ const DriverPickupDetailsView = ({
                   )}
                 >
                   <LuMapPin className="size-4" />
-                  Google Maps
+                  {t('Google Maps')}
                 </Button>
                 <Button
                   variant="secondary"
@@ -252,7 +261,7 @@ const DriverPickupDetailsView = ({
                   href={wazeNavigateUrl(request.pickup_request.pickup_address)}
                 >
                   <LuNavigation className="size-4" />
-                  Waze
+                  {t('Waze')}
                 </Button>
               </div>
             )}
@@ -260,7 +269,7 @@ const DriverPickupDetailsView = ({
             {request.pickup_request.note && (
               <div className="mt-5 border-t border-slate-100 pt-5">
                 <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-600">
-                  Requester&apos;s note
+                  {t("Requester's note")}
                 </p>
                 <p className="whitespace-pre-wrap text-sm leading-relaxed text-slate-700">
                   {request.pickup_request.note}
@@ -271,7 +280,7 @@ const DriverPickupDetailsView = ({
             {request.pickup_request.collection_point && (
               <div className="mt-5 border-t border-slate-100 pt-5">
                 <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-600">
-                  Drop-off collection point
+                  {t('Drop-off collection point')}
                 </p>
                 <p className="text-sm text-slate-700">
                   {request.pickup_request.collection_point.name} —{' '}
@@ -287,7 +296,7 @@ const DriverPickupDetailsView = ({
         <StickyActionBar className="lg:hidden">
           <Button onClick={() => setConfirmOpen(true)}>
             <LuClipboardCheck className="mr-1.5 size-4" />
-            Confirm pickup time
+            {t('Confirm pickup time')}
           </Button>
         </StickyActionBar>
       )}
