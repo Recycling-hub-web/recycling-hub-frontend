@@ -3,6 +3,7 @@ import type { ReactElement } from 'react';
 import { QuickPickupRequestForm } from '../components/features/pickups/components';
 import { Meta } from '../components/layout/Meta';
 import { PublicSeoSchema } from '../components/layout/PublicSeoSchema';
+import { AcceptedItemsSection } from '../components/public/home/AcceptedItemsSection';
 import { HeroBlobSection } from '../components/public/home/HeroBlobSection';
 import { LatestBlogSection } from '../components/public/home/LatestBlogSection';
 import { ServiceAreaSection } from '../components/public/home/ServiceAreaSection';
@@ -25,6 +26,7 @@ const HomePage: NextPageWithLayout = () => {
       <QuickPickupRequestForm />
       <WhyRecyclingHub />
       <HowItWorks />
+      <AcceptedItemsSection />
       <ServiceAreaSection />
       <LatestBlogSection />
       <FaqSection />

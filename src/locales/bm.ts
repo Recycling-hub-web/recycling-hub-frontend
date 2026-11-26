@@ -99,6 +99,43 @@ const bm: Dictionary = {
   },
 
   home: {
+    accepted: {
+      eyebrow: 'Apa yang kami terima',
+      headline: 'Apa yang boleh saya kitar semula?',
+      subtext:
+        'Beritahu kami apa yang anda ada dan keadaannya. Pickup isi rumah di Lembah Klang adalah percuma untuk sekurang-kurangnya 3 peranti, dan anda dibayar serta-merta melalui DuitNow.',
+      categories: [
+        {
+          title: 'Telefon & tablet',
+          items: ['Telefon pintar', 'Tablet', 'Gajet peribadi kecil'],
+        },
+        {
+          title: 'Laptop & komputer',
+          items: ['Laptop', 'Komputer meja', 'Cakera keras'],
+        },
+        {
+          title: 'Monitor & skrin',
+          items: ['Monitor komputer', 'Skrin dan paparan'],
+        },
+        {
+          title: 'Peralatan IT pejabat',
+          items: ['Peralatan IT pejabat', 'Pelayan (kutipan perniagaan)'],
+        },
+      ],
+      askFirst: {
+        title: 'Tidak pasti? Tanya kami dahulu',
+        body: 'Pengecas dan kabel, bateri, peranti rosak, perkakas elektrik atau apa-apa yang tidak disenaraikan di sini: hantar gambar kepada kami melalui WhatsApp dan pasukan kami akan mengesahkannya sebelum pickup.',
+        cta: 'Hantar gambar melalui WhatsApp',
+      },
+      facts: [
+        'Pickup percuma untuk 3+ peranti',
+        'Lembah Klang',
+        'Bayaran serta-merta DuitNow',
+        'Berdaftar dengan DOE',
+      ],
+      requestPickup: 'Minta pickup',
+    },
+
     serviceArea: {
       heading: 'Pickup e-waste di Lembah Klang',
       description:
@@ -1229,6 +1266,18 @@ const bm: Dictionary = {
             question: 'Di manakah pickup tersedia?',
             answer:
               'Kawasan perkhidmatan kami ialah Lembah Klang. Kongsi alamat kutipan semasa menghubungi kami supaya akses dan urusan kutipan boleh disahkan. Slot pickup tidak dijamin sebelum pengesahan.',
+          },
+          {
+            question:
+              'Bagaimana jika barang saya tiada dalam senarai, rosak atau mempunyai bateri?',
+            answer:
+              'Hantar gambar atau senarai ringkas kepada kami melalui WhatsApp sebelum menempah. Nyatakan bateri, peranti rosak, pengecas dan kabel atau barang luar biasa supaya pasukan kami boleh mengesahkan penerimaan dan pengendaliannya sebelum pickup.',
+          },
+          {
+            question:
+              'Bagaimana saya perlu menyediakan peranti sebelum pickup?',
+            answer:
+              'Buat sandaran data yang anda perlukan, log keluar daripada akaun anda (seperti Apple ID atau Google) dan keluarkan kad SIM serta kad memori. Simpan pengecas dan kabel bersama-sama dan nyatakannya semasa menempah. Perniagaan yang memerlukan bukti data mereka dimusnahkan boleh meminta pemusnahan data bertauliah.',
           },
         ],
       },
