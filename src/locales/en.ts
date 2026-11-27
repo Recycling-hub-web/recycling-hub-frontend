@@ -106,6 +106,43 @@ const en = {
   },
 
   home: {
+    accepted: {
+      eyebrow: 'What we accept',
+      headline: 'What can I recycle?',
+      subtext:
+        'Tell us what you have and its condition. Household pickup in Klang Valley is free with at least 3 devices, and you are paid instantly via DuitNow.',
+      categories: [
+        {
+          title: 'Phones & tablets',
+          items: ['Smartphones', 'Tablets', 'Small personal gadgets'],
+        },
+        {
+          title: 'Laptops & computers',
+          items: ['Laptops', 'Desktop computers', 'Hard drives'],
+        },
+        {
+          title: 'Monitors & screens',
+          items: ['Computer monitors', 'Screens and displays'],
+        },
+        {
+          title: 'Office IT equipment',
+          items: ['Office IT equipment', 'Servers (business collection)'],
+        },
+      ],
+      askFirst: {
+        title: 'Not sure? Ask us first',
+        body: 'Chargers and cables, batteries, damaged devices, appliances or anything not listed here: send us a photo on WhatsApp and the team will confirm before pickup.',
+        cta: 'Send a photo on WhatsApp',
+      },
+      facts: [
+        'Free pickup with 3+ devices',
+        'Klang Valley',
+        'Instant DuitNow payment',
+        'DOE-registered',
+      ],
+      requestPickup: 'Request a pickup',
+    },
+
     serviceArea: {
       heading: 'E-waste pickup in Klang Valley',
       description:
@@ -1225,6 +1262,17 @@ const en = {
             question: 'Where is pickup available?',
             answer:
               'Our service area is Klang Valley. Share your collection address when enquiring so we can confirm access and collection arrangements. No specific pickup window is guaranteed before confirmation.',
+          },
+          {
+            question:
+              "What if my item isn't listed, is damaged or has a battery?",
+            answer:
+              'Send us a photo or a short list on WhatsApp before booking. Mention batteries, damaged devices, chargers and cables or unusual items so the team can confirm acceptance and handling before pickup.',
+          },
+          {
+            question: 'How should I prepare my devices before pickup?',
+            answer:
+              'Back up anything you need, sign out of your accounts (such as Apple ID or Google) and remove SIM and memory cards. Keep chargers and cables together and mention them when booking. Businesses that need proof their data was destroyed can request certified data destruction.',
           },
         ],
       },
