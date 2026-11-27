@@ -49,6 +49,8 @@ const PublicSeoSchema = ({ page, serviceSlug }: PublicSeoSchemaProps) => {
       telephone: BRAND.phone,
       email: BRAND.email,
       areaServed: CITIES.map((name) => ({ '@type': 'City', name })),
+      // Our social profiles, so search engines tie them to the business.
+      sameAs: Object.values(BRAND.social),
       contactPoint: [
         {
           '@type': 'ContactPoint',

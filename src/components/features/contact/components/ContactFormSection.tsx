@@ -1,6 +1,7 @@
 'use client';
 
 import { type FormEvent, type ReactNode, useState } from 'react';
+import { FaTiktok } from 'react-icons/fa6';
 import {
   LuFacebook,
   LuInstagram,
@@ -166,6 +167,11 @@ const ContactFormSection = () => {
       icon: <LuInstagram className="size-5" />,
       label: 'Instagram',
       href: BRAND.social.instagram,
+    },
+    {
+      icon: <FaTiktok className="size-5" />,
+      label: 'TikTok',
+      href: BRAND.social.tiktok,
     },
   ];
 

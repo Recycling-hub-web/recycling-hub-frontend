@@ -52,6 +52,7 @@ export const BRAND = {
     instagram: 'https://www.instagram.com/recyclinghub.eco',
     facebook:
       'https://www.facebook.com/people/Recycling-Hub-E-Waste-Pickup-Malaysia/61596223853381/',
+    tiktok: 'https://www.tiktok.com/@recyclinghub.eco',
   },
 };
 

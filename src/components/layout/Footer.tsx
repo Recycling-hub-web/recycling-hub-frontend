@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { FaTiktok } from 'react-icons/fa6';
 
 import { ASSETS, BRAND, LOGO_SIZE } from '../../constants/content';
 import { useDictionary } from '../../hooks/useDictionary';
@@ -78,6 +79,15 @@ const Footer = () => {
                 aria-label="Facebook"
               >
                 <FacebookIcon />
+              </a>
+              <a
+                href={BRAND.social.tiktok}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex size-8 items-center justify-center rounded-lg bg-neutral-100 text-slate-500 transition-colors hover:bg-brand-50 hover:text-brand-700"
+                aria-label="TikTok"
+              >
+                <FaTiktok size={15} />
               </a>
             </div>
           </div>
